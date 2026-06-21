@@ -4,6 +4,7 @@ import { useTheme } from "@cooud/theme";
 import { Badge, Button } from "@cooud/ui";
 import { ArrowRight, Github, Moon, Sparkles, Sun } from "lucide-react";
 import { ComponentGallery } from "../components/component-gallery";
+import { FormsGallery } from "../components/forms-gallery";
 import { ThemeBuilder } from "../components/theme-builder";
 
 export default function Page() {
@@ -95,6 +96,7 @@ export default function Page() {
           </div>
           <div className="lg:order-2 min-w-0">
             <ComponentGallery />
+            <FormsGallery />
           </div>
         </div>
       </main>
