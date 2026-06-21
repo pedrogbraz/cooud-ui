@@ -36,7 +36,8 @@ export const dateTimeExamples: ExampleMap = {
       id: "single-date",
       title: "Single date",
       description: "A controlled calendar in single-select mode. Click a day to update the value.",
-      code: `const [date, setDate] = useState<Date | undefined>(new Date());
+      code: `// Fixed initial date keeps SSR + client identical (avoids hydration drift).
+const [date, setDate] = useState<Date | undefined>(() => new Date(2026, 5, 21));
 
 return (
   <Calendar mode="single" selected={date} onSelect={setDate} className="rounded-md" />

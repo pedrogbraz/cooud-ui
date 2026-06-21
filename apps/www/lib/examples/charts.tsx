@@ -10,7 +10,7 @@ import type { ExampleMap } from "./types";
 
 const chartConfig = {
   revenue: { label: "Revenue", color: "var(--cooud-primary)" },
-  profit: { label: "Profit", color: "var(--cooud-accent)" },
+  profit: { label: "Profit", color: "var(--cooud-info)" },
 } satisfies ChartConfig;
 
 const chartData = [
@@ -49,7 +49,7 @@ export const chartsExamples: ExampleMap = {
         "A recharts BarChart composed inside ChartContainer. The ChartConfig maps each series to a theme token, exposed to bars as `var(--color-*)`.",
       code: `const chartConfig = {
   revenue: { label: "Revenue", color: "var(--cooud-primary)" },
-  profit: { label: "Profit", color: "var(--cooud-accent)" },
+  profit: { label: "Profit", color: "var(--cooud-info)" },
 } satisfies ChartConfig;
 
 const chartData = [

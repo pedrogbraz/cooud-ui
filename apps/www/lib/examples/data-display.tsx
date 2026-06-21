@@ -134,22 +134,22 @@ export const dataDisplayExamples: ExampleMap = {
       description: "A stack of overlapping avatars with a ring to separate each layer.",
       code: `<div className="flex -space-x-3">
   {["CN", "AL", "JL", "MK"].map((initials) => (
-    <Avatar key={initials} className="ring-2 ring-surface">
+    <Avatar key={initials} className="ring-2 ring-surface-raised">
       <AvatarFallback>{initials}</AvatarFallback>
     </Avatar>
   ))}
-  <Avatar className="ring-2 ring-surface">
+  <Avatar className="ring-2 ring-surface-raised">
     <AvatarFallback className="text-xs">+5</AvatarFallback>
   </Avatar>
 </div>`,
       preview: (
         <div className="flex -space-x-3">
           {["CN", "AL", "JL", "MK"].map((initials) => (
-            <Avatar key={initials} className="ring-2 ring-surface">
+            <Avatar key={initials} className="ring-2 ring-surface-raised">
               <AvatarFallback>{initials}</AvatarFallback>
             </Avatar>
           ))}
-          <Avatar className="ring-2 ring-surface">
+          <Avatar className="ring-2 ring-surface-raised">
             <AvatarFallback className="text-xs">+5</AvatarFallback>
           </Avatar>
         </div>
