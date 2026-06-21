@@ -57,14 +57,17 @@ const FormItemContext = createContext<FormItemContextValue | null>(null);
 export const useFormField = () => {
   const fieldContext = useContext(FormFieldContext);
   const itemContext = useContext(FormItemContext);
-  const { getFieldState } = useFormContext();
+  const form = useFormContext();
   const formState = useFormState({ name: fieldContext?.name });
 
+  if (!form) {
+    throw new Error("useFormField must be used within a <Form> (FormProvider)");
+  }
   if (!fieldContext) {
     throw new Error("useFormField should be used within <FormField>");
   }
 
-  const fieldState = getFieldState(fieldContext.name, formState);
+  const fieldState = form.getFieldState(fieldContext.name, formState);
 
   if (!itemContext) {
     throw new Error("useFormField should be used within <FormItem>");
