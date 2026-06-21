@@ -203,6 +203,8 @@
 
 @theme {
   --animate-caret-blink: caret-blink 1.25s ease-out infinite;
+  --animate-shimmer: shimmer 2s linear infinite;
+  --animate-aurora: aurora-drift 18s ease-in-out infinite alternate;
 }
 
 @keyframes caret-blink {
@@ -214,6 +216,24 @@
   20%,
   50% {
     opacity: 0;
+  }
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes aurora-drift {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(3%, -4%) scale(1.08);
+  }
+  100% {
+    transform: translate(-3%, 4%) scale(1.04);
   }
 }
 
