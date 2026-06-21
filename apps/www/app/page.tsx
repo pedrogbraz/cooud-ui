@@ -13,16 +13,13 @@ import {
   Slider,
   Switch,
 } from "@cooud/ui";
-import { ArrowUpRight, Github, Terminal } from "lucide-react";
-import { ComponentGallery } from "../components/component-gallery";
-import { DataGallery } from "../components/data-gallery";
-import { FormsGallery } from "../components/forms-gallery";
+import { ArrowRight, ArrowUpRight, Github, Terminal } from "lucide-react";
+import Link from "next/link";
 import { Hero } from "../components/hero";
-import { OverlaysGallery } from "../components/overlays-gallery";
-import { PremiumGallery } from "../components/premium-gallery";
 import { Eyebrow } from "../components/showcase-ui";
 import { SiteNav } from "../components/site-nav";
 import { ThemeBuilder } from "../components/theme-builder";
+import { CATEGORIES } from "../lib/components-index";
 
 export default function Page() {
   return (
@@ -55,16 +52,43 @@ export default function Page() {
         </div>
       </section>
 
-      {/* Components */}
-      <main id="components" className="scroll-mt-20">
-        <div className="mx-auto max-w-7xl px-6">
-          <ComponentGallery />
-          <FormsGallery />
-          <OverlaysGallery />
-          <DataGallery />
-          <PremiumGallery />
+      {/* Components CTA */}
+      <section id="components" className="scroll-mt-20 border-t border-border/60">
+        <div className="mx-auto max-w-7xl px-6 py-16 sm:py-24">
+          <div className="flex flex-col gap-3">
+            <Eyebrow>Component library</Eyebrow>
+            <h2 className="max-w-2xl font-display text-3xl font-semibold tracking-tight sm:text-4xl">
+              {CATEGORIES.reduce((n, c) => n + c.items.length, 0)} components, fully documented
+            </h2>
+            <p className="max-w-2xl text-fg-secondary">
+              Browse every component with live previews, variants, states and copy-paste code —
+              organized by category.
+            </p>
+          </div>
+
+          <div className="mt-8 flex flex-wrap gap-2">
+            {CATEGORIES.map((category) => (
+              <Link
+                key={category.slug}
+                href={`/components#${category.slug}`}
+                className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface-raised px-3.5 py-1.5 text-sm text-fg-secondary outline-none transition-colors hover:border-border-strong hover:text-fg focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                {category.name}
+                <span className="text-fg-tertiary">{category.items.length}</span>
+              </Link>
+            ))}
+          </div>
+
+          <div className="mt-8">
+            <Button asChild variant="gradient" size="lg">
+              <Link href="/components">
+                Explore all components
+                <ArrowRight aria-hidden="true" />
+              </Link>
+            </Button>
+          </div>
         </div>
-      </main>
+      </section>
 
       <SiteFooter />
     </div>
