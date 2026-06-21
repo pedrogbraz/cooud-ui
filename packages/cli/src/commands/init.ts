@@ -1,0 +1,65 @@
+import { mkdir } from "node:fs/promises";
+import { join } from "node:path";
+import { type CooudUIConfig, DEFAULT_CONFIG, hasConfig, writeConfig } from "../config.js";
+import { Registry } from "../registry.js";
+import { detectPackageManager, log, runInstall, writeItemFiles } from "../utils.js";
+
+interface InitOptions {
+  cwd: string;
+  registry?: string;
+  yes?: boolean;
+  skipInstall?: boolean;
+}
+
+const BASE_DEPS = ["clsx", "tailwind-merge", "class-variance-authority", "@radix-ui/react-slot"];
+
+export async function init(options: InitOptions): Promise<void> {
+  const { cwd } = options;
+
+  if (hasConfig(cwd) && !options.yes) {
+    log.warn(`${"cooud-ui.json"} already exists. Re-run with --yes to overwrite.`);
+    return;
+  }
+
+  const config: CooudUIConfig = {
+    ...DEFAULT_CONFIG,
+    registry: options.registry ?? DEFAULT_CONFIG.registry,
+  };
+
+  log.title("Initializing Cooud UI");
+  await writeConfig(cwd, config);
+  log.ok("Wrote cooud-ui.json");
+
+  await mkdir(join(cwd, config.paths.ui), { recursive: true });
+  await mkdir(join(cwd, config.paths.lib), { recursive: true });
+  log.ok(`Created ${config.paths.ui} and ${config.paths.lib}`);
+
+  // Pull the shared cn() helper from the registry.
+  try {
+    const registry = new Registry(config.registry);
+    const [cn] = await registry.resolve(["cn"]);
+    if (cn) {
+      await writeItemFiles(cn, config, cwd, { overwrite: true });
+      log.ok(`Added ${config.paths.lib}/cn.ts`);
+    }
+  } catch (err) {
+    log.warn(`Could not fetch cn from registry (${(err as Error).message}). Add it later.`);
+  }
+
+  if (!options.skipInstall) {
+    const pm = detectPackageManager(cwd);
+    log.step(`Installing base dependencies with ${pm}…`);
+    try {
+      await runInstall(pm, BASE_DEPS, cwd);
+      log.ok("Installed base dependencies");
+    } catch (err) {
+      log.warn(`Dependency install skipped: ${(err as Error).message}`);
+    }
+  }
+
+  log.title("Next steps");
+  log.step("1. Install the token engine:  add @cooud/tokens @cooud/theme (or copy tokens.css).");
+  log.step('2. In your global CSS:  @import "tailwindcss";  @import "@cooud/tokens/styles.css";');
+  log.step("3. Wrap your app in <CooudUIProvider> from @cooud/theme.");
+  log.step("4. Add components:  npx cooud-ui add button card dialog");
+}
