@@ -101,7 +101,7 @@ export function Hero() {
         {/* CTAs */}
         <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row">
           <Button asChild variant="gradient" size="lg">
-            <a href="#components">
+            <a href="/components">
               Get started
               <ArrowRight aria-hidden="true" />
             </a>

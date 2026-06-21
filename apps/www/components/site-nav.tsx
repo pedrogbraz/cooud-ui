@@ -5,10 +5,10 @@ import { Badge } from "@cooud/ui";
 import { Github, Moon, Search, Sparkles, Sun } from "lucide-react";
 
 const navLinks = [
-  { label: "Components", href: "#components" },
-  { label: "Theme", href: "#playground" },
-  { label: "Tokens", href: "#tokens" },
-  { label: "CLI", href: "#cli" },
+  { label: "Components", href: "/components" },
+  { label: "Theme", href: "/#playground" },
+  { label: "Tokens", href: "/#tokens" },
+  { label: "CLI", href: "/#cli" },
 ] as const;
 
 const GITHUB_URL = "https://github.com/pedrogbraz/cooud-ui";
