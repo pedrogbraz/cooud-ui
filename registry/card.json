@@ -1,0 +1,15 @@
+{
+  "name": "card",
+  "type": "registry:ui",
+  "dependencies": [],
+  "registryDependencies": [
+    "cn"
+  ],
+  "files": [
+    {
+      "path": "card.tsx",
+      "content": "import { forwardRef, type HTMLAttributes } from \"react\";\nimport { cn } from \"../lib/cn.js\";\n\nexport const Card = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(\n  ({ className, ...props }, ref) => {\n    return (\n      <div\n        ref={ref}\n        data-slot=\"card\"\n        className={cn(\n          \"flex flex-col gap-6 py-6 rounded-xl border border-border bg-surface-raised text-fg shadow-sm\",\n          className,\n        )}\n        {...props}\n      />\n    );\n  },\n);\nCard.displayName = \"Card\";\n\nexport const CardHeader = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(\n  ({ className, ...props }, ref) => {\n    return (\n      <div\n        ref={ref}\n        data-slot=\"card-header\"\n        className={cn(\n          \"grid auto-rows-min grid-cols-[1fr_auto] items-start gap-1.5 px-6\",\n          className,\n        )}\n        {...props}\n      />\n    );\n  },\n);\nCardHeader.displayName = \"CardHeader\";\n\nexport const CardTitle = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(\n  ({ className, ...props }, ref) => {\n    return (\n      <div\n        ref={ref}\n        data-slot=\"card-title\"\n        className={cn(\"font-display font-semibold leading-none text-fg\", className)}\n        {...props}\n      />\n    );\n  },\n);\nCardTitle.displayName = \"CardTitle\";\n\nexport const CardDescription = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(\n  ({ className, ...props }, ref) => {\n    return (\n      <div\n        ref={ref}\n        data-slot=\"card-description\"\n        className={cn(\"text-sm text-fg-secondary\", className)}\n        {...props}\n      />\n    );\n  },\n);\nCardDescription.displayName = \"CardDescription\";\n\nexport const CardAction = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(\n  ({ className, ...props }, ref) => {\n    return (\n      <div\n        ref={ref}\n        data-slot=\"card-action\"\n        className={cn(\"col-start-2 row-span-2 row-start-1 self-start justify-self-end\", className)}\n        {...props}\n      />\n    );\n  },\n);\nCardAction.displayName = \"CardAction\";\n\nexport const CardContent = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(\n  ({ className, ...props }, ref) => {\n    return (\n      <div\n        ref={ref}\n        data-slot=\"card-content\"\n        className={cn(\"px-6 text-fg-secondary\", className)}\n        {...props}\n      />\n    );\n  },\n);\nCardContent.displayName = \"CardContent\";\n\nexport const CardFooter = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(\n  ({ className, ...props }, ref) => {\n    return (\n      <div\n        ref={ref}\n        data-slot=\"card-footer\"\n        className={cn(\"flex items-center gap-3 px-6\", className)}\n        {...props}\n      />\n    );\n  },\n);\nCardFooter.displayName = \"CardFooter\";\n",
+      "target": "ui"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "name": "motion-presets",
+  "type": "registry:ui",
+  "dependencies": [
+    "motion@^12.23.0"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "motion-presets.ts",
+      "content": "import type { Transition, Variants } from \"motion/react\";\n\nexport const springSoft: Transition = { type: \"spring\", stiffness: 260, damping: 26 };\n\nexport const springSnappy: Transition = { type: \"spring\", stiffness: 400, damping: 30 };\n\nexport const easeOutQuart: Transition = { duration: 0.5, ease: [0.16, 1, 0.3, 1] };\n\nexport const fadeInUp: Variants = {\n  hidden: { opacity: 0, y: 16 },\n  visible: { opacity: 1, y: 0, transition: easeOutQuart },\n};\n\nexport const fadeIn: Variants = {\n  hidden: { opacity: 0 },\n  visible: { opacity: 1, transition: easeOutQuart },\n};\n\nexport const scaleIn: Variants = {\n  hidden: { opacity: 0, scale: 0.96 },\n  visible: { opacity: 1, scale: 1, transition: springSoft },\n};\n\nexport const staggerContainer: Variants = {\n  hidden: {},\n  visible: { transition: { staggerChildren: 0.08, delayChildren: 0.05 } },\n};\n",
+      "target": "ui"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "name": "input-otp",
+  "type": "registry:ui",
+  "dependencies": [
+    "input-otp@^1.4.2",
+    "lucide-react@^0.577.0"
+  ],
+  "registryDependencies": [
+    "cn"
+  ],
+  "files": [
+    {
+      "path": "input-otp.tsx",
+      "content": "\"use client\";\n\nimport { OTPInput, OTPInputContext } from \"input-otp\";\nimport { Minus } from \"lucide-react\";\nimport {\n  type ComponentPropsWithoutRef,\n  type ComponentRef,\n  forwardRef,\n  type HTMLAttributes,\n  useContext,\n} from \"react\";\nimport { cn } from \"../lib/cn.js\";\n\nexport const InputOTP = forwardRef<\n  ComponentRef<typeof OTPInput>,\n  ComponentPropsWithoutRef<typeof OTPInput>\n>(({ className, containerClassName, ...props }, ref) => {\n  return (\n    <OTPInput\n      ref={ref}\n      data-slot=\"input-otp\"\n      containerClassName={cn(\n        \"flex items-center gap-2 has-[:disabled]:opacity-50\",\n        containerClassName,\n      )}\n      className={cn(\"disabled:cursor-not-allowed\", className)}\n      {...props}\n    />\n  );\n});\nInputOTP.displayName = \"InputOTP\";\n\nexport const InputOTPGroup = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(\n  ({ className, ...props }, ref) => {\n    return (\n      <div\n        ref={ref}\n        data-slot=\"input-otp-group\"\n        className={cn(\"flex items-center\", className)}\n        {...props}\n      />\n    );\n  },\n);\nInputOTPGroup.displayName = \"InputOTPGroup\";\n\nexport const InputOTPSlot = forwardRef<\n  HTMLDivElement,\n  HTMLAttributes<HTMLDivElement> & { index: number }\n>(({ index, className, ...props }, ref) => {\n  const inputOTPContext = useContext(OTPInputContext);\n  const slot = inputOTPContext?.slots[index];\n  const char = slot?.char;\n  const hasFakeCaret = slot?.hasFakeCaret;\n  const isActive = slot?.isActive;\n\n  return (\n    <div\n      ref={ref}\n      data-slot=\"input-otp-slot\"\n      data-active={isActive}\n      className={cn(\n        \"relative flex h-10 w-10 items-center justify-center border-y border-r border-border text-sm transition-all first:rounded-l-lg first:border-l last:rounded-r-lg data-[active=true]:border-ring data-[active=true]:ring-2 data-[active=true]:ring-ring\",\n        className,\n      )}\n      {...props}\n    >\n      {char}\n      {hasFakeCaret && (\n        <div className=\"pointer-events-none absolute inset-0 flex items-center justify-center\">\n          <div className=\"h-4 w-px animate-caret-blink bg-fg duration-1000\" />\n        </div>\n      )}\n    </div>\n  );\n});\nInputOTPSlot.displayName = \"InputOTPSlot\";\n\nexport const InputOTPSeparator = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(\n  ({ className, ...props }, ref) => {\n    return (\n      <div\n        ref={ref}\n        data-slot=\"input-otp-separator\"\n        aria-hidden=\"true\"\n        className={cn(\"flex items-center text-fg-muted\", className)}\n        {...props}\n      >\n        <Minus className=\"size-4\" />\n      </div>\n    );\n  },\n);\nInputOTPSeparator.displayName = \"InputOTPSeparator\";\n",
+      "target": "ui"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "name": "slider",
+  "type": "registry:ui",
+  "dependencies": [
+    "@radix-ui/react-slider@^1.3.5"
+  ],
+  "registryDependencies": [
+    "cn"
+  ],
+  "files": [
+    {
+      "path": "slider.tsx",
+      "content": "import * as SliderPrimitive from \"@radix-ui/react-slider\";\nimport { type ComponentPropsWithoutRef, type ComponentRef, forwardRef } from \"react\";\nimport { cn } from \"../lib/cn.js\";\n\nexport const Slider = forwardRef<\n  ComponentRef<typeof SliderPrimitive.Root>,\n  ComponentPropsWithoutRef<typeof SliderPrimitive.Root>\n>(({ className, ...props }, ref) => {\n  const values = props.value ?? props.defaultValue ?? [props.min ?? 0];\n\n  return (\n    <SliderPrimitive.Root\n      ref={ref}\n      data-slot=\"slider\"\n      className={cn(\n        \"relative flex w-full touch-none select-none items-center data-[disabled]:opacity-50\",\n        className,\n      )}\n      {...props}\n    >\n      <SliderPrimitive.Track className=\"relative h-1.5 w-full grow overflow-hidden rounded-full bg-surface-overlay\">\n        <SliderPrimitive.Range className=\"absolute h-full bg-primary\" />\n      </SliderPrimitive.Track>\n      {values.map((_, index) => (\n        <SliderPrimitive.Thumb\n          // biome-ignore lint/suspicious/noArrayIndexKey: thumb count is positional and stable\n          key={index}\n          className=\"block size-4 rounded-full border border-primary bg-surface-base shadow-sm transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base disabled:pointer-events-none\"\n        />\n      ))}\n    </SliderPrimitive.Root>\n  );\n});\nSlider.displayName = \"Slider\";\n",
+      "target": "ui"
+    }
+  ]
+}

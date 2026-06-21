@@ -1,0 +1,17 @@
+{
+  "name": "metric",
+  "type": "registry:ui",
+  "dependencies": [
+    "lucide-react@^0.577.0"
+  ],
+  "registryDependencies": [
+    "cn"
+  ],
+  "files": [
+    {
+      "path": "metric.tsx",
+      "content": "import { Minus, TrendingDown, TrendingUp } from \"lucide-react\";\nimport { forwardRef, type HTMLAttributes } from \"react\";\nimport { cn } from \"../lib/cn.js\";\n\nexport const Metric = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(\n  ({ className, ...props }, ref) => {\n    return (\n      <div\n        ref={ref}\n        data-slot=\"metric\"\n        className={cn(\"flex flex-col gap-1\", className)}\n        {...props}\n      />\n    );\n  },\n);\nMetric.displayName = \"Metric\";\n\nexport const MetricLabel = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(\n  ({ className, ...props }, ref) => {\n    return (\n      <div\n        ref={ref}\n        data-slot=\"metric-label\"\n        className={cn(\"text-xs font-medium uppercase tracking-wider text-fg-tertiary\", className)}\n        {...props}\n      />\n    );\n  },\n);\nMetricLabel.displayName = \"MetricLabel\";\n\nexport const MetricValue = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(\n  ({ className, ...props }, ref) => {\n    return (\n      <div\n        ref={ref}\n        data-slot=\"metric-value\"\n        className={cn(\"font-display text-2xl font-semibold text-fg tabular-nums\", className)}\n        {...props}\n      />\n    );\n  },\n);\nMetricValue.displayName = \"MetricValue\";\n\nexport interface MetricDeltaProps extends HTMLAttributes<HTMLSpanElement> {\n  trend?: \"up\" | \"down\" | \"neutral\";\n}\n\nconst trendStyles: Record<NonNullable<MetricDeltaProps[\"trend\"]>, string> = {\n  up: \"text-success\",\n  down: \"text-error\",\n  neutral: \"text-fg-tertiary\",\n};\n\nconst trendIcons = {\n  up: TrendingUp,\n  down: TrendingDown,\n  neutral: Minus,\n};\n\nexport const MetricDelta = forwardRef<HTMLSpanElement, MetricDeltaProps>(\n  ({ className, trend = \"neutral\", children, ...props }, ref) => {\n    const Icon = trendIcons[trend];\n    return (\n      <span\n        ref={ref}\n        data-slot=\"metric-delta\"\n        className={cn(\n          \"inline-flex items-center gap-1 text-xs font-medium\",\n          trendStyles[trend],\n          className,\n        )}\n        {...props}\n      >\n        <Icon className=\"size-3.5\" />\n        {children}\n      </span>\n    );\n  },\n);\nMetricDelta.displayName = \"MetricDelta\";\n",
+      "target": "ui"
+    }
+  ]
+}

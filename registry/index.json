@@ -1,0 +1,548 @@
+[
+  {
+    "name": "cn",
+    "type": "registry:lib",
+    "dependencies": [
+      "clsx@^2.1.1",
+      "tailwind-merge@^3.3.1"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "accordion",
+    "type": "registry:ui",
+    "dependencies": [
+      "@radix-ui/react-accordion@^1.2.11",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "alert-dialog",
+    "type": "registry:ui",
+    "dependencies": [
+      "@radix-ui/react-alert-dialog@^1.1.14"
+    ],
+    "registryDependencies": [
+      "button",
+      "cn"
+    ]
+  },
+  {
+    "name": "animated-button",
+    "type": "registry:ui",
+    "dependencies": [
+      "motion@^12.23.0"
+    ],
+    "registryDependencies": [
+      "button",
+      "cn",
+      "motion-presets"
+    ]
+  },
+  {
+    "name": "aurora-background",
+    "type": "registry:ui",
+    "dependencies": [],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "avatar",
+    "type": "registry:ui",
+    "dependencies": [
+      "@radix-ui/react-avatar@^1.1.10"
+    ],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "badge",
+    "type": "registry:ui",
+    "dependencies": [
+      "class-variance-authority@^0.7.1"
+    ],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "breadcrumb",
+    "type": "registry:ui",
+    "dependencies": [
+      "@radix-ui/react-slot@^1.2.3",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "button",
+    "type": "registry:ui",
+    "dependencies": [
+      "@radix-ui/react-slot@^1.2.3",
+      "class-variance-authority@^0.7.1"
+    ],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "calendar",
+    "type": "registry:ui",
+    "dependencies": [
+      "lucide-react@^0.577.0",
+      "react-day-picker@^8.10.1"
+    ],
+    "registryDependencies": [
+      "button",
+      "cn"
+    ]
+  },
+  {
+    "name": "card",
+    "type": "registry:ui",
+    "dependencies": [],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "chart",
+    "type": "registry:ui",
+    "dependencies": [
+      "recharts@^2.15.4"
+    ],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "checkbox",
+    "type": "registry:ui",
+    "dependencies": [
+      "@radix-ui/react-checkbox@^1.3.2",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "command",
+    "type": "registry:ui",
+    "dependencies": [
+      "cmdk@^1.1.1",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": [
+      "cn",
+      "dialog"
+    ]
+  },
+  {
+    "name": "data-table",
+    "type": "registry:ui",
+    "dependencies": [
+      "@tanstack/react-table@^8.21.3"
+    ],
+    "registryDependencies": [
+      "table"
+    ]
+  },
+  {
+    "name": "date-picker",
+    "type": "registry:ui",
+    "dependencies": [
+      "date-fns@^3.6.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": [
+      "button",
+      "calendar",
+      "popover"
+    ]
+  },
+  {
+    "name": "dialog",
+    "type": "registry:ui",
+    "dependencies": [
+      "@radix-ui/react-dialog@^1.1.14",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "drawer",
+    "type": "registry:ui",
+    "dependencies": [
+      "vaul@^1.1.2"
+    ],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "dropdown-menu",
+    "type": "registry:ui",
+    "dependencies": [
+      "@radix-ui/react-dropdown-menu@^2.1.15",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "empty",
+    "type": "registry:ui",
+    "dependencies": [],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "field",
+    "type": "registry:ui",
+    "dependencies": [],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "file-dropzone",
+    "type": "registry:ui",
+    "dependencies": [
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "form",
+    "type": "registry:ui",
+    "dependencies": [
+      "@radix-ui/react-slot@^1.2.3",
+      "react-hook-form@^7.54.0"
+    ],
+    "registryDependencies": [
+      "cn",
+      "label"
+    ]
+  },
+  {
+    "name": "glass-card",
+    "type": "registry:ui",
+    "dependencies": [],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "gradient-border",
+    "type": "registry:ui",
+    "dependencies": [],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "gradient-text",
+    "type": "registry:ui",
+    "dependencies": [
+      "@radix-ui/react-slot@^1.2.3"
+    ],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "hover-card",
+    "type": "registry:ui",
+    "dependencies": [
+      "@radix-ui/react-hover-card@^1.1.14"
+    ],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "input-otp",
+    "type": "registry:ui",
+    "dependencies": [
+      "input-otp@^1.4.2",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "input",
+    "type": "registry:ui",
+    "dependencies": [],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "kbd",
+    "type": "registry:ui",
+    "dependencies": [],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "label",
+    "type": "registry:ui",
+    "dependencies": [
+      "@radix-ui/react-label@^2.1.7"
+    ],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "metric",
+    "type": "registry:ui",
+    "dependencies": [
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "motion-presets",
+    "type": "registry:ui",
+    "dependencies": [
+      "motion@^12.23.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "pagination",
+    "type": "registry:ui",
+    "dependencies": [
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": [
+      "button",
+      "cn"
+    ]
+  },
+  {
+    "name": "popover",
+    "type": "registry:ui",
+    "dependencies": [
+      "@radix-ui/react-popover@^1.1.14"
+    ],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "progress",
+    "type": "registry:ui",
+    "dependencies": [
+      "@radix-ui/react-progress@^1.1.7"
+    ],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "radio-group",
+    "type": "registry:ui",
+    "dependencies": [
+      "@radix-ui/react-radio-group@^1.3.7",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "reveal",
+    "type": "registry:ui",
+    "dependencies": [
+      "motion@^12.23.0"
+    ],
+    "registryDependencies": [
+      "motion-presets"
+    ]
+  },
+  {
+    "name": "scroll-area",
+    "type": "registry:ui",
+    "dependencies": [
+      "@radix-ui/react-scroll-area@^1.2.9"
+    ],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "select",
+    "type": "registry:ui",
+    "dependencies": [
+      "@radix-ui/react-select@^2.2.5",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "separator",
+    "type": "registry:ui",
+    "dependencies": [
+      "@radix-ui/react-separator@^1.1.7"
+    ],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "sheet",
+    "type": "registry:ui",
+    "dependencies": [
+      "@radix-ui/react-dialog@^1.1.14",
+      "class-variance-authority@^0.7.1",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "shimmer",
+    "type": "registry:ui",
+    "dependencies": [],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "skeleton",
+    "type": "registry:ui",
+    "dependencies": [],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "slider",
+    "type": "registry:ui",
+    "dependencies": [
+      "@radix-ui/react-slider@^1.3.5"
+    ],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "sonner",
+    "type": "registry:ui",
+    "dependencies": [
+      "sonner@^2.0.7"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "spinner",
+    "type": "registry:ui",
+    "dependencies": [
+      "class-variance-authority@^0.7.1"
+    ],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "spotlight-card",
+    "type": "registry:ui",
+    "dependencies": [],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "switch",
+    "type": "registry:ui",
+    "dependencies": [
+      "@radix-ui/react-switch@^1.2.5"
+    ],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "table",
+    "type": "registry:ui",
+    "dependencies": [],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "tabs",
+    "type": "registry:ui",
+    "dependencies": [
+      "@radix-ui/react-tabs@^1.1.12"
+    ],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "textarea",
+    "type": "registry:ui",
+    "dependencies": [],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "toggle-group",
+    "type": "registry:ui",
+    "dependencies": [
+      "@radix-ui/react-toggle-group@^1.1.10",
+      "class-variance-authority@^0.7.1"
+    ],
+    "registryDependencies": [
+      "cn",
+      "toggle"
+    ]
+  },
+  {
+    "name": "toggle",
+    "type": "registry:ui",
+    "dependencies": [
+      "@radix-ui/react-toggle@^1.1.9",
+      "class-variance-authority@^0.7.1"
+    ],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "tooltip",
+    "type": "registry:ui",
+    "dependencies": [
+      "@radix-ui/react-tooltip@^1.2.7"
+    ],
+    "registryDependencies": [
+      "cn"
+    ]
+  }
+]

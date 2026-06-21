@@ -1,0 +1,15 @@
+{
+  "name": "spotlight-card",
+  "type": "registry:ui",
+  "dependencies": [],
+  "registryDependencies": [
+    "cn"
+  ],
+  "files": [
+    {
+      "path": "spotlight-card.tsx",
+      "content": "\"use client\";\n\nimport { forwardRef, type HTMLAttributes, useRef, useState } from \"react\";\nimport { cn } from \"../lib/cn.js\";\n\nexport const SpotlightCard = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(\n  ({ className, children, onMouseMove, onMouseEnter, onMouseLeave, ...props }, ref) => {\n    const localRef = useRef<HTMLDivElement | null>(null);\n    const [pos, setPos] = useState({ x: 0, y: 0 });\n    const [hovered, setHovered] = useState(false);\n\n    const setRef = (node: HTMLDivElement | null) => {\n      localRef.current = node;\n      if (typeof ref === \"function\") {\n        ref(node);\n      } else if (ref) {\n        ref.current = node;\n      }\n    };\n\n    return (\n      // biome-ignore lint/a11y/noStaticElementInteractions: pointer tracking drives a purely decorative spotlight; the card is not a control.\n      <div\n        ref={setRef}\n        data-slot=\"spotlight-card\"\n        className={cn(\n          \"group relative overflow-hidden rounded-2xl border border-border bg-surface-raised p-6 text-fg\",\n          className,\n        )}\n        onMouseMove={(event) => {\n          const rect = localRef.current?.getBoundingClientRect();\n          if (rect) {\n            setPos({ x: event.clientX - rect.left, y: event.clientY - rect.top });\n          }\n          onMouseMove?.(event);\n        }}\n        onMouseEnter={(event) => {\n          setHovered(true);\n          onMouseEnter?.(event);\n        }}\n        onMouseLeave={(event) => {\n          setHovered(false);\n          onMouseLeave?.(event);\n        }}\n        {...props}\n      >\n        <div\n          aria-hidden\n          className={cn(\n            \"pointer-events-none absolute -inset-px transition-opacity duration-300\",\n            hovered ? \"opacity-100\" : \"opacity-0\",\n          )}\n          style={{\n            background: `radial-gradient(320px circle at ${pos.x}px ${pos.y}px, color-mix(in oklch, var(--cooud-primary) 14%, transparent), transparent 72%)`,\n          }}\n        />\n        <div className=\"relative\">{children}</div>\n      </div>\n    );\n  },\n);\nSpotlightCard.displayName = \"SpotlightCard\";\n",
+      "target": "ui"
+    }
+  ]
+}

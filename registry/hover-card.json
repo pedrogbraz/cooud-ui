@@ -1,0 +1,17 @@
+{
+  "name": "hover-card",
+  "type": "registry:ui",
+  "dependencies": [
+    "@radix-ui/react-hover-card@^1.1.14"
+  ],
+  "registryDependencies": [
+    "cn"
+  ],
+  "files": [
+    {
+      "path": "hover-card.tsx",
+      "content": "import * as HoverCardPrimitive from \"@radix-ui/react-hover-card\";\nimport { type ComponentPropsWithoutRef, type ComponentRef, forwardRef } from \"react\";\nimport { cn } from \"../lib/cn.js\";\n\nexport const HoverCard = HoverCardPrimitive.Root;\nexport const HoverCardTrigger = HoverCardPrimitive.Trigger;\n\nexport const HoverCardContent = forwardRef<\n  ComponentRef<typeof HoverCardPrimitive.Content>,\n  ComponentPropsWithoutRef<typeof HoverCardPrimitive.Content>\n>(({ className, align = \"center\", sideOffset = 4, ...props }, ref) => {\n  return (\n    <HoverCardPrimitive.Portal>\n      <HoverCardPrimitive.Content\n        ref={ref}\n        data-slot=\"hover-card-content\"\n        align={align}\n        sideOffset={sideOffset}\n        className={cn(\n          \"z-50 w-64 rounded-lg border border-border bg-surface-floating p-4 text-fg shadow-lg outline-none transition-all data-[state=closed]:opacity-0\",\n          className,\n        )}\n        {...props}\n      />\n    </HoverCardPrimitive.Portal>\n  );\n});\nHoverCardContent.displayName = \"HoverCardContent\";\n",
+      "target": "ui"
+    }
+  ]
+}

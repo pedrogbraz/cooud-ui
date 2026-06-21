@@ -1,0 +1,17 @@
+{
+  "name": "reveal",
+  "type": "registry:ui",
+  "dependencies": [
+    "motion@^12.23.0"
+  ],
+  "registryDependencies": [
+    "motion-presets"
+  ],
+  "files": [
+    {
+      "path": "reveal.tsx",
+      "content": "\"use client\";\n\nimport { motion, useInView } from \"motion/react\";\nimport { useRef } from \"react\";\nimport { fadeInUp } from \"./motion-presets.js\";\n\nexport interface RevealProps extends React.HTMLAttributes<HTMLDivElement> {\n  delay?: number;\n  once?: boolean;\n}\n\nexport const Reveal = ({\n  className,\n  delay,\n  once,\n  children,\n  // omit handlers that clash with motion's prop signatures\n  onDrag,\n  onDragStart,\n  onDragEnd,\n  onAnimationStart,\n  ...props\n}: RevealProps) => {\n  const ref = useRef<HTMLDivElement>(null);\n  const inView = useInView(ref, { once: once ?? true, margin: \"-80px\" });\n\n  return (\n    <motion.div\n      ref={ref}\n      data-slot=\"reveal\"\n      initial=\"hidden\"\n      animate={inView ? \"visible\" : \"hidden\"}\n      variants={fadeInUp}\n      transition={{ delay }}\n      className={className}\n      {...props}\n    >\n      {children}\n    </motion.div>\n  );\n};\nReveal.displayName = \"Reveal\";\n",
+      "target": "ui"
+    }
+  ]
+}

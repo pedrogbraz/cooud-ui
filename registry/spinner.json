@@ -1,0 +1,17 @@
+{
+  "name": "spinner",
+  "type": "registry:ui",
+  "dependencies": [
+    "class-variance-authority@^0.7.1"
+  ],
+  "registryDependencies": [
+    "cn"
+  ],
+  "files": [
+    {
+      "path": "spinner.tsx",
+      "content": "import { cva, type VariantProps } from \"class-variance-authority\";\nimport { forwardRef, type SVGAttributes } from \"react\";\nimport { cn } from \"../lib/cn.js\";\n\nconst spinnerVariants = cva(\"animate-spin text-current\", {\n  variants: {\n    size: {\n      sm: \"size-4\",\n      md: \"size-5\",\n      lg: \"size-6\",\n    },\n  },\n  defaultVariants: { size: \"md\" },\n});\n\nexport interface SpinnerProps\n  extends SVGAttributes<SVGSVGElement>,\n    VariantProps<typeof spinnerVariants> {}\n\nexport const Spinner = forwardRef<SVGSVGElement, SpinnerProps>(\n  ({ className, size, \"aria-label\": ariaLabel = \"Loading\", ...props }, ref) => {\n    return (\n      <svg\n        ref={ref}\n        data-slot=\"spinner\"\n        role=\"status\"\n        aria-label={ariaLabel}\n        viewBox=\"0 0 24 24\"\n        fill=\"none\"\n        xmlns=\"http://www.w3.org/2000/svg\"\n        className={cn(spinnerVariants({ size }), className)}\n        {...props}\n      >\n        <circle\n          cx=\"12\"\n          cy=\"12\"\n          r=\"10\"\n          stroke=\"currentColor\"\n          strokeWidth=\"3\"\n          className=\"opacity-25\"\n        />\n        <path\n          d=\"M12 2a10 10 0 0 1 10 10\"\n          stroke=\"currentColor\"\n          strokeWidth=\"3\"\n          strokeLinecap=\"round\"\n          className=\"opacity-90\"\n        />\n      </svg>\n    );\n  },\n);\nSpinner.displayName = \"Spinner\";\n\nexport { spinnerVariants };\n",
+      "target": "ui"
+    }
+  ]
+}

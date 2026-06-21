@@ -1,0 +1,15 @@
+{
+  "name": "gradient-border",
+  "type": "registry:ui",
+  "dependencies": [],
+  "registryDependencies": [
+    "cn"
+  ],
+  "files": [
+    {
+      "path": "gradient-border.tsx",
+      "content": "import { forwardRef, type HTMLAttributes } from \"react\";\nimport { cn } from \"../lib/cn.js\";\n\nexport interface GradientBorderProps extends HTMLAttributes<HTMLDivElement> {\n  innerClassName?: string;\n  glow?: boolean;\n}\n\nexport const GradientBorder = forwardRef<HTMLDivElement, GradientBorderProps>(\n  ({ className, innerClassName, glow = false, children, ...props }, ref) => {\n    return (\n      <div\n        ref={ref}\n        data-slot=\"gradient-border\"\n        className={cn(\"rounded-2xl bg-gradient-primary p-px\", glow && \"shadow-glow\", className)}\n        {...props}\n      >\n        <div className={cn(\"h-full w-full rounded-[inherit] bg-surface-raised\", innerClassName)}>\n          {children}\n        </div>\n      </div>\n    );\n  },\n);\nGradientBorder.displayName = \"GradientBorder\";\n",
+      "target": "ui"
+    }
+  ]
+}

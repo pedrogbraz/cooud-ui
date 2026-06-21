@@ -1,0 +1,18 @@
+{
+  "name": "breadcrumb",
+  "type": "registry:ui",
+  "dependencies": [
+    "@radix-ui/react-slot@^1.2.3",
+    "lucide-react@^0.577.0"
+  ],
+  "registryDependencies": [
+    "cn"
+  ],
+  "files": [
+    {
+      "path": "breadcrumb.tsx",
+      "content": "import { Slot } from \"@radix-ui/react-slot\";\nimport { ChevronRight, MoreHorizontal } from \"lucide-react\";\nimport {\n  type AnchorHTMLAttributes,\n  forwardRef,\n  type HTMLAttributes,\n  type LiHTMLAttributes,\n  type OlHTMLAttributes,\n} from \"react\";\nimport { cn } from \"../lib/cn.js\";\n\nexport const Breadcrumb = forwardRef<HTMLElement, HTMLAttributes<HTMLElement>>(\n  ({ ...props }, ref) => {\n    return <nav ref={ref} aria-label=\"breadcrumb\" data-slot=\"breadcrumb\" {...props} />;\n  },\n);\nBreadcrumb.displayName = \"Breadcrumb\";\n\nexport const BreadcrumbList = forwardRef<HTMLOListElement, OlHTMLAttributes<HTMLOListElement>>(\n  ({ className, ...props }, ref) => {\n    return (\n      <ol\n        ref={ref}\n        data-slot=\"breadcrumb-list\"\n        className={cn(\"flex flex-wrap items-center gap-1.5 text-sm text-fg-tertiary\", className)}\n        {...props}\n      />\n    );\n  },\n);\nBreadcrumbList.displayName = \"BreadcrumbList\";\n\nexport const BreadcrumbItem = forwardRef<HTMLLIElement, LiHTMLAttributes<HTMLLIElement>>(\n  ({ className, ...props }, ref) => {\n    return (\n      <li\n        ref={ref}\n        data-slot=\"breadcrumb-item\"\n        className={cn(\"inline-flex items-center gap-1.5\", className)}\n        {...props}\n      />\n    );\n  },\n);\nBreadcrumbItem.displayName = \"BreadcrumbItem\";\n\nexport interface BreadcrumbLinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {\n  asChild?: boolean;\n}\n\nexport const BreadcrumbLink = forwardRef<HTMLAnchorElement, BreadcrumbLinkProps>(\n  ({ className, asChild = false, ...props }, ref) => {\n    const Comp = asChild ? Slot : \"a\";\n    return (\n      <Comp\n        ref={ref}\n        data-slot=\"breadcrumb-link\"\n        className={cn(\"transition-colors hover:text-fg\", className)}\n        {...props}\n      />\n    );\n  },\n);\nBreadcrumbLink.displayName = \"BreadcrumbLink\";\n\nexport const BreadcrumbPage = forwardRef<HTMLSpanElement, HTMLAttributes<HTMLSpanElement>>(\n  ({ className, ...props }, ref) => {\n    return (\n      <span\n        ref={ref}\n        aria-current=\"page\"\n        data-slot=\"breadcrumb-page\"\n        className={cn(\"font-normal text-fg\", className)}\n        {...props}\n      />\n    );\n  },\n);\nBreadcrumbPage.displayName = \"BreadcrumbPage\";\n\nexport const BreadcrumbSeparator = forwardRef<HTMLLIElement, LiHTMLAttributes<HTMLLIElement>>(\n  ({ className, children, ...props }, ref) => {\n    return (\n      <li\n        ref={ref}\n        role=\"presentation\"\n        aria-hidden=\"true\"\n        data-slot=\"breadcrumb-separator\"\n        className={cn(\"[&_svg]:size-3.5\", className)}\n        {...props}\n      >\n        {children ?? <ChevronRight />}\n      </li>\n    );\n  },\n);\nBreadcrumbSeparator.displayName = \"BreadcrumbSeparator\";\n\nexport const BreadcrumbEllipsis = forwardRef<HTMLSpanElement, HTMLAttributes<HTMLSpanElement>>(\n  ({ className, ...props }, ref) => {\n    return (\n      <span\n        ref={ref}\n        role=\"presentation\"\n        aria-hidden=\"true\"\n        data-slot=\"breadcrumb-ellipsis\"\n        className={cn(\"flex items-center justify-center\", className)}\n        {...props}\n      >\n        <MoreHorizontal className=\"size-4\" />\n        <span className=\"sr-only\">More</span>\n      </span>\n    );\n  },\n);\nBreadcrumbEllipsis.displayName = \"BreadcrumbEllipsis\";\n",
+      "target": "ui"
+    }
+  ]
+}

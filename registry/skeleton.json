@@ -1,0 +1,15 @@
+{
+  "name": "skeleton",
+  "type": "registry:ui",
+  "dependencies": [],
+  "registryDependencies": [
+    "cn"
+  ],
+  "files": [
+    {
+      "path": "skeleton.tsx",
+      "content": "import { forwardRef, type HTMLAttributes } from \"react\";\nimport { cn } from \"../lib/cn.js\";\n\nexport const Skeleton = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(\n  ({ className, ...props }, ref) => {\n    return (\n      <div\n        ref={ref}\n        data-slot=\"skeleton\"\n        aria-hidden\n        className={cn(\"animate-pulse rounded-md bg-surface-overlay\", className)}\n        {...props}\n      />\n    );\n  },\n);\nSkeleton.displayName = \"Skeleton\";\n",
+      "target": "ui"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "name": "data-table",
+  "type": "registry:ui",
+  "dependencies": [
+    "@tanstack/react-table@^8.21.3"
+  ],
+  "registryDependencies": [
+    "table"
+  ],
+  "files": [
+    {
+      "path": "data-table.tsx",
+      "content": "\"use client\";\n\nimport {\n  type ColumnDef,\n  flexRender,\n  getCoreRowModel,\n  getSortedRowModel,\n  type SortingState,\n  useReactTable,\n} from \"@tanstack/react-table\";\nimport { useState } from \"react\";\nimport { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from \"./table.js\";\n\nexport interface DataTableProps<TData, TValue> {\n  columns: ColumnDef<TData, TValue>[];\n  data: TData[];\n}\n\nexport function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {\n  const [sorting, setSorting] = useState<SortingState>([]);\n\n  const table = useReactTable({\n    data,\n    columns,\n    state: { sorting },\n    onSortingChange: setSorting,\n    getCoreRowModel: getCoreRowModel(),\n    getSortedRowModel: getSortedRowModel(),\n  });\n\n  return (\n    <div className=\"rounded-xl border border-border overflow-hidden\">\n      <Table>\n        <TableHeader>\n          {table.getHeaderGroups().map((headerGroup) => (\n            <TableRow key={headerGroup.id}>\n              {headerGroup.headers.map((header) => (\n                <TableHead key={header.id} colSpan={header.colSpan}>\n                  {header.isPlaceholder\n                    ? null\n                    : flexRender(header.column.columnDef.header, header.getContext())}\n                </TableHead>\n              ))}\n            </TableRow>\n          ))}\n        </TableHeader>\n        <TableBody>\n          {table.getRowModel().rows.length ? (\n            table.getRowModel().rows.map((row) => (\n              <TableRow key={row.id} data-state={row.getIsSelected() ? \"selected\" : undefined}>\n                {row.getVisibleCells().map((cell) => (\n                  <TableCell key={cell.id}>\n                    {flexRender(cell.column.columnDef.cell, cell.getContext())}\n                  </TableCell>\n                ))}\n              </TableRow>\n            ))\n          ) : (\n            <TableRow>\n              <TableCell colSpan={columns.length} className=\"h-24 text-center text-fg-tertiary\">\n                No results.\n              </TableCell>\n            </TableRow>\n          )}\n        </TableBody>\n      </Table>\n    </div>\n  );\n}\n",
+      "target": "ui"
+    }
+  ]
+}

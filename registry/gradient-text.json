@@ -1,0 +1,17 @@
+{
+  "name": "gradient-text",
+  "type": "registry:ui",
+  "dependencies": [
+    "@radix-ui/react-slot@^1.2.3"
+  ],
+  "registryDependencies": [
+    "cn"
+  ],
+  "files": [
+    {
+      "path": "gradient-text.tsx",
+      "content": "import { Slot } from \"@radix-ui/react-slot\";\nimport { forwardRef, type HTMLAttributes } from \"react\";\nimport { cn } from \"../lib/cn.js\";\n\nexport interface GradientTextProps extends HTMLAttributes<HTMLSpanElement> {\n  asChild?: boolean;\n}\n\nexport const GradientText = forwardRef<HTMLSpanElement, GradientTextProps>(\n  ({ className, asChild = false, ...props }, ref) => {\n    const Comp = asChild ? Slot : \"span\";\n    return (\n      <Comp\n        ref={ref}\n        data-slot=\"gradient-text\"\n        className={cn(\"bg-gradient-primary bg-clip-text text-transparent\", className)}\n        {...props}\n      />\n    );\n  },\n);\nGradientText.displayName = \"GradientText\";\n",
+      "target": "ui"
+    }
+  ]
+}
