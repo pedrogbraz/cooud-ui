@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { DocsSidebar } from "../../components/docs/docs-sidebar";
+import { MobileComponentNav } from "../../components/docs/mobile-component-nav";
 import { SiteNav } from "../../components/site-nav";
 
 export default function ComponentsLayout({ children }: { children: ReactNode }) {
@@ -8,7 +9,12 @@ export default function ComponentsLayout({ children }: { children: ReactNode }) 
       <SiteNav />
       <div className="mx-auto max-w-[90rem] px-6 lg:grid lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-8">
         <DocsSidebar />
-        <div className="min-w-0">{children}</div>
+        <div className="min-w-0">
+          <div className="py-4 lg:hidden">
+            <MobileComponentNav />
+          </div>
+          {children}
+        </div>
       </div>
     </div>
   );

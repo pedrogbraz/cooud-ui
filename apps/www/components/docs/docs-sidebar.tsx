@@ -3,57 +3,78 @@
 import { cn } from "@cooud/ui";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import type { ReactNode } from "react";
 import { CATEGORIES } from "../../lib/components-index";
 
 export function DocsSidebar() {
+  return (
+    <aside className="hidden lg:block">
+      <nav
+        aria-label="Components"
+        className="sticky top-20 max-h-[calc(100vh-6rem)] overflow-y-auto pb-12 pr-4 text-sm"
+      >
+        <ComponentNavList />
+      </nav>
+    </aside>
+  );
+}
+
+/**
+ * Shared category → component list. Used by the desktop sidebar, the mobile
+ * sheet in the site nav, and the docs-layout mobile control.
+ * `onNavigate` lets the caller close a containing sheet after a link click.
+ */
+export function ComponentNavList({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
 
   return (
-    <aside className="hidden lg:block">
-      <nav className="sticky top-20 max-h-[calc(100vh-6rem)] overflow-y-auto pb-12 pr-4 text-sm">
-        <p className="px-3 pb-2 text-xs font-medium uppercase tracking-widest text-fg-tertiary">
-          Overview
-        </p>
-        <SidebarLink href="/components" active={pathname === "/components"}>
-          All Components
-        </SidebarLink>
+    <>
+      <p className="px-3 pb-2 text-xs font-medium uppercase tracking-widest text-fg-tertiary">
+        Overview
+      </p>
+      <SidebarLink href="/components" active={pathname === "/components"} onNavigate={onNavigate}>
+        All Components
+      </SidebarLink>
 
-        {CATEGORIES.map((category) => (
-          <div key={category.slug} className="mt-6">
-            <p className="px-3 pb-2 text-xs font-medium uppercase tracking-widest text-fg-tertiary">
-              {category.name}
-            </p>
-            <ul>
-              {category.items.map((item) => {
-                const href = `/components/${item.slug}`;
-                return (
-                  <li key={item.slug}>
-                    <SidebarLink href={href} active={pathname === href}>
-                      {item.name}
-                    </SidebarLink>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        ))}
-      </nav>
-    </aside>
+      {CATEGORIES.map((category) => (
+        <div key={category.slug} className="mt-6">
+          <p className="px-3 pb-2 text-xs font-medium uppercase tracking-widest text-fg-tertiary">
+            {category.name}
+          </p>
+          <ul>
+            {category.items.map((item) => {
+              const href = `/components/${item.slug}`;
+              return (
+                <li key={item.slug}>
+                  <SidebarLink href={href} active={pathname === href} onNavigate={onNavigate}>
+                    {item.name}
+                  </SidebarLink>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      ))}
+    </>
   );
 }
 
 function SidebarLink({
   href,
   active,
+  onNavigate,
   children,
 }: {
   href: string;
   active: boolean;
-  children: React.ReactNode;
+  onNavigate?: () => void;
+  children: ReactNode;
 }) {
   return (
     <Link
       href={href}
+      onClick={onNavigate}
+      aria-current={active ? "page" : undefined}
       className={cn(
         "block rounded-lg px-3 py-1.5 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring",
         active
