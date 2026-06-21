@@ -1,124 +1,197 @@
 "use client";
 
-import { useTheme } from "@cooud/theme";
-import { Badge, Button } from "@cooud/ui";
-import { ArrowRight, Github, Moon, Sparkles, Sun } from "lucide-react";
+import {
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Input,
+  Label,
+  Slider,
+  Switch,
+} from "@cooud/ui";
+import { ArrowUpRight, Github, Terminal } from "lucide-react";
 import { ComponentGallery } from "../components/component-gallery";
 import { DataGallery } from "../components/data-gallery";
 import { FormsGallery } from "../components/forms-gallery";
+import { Hero } from "../components/hero";
 import { OverlaysGallery } from "../components/overlays-gallery";
 import { PremiumGallery } from "../components/premium-gallery";
+import { Eyebrow } from "../components/showcase-ui";
+import { SiteNav } from "../components/site-nav";
 import { ThemeBuilder } from "../components/theme-builder";
 
 export default function Page() {
-  const { mode, toggleMode } = useTheme();
-
   return (
     <div className="min-h-screen bg-surface-base text-fg">
-      {/* Top bar */}
-      <header className="sticky top-0 z-30 border-b border-border bg-surface-base/80 backdrop-blur-md">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-6">
-          <a
-            href="#top"
-            className="flex items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-md"
-          >
-            <span className="grid size-7 place-items-center rounded-lg bg-gradient-primary text-primary-foreground shadow-glow">
-              <Sparkles className="size-4" aria-hidden="true" />
-            </span>
-            <span className="font-display text-lg font-semibold tracking-tight">Cooud UI</span>
-          </a>
-          <nav className="flex items-center gap-2">
-            <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
-              <a href="#buttons">Components</a>
-            </Button>
-            <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
-              <a href="#theme-builder">Theme</a>
-            </Button>
-            <Button
-              variant="outline"
-              size="icon-sm"
-              onClick={toggleMode}
-              aria-label={`Switch to ${mode === "dark" ? "light" : "dark"} mode`}
-            >
-              {mode === "dark" ? <Sun aria-hidden="true" /> : <Moon aria-hidden="true" />}
-            </Button>
-          </nav>
-        </div>
-      </header>
+      <SiteNav />
+      <Hero />
 
-      {/* Hero */}
-      <section
-        id="top"
-        className="relative overflow-hidden border-b border-border bg-surface-inset"
-      >
+      {/* Playground — theming + tokens */}
+      <section id="playground" className="relative border-t border-border/60">
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 -top-40 h-96 bg-gradient-aurora opacity-20 blur-3xl"
+          className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-72 bg-gradient-aurora opacity-[0.08] blur-3xl"
         />
-        <div className="relative mx-auto flex max-w-7xl flex-col items-center gap-7 px-6 py-24 text-center sm:py-32">
-          <Badge variant="primary" className="gap-1.5">
-            <Sparkles className="size-3" aria-hidden="true" />
-            Wave 0 · Aurora + Neutral
-          </Badge>
-          <h1 className="max-w-3xl font-display text-5xl font-semibold leading-[1.05] tracking-tight sm:text-7xl">
-            The design system that{" "}
-            <span className="bg-gradient-primary bg-clip-text text-transparent">themes itself</span>
-          </h1>
-          <p className="max-w-2xl text-balance text-lg text-fg-secondary">
-            Accessible, token-driven React components for the Cooud platform. Every color, radius,
-            and shadow flows from a single source of truth — re-theme the entire page live.
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            <Button asChild variant="gradient" size="lg">
-              <a href="#buttons">
-                Explore components
-                <ArrowRight aria-hidden="true" />
-              </a>
-            </Button>
-            <Button asChild variant="outline" size="lg">
-              <a href="#theme-builder">
-                <Sparkles aria-hidden="true" />
-                Build a theme
-              </a>
-            </Button>
-            <Button asChild variant="ghost" size="lg">
-              <a href="https://github.com/cooud" target="_blank" rel="noreferrer">
-                <Github aria-hidden="true" />
-                GitHub
-              </a>
-            </Button>
+        <div className="mx-auto max-w-7xl px-6 py-16 sm:py-24">
+          <div id="tokens" className="flex flex-col gap-3 scroll-mt-24">
+            <Eyebrow>Tokens &amp; theming</Eyebrow>
+            <h2 className="max-w-2xl font-display text-3xl font-semibold tracking-tight sm:text-4xl">
+              Theme it your way
+            </h2>
+            <p className="max-w-2xl text-fg-secondary">
+              Every component reads semantic tokens, so one change re-themes the entire page — live,
+              with no re-render. Drag the radius, pick a brand color, switch Aurora ↔ Neutral.
+            </p>
+          </div>
+
+          <div className="mt-10 grid items-start gap-8 lg:grid-cols-[24rem_minmax(0,1fr)]">
+            <ThemeBuilder />
+            <PlaygroundPreview />
           </div>
         </div>
       </section>
 
-      {/* Two-column workbench */}
-      <main className="mx-auto max-w-7xl px-6 py-16">
-        <div className="grid gap-10 lg:grid-cols-[20rem_minmax(0,1fr)] xl:grid-cols-[22rem_minmax(0,1fr)]">
-          <div className="lg:order-1">
-            <ThemeBuilder />
-          </div>
-          <div className="lg:order-2 min-w-0">
-            <ComponentGallery />
-            <FormsGallery />
-            <OverlaysGallery />
-            <DataGallery />
-            <PremiumGallery />
-          </div>
+      {/* Components */}
+      <main id="components" className="scroll-mt-20">
+        <div className="mx-auto max-w-7xl px-6">
+          <ComponentGallery />
+          <FormsGallery />
+          <OverlaysGallery />
+          <DataGallery />
+          <PremiumGallery />
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-border bg-surface-inset">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 py-10 text-sm text-fg-tertiary sm:flex-row">
-          <div className="flex items-center gap-2">
-            <span className="grid size-5 place-items-center rounded-md bg-gradient-primary text-primary-foreground">
-              <Sparkles className="size-3" aria-hidden="true" />
-            </span>
-            <span className="font-display font-medium text-fg-secondary">Cooud UI</span>
+      <SiteFooter />
+    </div>
+  );
+}
+
+function PlaygroundPreview() {
+  return (
+    <div className="grid gap-6 sm:grid-cols-2">
+      <Card>
+        <CardHeader>
+          <CardTitle>Live preview</CardTitle>
+          <CardDescription>These update as you tweak the tokens.</CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-4">
+          <div className="flex flex-wrap gap-2">
+            <Button variant="gradient" size="sm">
+              Gradient
+            </Button>
+            <Button variant="secondary" size="sm">
+              Secondary
+            </Button>
+            <Button variant="outline" size="sm">
+              Outline
+            </Button>
           </div>
-          <p>Built with semantic tokens. Re-theme everything from one place.</p>
+          <div className="flex flex-wrap gap-2">
+            <Badge variant="primary">Primary</Badge>
+            <Badge variant="success">Success</Badge>
+            <Badge variant="warning">Warning</Badge>
+            <Badge variant="info">Info</Badge>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Controls</CardTitle>
+          <CardDescription>Inputs, switches and sliders.</CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-5">
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="pg-email">Email</Label>
+            <Input id="pg-email" placeholder="you@cooud.com" />
+          </div>
+          <div className="flex items-center justify-between">
+            <Label htmlFor="pg-switch">Notifications</Label>
+            <Switch id="pg-switch" defaultChecked />
+          </div>
+          <Slider defaultValue={[60]} max={100} step={1} />
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+function SiteFooter() {
+  return (
+    <footer id="cli" className="border-t border-border/60 bg-surface-inset/40">
+      <div className="mx-auto max-w-7xl px-6 py-14">
+        <div className="flex flex-col gap-10 lg:flex-row lg:items-start lg:justify-between">
+          <div className="max-w-sm">
+            <div className="flex items-center gap-2">
+              <span className="grid size-7 place-items-center rounded-lg bg-gradient-primary text-primary-foreground shadow-glow">
+                <Terminal className="size-4" aria-hidden="true" />
+              </span>
+              <span className="font-display text-lg font-semibold tracking-tight">Cooud UI</span>
+            </div>
+            <p className="mt-4 text-sm text-fg-secondary">
+              The Cooud design system. 54 themeable, accessible React components — as an npm package
+              or copy-paste registry.
+            </p>
+            <div className="mt-5 inline-flex items-center gap-3 rounded-xl border border-border bg-surface-raised px-4 py-2.5 font-mono text-sm text-fg-secondary">
+              <span className="text-fg-tertiary">$</span> npx cooud-ui add button
+            </div>
+          </div>
+
+          <div className="flex flex-wrap gap-12">
+            <FooterCol
+              title="Library"
+              links={[
+                { label: "Components", href: "#components" },
+                { label: "Theming", href: "#playground" },
+                { label: "Tokens", href: "#tokens" },
+              ]}
+            />
+            <FooterCol
+              title="Resources"
+              links={[
+                { label: "GitHub", href: "https://github.com/pedrogbraz/cooud-ui" },
+                { label: "Aurora theme", href: "#playground" },
+                { label: "CLI registry", href: "#cli" },
+              ]}
+            />
+          </div>
         </div>
-      </footer>
+
+        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border/60 pt-6 text-sm text-fg-tertiary sm:flex-row">
+          <span>Built with Cooud UI · Aurora + Neutral</span>
+          <a
+            href="https://github.com/pedrogbraz/cooud-ui"
+            className="inline-flex items-center gap-1.5 rounded-md text-fg-secondary outline-none hover:text-fg focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <Github className="size-4" aria-hidden="true" /> pedrogbraz/cooud-ui
+            <ArrowUpRight className="size-3.5" aria-hidden="true" />
+          </a>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+function FooterCol({ title, links }: { title: string; links: { label: string; href: string }[] }) {
+  return (
+    <div className="flex flex-col gap-3">
+      <span className="text-xs font-medium uppercase tracking-widest text-fg-tertiary">
+        {title}
+      </span>
+      {links.map((link) => (
+        <a
+          key={link.label}
+          href={link.href}
+          className="rounded-md text-sm text-fg-secondary outline-none hover:text-fg focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          {link.label}
+        </a>
+      ))}
     </div>
   );
 }
