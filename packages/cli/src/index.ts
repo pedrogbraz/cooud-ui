@@ -1,0 +1,64 @@
+#!/usr/bin/env node
+import { Command } from "commander";
+import { add } from "./commands/add.js";
+import { diff } from "./commands/diff.js";
+import { init } from "./commands/init.js";
+import { list } from "./commands/list.js";
+
+const program = new Command();
+
+program
+  .name("cooud-ui")
+  .description("Add Cooud UI components to your project, shadcn-style.")
+  .version("0.1.0");
+
+program
+  .command("init")
+  .description("Set up cooud-ui.json, the cn() helper, and base dependencies.")
+  .option("-c, --cwd <dir>", "working directory", process.cwd())
+  .option("-r, --registry <source>", "registry URL or local directory")
+  .option("-y, --yes", "overwrite an existing cooud-ui.json")
+  .option("--skip-install", "do not install base dependencies")
+  .action((opts) =>
+    init({
+      cwd: opts.cwd,
+      registry: opts.registry,
+      yes: opts.yes,
+      skipInstall: opts.skipInstall,
+    }),
+  );
+
+program
+  .command("add")
+  .description("Add one or more components (resolves dependencies).")
+  .argument("[components...]", "component names")
+  .option("-c, --cwd <dir>", "working directory", process.cwd())
+  .option("-r, --registry <source>", "registry URL or local directory")
+  .option("-o, --overwrite", "overwrite existing files")
+  .option("--skip-install", "do not install npm dependencies")
+  .action((components, opts) =>
+    add(components, {
+      cwd: opts.cwd,
+      registry: opts.registry,
+      overwrite: opts.overwrite,
+      skipInstall: opts.skipInstall,
+    }),
+  );
+
+program
+  .command("list")
+  .alias("ls")
+  .description("List all components available in the registry.")
+  .option("-c, --cwd <dir>", "working directory", process.cwd())
+  .option("-r, --registry <source>", "registry URL or local directory")
+  .action((opts) => list({ cwd: opts.cwd, registry: opts.registry }));
+
+program
+  .command("diff")
+  .description("Show which installed components have drifted from the registry.")
+  .argument("[components...]", "component names (default: all)")
+  .option("-c, --cwd <dir>", "working directory", process.cwd())
+  .option("-r, --registry <source>", "registry URL or local directory")
+  .action((components, opts) => diff(components, { cwd: opts.cwd, registry: opts.registry }));
+
+program.parseAsync(process.argv);
