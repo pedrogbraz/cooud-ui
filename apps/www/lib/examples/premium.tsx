@@ -140,7 +140,7 @@ export const premiumExamples: ExampleMap = {
       description:
         "A radial spotlight tracks your cursor across the card — hover anywhere over it to bring the surface to life.",
       code: `<SpotlightCard className="flex flex-col gap-3 p-5">
-  <span className="grid size-9 place-items-center rounded-lg bg-surface-overlay text-accent">
+  <span className="grid size-9 place-items-center rounded-lg bg-surface-overlay text-primary">
     <Gauge className="size-4" aria-hidden="true" />
   </span>
   <h3 className="font-display text-base font-semibold text-fg">Accessible core</h3>
@@ -150,7 +150,7 @@ export const premiumExamples: ExampleMap = {
 </SpotlightCard>`,
       preview: (
         <SpotlightCard className="flex flex-col gap-3 p-5">
-          <span className="grid size-9 place-items-center rounded-lg bg-surface-overlay text-accent">
+          <span className="grid size-9 place-items-center rounded-lg bg-surface-overlay text-primary">
             <Gauge className="size-4" aria-hidden="true" />
           </span>
           <h3 className="font-display text-base font-semibold text-fg">Accessible core</h3>

@@ -43,7 +43,7 @@ export default function ComponentsOverview() {
                       </div>
                     </div>
                     <div className="flex flex-col gap-1 px-5 py-4">
-                      <span className="font-medium text-fg transition-colors group-hover:text-accent">
+                      <span className="font-medium text-fg transition-colors group-hover:text-primary">
                         {item.name}
                       </span>
                       <span className="line-clamp-1 text-sm text-fg-tertiary">
