@@ -1,0 +1,27 @@
+{
+  "name": "cooud-ui",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Cooud Design System — themeable shadcn-class component library (Aurora + Neutral).",
+  "packageManager": "bun@1.3.14",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "typecheck": "turbo run typecheck",
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "www": "turbo run dev --filter=@cooud/www"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.0.6",
+    "turbo": "^2.3.3",
+    "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
