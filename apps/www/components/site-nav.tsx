@@ -10,8 +10,8 @@ import { ComponentNavList } from "./docs/docs-sidebar";
 
 const navLinks = [
   { label: "Components", href: "/components" },
+  { label: "Blocks", href: "/blocks" },
   { label: "Theme", href: "/#playground" },
-  { label: "Tokens", href: "/#tokens" },
   { label: "CLI", href: "/#cli" },
 ] as const;
 
