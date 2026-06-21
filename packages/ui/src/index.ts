@@ -18,6 +18,10 @@ export {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "./components/alert-dialog.js";
+export type { AnimatedButtonProps } from "./components/animated-button.js";
+// ── Wave 4 — premium & brand ───────────────────────────────────────
+export { AnimatedButton } from "./components/animated-button.js";
+export { AuroraBackground } from "./components/aurora-background.js";
 // ── Wave 3 — data & display ────────────────────────────────────────
 export { Avatar, AvatarFallback, AvatarImage } from "./components/avatar.js";
 export type { BadgeProps } from "./components/badge.js";
@@ -135,6 +139,11 @@ export {
   useFormContext,
   useFormField,
 } from "./components/form.js";
+export { GlassCard } from "./components/glass-card.js";
+export type { GradientBorderProps } from "./components/gradient-border.js";
+export { GradientBorder } from "./components/gradient-border.js";
+export type { GradientTextProps } from "./components/gradient-text.js";
+export { GradientText } from "./components/gradient-text.js";
 export { HoverCard, HoverCardContent, HoverCardTrigger } from "./components/hover-card.js";
 export type { InputProps } from "./components/input.js";
 export { Input } from "./components/input.js";
@@ -148,6 +157,15 @@ export { Kbd } from "./components/kbd.js";
 export { Label } from "./components/label.js";
 export type { MetricDeltaProps } from "./components/metric.js";
 export { Metric, MetricDelta, MetricLabel, MetricValue } from "./components/metric.js";
+export {
+  easeOutQuart,
+  fadeIn,
+  fadeInUp,
+  scaleIn,
+  springSnappy,
+  springSoft,
+  staggerContainer,
+} from "./components/motion-presets.js";
 export type { PaginationLinkProps } from "./components/pagination.js";
 export {
   Pagination,
@@ -161,6 +179,8 @@ export {
 export { Popover, PopoverAnchor, PopoverContent, PopoverTrigger } from "./components/popover.js";
 export { Progress } from "./components/progress.js";
 export { RadioGroup, RadioGroupItem } from "./components/radio-group.js";
+export type { RevealProps } from "./components/reveal.js";
+export { Reveal } from "./components/reveal.js";
 export { ScrollArea, ScrollBar } from "./components/scroll-area.js";
 export {
   Select,
@@ -187,12 +207,14 @@ export {
   SheetTrigger,
   sheetVariants,
 } from "./components/sheet.js";
+export { Shimmer } from "./components/shimmer.js";
 export { Skeleton } from "./components/skeleton.js";
 export { Slider } from "./components/slider.js";
 export type { ToasterProps } from "./components/sonner.js";
 export { Toaster, toast } from "./components/sonner.js";
 export type { SpinnerProps } from "./components/spinner.js";
 export { Spinner } from "./components/spinner.js";
+export { SpotlightCard } from "./components/spotlight-card.js";
 export { Switch } from "./components/switch.js";
 export {
   Table,
