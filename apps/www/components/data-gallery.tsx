@@ -49,8 +49,9 @@ import {
 } from "@cooud/ui";
 import type { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, Inbox } from "lucide-react";
-import { type ReactNode, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
+import { Cluster, Section, Subcard } from "./showcase-ui";
 
 export function DataGallery() {
   return (
@@ -455,56 +456,5 @@ function KbdSection() {
         </Cluster>
       </div>
     </Section>
-  );
-}
-
-// ── Shared layout primitives (mirrors forms-gallery.tsx) ────────────
-interface SectionProps {
-  title: string;
-  description: string;
-  children: ReactNode;
-}
-
-function Section({ title, description, children }: SectionProps) {
-  const id = `data-${title.toLowerCase().replace(/\s+/g, "-")}`;
-  return (
-    <section id={id} aria-labelledby={`${id}-title`} className="scroll-mt-24">
-      <div className="mb-5 flex flex-col gap-1">
-        <h3 id={`${id}-title`} className="font-display text-xl font-semibold text-fg">
-          {title}
-        </h3>
-        <p className="text-sm text-fg-secondary">{description}</p>
-      </div>
-      <div className="rounded-2xl border border-border bg-surface-raised p-6 shadow-sm">
-        {children}
-      </div>
-    </section>
-  );
-}
-
-interface ClusterProps {
-  label?: string;
-  children: ReactNode;
-}
-
-function Cluster({ label, children }: ClusterProps) {
-  return (
-    <div className="flex flex-col gap-3">
-      {label ? (
-        <span className="text-xs font-medium uppercase tracking-wider text-fg-tertiary">
-          {label}
-        </span>
-      ) : null}
-      <div className="flex flex-wrap items-center gap-3">{children}</div>
-    </div>
-  );
-}
-
-function Subcard({ label, children }: { label: string; children: ReactNode }) {
-  return (
-    <div className="flex flex-col gap-4 rounded-xl border border-border-soft bg-surface-inset p-5">
-      <span className="text-xs font-medium uppercase tracking-wider text-fg-tertiary">{label}</span>
-      {children}
-    </div>
   );
 }
