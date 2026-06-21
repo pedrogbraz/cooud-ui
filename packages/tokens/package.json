@@ -12,13 +12,40 @@
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "sideEffects": [
+    "./styles/tokens.css"
+  ],
+  "license": "UNLICENSED",
+  "author": "Cooud",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pedrogbraz/cooud-ui.git",
+    "directory": "packages/tokens"
+  },
+  "homepage": "https://github.com/pedrogbraz/cooud-ui#readme",
+  "bugs": {
+    "url": "https://github.com/pedrogbraz/cooud-ui/issues"
+  },
+  "keywords": [
+    "cooud",
+    "design-system",
+    "react",
+    "tailwind",
+    "ui",
+    "components"
+  ],
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "restricted"
+  },
   "files": [
     "dist",
     "styles"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "typecheck": "tsc -p tsconfig.json --noEmit"
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "prepublishOnly": "tsc -p tsconfig.json"
   },
   "devDependencies": {
     "typescript": "^5.9.3"
