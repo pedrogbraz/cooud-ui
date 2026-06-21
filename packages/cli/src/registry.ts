@@ -1,0 +1,91 @@
+import { readFile } from "node:fs/promises";
+import { isAbsolute, join, resolve } from "node:path";
+
+/** A single file that ships with a registry item. */
+export interface RegistryFile {
+  /** Path relative to the item kind (e.g. "button.tsx" or "cn.ts"). */
+  path: string;
+  /** Raw source, with canonical `../lib/cn.js` / `./x.js` specifiers. */
+  content: string;
+  /** Where it is written in the consumer. */
+  target: "ui" | "lib";
+}
+
+export type RegistryItemType = "registry:ui" | "registry:lib";
+
+export interface RegistryItem {
+  name: string;
+  type: RegistryItemType;
+  /** npm packages (with version ranges) this item imports. */
+  dependencies: string[];
+  /** other registry items this item imports (by name). */
+  registryDependencies: string[];
+  files: RegistryFile[];
+}
+
+export interface RegistryIndexEntry {
+  name: string;
+  type: RegistryItemType;
+  dependencies: string[];
+  registryDependencies: string[];
+}
+
+export type RegistryIndex = RegistryIndexEntry[];
+
+/** A registry source: either a local directory or an http(s) base URL. */
+export class Registry {
+  private readonly base: string;
+  private readonly isUrl: boolean;
+  private cache = new Map<string, RegistryItem>();
+
+  constructor(base: string) {
+    this.isUrl = /^https?:\/\//.test(base);
+    this.base = this.isUrl ? base.replace(/\/$/, "") : isAbsolute(base) ? base : resolve(base);
+  }
+
+  private async readJson<T>(file: string): Promise<T> {
+    if (this.isUrl) {
+      const res = await fetch(`${this.base}/${file}`);
+      if (!res.ok) throw new Error(`registry fetch failed (${res.status}): ${this.base}/${file}`);
+      return (await res.json()) as T;
+    }
+    const raw = await readFile(join(this.base, file), "utf8");
+    return JSON.parse(raw) as T;
+  }
+
+  async index(): Promise<RegistryIndex> {
+    return this.readJson<RegistryIndex>("index.json");
+  }
+
+  async item(name: string): Promise<RegistryItem> {
+    const cached = this.cache.get(name);
+    if (cached) return cached;
+    const item = await this.readJson<RegistryItem>(`${name}.json`);
+    this.cache.set(name, item);
+    return item;
+  }
+
+  /**
+   * Resolve the full transitive closure of registry items needed for `names`,
+   * returned in dependency-first order (so files write cleanly).
+   */
+  async resolve(names: string[]): Promise<RegistryItem[]> {
+    const ordered: RegistryItem[] = [];
+    const seen = new Set<string>();
+    const visiting = new Set<string>();
+
+    const visit = async (name: string): Promise<void> => {
+      if (seen.has(name)) return;
+      if (visiting.has(name)) return; // guard against cycles
+      visiting.add(name);
+      const item = await this.item(name);
+      for (const dep of item.registryDependencies) await visit(dep);
+      visiting.delete(name);
+      seen.add(name);
+      ordered.push(item);
+    };
+
+    for (const name of names) await visit(name);
+    return ordered;
+  }
+}
