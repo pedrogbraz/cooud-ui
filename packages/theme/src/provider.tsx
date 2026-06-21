@@ -47,14 +47,17 @@ export function CooudUIProvider({
   children,
   defaultThemeName = defaultTheme,
   defaultModeName = defaultMode,
-  overrides = {},
+  overrides,
   asRoot = false,
   storageKey,
   className,
 }: CooudUIProviderProps) {
   const [theme, setThemeState] = useState<ThemeName>(defaultThemeName);
   const [mode, setModeState] = useState<Mode>(defaultModeName);
-  const [scopedOverrides, setScopedOverrides] = useState<ThemeOverrides>(overrides);
+  // `overrides` seeds the initial value only; further changes go through
+  // setOverrides() (e.g. the ThemeBuilder). Syncing an inline-object prop on
+  // every render would create a new reference each time and loop.
+  const [scopedOverrides, setScopedOverrides] = useState<ThemeOverrides>(() => overrides ?? {});
 
   // Hydrate from storage once on mount.
   useEffect(() => {
@@ -69,11 +72,6 @@ export function CooudUIProvider({
       // ignore malformed storage
     }
   }, [storageKey]);
-
-  // Keep external `overrides` prop in sync (controlled usage).
-  useEffect(() => {
-    setScopedOverrides(overrides);
-  }, [overrides]);
 
   const persist = useCallback(
     (next: { theme: ThemeName; mode: Mode }) => {
