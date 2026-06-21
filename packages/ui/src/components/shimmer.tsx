@@ -11,7 +11,7 @@ export const Shimmer = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>
         className={cn("relative overflow-hidden rounded-md bg-surface-overlay", className)}
         {...props}
       >
-        <div className="absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+        <div className="absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-fg/10 to-transparent" />
         {children}
       </div>
     );
