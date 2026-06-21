@@ -1,0 +1,57 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      # setup-node configures npm to publish to GitHub Packages under @cooud
+      # (writes the registry-url + scope into ~/.npmrc and wires NODE_AUTH_TOKEN).
+      - name: Setup Node (GitHub Packages registry)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://npm.pkg.github.com
+          scope: "@cooud"
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build (turbo: tokens -> theme -> ui)
+        run: bun run build
+
+      # Publish in dependency order: tokens, then theme, then ui.
+      - name: Publish @cooud/tokens
+        working-directory: packages/tokens
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish @cooud/theme
+        working-directory: packages/theme
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish @cooud/ui
+        working-directory: packages/ui
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
