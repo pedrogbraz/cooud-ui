@@ -67,11 +67,15 @@ Command palette (cmdk, ⌘K).
 Progress · ScrollArea · Calendar · DatePicker · Chart (Recharts) · Empty · Metric ·
 Kbd · Breadcrumb.
 
+**Wave 4 — premium & brand:** GlassCard · GradientBorder · GradientText ·
+SpotlightCard · AuroraBackground · Shimmer · AnimatedButton (motion) · Reveal ·
+motion presets. The premium Aurora layer (glass, gradients, springs, scroll reveals).
+
 ## Conventions
 See `CONTRACT.md` — semantic tokens only, CVA variants, `forwardRef`, `data-slot`,
 `focus-visible` rings, no raw colors. This is what keeps the library re-themeable.
 
 ## Roadmap
-~~Wave 1 (forms)~~ ✅ → ~~Wave 2 (overlays/nav)~~ ✅ → ~~Wave 3 (data)~~ ✅ → Wave 4 (premium/brand) →
+~~Wave 1 (forms)~~ ✅ → ~~Wave 2 (overlays/nav)~~ ✅ → ~~Wave 3 (data)~~ ✅ → ~~Wave 4 (premium/brand)~~ ✅ →
 `cooud-ui` CLI registry (`npx cooud-ui add`) → publish to GitHub Packages → migrate
 `dashboard` first. Full plan in the SDD.
