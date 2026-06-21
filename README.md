@@ -50,6 +50,25 @@ const { setTheme, setMode, setOverrides } = useTheme();
 setOverrides({ radius: "20px", primary: "#7c3aed", border: "..." }); // re-themes the whole subtree, no re-render
 ```
 
+## Or copy-paste, shadcn-style (you own the code)
+
+```sh
+npx cooud-ui init
+npx cooud-ui add button card dialog   # resolves deps, rewrites imports to your aliases
+npx cooud-ui list                     # 55 registry items
+```
+
+The registry under `registry/` is generated from the real component sources by
+`packages/cli` — see [packages/cli/README.md](packages/cli/README.md). Both
+distribution modes (npm package + CLI registry) share one source of truth.
+
+## Publishing
+
+The three library packages (`@cooud/tokens`, `@cooud/theme`, `@cooud/ui`) are
+publish-ready for GitHub Packages — see [RELEASE.md](RELEASE.md). Tag `vX.Y.Z` to
+trigger `.github/workflows/release.yml`. (Note: a real publish needs the `@cooud`
+scope hosted under a matching GitHub org or an npmjs `@cooud` org + token.)
+
 ## Components
 
 **Wave 0 — foundation:** Button · Input · Label · Badge · Card (+ Header/Title/
