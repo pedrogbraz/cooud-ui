@@ -16,7 +16,23 @@ export const TooltipProvider = ({
 };
 TooltipProvider.displayName = "TooltipProvider";
 
-export const Tooltip = TooltipPrimitive.Root;
+/**
+ * Self-contained: wraps its own Provider so a single <Tooltip> works without a
+ * top-level <TooltipProvider>. For shared delay config, still wrap your app in
+ * one <TooltipProvider> (nested providers are fine).
+ */
+export const Tooltip = ({
+  delayDuration,
+  ...props
+}: ComponentPropsWithoutRef<typeof TooltipPrimitive.Root>) => {
+  return (
+    <TooltipProvider delayDuration={delayDuration}>
+      <TooltipPrimitive.Root data-slot="tooltip" {...props} />
+    </TooltipProvider>
+  );
+};
+Tooltip.displayName = "Tooltip";
+
 export const TooltipTrigger = TooltipPrimitive.Trigger;
 
 export const TooltipContent = forwardRef<
