@@ -63,11 +63,15 @@ FileDropzone.
 Popover · HoverCard · Tooltip · Tabs · Accordion · Drawer (vaul) · Toast (sonner) ·
 Command palette (cmdk, ⌘K).
 
+**Wave 3 — data & display:** Table · DataTable (TanStack) · Pagination · Avatar ·
+Progress · ScrollArea · Calendar · DatePicker · Chart (Recharts) · Empty · Metric ·
+Kbd · Breadcrumb.
+
 ## Conventions
 See `CONTRACT.md` — semantic tokens only, CVA variants, `forwardRef`, `data-slot`,
 `focus-visible` rings, no raw colors. This is what keeps the library re-themeable.
 
 ## Roadmap
-~~Wave 1 (forms)~~ ✅ → ~~Wave 2 (overlays/nav)~~ ✅ → Wave 3 (data) → Wave 4 (premium/brand) →
+~~Wave 1 (forms)~~ ✅ → ~~Wave 2 (overlays/nav)~~ ✅ → ~~Wave 3 (data)~~ ✅ → Wave 4 (premium/brand) →
 `cooud-ui` CLI registry (`npx cooud-ui add`) → publish to GitHub Packages → migrate
 `dashboard` first. Full plan in the SDD.
