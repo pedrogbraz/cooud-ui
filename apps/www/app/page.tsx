@@ -7,6 +7,7 @@ import { ComponentGallery } from "../components/component-gallery";
 import { DataGallery } from "../components/data-gallery";
 import { FormsGallery } from "../components/forms-gallery";
 import { OverlaysGallery } from "../components/overlays-gallery";
+import { PremiumGallery } from "../components/premium-gallery";
 import { ThemeBuilder } from "../components/theme-builder";
 
 export default function Page() {
@@ -101,6 +102,7 @@ export default function Page() {
             <FormsGallery />
             <OverlaysGallery />
             <DataGallery />
+            <PremiumGallery />
           </div>
         </div>
       </main>
