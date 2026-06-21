@@ -15,7 +15,7 @@ const buttonVariants = cva(
         outline: "border border-border text-fg hover:bg-surface-overlay",
         ghost: "text-fg-secondary hover:bg-surface-overlay hover:text-fg",
         destructive: "bg-error text-white hover:opacity-90 shadow-xs",
-        link: "text-accent underline-offset-4 hover:underline",
+        link: "text-primary underline-offset-4 hover:underline",
       },
       size: {
         sm: "h-8 gap-1.5 px-3 text-xs [&_svg]:size-3.5",
