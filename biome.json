@@ -16,6 +16,7 @@
     "rules": {
       "recommended": true,
       "a11y": { "recommended": true },
+      "complexity": { "noImportantStyles": "off" },
       "correctness": { "noUnusedVariables": "error" },
       "style": { "useImportType": "error" }
     }
