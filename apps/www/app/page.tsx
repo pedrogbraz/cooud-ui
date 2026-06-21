@@ -19,7 +19,7 @@ import { Hero } from "../components/hero";
 import { Eyebrow } from "../components/showcase-ui";
 import { SiteNav } from "../components/site-nav";
 import { ThemeBuilder } from "../components/theme-builder";
-import { CATEGORIES } from "../lib/components-index";
+import { CATEGORIES, COMPONENT_COUNT } from "../lib/components-index";
 
 export default function Page() {
   return (
@@ -158,8 +158,8 @@ function SiteFooter() {
               <span className="font-display text-lg font-semibold tracking-tight">Cooud UI</span>
             </div>
             <p className="mt-4 text-sm text-fg-secondary">
-              The Cooud design system. 54 themeable, accessible React components — as an npm package
-              or copy-paste registry.
+              The Cooud design system. {COMPONENT_COUNT} themeable, accessible React components — as
+              an npm package or copy-paste registry.
             </p>
             <div className="mt-5 inline-flex items-center gap-3 rounded-xl border border-border bg-surface-raised px-4 py-2.5 font-mono text-sm text-fg-secondary">
               <span className="text-fg-tertiary">$</span> npx cooud-ui add button

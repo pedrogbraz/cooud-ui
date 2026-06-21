@@ -21,6 +21,7 @@ import {
 } from "@cooud/ui";
 import { ArrowRight, Check, Copy, Github, Sparkles } from "lucide-react";
 import { useState } from "react";
+import { COMPONENT_COUNT } from "../lib/components-index";
 
 const INSTALL_COMMAND = "npx cooud-ui add button";
 const GITHUB_URL = "https://github.com/pedrogbraz/cooud-ui";
@@ -63,7 +64,7 @@ export function Hero() {
             aria-hidden="true"
             className="size-2 rounded-full bg-gradient-primary shadow-glow"
           />
-          54 components · Aurora + Neutral themes
+          {COMPONENT_COUNT} components · Aurora + Neutral themes
         </div>
 
         {/* Headline */}

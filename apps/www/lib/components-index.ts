@@ -8,6 +8,8 @@ export interface ComponentMeta {
   slug: string;
   name: string;
   description: string;
+  /** Override the named imports shown in the docs when they differ from `name`. */
+  importName?: string;
 }
 
 export interface ComponentCategory {
@@ -84,7 +86,12 @@ export const CATEGORIES: ComponentCategory[] = [
     items: [
       { slug: "spinner", name: "Spinner", description: "Indeterminate loading indicator." },
       { slug: "progress", name: "Progress", description: "Determinate progress bar." },
-      { slug: "sonner", name: "Toast", description: "Transient notifications via Sonner." },
+      {
+        slug: "sonner",
+        name: "Toast",
+        description: "Transient notifications via Sonner.",
+        importName: "Toaster, toast",
+      },
       { slug: "alert-dialog", name: "AlertDialog", description: "Confirm a destructive action." },
     ],
   },
@@ -123,7 +130,14 @@ export const CATEGORIES: ComponentCategory[] = [
   {
     slug: "charts",
     name: "Charts",
-    items: [{ slug: "chart", name: "Chart", description: "Recharts wrapper with tokens." }],
+    items: [
+      {
+        slug: "chart",
+        name: "Chart",
+        description: "Recharts wrapper with tokens.",
+        importName: "ChartContainer, ChartTooltip, ChartTooltipContent",
+      },
+    ],
   },
   {
     slug: "premium",
@@ -153,3 +167,5 @@ export function getComponentMeta(slug: string): (ComponentMeta & { category: str
 }
 
 export const COMPONENT_SLUGS = ALL_COMPONENTS.map((c) => c.slug);
+
+export const COMPONENT_COUNT = ALL_COMPONENTS.length;
