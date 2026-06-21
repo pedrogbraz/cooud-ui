@@ -50,15 +50,20 @@ const { setTheme, setMode, setOverrides } = useTheme();
 setOverrides({ radius: "20px", primary: "#7c3aed", border: "..." }); // re-themes the whole subtree, no re-render
 ```
 
-## Wave 0 components
-Button · Input · Label · Badge · Card (+ Header/Title/Description/Action/Content/Footer)
-· Separator · Skeleton · Spinner.
+## Components
+
+**Wave 0 — foundation:** Button · Input · Label · Badge · Card (+ Header/Title/
+Description/Action/Content/Footer) · Separator · Skeleton · Spinner.
+
+**Wave 1 — forms:** Textarea · Checkbox · Switch · RadioGroup · Select (composable)
+· Slider · Toggle · ToggleGroup · Field · Form (react-hook-form + zod) · InputOTP ·
+FileDropzone.
 
 ## Conventions
 See `CONTRACT.md` — semantic tokens only, CVA variants, `forwardRef`, `data-slot`,
 `focus-visible` rings, no raw colors. This is what keeps the library re-themeable.
 
 ## Roadmap
-Wave 1 (forms) → Wave 2 (overlays/nav) → Wave 3 (data) → Wave 4 (premium/brand) →
+~~Wave 1 (forms)~~ ✅ → Wave 2 (overlays/nav) → Wave 3 (data) → Wave 4 (premium/brand) →
 `cooud-ui` CLI registry (`npx cooud-ui add`) → publish to GitHub Packages → migrate
 `dashboard` first. Full plan in the SDD.
