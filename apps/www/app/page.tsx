@@ -4,6 +4,7 @@ import { useTheme } from "@cooud/theme";
 import { Badge, Button } from "@cooud/ui";
 import { ArrowRight, Github, Moon, Sparkles, Sun } from "lucide-react";
 import { ComponentGallery } from "../components/component-gallery";
+import { DataGallery } from "../components/data-gallery";
 import { FormsGallery } from "../components/forms-gallery";
 import { OverlaysGallery } from "../components/overlays-gallery";
 import { ThemeBuilder } from "../components/theme-builder";
@@ -99,6 +100,7 @@ export default function Page() {
             <ComponentGallery />
             <FormsGallery />
             <OverlaysGallery />
+            <DataGallery />
           </div>
         </div>
       </main>
