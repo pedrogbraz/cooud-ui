@@ -199,9 +199,9 @@ const ChartTooltipContent = forwardRef<HTMLDivElement, ChartTooltipContentProps>
                     {nestLabel ? tooltipLabel : null}
                     <span className="text-fg-tertiary">{itemConfig?.label || item.name}</span>
                   </div>
-                  {item.value !== undefined && (
+                  {item.value != null && (
                     <span className="font-mono font-medium tabular-nums text-fg">
-                      {item.value.toLocaleString()}
+                      {typeof item.value === "number" ? item.value.toLocaleString() : item.value}
                     </span>
                   )}
                 </div>

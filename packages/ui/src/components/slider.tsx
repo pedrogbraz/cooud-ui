@@ -6,7 +6,8 @@ export const Slider = forwardRef<
   ComponentRef<typeof SliderPrimitive.Root>,
   ComponentPropsWithoutRef<typeof SliderPrimitive.Root>
 >(({ className, ...props }, ref) => {
-  const values = props.value ?? props.defaultValue ?? [props.min ?? 0];
+  const provided = props.value ?? props.defaultValue;
+  const values = provided?.length ? provided : [props.min ?? 0];
 
   return (
     <SliderPrimitive.Root
