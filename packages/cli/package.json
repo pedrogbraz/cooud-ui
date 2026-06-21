@@ -1,0 +1,31 @@
+{
+  "name": "@cooud/cli",
+  "version": "0.1.0",
+  "description": "cooud-ui — add Cooud UI components to your project, shadcn-style (copy-paste registry).",
+  "type": "module",
+  "bin": {
+    "cooud-ui": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "registry": "bun run scripts/build-registry.ts"
+  },
+  "dependencies": {
+    "commander": "^12.1.0",
+    "picocolors": "^1.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "typescript": "^5.9.3"
+  }
+}
