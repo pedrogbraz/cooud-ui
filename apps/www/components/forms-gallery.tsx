@@ -198,7 +198,7 @@ function SelectSection() {
     <Section title="Select" description="A grouped dropdown with labels, items, and a separator.">
       <Field className="max-w-xs">
         <Label htmlFor="f-region">Deploy region</Label>
-        <Select value={region} onValueChange={setRegion}>
+        <Select value={region ?? ""} onValueChange={setRegion}>
           <SelectTrigger id="f-region">
             <SelectValue placeholder="Choose a region" />
           </SelectTrigger>
