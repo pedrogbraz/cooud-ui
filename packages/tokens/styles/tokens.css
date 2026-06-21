@@ -74,6 +74,10 @@
   --cooud-shadow-md: 0 6px 12px rgba(16, 24, 40, 0.1), 0 2px 4px rgba(16, 24, 40, 0.06);
   --cooud-shadow-lg: 0 12px 24px rgba(16, 24, 40, 0.12), 0 4px 8px rgba(16, 24, 40, 0.08);
   --cooud-shadow-glow: 0 12px 32px rgba(14, 165, 233, 0.22);
+  --cooud-success: oklch(0.52 0.15 162);
+  --cooud-warning: oklch(0.52 0.12 70);
+  --cooud-info: oklch(0.52 0.16 235);
+  --cooud-error: oklch(0.55 0.2 25);
 }
 
 /* Neutral preset — light-first */
@@ -97,10 +101,10 @@
   --cooud-border-strong: oklch(0.86 0 0);
   --cooud-border-soft: oklch(0.94 0 0);
   --cooud-ring: oklch(0.705 0 0);
-  --cooud-success: oklch(0.715 0.155 162.5);
-  --cooud-warning: oklch(0.769 0.166 70.08);
-  --cooud-error: oklch(0.577 0.245 27.325);
-  --cooud-info: oklch(0.6 0.118 244.7);
+  --cooud-success: oklch(0.52 0.15 162);
+  --cooud-warning: oklch(0.52 0.12 70);
+  --cooud-error: oklch(0.55 0.2 25);
+  --cooud-info: oklch(0.52 0.16 235);
   --cooud-radius: 14px;
   --cooud-shadow-xs: 0 1px 2px rgba(16, 24, 40, 0.05);
   --cooud-shadow-sm: 0 1px 3px rgba(16, 24, 40, 0.08);
@@ -129,7 +133,11 @@
   --cooud-border-strong: oklch(1 0 0 / 0.16);
   --cooud-border-soft: oklch(1 0 0 / 0.06);
   --cooud-ring: oklch(0.55 0 0);
+  --cooud-success: oklch(0.715 0.155 162.5);
+  --cooud-warning: oklch(0.769 0.166 70.08);
+  --cooud-info: oklch(0.715 0.143 215.2);
   --cooud-error: oklch(0.704 0.191 22.216);
+  --cooud-shadow-glow: 0 0 0 4px oklch(0.6 0 0 / 0.3);
 }
 
 /* ------------------------------------------------------------------ *
@@ -164,8 +172,8 @@
   --color-error: var(--cooud-error);
   --color-info: var(--cooud-info);
 
-  --radius-sm: calc(var(--cooud-radius) - 8px);
-  --radius-md: calc(var(--cooud-radius) - 4px);
+  --radius-sm: max(0px, calc(var(--cooud-radius) - 8px));
+  --radius-md: max(0px, calc(var(--cooud-radius) - 4px));
   --radius-lg: var(--cooud-radius);
   --radius-xl: calc(var(--cooud-radius) + 4px);
   --radius-2xl: calc(var(--cooud-radius) + 8px);

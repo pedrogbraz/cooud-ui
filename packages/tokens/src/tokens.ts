@@ -116,6 +116,10 @@ const auroraLight: ThemeTokens = {
   shadowMd: "0 6px 12px rgba(16,24,40,0.10), 0 2px 4px rgba(16,24,40,0.06)",
   shadowLg: "0 12px 24px rgba(16,24,40,0.12), 0 4px 8px rgba(16,24,40,0.08)",
   shadowGlow: "0 12px 32px rgba(14,165,233,0.22)",
+  success: "oklch(0.52 0.15 162)",
+  warning: "oklch(0.52 0.12 70)",
+  info: "oklch(0.52 0.16 235)",
+  error: "oklch(0.55 0.2 25)",
 };
 
 const neutralLight: ThemeTokens = {
@@ -138,10 +142,10 @@ const neutralLight: ThemeTokens = {
   borderStrong: "oklch(0.86 0 0)",
   borderSoft: "oklch(0.94 0 0)",
   ring: "oklch(0.705 0 0)",
-  success: "oklch(0.715 0.155 162.5)",
-  warning: "oklch(0.769 0.166 70.08)",
-  error: "oklch(0.577 0.245 27.325)",
-  info: "oklch(0.6 0.118 244.7)",
+  success: "oklch(0.52 0.15 162)",
+  warning: "oklch(0.52 0.12 70)",
+  error: "oklch(0.55 0.2 25)",
+  info: "oklch(0.52 0.16 235)",
   radius: "14px",
   shadowXs: "0 1px 2px rgba(16,24,40,0.05)",
   shadowSm: "0 1px 3px rgba(16,24,40,0.08)",
@@ -171,7 +175,11 @@ const neutralDark: ThemeTokens = {
   borderStrong: "oklch(1 0 0 / 0.16)",
   borderSoft: "oklch(1 0 0 / 0.06)",
   ring: "oklch(0.55 0 0)",
+  success: "oklch(0.715 0.155 162.5)",
+  warning: "oklch(0.769 0.166 70.08)",
+  info: "oklch(0.715 0.143 215.2)",
   error: "oklch(0.704 0.191 22.216)",
+  shadowGlow: "0 0 0 4px oklch(0.6 0 0 / 0.3)",
 };
 
 export const themes: Record<ThemeName, Record<Mode, ThemeTokens>> = {
