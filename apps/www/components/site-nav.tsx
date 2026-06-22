@@ -1,7 +1,8 @@
 "use client";
 
 import { useTheme } from "@cooud/theme";
-import { Badge, Sheet, SheetContent, SheetTitle, SheetTrigger } from "@cooud/ui";
+import { Badge } from "@cooud/ui/badge";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@cooud/ui/sheet";
 import { Github, Menu } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
