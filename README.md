@@ -28,14 +28,85 @@ bun run www         # dev the showcase at http://localhost:4747
 bun run lint        # biome
 ```
 
-## Using it in a Cooud app
+## Install (external consumer)
 
-```tsx
-// globals.css
+Install the three library packages from your registry (GitHub Packages — see
+[RELEASE.md](RELEASE.md)):
+
+```sh
+npm i @cooud/ui @cooud/tokens @cooud/theme
+# peers (provide what you don't already have):
+npm i react react-dom
+```
+
+Then wire up styling. **Tailwind v4 and v3 are configured differently** — pick the
+one your app uses.
+
+### Tailwind v4 (CSS-first)
+
+In your global stylesheet (e.g. `app/globals.css` / `src/index.css`):
+
+```css
 @import "tailwindcss";
 @import "@cooud/tokens/styles.css";
 
-// layout.tsx
+/* REQUIRED. Tailwind v4 does not scan node_modules by default, so the utility
+   classes baked into the shipped components (dist/**/*.js) would never be
+   emitted and your components would render unstyled. This @source opts the
+   published package back into content detection. Adjust the relative path so it
+   resolves to your node_modules from this CSS file. */
+@source "../node_modules/@cooud/ui/dist/**/*.js";
+```
+
+That's it — no PostCSS config beyond the standard `@tailwindcss/postcss` (or the
+Vite plugin). The `@import "@cooud/tokens/styles.css"` line brings in the Aurora
+theme tokens and the `@theme inline` bridge that maps `bg-primary`, `rounded-lg`,
+`text-fg-secondary`, `shadow-glow`, etc. onto the runtime `--cooud-*` variables.
+
+### Tailwind v3 (config JS)
+
+Consume the `@cooud/tokens/preset` (it maps `bg-primary`, `rounded-lg`, `shadow-glow`,
+… onto the `--cooud-*` variables) and add the package `dist` to `content[]` so the
+component classes survive purging:
+
+```js
+// tailwind.config.js
+import cooudPreset from "@cooud/tokens/preset";
+
+/** @type {import('tailwindcss').Config} */
+export default {
+  presets: [cooudPreset],
+  content: [
+    "./src/**/*.{ts,tsx}",
+    // REQUIRED: keep the utilities used inside the shipped components.
+    "./node_modules/@cooud/ui/dist/**/*.js",
+  ],
+};
+```
+
+```css
+/* your global stylesheet */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+```
+
+> **v3 does not import `@cooud/tokens/styles.css`.** That file is Tailwind v4-only
+> (it uses `@theme inline` / `@utility`, which the v3 PostCSS engine can't parse).
+> On v3 the `--cooud-*` runtime variables are injected for you by
+> `<CooudUIProvider>` from `@cooud/theme` (see below) — the preset is what connects
+> the utility classes to those variables.
+
+> Why the extra `@source` (v4) / `content` (v3) entry on both paths? The components
+> ship as pre-compiled JS with their Tailwind class strings inline (e.g.
+> `class="inline-flex … bg-primary rounded-lg …"`). Tailwind only emits CSS for
+> classes it finds while scanning content, and it skips `node_modules` unless you
+> opt in. Without this line the markup is correct but **no styles are generated**.
+
+## Using it in your app
+
+```tsx
+// layout.tsx (or your root)
 import { CooudUIProvider } from "@cooud/theme";
 <CooudUIProvider asRoot defaultThemeName="aurora" defaultModeName="dark">{children}</CooudUIProvider>
 
@@ -50,12 +121,19 @@ const { setTheme, setMode, setOverrides } = useTheme();
 setOverrides({ radius: "20px", primary: "#7c3aed", border: "..." }); // re-themes the whole subtree, no re-render
 ```
 
+Two end-to-end consumer fixtures live under [`examples/`](examples/): a Next.js App
+Router app (`examples/smoke-next`) and a Vite + React app (`examples/smoke-vite`).
+`scripts/package-smoke.mjs` packs the real tarballs, installs them into those
+fixtures, builds them, and asserts the component utility classes show up in the
+compiled CSS — proof that an external install renders *styled*.
+
 ## Or copy-paste, shadcn-style (you own the code)
 
 ```sh
-npx cooud-ui init
+npx cooud-ui init                     # writes cooud-ui.json + the cn() helper
 npx cooud-ui add button card dialog   # resolves deps, rewrites imports to your aliases
-npx cooud-ui list                     # 55 registry items
+npx cooud-ui list                     # list registry items (alias: ls)
+npx cooud-ui diff                     # show which installed components drifted
 ```
 
 The registry under `registry/` is generated from the real component sources by
