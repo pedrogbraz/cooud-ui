@@ -50,6 +50,17 @@
   --cooud-shadow-md: 0 6px 12px rgba(0, 0, 0, 0.24), 0 2px 4px rgba(0, 0, 0, 0.16);
   --cooud-shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.28), 0 4px 8px rgba(0, 0, 0, 0.18);
   --cooud-shadow-glow: 0 12px 32px rgba(14, 165, 233, 0.32);
+  /* Fonts (runtime-overridable so the Create studio can swap them). */
+  --cooud-font-display:
+    "SF Pro Display", Geist, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --cooud-font-sans: "SF Pro Text", Geist, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --cooud-font-mono: "SF Mono", "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  /* Chart palette. */
+  --cooud-chart-1: oklch(0.685 0.169 237.3);
+  --cooud-chart-2: oklch(0.715 0.143 215.2);
+  --cooud-chart-3: oklch(0.62 0.21 292);
+  --cooud-chart-4: oklch(0.7 0.15 162);
+  --cooud-chart-5: oklch(0.78 0.16 70);
 }
 
 [data-cooud-theme="aurora"][data-cooud-mode="light"] {
@@ -185,9 +196,15 @@
   --shadow-lg: var(--cooud-shadow-lg);
   --shadow-glow: var(--cooud-shadow-glow);
 
-  --font-sans: "SF Pro Text", Geist, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-  --font-display: "SF Pro Display", Geist, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-  --font-mono: "SF Mono", "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  --font-sans: var(--cooud-font-sans);
+  --font-display: var(--cooud-font-display);
+  --font-mono: var(--cooud-font-mono);
+
+  --color-chart-1: var(--cooud-chart-1);
+  --color-chart-2: var(--cooud-chart-2);
+  --color-chart-3: var(--cooud-chart-3);
+  --color-chart-4: var(--cooud-chart-4);
+  --color-chart-5: var(--cooud-chart-5);
 
   --ease-out-quart: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);

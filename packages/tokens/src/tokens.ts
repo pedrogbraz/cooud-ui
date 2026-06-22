@@ -44,6 +44,16 @@ export interface ThemeTokens {
   info: string;
   // Shape
   radius: string;
+  // Typography
+  fontSans: string;
+  fontDisplay: string;
+  fontMono: string;
+  // Data visualization
+  chart1: string;
+  chart2: string;
+  chart3: string;
+  chart4: string;
+  chart5: string;
   // Elevation
   shadowXs: string;
   shadowSm: string;
@@ -86,6 +96,14 @@ const auroraDark: ThemeTokens = {
   error: "oklch(0.645 0.222 16.44)", // rose #f43f5e
   info: "oklch(0.715 0.143 215.2)", // cyan #06b6d4
   radius: "14px",
+  fontSans: fonts.sans,
+  fontDisplay: fonts.display,
+  fontMono: fonts.mono,
+  chart1: "oklch(0.685 0.169 237.3)",
+  chart2: "oklch(0.715 0.143 215.2)",
+  chart3: "oklch(0.62 0.21 292)",
+  chart4: "oklch(0.7 0.15 162)",
+  chart5: "oklch(0.78 0.16 70)",
   shadowXs: "0 1px 2px rgba(0,0,0,0.20)",
   shadowSm: "0 2px 4px rgba(0,0,0,0.22)",
   shadowMd: "0 6px 12px rgba(0,0,0,0.24), 0 2px 4px rgba(0,0,0,0.16)",
@@ -147,6 +165,14 @@ const neutralLight: ThemeTokens = {
   error: "oklch(0.55 0.2 25)",
   info: "oklch(0.52 0.16 235)",
   radius: "14px",
+  fontSans: fonts.sans,
+  fontDisplay: fonts.display,
+  fontMono: fonts.mono,
+  chart1: "oklch(0.3 0 0)",
+  chart2: "oklch(0.44 0 0)",
+  chart3: "oklch(0.58 0 0)",
+  chart4: "oklch(0.72 0 0)",
+  chart5: "oklch(0.85 0 0)",
   shadowXs: "0 1px 2px rgba(16,24,40,0.05)",
   shadowSm: "0 1px 3px rgba(16,24,40,0.08)",
   shadowMd: "0 4px 8px rgba(16,24,40,0.08), 0 2px 4px rgba(16,24,40,0.04)",
@@ -218,6 +244,14 @@ export const cssVarMap: Record<keyof ThemeTokens, string> = {
   error: "--cooud-error",
   info: "--cooud-info",
   radius: "--cooud-radius",
+  fontSans: "--cooud-font-sans",
+  fontDisplay: "--cooud-font-display",
+  fontMono: "--cooud-font-mono",
+  chart1: "--cooud-chart-1",
+  chart2: "--cooud-chart-2",
+  chart3: "--cooud-chart-3",
+  chart4: "--cooud-chart-4",
+  chart5: "--cooud-chart-5",
   shadowXs: "--cooud-shadow-xs",
   shadowSm: "--cooud-shadow-sm",
   shadowMd: "--cooud-shadow-md",
