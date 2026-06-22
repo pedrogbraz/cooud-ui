@@ -19,12 +19,11 @@ import {
   Slider,
   Switch,
 } from "@cooud/ui";
-import { ArrowRight, Check, Copy, Github, Sparkles } from "lucide-react";
+import { ArrowRight, BookOpen, Check, Copy, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { COMPONENT_COUNT } from "../lib/components-index";
 
 const INSTALL_COMMAND = "npx cooud-ui add button";
-const GITHUB_URL = "https://github.com/pedrogbraz/cooud-ui";
 
 export function Hero() {
   const [copied, setCopied] = useState(false);
@@ -102,15 +101,15 @@ export function Hero() {
         {/* CTAs */}
         <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row">
           <Button asChild variant="gradient" size="lg">
-            <a href="/components">
-              Get started
+            <a href="/create">
+              Create a system
               <ArrowRight aria-hidden="true" />
             </a>
           </Button>
           <Button asChild variant="outline" size="lg">
-            <a href={GITHUB_URL} target="_blank" rel="noreferrer noopener">
-              <Github aria-hidden="true" />
-              Star on GitHub
+            <a href="/docs/installation">
+              <BookOpen aria-hidden="true" />
+              Read docs
             </a>
           </Button>
         </div>

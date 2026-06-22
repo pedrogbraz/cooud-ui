@@ -12,6 +12,9 @@ import { Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { CATEGORIES } from "../../lib/components-index";
+import { DOC_NAV_SECTIONS } from "../../lib/docs";
+
+const docItems = DOC_NAV_SECTIONS.flatMap((section) => section.items);
 
 export function CommandSearch() {
   const router = useRouter();
@@ -28,10 +31,18 @@ export function CommandSearch() {
     return () => document.removeEventListener("keydown", onKeyDown);
   }, []);
 
-  const onSelect = useCallback(
+  const onSelectComponent = useCallback(
     (slug: string) => {
       setOpen(false);
       router.push(`/components/${slug}`);
+    },
+    [router],
+  );
+
+  const onSelectRoute = useCallback(
+    (href: string) => {
+      setOpen(false);
+      router.push(href);
     },
     [router],
   );
@@ -40,14 +51,14 @@ export function CommandSearch() {
     <>
       <button
         type="button"
-        aria-label="Search components"
+        aria-label="Search documentation"
         aria-keyshortcuts="Meta+K Control+K"
         onClick={() => setOpen(true)}
-        className="hidden h-9 items-center gap-2 rounded-lg border border-border bg-surface-inset px-3 text-xs text-fg-tertiary outline-none transition-colors hover:border-border-strong hover:text-fg-secondary focus-visible:ring-2 focus-visible:ring-ring md:inline-flex"
+        className="inline-grid size-9 place-items-center rounded-lg border border-border bg-surface-inset text-xs text-fg-tertiary outline-none transition-colors hover:border-border-strong hover:text-fg-secondary focus-visible:ring-2 focus-visible:ring-ring xl:inline-flex xl:w-64 xl:justify-start xl:gap-2 xl:px-3"
       >
-        <Search className="size-3.5" aria-hidden="true" />
-        <span>Search components…</span>
-        <kbd className="ml-2 rounded border border-border bg-surface-raised px-1.5 py-0.5 font-mono text-[10px] text-fg-tertiary">
+        <Search className="size-4 xl:size-3.5" aria-hidden="true" />
+        <span className="hidden xl:inline">Search documentation…</span>
+        <kbd className="ml-auto hidden rounded border border-border bg-surface-raised px-1.5 py-0.5 font-mono text-[10px] text-fg-tertiary xl:inline">
           ⌘K
         </kbd>
       </button>
@@ -55,19 +66,52 @@ export function CommandSearch() {
       <CommandDialog
         open={open}
         onOpenChange={setOpen}
-        title="Search components"
-        description="Find a component and jump to its documentation."
+        title="Search documentation"
+        description="Find docs, components, studio routes, and release notes."
       >
-        <CommandInput placeholder="Search components…" />
+        <CommandInput placeholder="Search documentation…" />
         <CommandList>
-          <CommandEmpty>No components found.</CommandEmpty>
+          <CommandEmpty>No results found.</CommandEmpty>
+          <CommandGroup heading="Documentation">
+            {docItems.map((item) => (
+              <CommandItem
+                key={item.href}
+                value={`${item.label} ${item.description}`}
+                onSelect={() => onSelectRoute(item.href)}
+                className="flex flex-col items-start gap-0.5"
+              >
+                <span className="text-sm text-fg">{item.label}</span>
+                <span className="text-xs text-fg-tertiary">{item.description}</span>
+              </CommandItem>
+            ))}
+          </CommandGroup>
+          <CommandGroup heading="Studio">
+            <CommandItem
+              value="Create design-system studio"
+              onSelect={() => onSelectRoute("/create")}
+              className="flex flex-col items-start gap-0.5"
+            >
+              <span className="text-sm text-fg">Create</span>
+              <span className="text-xs text-fg-tertiary">
+                Build, save, shuffle, and export a complete design-system preset.
+              </span>
+            </CommandItem>
+            <CommandItem
+              value="Blocks"
+              onSelect={() => onSelectRoute("/blocks")}
+              className="flex flex-col items-start gap-0.5"
+            >
+              <span className="text-sm text-fg">Blocks</span>
+              <span className="text-xs text-fg-tertiary">Browse production-ready blocks.</span>
+            </CommandItem>
+          </CommandGroup>
           {CATEGORIES.map((category) => (
             <CommandGroup key={category.slug} heading={category.name}>
               {category.items.map((item) => (
                 <CommandItem
                   key={item.slug}
                   value={item.name}
-                  onSelect={() => onSelect(item.slug)}
+                  onSelect={() => onSelectComponent(item.slug)}
                   className="flex flex-col items-start gap-0.5"
                 >
                   <span className="text-sm text-fg">{item.name}</span>

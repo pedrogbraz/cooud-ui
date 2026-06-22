@@ -13,8 +13,9 @@ import {
   Slider,
   Switch,
 } from "@cooud/ui";
-import { ArrowRight, ArrowUpRight, Github, Terminal } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Github } from "lucide-react";
 import Link from "next/link";
+import { CooudMark } from "../components/brand/cooud-mark";
 import { Hero } from "../components/hero";
 import { Eyebrow } from "../components/showcase-ui";
 import { SiteNav } from "../components/site-nav";
@@ -33,7 +34,7 @@ export default function Page() {
           aria-hidden="true"
           className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-72 bg-gradient-aurora opacity-[0.08] blur-3xl"
         />
-        <div className="mx-auto max-w-7xl px-6 py-16 sm:py-24">
+        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24">
           <div id="tokens" className="flex flex-col gap-3 scroll-mt-24">
             <Eyebrow>Tokens &amp; theming</Eyebrow>
             <h2 className="max-w-2xl font-display text-3xl font-semibold tracking-tight sm:text-4xl">
@@ -45,7 +46,7 @@ export default function Page() {
             </p>
           </div>
 
-          <div className="mt-10 grid items-start gap-8 lg:grid-cols-[24rem_minmax(0,1fr)]">
+          <div className="mt-10 grid min-w-0 items-start gap-8 lg:grid-cols-[minmax(0,24rem)_minmax(0,1fr)]">
             <ThemeBuilder />
             <PlaygroundPreview />
           </div>
@@ -54,7 +55,7 @@ export default function Page() {
 
       {/* Components CTA */}
       <section id="components" className="scroll-mt-20 border-t border-border/60">
-        <div className="mx-auto max-w-7xl px-6 py-16 sm:py-24">
+        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24">
           <div className="flex flex-col gap-3">
             <Eyebrow>Component library</Eyebrow>
             <h2 className="max-w-2xl font-display text-3xl font-semibold tracking-tight sm:text-4xl">
@@ -148,13 +149,11 @@ function PlaygroundPreview() {
 function SiteFooter() {
   return (
     <footer id="cli" className="border-t border-border/60 bg-surface-inset/40">
-      <div className="mx-auto max-w-7xl px-6 py-14">
+      <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6">
         <div className="flex flex-col gap-10 lg:flex-row lg:items-start lg:justify-between">
           <div className="max-w-sm">
             <div className="flex items-center gap-2">
-              <span className="grid size-7 place-items-center rounded-lg bg-gradient-primary text-primary-foreground shadow-glow">
-                <Terminal className="size-4" aria-hidden="true" />
-              </span>
+              <CooudMark className="h-4 w-8 text-fg" />
               <span className="font-display text-lg font-semibold tracking-tight">Cooud UI</span>
             </div>
             <p className="mt-4 text-sm text-fg-secondary">

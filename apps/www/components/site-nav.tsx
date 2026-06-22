@@ -2,20 +2,34 @@
 
 import { useTheme } from "@cooud/theme";
 import { Badge, Sheet, SheetContent, SheetTitle, SheetTrigger } from "@cooud/ui";
-import { Github, Menu, Moon, Sparkles, Sun } from "lucide-react";
+import { Github, Menu } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { CooudMark } from "./brand/cooud-mark";
 import { CommandSearch } from "./docs/command-search";
 import { ComponentNavList } from "./docs/docs-sidebar";
+import { DocumentationNavList } from "./docs/documentation-nav";
 
 const navLinks = [
+  { label: "Docs", href: "/docs" },
   { label: "Components", href: "/components" },
   { label: "Blocks", href: "/blocks" },
-  { label: "Theme", href: "/#playground" },
-  { label: "CLI", href: "/#cli" },
+  { label: "Create", href: "/create" },
+  { label: "Changelog", href: "/changelog" },
 ] as const;
 
 const GITHUB_URL = "https://github.com/pedrogbraz/cooud-ui";
+
+function ThemeGlyph({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true" focusable="false">
+      <circle cx="12" cy="12" r="8.1" stroke="currentColor" strokeWidth="1.7" />
+      <path d="M7.7 17.2 16.3 6.8" stroke="currentColor" strokeLinecap="round" strokeWidth="1.7" />
+      <path d="M9.2 7.6v8.7" stroke="currentColor" strokeLinecap="round" strokeWidth="1.7" />
+      <path d="M12.4 8.6v7" stroke="currentColor" strokeLinecap="round" strokeWidth="1.7" />
+    </svg>
+  );
+}
 
 export function SiteNav() {
   const { mode, toggleMode } = useTheme();
@@ -33,9 +47,7 @@ export function SiteNav() {
           href="/"
           className="group flex items-center gap-3 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base"
         >
-          <span className="grid size-8 place-items-center rounded-xl bg-gradient-primary text-primary-foreground shadow-glow transition-transform duration-200 group-hover:scale-105">
-            <Sparkles className="size-4" aria-hidden="true" />
-          </span>
+          <CooudMark className="h-5 w-10 text-fg transition-opacity group-hover:opacity-90" />
           <span className="flex items-center gap-2">
             <span className="font-display text-base font-semibold tracking-tight text-fg">
               Cooud UI
@@ -47,7 +59,7 @@ export function SiteNav() {
         </Link>
 
         {/* Center — nav links */}
-        <ul className="hidden items-center gap-1 md:flex">
+        <ul className="hidden items-center gap-1 lg:flex">
           {navLinks.map((link) => (
             <li key={link.href}>
               <Link
@@ -80,18 +92,14 @@ export function SiteNav() {
             aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
             className="grid size-9 place-items-center rounded-lg text-fg-secondary outline-none transition-colors hover:bg-surface-overlay hover:text-fg focus-visible:ring-2 focus-visible:ring-ring"
           >
-            {isDark ? (
-              <Sun className="size-[18px]" aria-hidden="true" />
-            ) : (
-              <Moon className="size-[18px]" aria-hidden="true" />
-            )}
+            <ThemeGlyph className="size-[18px]" />
           </button>
 
           {/* Mobile hamburger */}
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger
               aria-label="Open navigation menu"
-              className="grid size-9 place-items-center rounded-lg text-fg-secondary outline-none transition-colors hover:bg-surface-overlay hover:text-fg focus-visible:ring-2 focus-visible:ring-ring md:hidden"
+              className="grid size-9 place-items-center rounded-lg text-fg-secondary outline-none transition-colors hover:bg-surface-overlay hover:text-fg focus-visible:ring-2 focus-visible:ring-ring lg:hidden"
             >
               <Menu className="size-[18px]" aria-hidden="true" />
             </SheetTrigger>
@@ -115,6 +123,10 @@ export function SiteNav() {
                   </li>
                 ))}
               </ul>
+
+              <nav aria-label="Documentation" className="mt-6 text-sm">
+                <DocumentationNavList onNavigate={() => setMobileOpen(false)} />
+              </nav>
 
               <nav aria-label="Components" className="mt-6 text-sm">
                 <ComponentNavList onNavigate={() => setMobileOpen(false)} />
