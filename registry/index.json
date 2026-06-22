@@ -31,6 +31,16 @@
     ]
   },
   {
+    "name": "alert",
+    "type": "registry:ui",
+    "dependencies": [
+      "class-variance-authority@^0.7.1"
+    ],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
     "name": "animated-button",
     "type": "registry:ui",
     "dependencies": [
@@ -43,11 +53,42 @@
     ]
   },
   {
+    "name": "app-shell",
+    "type": "registry:ui",
+    "dependencies": [],
+    "registryDependencies": [
+      "cn",
+      "sidebar"
+    ]
+  },
+  {
+    "name": "aspect-ratio",
+    "type": "registry:ui",
+    "dependencies": [],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
     "name": "aurora-background",
     "type": "registry:ui",
     "dependencies": [],
     "registryDependencies": [
       "cn"
+    ]
+  },
+  {
+    "name": "autocomplete",
+    "type": "registry:ui",
+    "dependencies": [
+      "cmdk@^1.1.1"
+    ],
+    "registryDependencies": [
+      "cn",
+      "command",
+      "popover",
+      "skeleton",
+      "spinner"
     ]
   },
   {
@@ -134,6 +175,39 @@
     ]
   },
   {
+    "name": "code-block",
+    "type": "registry:ui",
+    "dependencies": [],
+    "registryDependencies": [
+      "badge",
+      "cn",
+      "copy-button"
+    ]
+  },
+  {
+    "name": "collapsible",
+    "type": "registry:ui",
+    "dependencies": [
+      "@radix-ui/react-collapsible@^1.1.14"
+    ],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "combobox",
+    "type": "registry:ui",
+    "dependencies": [
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": [
+      "button",
+      "cn",
+      "command",
+      "popover"
+    ]
+  },
+  {
     "name": "command",
     "type": "registry:ui",
     "dependencies": [
@@ -146,12 +220,32 @@
     ]
   },
   {
+    "name": "copy-button",
+    "type": "registry:ui",
+    "dependencies": [
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": [
+      "button",
+      "cn"
+    ]
+  },
+  {
     "name": "data-table",
     "type": "registry:ui",
     "dependencies": [
-      "@tanstack/react-table@^8.21.3"
+      "@tanstack/react-table@^8.21.3",
+      "lucide-react@^0.577.0"
     ],
     "registryDependencies": [
+      "badge",
+      "button",
+      "checkbox",
+      "cn",
+      "dropdown-menu",
+      "input",
+      "select",
+      "skeleton",
       "table"
     ]
   },
@@ -165,6 +259,21 @@
     "registryDependencies": [
       "button",
       "calendar",
+      "popover"
+    ]
+  },
+  {
+    "name": "date-range-picker",
+    "type": "registry:ui",
+    "dependencies": [
+      "date-fns@^3.6.0",
+      "lucide-react@^0.577.0",
+      "react-day-picker@^8.10.1"
+    ],
+    "registryDependencies": [
+      "button",
+      "calendar",
+      "cn",
       "popover"
     ]
   },
@@ -330,6 +439,43 @@
     "registryDependencies": []
   },
   {
+    "name": "multi-select",
+    "type": "registry:ui",
+    "dependencies": [
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": [
+      "badge",
+      "cn",
+      "command",
+      "popover"
+    ]
+  },
+  {
+    "name": "navigation-menu",
+    "type": "registry:ui",
+    "dependencies": [
+      "@radix-ui/react-navigation-menu@^1.2.16",
+      "class-variance-authority@^0.7.1",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "number-input",
+    "type": "registry:ui",
+    "dependencies": [
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": [
+      "button",
+      "cn",
+      "input"
+    ]
+  },
+  {
     "name": "pagination",
     "type": "registry:ui",
     "dependencies": [
@@ -430,6 +576,22 @@
     "dependencies": [],
     "registryDependencies": [
       "cn"
+    ]
+  },
+  {
+    "name": "sidebar",
+    "type": "registry:ui",
+    "dependencies": [
+      "@radix-ui/react-slot@^1.2.3",
+      "class-variance-authority@^0.7.1"
+    ],
+    "registryDependencies": [
+      "button",
+      "cn",
+      "scroll-area",
+      "separator",
+      "sheet",
+      "tooltip"
     ]
   },
   {

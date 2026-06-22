@@ -33,6 +33,15 @@ const VIEW_VIEWS: Record<BlockFamily, BlockDetailView> = {
     () => import("../../lib/blocks/application").then((m) => m.ApplicationView),
     { loading: BlockViewSkeleton },
   ),
+  dashboard: dynamic(() => import("../../lib/blocks/dashboard").then((m) => m.DashboardView), {
+    loading: BlockViewSkeleton,
+  }),
+  billing: dynamic(() => import("../../lib/blocks/billing").then((m) => m.BillingView), {
+    loading: BlockViewSkeleton,
+  }),
+  page: dynamic(() => import("../../lib/blocks/page-sections").then((m) => m.PageView), {
+    loading: BlockViewSkeleton,
+  }),
 };
 
 export function BlockView({ slug, variant }: { slug: string; variant: string }) {

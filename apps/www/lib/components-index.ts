@@ -39,6 +39,11 @@ export const CATEGORIES: ComponentCategory[] = [
         name: "ToggleGroup",
         description: "A set of toggles, single or multiple.",
       },
+      {
+        slug: "copy-button",
+        name: "CopyButton",
+        description: "Copy text to the clipboard with success feedback.",
+      },
     ],
   },
   {
@@ -52,6 +57,16 @@ export const CATEGORIES: ComponentCategory[] = [
       { slug: "radio-group", name: "RadioGroup", description: "Single choice among options." },
       { slug: "switch", name: "Switch", description: "Toggle a setting on or off." },
       { slug: "select", name: "Select", description: "Composable dropdown with groups." },
+      {
+        slug: "combobox",
+        name: "Combobox",
+        description: "Searchable single-select with autocomplete.",
+      },
+      {
+        slug: "multi-select",
+        name: "MultiSelect",
+        description: "Pick multiple values shown as removable chips.",
+      },
       { slug: "slider", name: "Slider", description: "Pick a value or a range." },
       { slug: "field", name: "Field", description: "Label + description + error layout." },
       { slug: "form", name: "Form", description: "react-hook-form + zod integration." },
@@ -60,6 +75,16 @@ export const CATEGORIES: ComponentCategory[] = [
         slug: "file-dropzone",
         name: "FileDropzone",
         description: "Drag-and-drop file upload area.",
+      },
+      {
+        slug: "number-input",
+        name: "NumberInput",
+        description: "Numeric field with steppers, clamping and keyboard control.",
+      },
+      {
+        slug: "autocomplete",
+        name: "Autocomplete",
+        description: "Free-text input with sync or async suggestions.",
       },
     ],
   },
@@ -71,19 +96,46 @@ export const CATEGORIES: ComponentCategory[] = [
       { slug: "badge", name: "Badge", description: "Small status / category label." },
       { slug: "card", name: "Card", description: "Surface that groups related content." },
       { slug: "table", name: "Table", description: "Styled semantic table primitives." },
-      { slug: "data-table", name: "DataTable", description: "Sortable table powered by TanStack." },
+      {
+        slug: "data-table",
+        name: "DataTable",
+        description:
+          "TanStack table with sorting, search & faceted filters, pagination, row selection with bulk actions, column visibility, density, and loading/empty/error states.",
+      },
       { slug: "metric", name: "Metric", description: "KPI value with trend delta." },
       { slug: "kbd", name: "Kbd", description: "Keyboard key hint." },
       { slug: "empty", name: "Empty", description: "Empty-state placeholder." },
       { slug: "separator", name: "Separator", description: "Visual divider between content." },
       { slug: "skeleton", name: "Skeleton", description: "Loading placeholder shimmer." },
       { slug: "scroll-area", name: "ScrollArea", description: "Custom-styled scroll container." },
+      {
+        slug: "code-block",
+        name: "CodeBlock",
+        description: "Source snippet with header, line numbers and copy.",
+      },
+      {
+        slug: "collapsible",
+        name: "Collapsible",
+        description: "Animated show/hide for a single section.",
+        importName: "Collapsible, CollapsibleTrigger, CollapsibleContent",
+      },
+      {
+        slug: "aspect-ratio",
+        name: "AspectRatio",
+        description: "Constrain content to a fixed width-to-height ratio.",
+      },
     ],
   },
   {
     slug: "feedback",
     name: "Feedback",
     items: [
+      {
+        slug: "alert",
+        name: "Alert",
+        description: "Inline callout banner with semantic variants.",
+        importName: "Alert, AlertTitle, AlertDescription",
+      },
       { slug: "spinner", name: "Spinner", description: "Indeterminate loading indicator." },
       { slug: "progress", name: "Progress", description: "Determinate progress bar." },
       {
@@ -117,6 +169,26 @@ export const CATEGORIES: ComponentCategory[] = [
       { slug: "accordion", name: "Accordion", description: "Collapsible content sections." },
       { slug: "breadcrumb", name: "Breadcrumb", description: "Hierarchical page trail." },
       { slug: "pagination", name: "Pagination", description: "Navigate between pages." },
+      {
+        slug: "navigation-menu",
+        name: "NavigationMenu",
+        description: "Horizontal menu bar with disclosure panels.",
+        importName:
+          "NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuTrigger, NavigationMenuContent, NavigationMenuLink",
+      },
+      {
+        slug: "sidebar",
+        name: "Sidebar",
+        description: "Composable, collapsible app sidebar.",
+        importName:
+          "Sidebar, SidebarProvider, SidebarTrigger, SidebarContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton",
+      },
+      {
+        slug: "app-shell",
+        name: "AppShell",
+        description: "Sidebar + header + content layout in one step.",
+        importName: "AppShell",
+      },
     ],
   },
   {
@@ -125,6 +197,11 @@ export const CATEGORIES: ComponentCategory[] = [
     items: [
       { slug: "calendar", name: "Calendar", description: "Date grid (react-day-picker)." },
       { slug: "date-picker", name: "DatePicker", description: "Popover-based date selection." },
+      {
+        slug: "date-range-picker",
+        name: "DateRangePicker",
+        description: "Start/end date selection with presets.",
+      },
     ],
   },
   {

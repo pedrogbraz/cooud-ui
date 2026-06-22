@@ -1,6 +1,8 @@
 "use client";
 
 import {
+  Alert,
+  AlertDescription,
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -10,13 +12,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
+  AlertTitle,
   Button,
   Progress,
   Spinner,
   Toaster,
   toast,
 } from "@cooud/ui";
-import { Trash2 } from "lucide-react";
+import { CircleAlert, CircleCheck, Info, Terminal, Trash2, TriangleAlert } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ExampleList } from "../../components/docs/example-list";
 import type { ExampleMap } from "./types";
@@ -63,6 +66,92 @@ function ToastDemo() {
 }
 
 export const feedbackExamples: ExampleMap = {
+  alert: [
+    {
+      id: "default",
+      title: "Default",
+      description: "An inline callout with an icon, title, and description.",
+      code: `<Alert>
+  <Terminal aria-hidden="true" />
+  <AlertTitle>Heads up!</AlertTitle>
+  <AlertDescription>
+    You can add components to your app using the CLI.
+  </AlertDescription>
+</Alert>`,
+      preview: (
+        <Alert className="max-w-md">
+          <Terminal aria-hidden="true" />
+          <AlertTitle>Heads up!</AlertTitle>
+          <AlertDescription>You can add components to your app using the CLI.</AlertDescription>
+        </Alert>
+      ),
+    },
+    {
+      id: "variants",
+      title: "Variants",
+      description: "Semantic variants tint the surface, border, and icon for each intent.",
+      code: `<div className="flex flex-col gap-4">
+  <Alert variant="info">
+    <Info aria-hidden="true" />
+    <AlertTitle>New version available</AlertTitle>
+    <AlertDescription>A new release is ready to install.</AlertDescription>
+  </Alert>
+  <Alert variant="success">
+    <CircleCheck aria-hidden="true" />
+    <AlertTitle>Payment received</AlertTitle>
+    <AlertDescription>Your subscription is now active.</AlertDescription>
+  </Alert>
+  <Alert variant="warning">
+    <TriangleAlert aria-hidden="true" />
+    <AlertTitle>Storage almost full</AlertTitle>
+    <AlertDescription>You've used 92% of your quota.</AlertDescription>
+  </Alert>
+  <Alert variant="destructive">
+    <CircleAlert aria-hidden="true" />
+    <AlertTitle>Unable to save changes</AlertTitle>
+    <AlertDescription>Check your connection and try again.</AlertDescription>
+  </Alert>
+</div>`,
+      preview: (
+        <div className="flex max-w-md flex-col gap-4">
+          <Alert variant="info">
+            <Info aria-hidden="true" />
+            <AlertTitle>New version available</AlertTitle>
+            <AlertDescription>A new release is ready to install.</AlertDescription>
+          </Alert>
+          <Alert variant="success">
+            <CircleCheck aria-hidden="true" />
+            <AlertTitle>Payment received</AlertTitle>
+            <AlertDescription>Your subscription is now active.</AlertDescription>
+          </Alert>
+          <Alert variant="warning">
+            <TriangleAlert aria-hidden="true" />
+            <AlertTitle>Storage almost full</AlertTitle>
+            <AlertDescription>You've used 92% of your quota.</AlertDescription>
+          </Alert>
+          <Alert variant="destructive">
+            <CircleAlert aria-hidden="true" />
+            <AlertTitle>Unable to save changes</AlertTitle>
+            <AlertDescription>Check your connection and try again.</AlertDescription>
+          </Alert>
+        </div>
+      ),
+    },
+    {
+      id: "title-only",
+      title: "Title only",
+      description: "Drop the icon and description for a compact, single-line callout.",
+      code: `<Alert variant="info">
+  <AlertTitle>Your trial ends in 3 days.</AlertTitle>
+</Alert>`,
+      preview: (
+        <Alert variant="info" className="max-w-md">
+          <AlertTitle>Your trial ends in 3 days.</AlertTitle>
+        </Alert>
+      ),
+    },
+  ],
+
   spinner: [
     {
       id: "sizes",

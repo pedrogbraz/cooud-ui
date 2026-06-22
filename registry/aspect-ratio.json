@@ -1,0 +1,15 @@
+{
+  "name": "aspect-ratio",
+  "type": "registry:ui",
+  "dependencies": [],
+  "registryDependencies": [
+    "cn"
+  ],
+  "files": [
+    {
+      "path": "aspect-ratio.tsx",
+      "content": "import { type CSSProperties, forwardRef, type HTMLAttributes } from \"react\";\nimport { cn } from \"../lib/cn.js\";\n\nexport interface AspectRatioProps extends HTMLAttributes<HTMLDivElement> {\n  /**\n   * The desired width-to-height ratio, expressed as a number\n   * (e.g. `16 / 9`, `1`, `4 / 3`). Defaults to `16 / 9`.\n   */\n  ratio?: number;\n}\n\n/**\n * Constrains its content to a fixed width-to-height ratio using the native\n * CSS `aspect-ratio` property (no JavaScript measurement, no dependency).\n * The wrapper fills the available width; children should stretch to fill it\n * (e.g. an `<img className=\"h-full w-full object-cover\" />`).\n */\nexport const AspectRatio = forwardRef<HTMLDivElement, AspectRatioProps>(\n  ({ ratio = 16 / 9, className, style, ...props }, ref) => {\n    return (\n      <div\n        ref={ref}\n        data-slot=\"aspect-ratio\"\n        className={cn(\"relative w-full\", className)}\n        style={{ aspectRatio: ratio, ...style } as CSSProperties}\n        {...props}\n      />\n    );\n  },\n);\nAspectRatio.displayName = \"AspectRatio\";\n",
+      "target": "ui"
+    }
+  ]
+}

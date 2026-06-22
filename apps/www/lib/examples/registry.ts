@@ -28,6 +28,7 @@ export const EXAMPLE_FAMILY_BY_SLUG: Record<string, ExampleFamily> = {
   "animated-button": "buttons",
   toggle: "buttons",
   "toggle-group": "buttons",
+  "copy-button": "buttons",
   // forms
   input: "forms",
   textarea: "forms",
@@ -36,11 +37,15 @@ export const EXAMPLE_FAMILY_BY_SLUG: Record<string, ExampleFamily> = {
   "radio-group": "forms",
   switch: "forms",
   select: "forms",
+  combobox: "forms",
+  "multi-select": "forms",
   slider: "forms",
   field: "forms",
   form: "forms",
   "input-otp": "forms",
   "file-dropzone": "forms",
+  "number-input": "forms",
+  autocomplete: "forms",
   // data-display
   avatar: "data-display",
   badge: "data-display",
@@ -53,10 +58,14 @@ export const EXAMPLE_FAMILY_BY_SLUG: Record<string, ExampleFamily> = {
   separator: "data-display",
   skeleton: "data-display",
   "scroll-area": "data-display",
+  "code-block": "data-display",
+  collapsible: "data-display",
+  "aspect-ratio": "data-display",
   // feedback
   spinner: "feedback",
   progress: "feedback",
   sonner: "feedback",
+  alert: "feedback",
   "alert-dialog": "feedback",
   // overlays
   dialog: "overlays",
@@ -72,9 +81,13 @@ export const EXAMPLE_FAMILY_BY_SLUG: Record<string, ExampleFamily> = {
   accordion: "navigation",
   breadcrumb: "navigation",
   pagination: "navigation",
+  "navigation-menu": "navigation",
+  sidebar: "navigation",
+  "app-shell": "navigation",
   // date-time
   calendar: "date-time",
   "date-picker": "date-time",
+  "date-range-picker": "date-time",
   // charts
   chart: "charts",
   // premium

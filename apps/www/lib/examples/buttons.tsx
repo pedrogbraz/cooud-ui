@@ -1,6 +1,14 @@
 "use client";
 
-import { AnimatedButton, Button, Spinner, Toggle, ToggleGroup, ToggleGroupItem } from "@cooud/ui";
+import {
+  AnimatedButton,
+  Button,
+  CopyButton,
+  Spinner,
+  Toggle,
+  ToggleGroup,
+  ToggleGroupItem,
+} from "@cooud/ui";
 import {
   AlignCenter,
   AlignLeft,
@@ -373,6 +381,45 @@ return (
   </ToggleGroup>
 );`,
       preview: <ToggleGroupMultipleDemo />,
+    },
+  ],
+
+  "copy-button": [
+    {
+      id: "default",
+      title: "Default",
+      description:
+        "An icon button that writes `value` to the clipboard and swaps to a check for a moment. It manages its own copied state.",
+      code: `<CopyButton value="npm install @cooud/ui" />`,
+      preview: <CopyButton value="npm install @cooud/ui" />,
+    },
+    {
+      id: "inline",
+      title: "Inline with a value",
+      description:
+        "Drop it next to a value the user might copy, such as an API key or command. Use `copyLabel` / `copiedLabel` to localise the accessible text, and the outline variant to sit flush with a field.",
+      code: `<div className="flex items-center gap-2">
+  <code className="rounded bg-surface-inset px-2 py-1 font-mono text-sm">cooud_sk_live_…a1b2</code>
+  <CopyButton
+    value="cooud_sk_live_a1b2"
+    variant="outline"
+    copyLabel="Copy API key"
+    copiedLabel="API key copied"
+  />
+</div>`,
+      preview: (
+        <div className="flex items-center gap-2">
+          <code className="rounded bg-surface-inset px-2 py-1 font-mono text-sm">
+            cooud_sk_live_…a1b2
+          </code>
+          <CopyButton
+            value="cooud_sk_live_a1b2"
+            variant="outline"
+            copyLabel="Copy API key"
+            copiedLabel="API key copied"
+          />
+        </div>
+      ),
     },
   ],
 };

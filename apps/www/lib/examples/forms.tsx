@@ -1,9 +1,12 @@
 "use client";
 
 import {
+  Autocomplete,
+  type AutocompleteOption,
   Badge,
   Button,
   Checkbox,
+  Combobox,
   Field,
   FieldDescription,
   FieldError,
@@ -21,6 +24,8 @@ import {
   InputOTPSeparator,
   InputOTPSlot,
   Label,
+  MultiSelect,
+  NumberInput,
   RadioGroup,
   RadioGroupItem,
   Select,
@@ -565,6 +570,336 @@ function FormDemo() {
   );
 }`;
 
+// ── Combobox ───────────────────────────────────────────────────────
+const frameworkOptions = [
+  { value: "next", label: "Next.js" },
+  { value: "remix", label: "Remix" },
+  { value: "astro", label: "Astro" },
+  { value: "nuxt", label: "Nuxt" },
+  { value: "sveltekit", label: "SvelteKit" },
+  { value: "solidstart", label: "SolidStart", disabled: true },
+];
+
+function ComboboxDemo() {
+  const [framework, setFramework] = useState<string>();
+
+  return (
+    <Field className="max-w-xs">
+      <FieldLabel id="framework-label">Framework</FieldLabel>
+      <Combobox
+        options={frameworkOptions}
+        value={framework}
+        onValueChange={setFramework}
+        placeholder="Select a framework…"
+        searchPlaceholder="Search frameworks…"
+        aria-labelledby="framework-label"
+      />
+      <FieldDescription>
+        {framework
+          ? `Selected: ${frameworkOptions.find((o) => o.value === framework)?.label}`
+          : "Search and pick a single framework."}
+      </FieldDescription>
+    </Field>
+  );
+}
+
+const comboboxDemoCode = `const frameworkOptions = [
+  { value: "next", label: "Next.js" },
+  { value: "remix", label: "Remix" },
+  { value: "astro", label: "Astro" },
+  { value: "nuxt", label: "Nuxt" },
+  { value: "sveltekit", label: "SvelteKit" },
+  { value: "solidstart", label: "SolidStart", disabled: true },
+];
+
+function ComboboxDemo() {
+  const [framework, setFramework] = useState<string>();
+
+  return (
+    <Field className="max-w-xs">
+      <FieldLabel id="framework-label">Framework</FieldLabel>
+      <Combobox
+        options={frameworkOptions}
+        value={framework}
+        onValueChange={setFramework}
+        placeholder="Select a framework…"
+        searchPlaceholder="Search frameworks…"
+        aria-labelledby="framework-label"
+      />
+      <FieldDescription>
+        {framework
+          ? \`Selected: \${frameworkOptions.find((o) => o.value === framework)?.label}\`
+          : "Search and pick a single framework."}
+      </FieldDescription>
+    </Field>
+  );
+}`;
+
+// ── MultiSelect ────────────────────────────────────────────────────
+const skillOptions = [
+  { value: "typescript", label: "TypeScript" },
+  { value: "react", label: "React" },
+  { value: "node", label: "Node.js" },
+  { value: "postgres", label: "PostgreSQL" },
+  { value: "tailwind", label: "Tailwind CSS" },
+  { value: "graphql", label: "GraphQL" },
+  { value: "rust", label: "Rust", disabled: true },
+];
+
+function MultiSelectDemo() {
+  const [skills, setSkills] = useState<string[]>(["typescript", "react"]);
+
+  return (
+    <Field className="max-w-sm">
+      <FieldLabel id="skills-label">Skills</FieldLabel>
+      <MultiSelect
+        options={skillOptions}
+        value={skills}
+        onValueChange={setSkills}
+        placeholder="Select skills…"
+        aria-labelledby="skills-label"
+      />
+      <FieldDescription>
+        {skills.length > 0 ? `${skills.length} selected.` : "Pick one or more skills."}
+      </FieldDescription>
+    </Field>
+  );
+}
+
+const multiSelectDemoCode = `const skillOptions = [
+  { value: "typescript", label: "TypeScript" },
+  { value: "react", label: "React" },
+  { value: "node", label: "Node.js" },
+  { value: "postgres", label: "PostgreSQL" },
+  { value: "tailwind", label: "Tailwind CSS" },
+  { value: "graphql", label: "GraphQL" },
+  { value: "rust", label: "Rust", disabled: true },
+];
+
+function MultiSelectDemo() {
+  const [skills, setSkills] = useState<string[]>(["typescript", "react"]);
+
+  return (
+    <Field className="max-w-sm">
+      <FieldLabel id="skills-label">Skills</FieldLabel>
+      <MultiSelect
+        options={skillOptions}
+        value={skills}
+        onValueChange={setSkills}
+        placeholder="Select skills…"
+        aria-labelledby="skills-label"
+      />
+      <FieldDescription>
+        {skills.length > 0 ? \`\${skills.length} selected.\` : "Pick one or more skills."}
+      </FieldDescription>
+    </Field>
+  );
+}`;
+
+function MultiSelectMaxDisplayDemo() {
+  const [skills, setSkills] = useState<string[]>(["typescript", "react", "node", "postgres"]);
+
+  return (
+    <MultiSelect
+      options={skillOptions}
+      value={skills}
+      onValueChange={setSkills}
+      maxDisplay={2}
+      placeholder="Select skills…"
+      aria-label="Skills"
+      className="max-w-sm"
+    />
+  );
+}
+
+const multiSelectMaxDisplayDemoCode = `function MultiSelectMaxDisplayDemo() {
+  const [skills, setSkills] = useState<string[]>([
+    "typescript",
+    "react",
+    "node",
+    "postgres",
+  ]);
+
+  return (
+    <MultiSelect
+      options={skillOptions}
+      value={skills}
+      onValueChange={setSkills}
+      maxDisplay={2}
+      placeholder="Select skills…"
+      aria-label="Skills"
+      className="max-w-sm"
+    />
+  );
+}`;
+
+// ── NumberInput ────────────────────────────────────────────────────
+function NumberInputDemo() {
+  const [quantity, setQuantity] = useState<number | null>(1);
+
+  return (
+    <Field className="max-w-[12rem]">
+      <FieldLabel htmlFor="qty">Quantity</FieldLabel>
+      <NumberInput
+        id="qty"
+        value={quantity}
+        onValueChange={setQuantity}
+        min={0}
+        max={10}
+        aria-label="Quantity"
+      />
+      <FieldDescription>Between 0 and 10.</FieldDescription>
+    </Field>
+  );
+}
+
+const numberInputDemoCode = `function NumberInputDemo() {
+  const [quantity, setQuantity] = useState<number | null>(1);
+
+  return (
+    <Field className="max-w-[12rem]">
+      <FieldLabel htmlFor="qty">Quantity</FieldLabel>
+      <NumberInput
+        id="qty"
+        value={quantity}
+        onValueChange={setQuantity}
+        min={0}
+        max={10}
+        aria-label="Quantity"
+      />
+      <FieldDescription>Between 0 and 10.</FieldDescription>
+    </Field>
+  );
+}`;
+
+function NumberInputCurrencyDemo() {
+  const [price, setPrice] = useState<number | null>(19.9);
+
+  return (
+    <NumberInput
+      value={price}
+      onValueChange={setPrice}
+      min={0}
+      step={0.1}
+      precision={2}
+      format={(value) => `$${value.toFixed(2)}`}
+      aria-label="Price"
+      className="max-w-[12rem]"
+    />
+  );
+}
+
+const numberInputCurrencyDemoCode = `function NumberInputCurrencyDemo() {
+  const [price, setPrice] = useState<number | null>(19.9);
+
+  return (
+    <NumberInput
+      value={price}
+      onValueChange={setPrice}
+      min={0}
+      step={0.1}
+      precision={2}
+      format={(value) => \`$\${value.toFixed(2)}\`}
+      aria-label="Price"
+      className="max-w-[12rem]"
+    />
+  );
+}`;
+
+// ── Autocomplete ───────────────────────────────────────────────────
+const autocompleteFrameworks: AutocompleteOption[] = [
+  { value: "Next.js" },
+  { value: "Remix" },
+  { value: "Astro" },
+  { value: "SvelteKit" },
+  { value: "Nuxt" },
+  { value: "SolidStart" },
+];
+
+function AutocompleteDemo() {
+  const [value, setValue] = useState("");
+
+  return (
+    <Autocomplete
+      options={autocompleteFrameworks}
+      value={value}
+      onValueChange={setValue}
+      placeholder="Search a framework…"
+      aria-label="Framework"
+      className="max-w-xs"
+    />
+  );
+}
+
+const autocompleteDemoCode = `const frameworks: AutocompleteOption[] = [
+  { value: "Next.js" },
+  { value: "Remix" },
+  { value: "Astro" },
+  { value: "SvelteKit" },
+  { value: "Nuxt" },
+  { value: "SolidStart" },
+];
+
+function AutocompleteDemo() {
+  const [value, setValue] = useState("");
+
+  return (
+    <Autocomplete
+      options={frameworks}
+      value={value}
+      onValueChange={setValue}
+      placeholder="Search a framework…"
+      aria-label="Framework"
+      className="max-w-xs"
+    />
+  );
+}`;
+
+function AutocompleteAsyncDemo() {
+  const [value, setValue] = useState("");
+
+  // Simulated remote search over the static list (replace with a real fetch).
+  const search = async (query: string): Promise<AutocompleteOption[]> => {
+    await new Promise((resolve) => setTimeout(resolve, 350));
+    const needle = query.trim().toLowerCase();
+    return needle === ""
+      ? autocompleteFrameworks
+      : autocompleteFrameworks.filter((o) => o.value.toLowerCase().includes(needle));
+  };
+
+  return (
+    <Autocomplete
+      onSearch={search}
+      value={value}
+      onValueChange={setValue}
+      placeholder="Search (async)…"
+      aria-label="Framework (async)"
+      className="max-w-xs"
+    />
+  );
+}
+
+const autocompleteAsyncDemoCode = `function AutocompleteAsyncDemo() {
+  const [value, setValue] = useState("");
+
+  // Debounced; the component tracks its own loading state when onSearch is set.
+  const search = async (query: string): Promise<AutocompleteOption[]> => {
+    const res = await fetch(\`/api/frameworks?q=\${encodeURIComponent(query)}\`);
+    return res.json();
+  };
+
+  return (
+    <Autocomplete
+      onSearch={search}
+      value={value}
+      onValueChange={setValue}
+      placeholder="Search (async)…"
+      aria-label="Framework (async)"
+      className="max-w-xs"
+    />
+  );
+}`;
+
 export const formsExamples: ExampleMap = {
   input: [
     {
@@ -712,6 +1047,31 @@ export const formsExamples: ExampleMap = {
       preview: <SelectDemo />,
     },
   ],
+  combobox: [
+    {
+      id: "single-select",
+      title: "Single select",
+      description: "A searchable, single-value picker built on Command inside a Popover.",
+      code: comboboxDemoCode,
+      preview: <ComboboxDemo />,
+    },
+  ],
+  "multi-select": [
+    {
+      id: "default",
+      title: "Default",
+      description: "Select multiple values; each shows as a removable chip in the trigger.",
+      code: multiSelectDemoCode,
+      preview: <MultiSelectDemo />,
+    },
+    {
+      id: "max-display",
+      title: "Max display",
+      description: "Cap visible chips with `maxDisplay`; the rest collapse into a +N badge.",
+      code: multiSelectMaxDisplayDemoCode,
+      preview: <MultiSelectMaxDisplayDemo />,
+    },
+  ],
   slider: [
     {
       id: "single-thumb",
@@ -787,6 +1147,44 @@ export const formsExamples: ExampleMap = {
       description: "Drag-and-drop or click-to-browse uploads with selected-file feedback.",
       code: fileDropzoneDemoCode,
       preview: <FileDropzoneDemo />,
+    },
+  ],
+
+  "number-input": [
+    {
+      id: "default",
+      title: "Default",
+      description:
+        "A spinbutton with increment/decrement steppers. Arrow keys step, PageUp/PageDown jump, and Home/End snap to `min`/`max`. Values are clamped to the bounds on blur.",
+      code: numberInputDemoCode,
+      preview: <NumberInputDemo />,
+    },
+    {
+      id: "precision-format",
+      title: "Precision & formatting",
+      description:
+        "Use `precision` for decimal rounding and `format` to display a unit such as currency when the field is not focused.",
+      code: numberInputCurrencyDemoCode,
+      preview: <NumberInputCurrencyDemo />,
+    },
+  ],
+
+  autocomplete: [
+    {
+      id: "default",
+      title: "Default",
+      description:
+        "Free-text input that filters a static `options` list as you type. Arrow keys move the highlight, Enter commits it, and Escape dismisses the suggestions.",
+      code: autocompleteDemoCode,
+      preview: <AutocompleteDemo />,
+    },
+    {
+      id: "async",
+      title: "Async suggestions",
+      description:
+        "Pass `onSearch` to resolve suggestions remotely. Calls are debounced, stale responses are dropped, and the busy state (spinner + skeletons) is managed for you.",
+      code: autocompleteAsyncDemoCode,
+      preview: <AutocompleteAsyncDemo />,
     },
   ],
 };

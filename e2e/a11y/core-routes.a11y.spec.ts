@@ -70,6 +70,23 @@ const CORE_ROUTES: ReadonlyArray<{ path: string; label: string }> = [
   { path: "/create", label: "create studio" },
   { path: "/docs", label: "docs landing" },
   { path: "/docs/installation", label: "docs · installation" },
+  // P3 wave 1 components — scan their live demo pages directly.
+  { path: "/components/alert", label: "components · alert" },
+  { path: "/components/combobox", label: "components · combobox" },
+  { path: "/components/multi-select", label: "components · multi-select" },
+  { path: "/components/data-table", label: "components · data-table" },
+  // P3 layout & app-navigation components — mini-layout demos in fixed frames.
+  { path: "/components/sidebar", label: "components · sidebar" },
+  { path: "/components/app-shell", label: "components · app-shell" },
+  { path: "/components/navigation-menu", label: "components · navigation-menu" },
+  // P3 components wave — copy/code/collapsible/aspect-ratio/number/date-range/autocomplete.
+  { path: "/components/copy-button", label: "components · copy-button" },
+  { path: "/components/code-block", label: "components · code-block" },
+  { path: "/components/collapsible", label: "components · collapsible" },
+  { path: "/components/aspect-ratio", label: "components · aspect-ratio" },
+  { path: "/components/number-input", label: "components · number-input" },
+  { path: "/components/date-range-picker", label: "components · date-range-picker" },
+  { path: "/components/autocomplete", label: "components · autocomplete" },
 ];
 
 async function runAxe(page: Page) {

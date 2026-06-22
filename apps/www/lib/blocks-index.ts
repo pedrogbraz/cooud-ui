@@ -138,6 +138,111 @@ export const BLOCK_CATEGORIES: BlockCategory[] = [
       },
     ],
   },
+  {
+    slug: "dashboard",
+    name: "Dashboard",
+    items: [
+      {
+        slug: "dashboard",
+        name: "Dashboard",
+        description: "A full application shell with sidebar nav, KPI cards, a chart, and a table.",
+        variants: [
+          {
+            id: "analytics",
+            name: "Analytics dashboard",
+            description:
+              "A full application shell — sidebar nav, search topbar, KPI cards, a revenue chart and a recent-activity table.",
+          },
+          {
+            id: "admin-overview",
+            name: "Admin overview",
+            description:
+              "An admin console with an icon-collapsible sidebar, status cards, a signups trend and a larger users & orders table.",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    slug: "billing",
+    name: "Billing",
+    items: [
+      {
+        slug: "billing",
+        name: "Billing",
+        description: "Subscription management, usage meters, invoices, and a plan selector.",
+        variants: [
+          {
+            id: "subscription",
+            name: "Subscription",
+            description:
+              "Current plan, usage meters, payment method, and a downloadable invoice history.",
+          },
+          {
+            id: "plans",
+            name: "Plan selector",
+            description:
+              "Three-tier plan picker with a highlighted popular plan and a monthly/annual toggle.",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    slug: "page",
+    name: "Page sections",
+    items: [
+      {
+        slug: "page-header",
+        name: "Page Header",
+        description: "A page header with breadcrumbs, title, status, actions, and optional tabs.",
+        variants: [
+          {
+            id: "with-actions",
+            name: "Title and actions",
+            description:
+              "Breadcrumb, title with status badge, supporting copy, and primary/secondary actions.",
+          },
+          {
+            id: "with-tabs",
+            name: "Title and tabs",
+            description: "Adds a section tab row beneath the header for switching detail views.",
+          },
+        ],
+      },
+      {
+        slug: "filter-bar",
+        name: "Filter Bar",
+        description: "A search and filter toolbar with chips and a result count.",
+        variants: [
+          {
+            id: "toolbar",
+            name: "Search and filters",
+            description:
+              "Search input, status select, owner combobox, list/grid toggle, removable filter chips, and a result count.",
+          },
+        ],
+      },
+      {
+        slug: "empty-state",
+        name: "Empty State",
+        description: "Empty and error states with illustrations, guidance, and recovery actions.",
+        variants: [
+          {
+            id: "empty",
+            name: "Empty list",
+            description: "A friendly empty list with an illustration, guidance, and creation CTAs.",
+          },
+          {
+            id: "error",
+            name: "Error / not found",
+            description:
+              "An error state for failed loads or 404s, with retry and recovery actions.",
+          },
+        ],
+      },
+    ],
+  },
 ];
 
 export const ALL_BLOCKS: (BlockMeta & { category: string })[] = BLOCK_CATEGORIES.flatMap((c) =>
