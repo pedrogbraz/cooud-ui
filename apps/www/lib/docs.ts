@@ -45,6 +45,13 @@ export const DOC_NAV_SECTIONS: { heading: string; items: DocNavItem[] }[] = [
         description: "Install, add, diff, and inspect registry components.",
       },
       {
+        label: "Stack Builder",
+        href: "/docs/stack-builder",
+        description:
+          "Beta full-stack picker, preview scaffolding command, KICKOFF.md, and stack.json schema.",
+        status: "beta",
+      },
+      {
         label: "RTL",
         href: "/docs/rtl",
         description: "Direction, spacing, keyboard behavior, and locale checks.",
@@ -114,6 +121,13 @@ export const INSTALL_OPTIONS = [
       "Build a preset visually, save it, and generate the setup snippets for your stack.",
     href: "/create",
     action: "Open Create",
+  },
+  {
+    title: "Use Stack Builder",
+    description:
+      "Compose a full-stack app and export beta preview artifacts while the generator package is still pending.",
+    href: "/stack",
+    action: "Open Stack Builder",
   },
   {
     title: "Use the CLI",
@@ -215,6 +229,19 @@ export const ACCESSIBILITY_CHECKS = [
 ] as const;
 
 export const CHANGELOG_ENTRIES = [
+  {
+    date: "2026-06-22",
+    version: "v0.2.2",
+    status: "In development",
+    title: "Stack Builder beta preview and schema docs",
+    summary:
+      "Added Stack Builder to the docs IA and clarified that generated commands are preview artifacts until a cooud-stack generator package exists.",
+    items: [
+      "Stack Builder docs route with beta status and generator truth",
+      "Command palette entries for Stack Builder docs and the live builder",
+      "stack.json schema metadata for the current builder output",
+    ],
+  },
   {
     date: "2026-06-22",
     version: "v0.2.0",

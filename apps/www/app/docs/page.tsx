@@ -33,7 +33,8 @@ const foundations = [
 ] as const;
 
 export default function DocsOverviewPage() {
-  const latest = CHANGELOG_ENTRIES[0];
+  const latest =
+    CHANGELOG_ENTRIES.find((entry) => entry.status === "Released") ?? CHANGELOG_ENTRIES[0];
 
   return (
     <div className="py-10">
