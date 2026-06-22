@@ -9,6 +9,14 @@ export const Slider = forwardRef<
   const provided = props.value ?? props.defaultValue;
   const values = provided?.length ? provided : [props.min ?? 0];
 
+  // Radix forwards the Root's `aria-label`/`aria-labelledby` only inconsistently
+  // to the focusable thumb. The thumb is the actual `role="slider"` input, so we
+  // name it explicitly to satisfy `aria-input-field-name` (WCAG 4.1.2). For
+  // multi-thumb sliders each thumb gets an index suffix so the names stay unique.
+  const ariaLabel = props["aria-label"];
+  const ariaLabelledby = props["aria-labelledby"];
+  const multipleThumbs = values.length > 1;
+
   return (
     <SliderPrimitive.Root
       ref={ref}
@@ -26,6 +34,10 @@ export const Slider = forwardRef<
         <SliderPrimitive.Thumb
           // biome-ignore lint/suspicious/noArrayIndexKey: thumb count is positional and stable
           key={index}
+          aria-label={
+            ariaLabel ? (multipleThumbs ? `${ariaLabel} (${index + 1})` : ariaLabel) : undefined
+          }
+          aria-labelledby={ariaLabel ? undefined : ariaLabelledby}
           className="block size-4 rounded-full border border-primary bg-surface-base shadow-sm transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base disabled:pointer-events-none"
         />
       ))}

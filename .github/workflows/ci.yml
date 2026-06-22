@@ -51,6 +51,19 @@ jobs:
       - name: Build
         run: bun run build
 
+      # --- Browser-driven gates: run AFTER Build (they serve the built app). ---
+      # The Playwright config's webServer boots `next start` on the already-built
+      # apps/www output, so Build must precede these steps.
+
+      - name: Install Playwright browsers (Chromium)
+        run: bunx playwright install --with-deps chromium
+
+      - name: Accessibility (axe) on core routes
+        run: bun run test:a11y
+
+      - name: End-to-end (Playwright) core flows
+        run: bun run test:e2e
+
       # The runtime PostCSS advisory is resolved (overrides: postcss >=8.5.10).
       # The only remaining advisories are dev-server bugs in vite/esbuild pulled
       # transitively by vitest — never reached by `vitest run` in CI and never

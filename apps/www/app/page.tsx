@@ -142,7 +142,7 @@ function PlaygroundPreview() {
             <Label htmlFor="pg-switch">Notifications</Label>
             <Switch id="pg-switch" defaultChecked />
           </div>
-          <Slider defaultValue={[60]} max={100} step={1} />
+          <Slider aria-label="Preview value" defaultValue={[60]} max={100} step={1} />
         </CardContent>
       </Card>
     </div>

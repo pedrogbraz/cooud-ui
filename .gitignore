@@ -9,3 +9,10 @@ dist
 coverage
 next-env.d.ts
 *.tsbuildinfo
+
+# Playwright (a11y/e2e) artifacts
+test-results
+playwright-report
+.playwright
+blob-report
+.cache/ms-playwright

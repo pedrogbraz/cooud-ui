@@ -940,7 +940,7 @@ function ComponentSampler({ config }: { config: DesignConfig }) {
               <span className="text-fg-secondary">Migration progress</span>
               <span className="font-mono text-fg">72%</span>
             </div>
-            <Progress value={72} />
+            <Progress value={72} aria-label="Migration progress" />
           </div>
           <div className="overflow-hidden rounded-lg border border-border">
             <Table>

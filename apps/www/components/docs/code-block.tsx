@@ -72,20 +72,31 @@ export function CodeBlock({ code, language = "tsx", expandable = false }: CodeBl
         <div className={expanded ? "" : "max-h-64 overflow-hidden"}>
           <Highlight code={code.trim()} language={language} theme={theme}>
             {({ className, style, tokens, getLineProps, getTokenProps }) => (
-              <pre
-                className={`${className} overflow-x-auto p-4 font-mono text-[0.8rem] leading-relaxed`}
-                style={{ ...style, background: "transparent" }}
+              // The horizontally scrollable container must be keyboard-reachable
+              // (axe `scrollable-region-focusable`, WCAG 2.1.1). A focusable
+              // <section> (a native region) owns the scroll + accessible name, so
+              // we satisfy both axe and biome's no-tabindex-on-<pre> rule.
+              <section
+                // biome-ignore lint/a11y/noNoninteractiveTabindex: a scrollable region is intentionally focusable so keyboard users can scroll it.
+                tabIndex={0}
+                aria-label="Code sample"
+                className="overflow-x-auto outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
-                {tokens.map((line, i) => (
-                  // biome-ignore lint/suspicious/noArrayIndexKey: tokenized source lines are positional and stable.
-                  <div key={i} {...getLineProps({ line })}>
-                    {line.map((token, key) => (
-                      // biome-ignore lint/suspicious/noArrayIndexKey: tokens within a line are positional and stable.
-                      <span key={key} {...getTokenProps({ token })} />
-                    ))}
-                  </div>
-                ))}
-              </pre>
+                <pre
+                  className={`${className} p-4 font-mono text-[0.8rem] leading-relaxed`}
+                  style={{ ...style, background: "transparent" }}
+                >
+                  {tokens.map((line, i) => (
+                    // biome-ignore lint/suspicious/noArrayIndexKey: tokenized source lines are positional and stable.
+                    <div key={i} {...getLineProps({ line })}>
+                      {line.map((token, key) => (
+                        // biome-ignore lint/suspicious/noArrayIndexKey: tokens within a line are positional and stable.
+                        <span key={key} {...getTokenProps({ token })} />
+                      ))}
+                    </div>
+                  ))}
+                </pre>
+              </section>
             )}
           </Highlight>
         </div>

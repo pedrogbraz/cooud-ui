@@ -9,14 +9,23 @@ import { cn } from "../lib/cn.js";
 export const Table = forwardRef<HTMLTableElement, HTMLAttributes<HTMLTableElement>>(
   ({ className, ...props }, ref) => {
     return (
-      <div data-slot="table-container" className="relative w-full overflow-x-auto">
+      // The horizontal-scroll container is keyboard-reachable so users who can't
+      // swipe/drag can still scroll wide tables (axe `scrollable-region-focusable`,
+      // WCAG 2.1.1). A focusable <section> (native region) + `aria-label` names it.
+      <section
+        data-slot="table-container"
+        // biome-ignore lint/a11y/noNoninteractiveTabindex: a scrollable region is intentionally focusable so keyboard users can scroll it.
+        tabIndex={0}
+        aria-label="Table"
+        className="relative w-full overflow-x-auto outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      >
         <table
           ref={ref}
           data-slot="table"
           className={cn("w-full caption-bottom text-sm text-fg", className)}
           {...props}
         />
-      </div>
+      </section>
     );
   },
 );
