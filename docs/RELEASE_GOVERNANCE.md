@@ -54,11 +54,16 @@ Current action pins:
 
 The release job **packs first, then attests, then publishes the same bytes**:
 
-1. `npm pack` each scoped package into `dist-artifacts/*.tgz`.
+1. `bun pm pack` each scoped package into `dist-artifacts/github/*.tgz` and the
+   public CLI into `dist-artifacts/npm/*.tgz`.
 2. `anchore/sbom-action` writes a CycloneDX SBOM (`sbom.cyclonedx.json`).
 3. `actions/attest-build-provenance` signs a SLSA-style provenance attestation
    over each tarball via OIDC (no long-lived signing key).
-4. `npm publish <tarball>` ships the attested bytes.
+4. `npm publish <tarball>` ships the attested bytes: `@cooud/tokens`,
+   `@cooud/theme`, and `@cooud/ui` to GitHub Packages; `cooud-ui` to public npm.
+
+The separate `github/` and `npm/` artifact directories are intentional:
+`@cooud/ui` and `cooud-ui` both pack to `cooud-ui-<version>.tgz`.
 
 Consumers can verify provenance with:
 
@@ -78,10 +83,15 @@ order**; any failure (except `audit`) blocks the merge:
 3. `test`
 4. `registry:check` — the CLI registry is in sync with source.
 5. `tokens:check` — generated tokens match their source of truth.
-6. `package:smoke` — consumer fixtures (`examples/smoke-next/`,
-   `examples/smoke-vite/`) resolve the published subpath exports.
+6. `check:example-sections` — docs TOC metadata is in sync.
 7. `build`
-8. `audit` — dependency vulnerability scan. **Currently non-blocking**
+8. `package:smoke` with `SMOKE_FULL=1` — validates tarball structure, installs
+   packed local tarballs into the consumer fixtures (`examples/smoke-next/`,
+   `examples/smoke-vite/`), builds them, and asserts styled CSS is emitted.
+9. `bundle:check` with strict budgets.
+10. `test:a11y`
+11. `test:e2e`
+12. `audit` — dependency vulnerability scan. **Currently non-blocking**
    (`continue-on-error: true`). The runtime PostCSS advisory is resolved
    (`overrides: { postcss: ">=8.5.10" }`); the only remaining advisories are
    dev-server bugs in `vite`/`esbuild` pulled transitively by `vitest` —
@@ -107,8 +117,9 @@ Configure in **Settings → Branches → Branch protection rules** for `main`:
   - Dismiss stale approvals when new commits are pushed.
 - **Require status checks to pass before merging**, and **require branches to be
   up to date**. Required check: the CI **`build`** job
-  (typecheck → lint → test → registry:check → tokens:check → package:smoke →
-  build). `audit` is intentionally **not** required until the dev-only
+  (typecheck → lint → test → registry:check → tokens:check →
+  check:example-sections → build → full package:smoke → bundle:check →
+  a11y → e2e). `audit` is intentionally **not** required until the dev-only
   `vite`/`esbuild` advisories clear.
 - **Require linear history** (no merge commits → clean, bisectable `main`).
 - **Require signed commits** (recommended).
@@ -152,7 +163,8 @@ The `publish` job runs in `environment: name: release`. Configure in
 - **Environment secrets:** store publish secrets here so they are only exposed
   to the approved `release` deployment, never to PR/CI runs:
   - `NPM_TOKEN` — for the public-npm CLI (`cooud-ui`) and, under
-    `RELEASE.md` "Prerequisite B", the scoped libs on npmjs.
+    `RELEASE.md` "Prerequisite B", the scoped libs on npmjs. The release
+    workflow validates this secret before any package publish step runs.
   - (GitHub Packages uses the built-in `GITHUB_TOKEN`; no secret needed.)
 - **Wait timer (optional):** a short delay gives a window to cancel a bad release.
 
