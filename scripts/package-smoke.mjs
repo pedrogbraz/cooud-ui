@@ -251,15 +251,23 @@ function lightCheckPackage(pkg) {
  * FULL path helpers
  * ------------------------------------------------------------------ */
 function realPack(absDir, destDir) {
-  // `npm pack <dir> --pack-destination <dest>` writes the .tgz and prints the
-  // filename. Returns the absolute tarball path.
-  const out = run("npm", ["pack", "--json", "--pack-destination", destDir, absDir]);
-  const json = JSON.parse(out);
-  const entry = Array.isArray(json) ? json[0] : json;
-  const file = entry.filename || entry.name;
-  const abs = join(destDir, file.replace(/^.*\//, ""));
-  if (!existsSync(abs)) throw new Error(`packed tarball not found at ${abs}`);
-  return abs;
+  // Release uses `bun pm pack` because it rewrites workspace protocol deps to
+  // concrete versions. Use the same packer here so the smoke installs exercise
+  // the exact publish path instead of a sanitized npm-pack approximation.
+  const before = new Set(readdirSync(destDir).filter((entry) => entry.endsWith(".tgz")));
+  run("bun", ["pm", "pack", "--destination", destDir], { cwd: absDir });
+
+  const created = readdirSync(destDir)
+    .filter((entry) => entry.endsWith(".tgz") && !before.has(entry))
+    .map((entry) => join(destDir, entry));
+
+  if (created.length !== 1) {
+    throw new Error(
+      `expected bun pm pack to create exactly one tarball in ${destDir}, found ${created.length}`,
+    );
+  }
+
+  return created[0];
 }
 
 /**
