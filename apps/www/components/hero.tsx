@@ -40,10 +40,12 @@ export function Hero() {
 
   return (
     <section id="top" className="relative overflow-hidden px-4 py-20 sm:px-6 sm:py-28 lg:px-8">
-      {/* Aurora glow */}
+      {/* Aurora glow — single animated blur layer.
+          `transform-gpu` + `will-change-transform` keep the drift on the
+          compositor; `motion-reduce:animate-none` parks it for reduced-motion. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 -top-32 -z-10 h-[28rem] bg-gradient-aurora opacity-25 blur-3xl animate-aurora"
+        className="pointer-events-none absolute inset-x-0 -top-32 -z-10 h-[28rem] transform-gpu bg-gradient-aurora opacity-25 blur-3xl animate-aurora [will-change:transform] motion-reduce:animate-none"
       />
       {/* Faint dotted grid */}
       <div
@@ -116,10 +118,12 @@ export function Hero() {
 
         {/* Floating component preview cluster */}
         <div className="relative mt-20 w-full max-w-5xl">
-          {/* secondary aurora behind the cluster */}
+          {/* secondary aurora behind the cluster — static; promoted to its own
+              composited layer so the heavy blur is painted once, not on every
+              repaint of the aurora drift above it. */}
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-x-8 top-8 -z-10 h-72 bg-gradient-aurora opacity-20 blur-3xl"
+            className="pointer-events-none absolute inset-x-8 top-8 -z-10 h-72 transform-gpu bg-gradient-aurora opacity-20 blur-3xl [contain:paint]"
           />
 
           <div className="grid grid-cols-1 items-start gap-6 text-left md:grid-cols-12 md:gap-0">

@@ -21,6 +21,7 @@
     "tokens:check": "bun run -F @cooud/tokens tokens:check",
     "package:smoke": "node scripts/package-smoke.mjs",
     "bundle:check": "node scripts/bundle-check.mjs",
+    "check:example-sections": "node scripts/check-example-sections.mjs",
     "audit": "bun audit",
     "test:a11y": "node scripts/playwright-placeholder.mjs a11y",
     "test:e2e": "node scripts/playwright-placeholder.mjs e2e"

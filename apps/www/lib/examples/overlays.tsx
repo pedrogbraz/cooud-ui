@@ -74,6 +74,7 @@ import {
   Users,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { ExampleList } from "../../components/docs/example-list";
 import type { ExampleMap } from "./types";
 
 function ActionsMenuDemo() {
@@ -716,3 +717,12 @@ export const overlaysExamples: ExampleMap = {
     },
   ],
 };
+
+/**
+ * Default-export view for this family. Imported lazily per-slug by the
+ * `/components/[slug]` detail route, so visiting one component only loads this
+ * family chunk (not the whole catalog).
+ */
+export default function OverlaysExamples({ slug }: { slug: string }) {
+  return <ExampleList examples={overlaysExamples[slug] ?? []} />;
+}

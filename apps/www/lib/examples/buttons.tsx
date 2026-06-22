@@ -14,6 +14,7 @@ import {
   Underline,
 } from "lucide-react";
 import { useState } from "react";
+import { ExampleList } from "../../components/docs/example-list";
 import type { ExampleMap } from "./types";
 
 /* -------------------------------------------------------------------------- */
@@ -375,3 +376,12 @@ return (
     },
   ],
 };
+
+/**
+ * Default-export view for the buttons family. Imported lazily per-slug by the
+ * `/components/[slug]` detail route, so visiting one component only loads this
+ * family chunk (not the whole catalog).
+ */
+export default function ButtonsExamples({ slug }: { slug: string }) {
+  return <ExampleList examples={buttonsExamples[slug] ?? []} />;
+}

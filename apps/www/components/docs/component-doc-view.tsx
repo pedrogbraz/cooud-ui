@@ -1,25 +1,23 @@
-"use client";
-
 import { getComponentDisplayName, getComponentMeta } from "../../lib/components-index";
-import { EXAMPLES } from "../../lib/examples";
+import { getExampleSections } from "../../lib/examples/sections";
 import { Eyebrow } from "../showcase-ui";
 import { CodeBlock } from "./code-block";
-import { ExampleBlock } from "./component-preview";
+import { ComponentExamples } from "./component-examples";
 import { Toc } from "./toc";
 
 export function ComponentDocView({ slug }: { slug: string }) {
   const meta = getComponentMeta(slug);
-  const examples = EXAMPLES[slug] ?? [];
 
   if (!meta) {
     return <div className="py-20 text-fg-tertiary">Unknown component: {slug}</div>;
   }
 
+  // TOC + section anchors come from lightweight metadata (no preview modules),
+  // so the eager example *families* (recharts, forms, overlays…) are never
+  // pulled into this route — only the one family chunk loads, lazily, below.
+  const sections = getExampleSections(slug);
   const displayName = getComponentDisplayName(meta.name);
-  const toc = [
-    { id: "import", title: "Import" },
-    ...examples.map((example) => ({ id: example.id, title: example.title })),
-  ];
+  const toc = [{ id: "import", title: "Import" }, ...sections];
 
   return (
     <div className="grid gap-10 xl:grid-cols-[minmax(0,1fr)_13rem]">
@@ -39,14 +37,7 @@ export function ComponentDocView({ slug }: { slug: string }) {
         </section>
 
         <div className="mt-12 flex flex-col gap-12">
-          {examples.map((example) => (
-            <ExampleBlock key={example.id} example={example} />
-          ))}
-          {examples.length === 0 && (
-            <p className="rounded-xl border border-dashed border-border bg-surface-inset/40 px-6 py-10 text-center text-sm text-fg-tertiary">
-              Interactive examples for {displayName} are coming soon.
-            </p>
-          )}
+          <ComponentExamples slug={slug} displayName={displayName} />
         </div>
       </article>
 

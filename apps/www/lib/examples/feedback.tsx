@@ -18,6 +18,7 @@ import {
 } from "@cooud/ui";
 import { Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { ExampleList } from "../../components/docs/example-list";
 import type { ExampleMap } from "./types";
 
 // ── Progress: animate one bar in on mount ─────────────────────────────
@@ -186,3 +187,12 @@ export const feedbackExamples: ExampleMap = {
     },
   ],
 };
+
+/**
+ * Default-export view for this family. Imported lazily per-slug by the
+ * `/components/[slug]` detail route, so visiting one component only loads this
+ * family chunk (not the whole catalog).
+ */
+export default function FeedbackExamples({ slug }: { slug: string }) {
+  return <ExampleList examples={feedbackExamples[slug] ?? []} />;
+}
