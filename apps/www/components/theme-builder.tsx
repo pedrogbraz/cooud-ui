@@ -53,7 +53,7 @@ export function ThemeBuilder() {
 
   return (
     <aside
-      className="lg:sticky lg:top-24 flex flex-col gap-6 rounded-2xl border border-border bg-surface-raised p-6 shadow-md"
+      className="flex w-full min-w-0 flex-col gap-6 rounded-2xl border border-border bg-surface-raised p-4 shadow-md sm:p-6 lg:sticky lg:top-24"
       aria-label="Theme builder"
     >
       <header className="flex flex-col gap-1">
@@ -199,7 +199,7 @@ export function ThemeBuilder() {
             {copied ? <Check aria-hidden="true" /> : <Copy aria-hidden="true" />}
           </Button>
         </div>
-        <pre className="max-h-56 overflow-auto rounded-lg border border-border bg-surface-inset p-3 font-mono text-xs leading-relaxed text-fg-secondary">
+        <pre className="max-h-56 max-w-full overflow-auto rounded-lg border border-border bg-surface-inset p-3 font-mono text-xs leading-relaxed text-fg-secondary">
           <code>{hasOverrides ? snippet : "/* No overrides — adjust a control above */"}</code>
         </pre>
       </div>

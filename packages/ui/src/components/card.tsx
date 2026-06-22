@@ -8,7 +8,7 @@ export const Card = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
         ref={ref}
         data-slot="card"
         className={cn(
-          "flex flex-col gap-6 py-6 rounded-xl border border-border bg-surface-raised text-fg shadow-sm",
+          "flex w-full min-w-0 flex-col gap-6 rounded-xl border border-border bg-surface-raised py-6 text-fg shadow-sm",
           className,
         )}
         {...props}
@@ -25,7 +25,7 @@ export const CardHeader = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivEleme
         ref={ref}
         data-slot="card-header"
         className={cn(
-          "grid auto-rows-min grid-cols-[1fr_auto] items-start gap-1.5 px-6",
+          "grid min-w-0 auto-rows-min grid-cols-[minmax(0,1fr)_auto] items-start gap-1.5 px-4 sm:px-6",
           className,
         )}
         {...props}
@@ -41,7 +41,10 @@ export const CardTitle = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElemen
       <div
         ref={ref}
         data-slot="card-title"
-        className={cn("font-display font-semibold leading-none text-fg", className)}
+        className={cn(
+          "min-w-0 break-words font-display font-semibold leading-none text-fg",
+          className,
+        )}
         {...props}
       />
     );
@@ -55,7 +58,7 @@ export const CardDescription = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDiv
       <div
         ref={ref}
         data-slot="card-description"
-        className={cn("text-sm text-fg-secondary", className)}
+        className={cn("col-span-full text-sm text-fg-secondary", className)}
         {...props}
       />
     );
@@ -83,7 +86,7 @@ export const CardContent = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElem
       <div
         ref={ref}
         data-slot="card-content"
-        className={cn("px-6 text-fg-secondary", className)}
+        className={cn("min-w-0 px-4 text-fg-secondary sm:px-6", className)}
         {...props}
       />
     );
@@ -97,7 +100,7 @@ export const CardFooter = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivEleme
       <div
         ref={ref}
         data-slot="card-footer"
-        className={cn("flex items-center gap-3 px-6", className)}
+        className={cn("flex min-w-0 items-center gap-3 px-4 sm:px-6", className)}
         {...props}
       />
     );

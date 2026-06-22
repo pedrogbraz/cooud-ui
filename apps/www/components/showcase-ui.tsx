@@ -91,7 +91,7 @@ export function PreviewFrame({ label, children, className }: PreviewFrameProps) 
   return (
     <div
       className={cn(
-        "relative flex min-h-[8rem] items-center justify-center gap-4 overflow-hidden rounded-2xl border border-border bg-surface-inset/50 p-8",
+        "relative flex min-h-[8rem] items-center justify-center gap-4 overflow-x-auto overflow-y-hidden rounded-2xl border border-border bg-surface-inset/50 p-8",
         className,
       )}
     >
@@ -104,7 +104,7 @@ export function PreviewFrame({ label, children, className }: PreviewFrameProps) 
           {label}
         </span>
       ) : null}
-      <div className="relative z-10 flex flex-wrap items-center justify-center gap-4">
+      <div className="relative z-10 flex w-full min-w-0 flex-wrap items-center justify-center gap-4">
         {children}
       </div>
     </div>

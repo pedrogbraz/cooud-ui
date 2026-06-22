@@ -98,14 +98,13 @@ export const dataDisplayExamples: ExampleMap = {
     {
       id: "image-fallback",
       title: "Image & fallback",
-      description: "A user image that degrades to initials when the source fails to load.",
+      description: "A user image alongside deterministic initials-only fallbacks.",
       code: `<div className="flex items-center gap-4">
   <Avatar>
     <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
     <AvatarFallback>CN</AvatarFallback>
   </Avatar>
   <Avatar>
-    <AvatarImage src="https://broken.example/none.png" alt="Ada Lovelace" />
     <AvatarFallback>AL</AvatarFallback>
   </Avatar>
   <Avatar>
@@ -119,7 +118,6 @@ export const dataDisplayExamples: ExampleMap = {
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
           <Avatar>
-            <AvatarImage src="https://broken.example/none.png" alt="Ada Lovelace" />
             <AvatarFallback>AL</AvatarFallback>
           </Avatar>
           <Avatar>
