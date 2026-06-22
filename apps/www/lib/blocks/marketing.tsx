@@ -144,6 +144,173 @@ export function HeroBlock() {
   );
 }`;
 
+function SplitHeroBlock() {
+  return (
+    <section className="px-6 py-20 sm:py-28">
+      <div className="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-[minmax(0,1fr)_26rem]">
+        <div>
+          <Badge variant="secondary" className="gap-1.5">
+            <Sparkles aria-hidden="true" className="size-3.5" />
+            Design systems in minutes
+          </Badge>
+          <h1 className="mt-6 text-balance font-display text-5xl font-semibold leading-[1.04] tracking-tight text-fg sm:text-6xl">
+            Build the product surface before the backlog catches up.
+          </h1>
+          <p className="mt-6 max-w-2xl text-lg leading-8 text-fg-secondary">
+            Compose accessible primitives, tokenized themes, and production-ready sections without
+            re-solving every interaction from scratch.
+          </p>
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <Button variant="gradient" size="lg">
+              Start building
+              <ArrowRight aria-hidden="true" />
+            </Button>
+            <Button variant="outline" size="lg">
+              View templates
+            </Button>
+          </div>
+        </div>
+
+        <Card className="border-border bg-surface-raised/85 shadow-glow backdrop-blur">
+          <CardHeader>
+            <CardTitle>Release quality</CardTitle>
+            <CardDescription>Everything tokenized before handoff.</CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-4">
+            {[
+              ["Components", "52 ready"],
+              ["Themes", "Aurora + Neutral"],
+              ["Coverage", "A11y pass"],
+            ].map(([label, value]) => (
+              <div
+                key={label}
+                className="flex items-center justify-between rounded-xl border border-border bg-surface-inset px-4 py-3"
+              >
+                <span className="text-sm text-fg-secondary">{label}</span>
+                <span className="text-sm font-medium text-fg">{value}</span>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      </div>
+    </section>
+  );
+}
+
+const splitHeroCode = `import { Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from "@cooud/ui";
+import { ArrowRight, Sparkles } from "lucide-react";
+
+export function SplitHeroBlock() {
+  return (
+    <section className="px-6 py-20 sm:py-28">
+      <div className="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-[minmax(0,1fr)_26rem]">
+        <div>
+          <Badge variant="secondary" className="gap-1.5">
+            <Sparkles aria-hidden="true" className="size-3.5" />
+            Design systems in minutes
+          </Badge>
+          <h1 className="mt-6 text-balance font-display text-5xl font-semibold leading-[1.04] tracking-tight text-fg sm:text-6xl">
+            Build the product surface before the backlog catches up.
+          </h1>
+          <p className="mt-6 max-w-2xl text-lg leading-8 text-fg-secondary">
+            Compose accessible primitives, tokenized themes, and production-ready sections.
+          </p>
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <Button variant="gradient" size="lg">Start building <ArrowRight aria-hidden="true" /></Button>
+            <Button variant="outline" size="lg">View templates</Button>
+          </div>
+        </div>
+
+        <Card className="border-border bg-surface-raised/85 shadow-glow backdrop-blur">
+          <CardHeader>
+            <CardTitle>Release quality</CardTitle>
+            <CardDescription>Everything tokenized before handoff.</CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-4">
+            {[
+              ["Components", "52 ready"],
+              ["Themes", "Aurora + Neutral"],
+              ["Coverage", "A11y pass"],
+            ].map(([label, value]) => (
+              <div key={label} className="flex items-center justify-between rounded-xl border border-border bg-surface-inset px-4 py-3">
+                <span className="text-sm text-fg-secondary">{label}</span>
+                <span className="text-sm font-medium text-fg">{value}</span>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      </div>
+    </section>
+  );
+}`;
+
+function CompactHeroBlock() {
+  return (
+    <section className="px-6 py-20">
+      <div className="mx-auto max-w-5xl rounded-3xl border border-border bg-surface-raised p-8 text-center shadow-lg sm:p-12">
+        <Badge variant="primary">New registry</Badge>
+        <h1 className="mx-auto mt-5 max-w-3xl text-balance font-display text-4xl font-semibold tracking-tight text-fg sm:text-6xl">
+          Copy polished product sections into any React app.
+        </h1>
+        <p className="mx-auto mt-5 max-w-2xl text-balance text-fg-secondary">
+          Blocks inherit your theme, radius, color scale, and typography automatically.
+        </p>
+        <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <Button variant="gradient" size="lg">
+            Browse blocks
+            <ArrowRight aria-hidden="true" />
+          </Button>
+          <Button variant="ghost" size="lg">
+            Read docs
+          </Button>
+        </div>
+        <div className="mx-auto mt-9 grid max-w-2xl gap-3 text-left sm:grid-cols-3">
+          {["Accessible", "Themeable", "Composable"].map((item) => (
+            <div
+              key={item}
+              className="flex items-center gap-2 rounded-xl bg-surface-inset px-3 py-2"
+            >
+              <Check className="size-4 text-primary" aria-hidden="true" />
+              <span className="text-sm text-fg-secondary">{item}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+const compactHeroCode = `import { Badge, Button } from "@cooud/ui";
+import { ArrowRight, Check } from "lucide-react";
+
+export function CompactHeroBlock() {
+  return (
+    <section className="px-6 py-20">
+      <div className="mx-auto max-w-5xl rounded-3xl border border-border bg-surface-raised p-8 text-center shadow-lg sm:p-12">
+        <Badge variant="primary">New registry</Badge>
+        <h1 className="mx-auto mt-5 max-w-3xl text-balance font-display text-4xl font-semibold tracking-tight text-fg sm:text-6xl">
+          Copy polished product sections into any React app.
+        </h1>
+        <p className="mx-auto mt-5 max-w-2xl text-balance text-fg-secondary">
+          Blocks inherit your theme, radius, color scale, and typography automatically.
+        </p>
+        <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <Button variant="gradient" size="lg">Browse blocks <ArrowRight aria-hidden="true" /></Button>
+          <Button variant="ghost" size="lg">Read docs</Button>
+        </div>
+        <div className="mx-auto mt-9 grid max-w-2xl gap-3 text-left sm:grid-cols-3">
+          {["Accessible", "Themeable", "Composable"].map((item) => (
+            <div key={item} className="flex items-center gap-2 rounded-xl bg-surface-inset px-3 py-2">
+              <Check className="size-4 text-primary" aria-hidden="true" />
+              <span className="text-sm text-fg-secondary">{item}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}`;
+
 /* ──────────────────────────────────────────────────────────────────
    2. PRICING
    ────────────────────────────────────────────────────────────────── */
@@ -197,7 +364,7 @@ function PricingBlock() {
         </p>
       </div>
 
-      <div className="mx-auto mt-14 grid max-w-5xl grid-cols-1 items-start gap-6 lg:grid-cols-3">
+      <div className="mx-auto mt-14 grid max-w-5xl grid-cols-[repeat(auto-fit,minmax(min(100%,16rem),1fr))] items-start gap-6">
         {PRICING_TIERS.map((tier) => (
           <Card
             key={tier.name}
@@ -313,7 +480,7 @@ export function PricingBlock() {
         </p>
       </div>
 
-      <div className="mx-auto mt-14 grid max-w-5xl grid-cols-1 items-start gap-6 lg:grid-cols-3">
+      <div className="mx-auto mt-14 grid max-w-5xl grid-cols-[repeat(auto-fit,minmax(min(100%,16rem),1fr))] items-start gap-6">
         {PRICING_TIERS.map((tier) => (
           <Card
             key={tier.name}
@@ -360,6 +527,179 @@ export function PricingBlock() {
             </CardFooter>
           </Card>
         ))}
+      </div>
+    </section>
+  );
+}`;
+
+function PricingToggleBlock() {
+  const tiers = [
+    {
+      name: "Launch",
+      price: "$19",
+      description: "For focused teams shipping one product.",
+      features: ["Unlimited blocks", "Theme presets", "Email support"],
+    },
+    {
+      name: "Scale",
+      price: "$59",
+      description: "For teams running multiple surfaces.",
+      features: ["Everything in Launch", "Private registry", "Priority support"],
+    },
+  ] as const;
+
+  return (
+    <section className="px-6 py-20">
+      <div className="mx-auto max-w-2xl text-center">
+        <Badge variant="secondary">Plans</Badge>
+        <h2 className="mt-4 font-display text-4xl font-semibold tracking-tight text-fg">
+          Pick the pace that matches your team.
+        </h2>
+        <div className="mx-auto mt-6 inline-flex rounded-full border border-border bg-surface-inset p-1">
+          <Button variant="secondary" size="sm" className="rounded-full">
+            Monthly
+          </Button>
+          <Button variant="ghost" size="sm" className="rounded-full">
+            Annual - save 20%
+          </Button>
+        </div>
+      </div>
+
+      <div className="mx-auto mt-12 grid max-w-4xl grid-cols-[repeat(auto-fit,minmax(min(100%,18rem),1fr))] gap-6">
+        {tiers.map((tier, index) => (
+          <Card
+            key={tier.name}
+            className={index === 1 ? "border-primary shadow-glow" : "border-border"}
+          >
+            <CardHeader>
+              <CardTitle>{tier.name}</CardTitle>
+              <CardDescription>{tier.description}</CardDescription>
+              <div className="mt-2 flex items-baseline gap-1">
+                <span className="font-display text-4xl font-semibold text-fg">{tier.price}</span>
+                <span className="text-sm text-fg-tertiary">/ month</span>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <ul className="flex flex-col gap-3">
+                {tier.features.map((feature) => (
+                  <li key={feature} className="flex items-center gap-2 text-sm text-fg-secondary">
+                    <Check className="size-4 text-primary" aria-hidden="true" />
+                    {feature}
+                  </li>
+                ))}
+              </ul>
+            </CardContent>
+            <CardFooter>
+              <Button variant={index === 1 ? "gradient" : "outline"} className="w-full">
+                Choose {tier.name}
+              </Button>
+            </CardFooter>
+          </Card>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+const pricingToggleCode = `import { Badge, Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@cooud/ui";
+import { Check } from "lucide-react";
+
+export function PricingToggleBlock() {
+  return (
+    <section className="px-6 py-20">
+      <div className="mx-auto max-w-2xl text-center">
+        <Badge variant="secondary">Plans</Badge>
+        <h2 className="mt-4 font-display text-4xl font-semibold tracking-tight text-fg">
+          Pick the pace that matches your team.
+        </h2>
+        <div className="mx-auto mt-6 inline-flex rounded-full border border-border bg-surface-inset p-1">
+          <Button variant="secondary" size="sm" className="rounded-full">Monthly</Button>
+          <Button variant="ghost" size="sm" className="rounded-full">Annual - save 20%</Button>
+        </div>
+      </div>
+
+      <div className="mx-auto mt-12 grid max-w-4xl grid-cols-[repeat(auto-fit,minmax(min(100%,18rem),1fr))] gap-6">
+        {/* Map your plans here */}
+      </div>
+    </section>
+  );
+}`;
+
+function UsagePricingBlock() {
+  return (
+    <section className="px-6 py-20">
+      <div className="mx-auto max-w-5xl rounded-3xl border border-border bg-surface-raised p-6 shadow-lg sm:p-8">
+        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_20rem]">
+          <div>
+            <Badge variant="primary">Usage based</Badge>
+            <h2 className="mt-4 font-display text-4xl font-semibold tracking-tight text-fg">
+              Start small, pay only when your product grows.
+            </h2>
+            <p className="mt-4 max-w-2xl text-fg-secondary">
+              A pricing layout for APIs, infrastructure, and usage-metered products.
+            </p>
+            <div className="mt-8 grid gap-3 sm:grid-cols-3">
+              {["10k events", "5 seats", "99.9% SLA"].map((item) => (
+                <div
+                  key={item}
+                  className="rounded-xl border border-border bg-surface-inset px-4 py-3 text-sm text-fg-secondary"
+                >
+                  {item}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <Card className="border-primary bg-surface-floating shadow-glow">
+            <CardHeader>
+              <CardTitle>Growth</CardTitle>
+              <CardDescription>Best for teams validating scale.</CardDescription>
+              <div className="mt-2">
+                <span className="font-display text-4xl font-semibold text-fg">$0.08</span>
+                <span className="text-sm text-fg-tertiary"> / 1k events</span>
+              </div>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-3">
+              {["Unlimited projects", "Realtime analytics", "Priority queues"].map((item) => (
+                <div key={item} className="flex items-center gap-2 text-sm text-fg-secondary">
+                  <Check className="size-4 text-primary" aria-hidden="true" />
+                  {item}
+                </div>
+              ))}
+            </CardContent>
+            <CardFooter>
+              <Button variant="gradient" className="w-full">
+                Estimate usage
+              </Button>
+            </CardFooter>
+          </Card>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+const usagePricingCode = `import { Badge, Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@cooud/ui";
+import { Check } from "lucide-react";
+
+export function UsagePricingBlock() {
+  return (
+    <section className="px-6 py-20">
+      <div className="mx-auto max-w-5xl rounded-3xl border border-border bg-surface-raised p-6 shadow-lg sm:p-8">
+        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_20rem]">
+          <div>
+            <Badge variant="primary">Usage based</Badge>
+            <h2 className="mt-4 font-display text-4xl font-semibold tracking-tight text-fg">
+              Start small, pay only when your product grows.
+            </h2>
+            <p className="mt-4 max-w-2xl text-fg-secondary">
+              A pricing layout for APIs, infrastructure, and usage-metered products.
+            </p>
+          </div>
+          <Card className="border-primary bg-surface-floating shadow-glow">
+            {/* Highlight your metered plan here */}
+          </Card>
+        </div>
       </div>
     </section>
   );
@@ -415,7 +755,7 @@ function FeatureGridBlock() {
         </p>
       </div>
 
-      <div className="mx-auto mt-14 grid max-w-5xl grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mx-auto mt-14 grid max-w-5xl grid-cols-[repeat(auto-fit,minmax(min(100%,16rem),1fr))] gap-6">
         {FEATURES.map((feature) => (
           <Card key={feature.title} className="border-border">
             <CardHeader>
@@ -494,7 +834,7 @@ export function FeatureGridBlock() {
         </p>
       </div>
 
-      <div className="mx-auto mt-14 grid max-w-5xl grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mx-auto mt-14 grid max-w-5xl grid-cols-[repeat(auto-fit,minmax(min(100%,16rem),1fr))] gap-6">
         {FEATURES.map((feature) => (
           <Card key={feature.title} className="border-border">
             <CardHeader>
@@ -506,6 +846,67 @@ export function FeatureGridBlock() {
             </CardHeader>
           </Card>
         ))}
+      </div>
+    </section>
+  );
+}`;
+
+function BentoFeatureBlock() {
+  return (
+    <section className="px-6 py-20">
+      <div className="mx-auto max-w-2xl text-center">
+        <Badge variant="secondary">Platform</Badge>
+        <h2 className="mt-4 font-display text-4xl font-semibold tracking-tight text-fg">
+          A bento grid for product capabilities.
+        </h2>
+      </div>
+
+      <div className="mx-auto mt-12 grid max-w-5xl gap-4 md:grid-cols-6">
+        {FEATURES.slice(0, 4).map((feature, index) => (
+          <Card
+            key={feature.title}
+            className={[
+              "border-border bg-surface-raised",
+              index === 0 ? "md:col-span-4 md:row-span-2" : "md:col-span-2",
+              index === 3 ? "md:col-span-3" : "",
+            ].join(" ")}
+          >
+            <CardHeader>
+              <span className="grid size-11 place-items-center rounded-xl bg-primary/15 text-primary">
+                <feature.icon aria-hidden="true" className="size-5" />
+              </span>
+              <CardTitle className="mt-4">{feature.title}</CardTitle>
+              <CardDescription>{feature.description}</CardDescription>
+            </CardHeader>
+          </Card>
+        ))}
+        <Card className="border-primary bg-gradient-primary text-primary-foreground shadow-glow md:col-span-3">
+          <CardHeader>
+            <CardTitle className="text-primary-foreground">Production ready</CardTitle>
+            <CardDescription className="text-primary-foreground/75">
+              Compose, theme, and ship from one registry.
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      </div>
+    </section>
+  );
+}
+
+const bentoFeatureCode = `import { Badge, Card, CardDescription, CardHeader, CardTitle } from "@cooud/ui";
+import { BarChart3, Layers, Lock, Palette, Zap } from "lucide-react";
+
+export function BentoFeatureBlock() {
+  return (
+    <section className="px-6 py-20">
+      <div className="mx-auto max-w-2xl text-center">
+        <Badge variant="secondary">Platform</Badge>
+        <h2 className="mt-4 font-display text-4xl font-semibold tracking-tight text-fg">
+          A bento grid for product capabilities.
+        </h2>
+      </div>
+      <div className="mx-auto mt-12 grid max-w-5xl gap-4 md:grid-cols-6">
+        {/* Use md:col-span-* and md:row-span-* to shape the bento layout */}
       </div>
     </section>
   );
@@ -630,8 +1031,87 @@ export function CtaBlock() {
    ────────────────────────────────────────────────────────────────── */
 
 export const marketingBlocks: BlockContentMap = {
-  hero: { preview: <HeroBlock />, code: heroCode },
-  pricing: { preview: <PricingBlock />, code: pricingCode },
-  "feature-grid": { preview: <FeatureGridBlock />, code: featureGridCode },
+  hero: {
+    preview: <HeroBlock />,
+    code: heroCode,
+    variants: [
+      {
+        id: "centered",
+        name: "Centered launch",
+        description: "Classic centered SaaS hero with trust proof and two CTAs.",
+        appearance: "dark",
+        preview: <HeroBlock />,
+        code: heroCode,
+      },
+      {
+        id: "split",
+        name: "Split dashboard",
+        description: "Two-column hero with a compact product-quality panel.",
+        appearance: "dark",
+        preview: <SplitHeroBlock />,
+        code: splitHeroCode,
+      },
+      {
+        id: "compact",
+        name: "Compact registry",
+        description: "Contained hero card for docs, registries and template libraries.",
+        appearance: "light",
+        preview: <CompactHeroBlock />,
+        code: compactHeroCode,
+      },
+    ],
+  },
+  pricing: {
+    preview: <PricingBlock />,
+    code: pricingCode,
+    variants: [
+      {
+        id: "tiers",
+        name: "Three tiers",
+        description: "A responsive three-plan grid with a highlighted popular tier.",
+        appearance: "dark",
+        preview: <PricingBlock />,
+        code: pricingCode,
+      },
+      {
+        id: "toggle",
+        name: "Plan toggle",
+        description: "Two-plan pricing with a monthly/annual segmented control.",
+        appearance: "light",
+        preview: <PricingToggleBlock />,
+        code: pricingToggleCode,
+      },
+      {
+        id: "usage",
+        name: "Usage based",
+        description: "A metered pricing layout for API, infra and event-based products.",
+        appearance: "dark",
+        preview: <UsagePricingBlock />,
+        code: usagePricingCode,
+      },
+    ],
+  },
+  "feature-grid": {
+    preview: <FeatureGridBlock />,
+    code: featureGridCode,
+    variants: [
+      {
+        id: "cards",
+        name: "Card grid",
+        description: "Six balanced feature cards for broad capability overviews.",
+        appearance: "dark",
+        preview: <FeatureGridBlock />,
+        code: featureGridCode,
+      },
+      {
+        id: "bento",
+        name: "Bento grid",
+        description: "Editorial bento layout for showcasing a platform narrative.",
+        appearance: "light",
+        preview: <BentoFeatureBlock />,
+        code: bentoFeatureCode,
+      },
+    ],
+  },
   cta: { preview: <CtaBlock />, code: ctaCode },
 };

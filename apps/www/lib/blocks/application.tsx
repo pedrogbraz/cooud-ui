@@ -82,7 +82,7 @@ export function StatsBlock() {
   ];
 
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,13rem),1fr))] gap-4">
       {stats.map(({ label, value, delta, trend, icon: Icon, hint }) => (
         <Card key={label} className="gap-4 py-5">
           <CardContent className="flex flex-col gap-3">
@@ -151,7 +151,7 @@ export function StatsBlock() {
   ];
 
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,13rem),1fr))] gap-4">
       {stats.map(({ label, value, delta, trend, icon: Icon, hint }) => (
         <Card key={label} className="gap-4 py-5">
           <CardContent className="flex flex-col gap-3">
@@ -170,6 +170,202 @@ export function StatsBlock() {
         </Card>
       ))}
     </div>
+  );
+}`;
+
+export function StatsCompactBlock() {
+  const stats = [
+    { label: "Net revenue", value: "$128.4k", delta: "+18.2%", trend: "up" as const },
+    { label: "New accounts", value: "1,482", delta: "+9.7%", trend: "up" as const },
+    { label: "Expansion", value: "$24.1k", delta: "+4.1%", trend: "up" as const },
+  ];
+
+  return (
+    <Card>
+      <CardHeader className="flex-row items-center justify-between gap-3">
+        <div>
+          <CardTitle className="font-display text-lg">Growth snapshot</CardTitle>
+          <p className="mt-1 text-sm text-fg-secondary">Last 30 days</p>
+        </div>
+        <Badge variant="success">On track</Badge>
+      </CardHeader>
+      <CardContent className="grid gap-5 sm:grid-cols-3">
+        {stats.map(({ label, value, delta, trend }) => (
+          <Metric key={label} className="gap-1.5">
+            <MetricLabel>{label}</MetricLabel>
+            <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+              <MetricValue className="text-3xl">{value}</MetricValue>
+              <MetricDelta trend={trend}>{delta}</MetricDelta>
+            </div>
+          </Metric>
+        ))}
+      </CardContent>
+    </Card>
+  );
+}
+
+const statsCompactCode = `import {
+  Badge,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Metric,
+  MetricDelta,
+  MetricLabel,
+  MetricValue,
+} from "@cooud/ui";
+
+export function StatsCompactBlock() {
+  const stats = [
+    { label: "Net revenue", value: "$128.4k", delta: "+18.2%", trend: "up" as const },
+    { label: "New accounts", value: "1,482", delta: "+9.7%", trend: "up" as const },
+    { label: "Expansion", value: "$24.1k", delta: "+4.1%", trend: "up" as const },
+  ];
+
+  return (
+    <Card>
+      <CardHeader className="flex-row items-center justify-between gap-3">
+        <div>
+          <CardTitle className="font-display text-lg">Growth snapshot</CardTitle>
+          <p className="mt-1 text-sm text-fg-secondary">Last 30 days</p>
+        </div>
+        <Badge variant="success">On track</Badge>
+      </CardHeader>
+      <CardContent className="grid gap-5 sm:grid-cols-3">
+        {stats.map(({ label, value, delta, trend }) => (
+          <Metric key={label} className="gap-1.5">
+            <MetricLabel>{label}</MetricLabel>
+            <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+              <MetricValue className="text-3xl">{value}</MetricValue>
+              <MetricDelta trend={trend}>{delta}</MetricDelta>
+            </div>
+          </Metric>
+        ))}
+      </CardContent>
+    </Card>
+  );
+}`;
+
+export function StatsPipelineBlock() {
+  const stats = [
+    {
+      label: "Trials started",
+      value: "2,184",
+      delta: "+16.8%",
+      trend: "up" as const,
+      icon: Users,
+    },
+    {
+      label: "Qualified demos",
+      value: "642",
+      delta: "+7.4%",
+      trend: "up" as const,
+      icon: Activity,
+    },
+    {
+      label: "Paid upgrades",
+      value: "238",
+      delta: "+11.1%",
+      trend: "up" as const,
+      icon: DollarSign,
+    },
+  ];
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="font-display text-lg">Activation funnel</CardTitle>
+        <p className="text-sm text-fg-secondary">Weekly product-led conversion</p>
+      </CardHeader>
+      <CardContent className="grid gap-0 overflow-hidden rounded-xl border border-border sm:grid-cols-3">
+        {stats.map(({ label, value, delta, trend, icon: Icon }, index) => (
+          <div
+            key={label}
+            className="flex flex-col gap-4 border-border bg-surface-raised p-5 sm:border-l sm:first:border-l-0"
+          >
+            <div className="flex items-center justify-between gap-3">
+              <span className="inline-flex size-9 items-center justify-center rounded-lg bg-surface-overlay text-fg-secondary">
+                <Icon className="size-4" aria-hidden="true" />
+              </span>
+              <span className="text-xs font-medium text-fg-tertiary">Step {index + 1}</span>
+            </div>
+            <Metric className="gap-1.5">
+              <MetricLabel>{label}</MetricLabel>
+              <MetricValue className="text-3xl">{value}</MetricValue>
+            </Metric>
+            <MetricDelta trend={trend}>{delta}</MetricDelta>
+          </div>
+        ))}
+      </CardContent>
+    </Card>
+  );
+}
+
+const statsPipelineCode = `import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Metric,
+  MetricDelta,
+  MetricLabel,
+  MetricValue,
+} from "@cooud/ui";
+import { Activity, DollarSign, Users } from "lucide-react";
+
+export function StatsPipelineBlock() {
+  const stats = [
+    {
+      label: "Trials started",
+      value: "2,184",
+      delta: "+16.8%",
+      trend: "up" as const,
+      icon: Users,
+    },
+    {
+      label: "Qualified demos",
+      value: "642",
+      delta: "+7.4%",
+      trend: "up" as const,
+      icon: Activity,
+    },
+    {
+      label: "Paid upgrades",
+      value: "238",
+      delta: "+11.1%",
+      trend: "up" as const,
+      icon: DollarSign,
+    },
+  ];
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="font-display text-lg">Activation funnel</CardTitle>
+        <p className="text-sm text-fg-secondary">Weekly product-led conversion</p>
+      </CardHeader>
+      <CardContent className="grid gap-0 overflow-hidden rounded-xl border border-border sm:grid-cols-3">
+        {stats.map(({ label, value, delta, trend, icon: Icon }, index) => (
+          <div
+            key={label}
+            className="flex flex-col gap-4 border-border bg-surface-raised p-5 sm:border-l sm:first:border-l-0"
+          >
+            <div className="flex items-center justify-between gap-3">
+              <span className="inline-flex size-9 items-center justify-center rounded-lg bg-surface-overlay text-fg-secondary">
+                <Icon className="size-4" aria-hidden="true" />
+              </span>
+              <span className="text-xs font-medium text-fg-tertiary">Step {index + 1}</span>
+            </div>
+            <Metric className="gap-1.5">
+              <MetricLabel>{label}</MetricLabel>
+              <MetricValue className="text-3xl">{value}</MetricValue>
+            </Metric>
+            <MetricDelta trend={trend}>{delta}</MetricDelta>
+          </div>
+        ))}
+      </CardContent>
+    </Card>
   );
 }`;
 
@@ -860,7 +1056,36 @@ export function TeamBlock() {
  * ────────────────────────────────────────────────────────────────────────── */
 
 export const applicationBlocks: BlockContentMap = {
-  stats: { preview: <StatsBlock />, code: statsCode },
+  stats: {
+    preview: <StatsBlock />,
+    code: statsCode,
+    variants: [
+      {
+        id: "kpi-grid",
+        name: "KPI grid",
+        description: "Four-card dashboard metrics with icons, deltas, and contextual hints.",
+        appearance: "dark",
+        preview: <StatsBlock />,
+        code: statsCode,
+      },
+      {
+        id: "compact-summary",
+        name: "Compact summary",
+        description: "A single-card metric summary for dense dashboards and overview panels.",
+        appearance: "light",
+        preview: <StatsCompactBlock />,
+        code: statsCompactCode,
+      },
+      {
+        id: "pipeline-funnel",
+        name: "Pipeline funnel",
+        description: "A segmented stats card for activation, pipeline, or conversion steps.",
+        appearance: "dark",
+        preview: <StatsPipelineBlock />,
+        code: statsPipelineCode,
+      },
+    ],
+  },
   login: { preview: <LoginBlock />, code: loginCode },
   settings: { preview: <SettingsBlock />, code: settingsCode },
   team: { preview: <TeamBlock />, code: teamCode },
