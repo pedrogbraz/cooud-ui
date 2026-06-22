@@ -1,18 +1,10 @@
-"use client";
-
-import {
-  Badge,
-  Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Input,
-  Label,
-  Slider,
-  Switch,
-} from "@cooud/ui";
+import { Badge } from "@cooud/ui/badge";
+import { Button } from "@cooud/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@cooud/ui/card";
+import { Input } from "@cooud/ui/input";
+import { Label } from "@cooud/ui/label";
+import { Slider } from "@cooud/ui/slider";
+import { Switch } from "@cooud/ui/switch";
 import { ArrowRight, ArrowUpRight, Github } from "lucide-react";
 import Link from "next/link";
 import { CooudMark } from "../components/brand/cooud-mark";

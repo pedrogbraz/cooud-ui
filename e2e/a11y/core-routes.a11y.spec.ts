@@ -6,10 +6,9 @@ import { expect, type Page, test } from "@playwright/test";
  *
  * For every route we run the full axe-core rule set, scoped to WCAG 2.0/2.1
  * A & AA tags, and assert ZERO violations at impact level `serious` or
- * `critical` — EXCEPT a small, explicit, per-route allowlist of *known* design
- * system debt (see KNOWN_DEBT below). Anything new — a fresh contrast failure, a
- * missing label, a broken landmark — still fails the gate immediately, and the
- * failure message names the exact rule + a sample node so it's actionable.
+ * `critical`. A fresh contrast failure, a missing label, a broken landmark —
+ * any of those fail the gate immediately, and the failure message names the
+ * exact rule + a sample node so it's actionable.
  *
  * Rules explicitly covered (a representative subset of what axe runs):
  *   - color-contrast .................. text/background AA contrast (WCAG 1.4.3)
@@ -38,36 +37,12 @@ const BLOCKING_IMPACTS = new Set(["serious", "critical"]);
 // WCAG A/AA tag scope: deterministic and matches the level we ship to.
 const WCAG_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"];
 
-/**
- * Known, tracked serious/critical violations we knowingly tolerate **for now**,
- * keyed by route → set of axe rule ids. Every entry is debt with a follow-up,
- * NOT a way to silence the gate: the allowlist is per-route and per-rule, so any
- * other rule (or the same rule on a route not listed here) still fails the suite.
- *
- * TODO(a11y-debt), tracked follow-ups:
- *   - color-contrast: the default `primary` button variant renders white text on
- *     the Aurora `--primary` (sky) background at ~2.59:1 (needs 4.5:1). Fixing it
- *     means re-tuning the brand `primary` token in @cooud/tokens, which changes
- *     the brand color across the whole fleet — a design decision out of scope for
- *     this QA hardening pass. Tracked separately.
- *   - svg-img-alt: the recharts-rendered dashboard preview on /create emits one
- *     `role="img"` <path> per pie/bar segment with no <title>/<desc>. These are
- *     third-party SVG internals; naming them needs a recharts-a11y pass, tracked
- *     separately. (The progressbar name, scrollable code region, and Slider thumb
- *     names that axe also flagged here have already been fixed at the source.)
- */
-const KNOWN_DEBT: Record<string, ReadonlySet<string>> = {
-  "/": new Set(["color-contrast"]),
-  "/docs": new Set(["color-contrast"]),
-  "/docs/installation": new Set(["color-contrast"]),
-  "/create": new Set(["color-contrast", "svg-img-alt"]),
-};
-
 const CORE_ROUTES: ReadonlyArray<{ path: string; label: string }> = [
   { path: "/", label: "home" },
   { path: "/components", label: "components overview" },
   { path: "/blocks", label: "blocks overview" },
   { path: "/create", label: "create studio" },
+  { path: "/stack", label: "stack builder" },
   { path: "/docs", label: "docs landing" },
   { path: "/docs/installation", label: "docs · installation" },
   // P3 wave 1 components — scan their live demo pages directly.
@@ -107,6 +82,12 @@ async function runAxe(page: Page) {
   );
 }
 
+async function waitForRouteSettled(page: Page, path: string) {
+  if (path === "/create") {
+    await expect(page.getByText("Spending breakdown")).toBeVisible();
+  }
+}
+
 for (const route of CORE_ROUTES) {
   test(`a11y: ${route.label} (${route.path}) has no serious/critical violations`, async ({
     page,
@@ -114,12 +95,12 @@ for (const route of CORE_ROUTES) {
     await page.goto(route.path, { waitUntil: "networkidle" });
     // Wait for the route's main landmark so we scan settled, hydrated DOM.
     await expect(page.locator("main#main-content")).toBeVisible();
+    await waitForRouteSettled(page, route.path);
 
     const results = await runAxe(page);
-    const allowed = KNOWN_DEBT[route.path] ?? new Set<string>();
 
     const blocking = results.violations.filter(
-      (v) => v.impact != null && BLOCKING_IMPACTS.has(v.impact) && !allowed.has(v.id),
+      (v) => v.impact != null && BLOCKING_IMPACTS.has(v.impact),
     );
 
     // Human-readable failure detail: rule id, impact, and a sample target.
@@ -134,7 +115,7 @@ for (const route of CORE_ROUTES) {
       blocking,
       blocking.length > 0
         ? `axe found ${blocking.length} NEW serious/critical violation(s) on ${route.path} ` +
-            `(not in the known-debt allowlist):\n${summary}`
+            `:\n${summary}`
         : undefined,
     ).toEqual([]);
   });

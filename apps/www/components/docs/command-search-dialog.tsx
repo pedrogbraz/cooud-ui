@@ -7,7 +7,7 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@cooud/ui";
+} from "@cooud/ui/command";
 import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 // Server-safe block metadata only — names, slugs, variant ids + descriptions.
@@ -126,7 +126,7 @@ export default function CommandSearchDialog({
           {docItems.map((item) => (
             <CommandItem
               key={item.href}
-              value={`${item.label} ${item.description}`}
+              value={`${item.label} ${item.description} ${item.status ?? ""}`}
               onSelect={() => onSelectRoute(item.href)}
               className="flex flex-col items-start gap-0.5"
             >
@@ -144,6 +144,16 @@ export default function CommandSearchDialog({
             <span className="text-sm text-fg">Create</span>
             <span className="text-xs text-fg-tertiary">
               Build, save, shuffle, and export a complete design-system preset.
+            </span>
+          </CommandItem>
+          <CommandItem
+            value="Stack Builder beta preview full-stack generator command kickoff stack json"
+            onSelect={() => onSelectRoute("/stack")}
+            className="flex flex-col items-start gap-0.5"
+          >
+            <span className="text-sm text-fg">Stack Builder</span>
+            <span className="text-xs text-fg-tertiary">
+              Compose a full-stack app and export preview artifacts.
             </span>
           </CommandItem>
           <CommandItem

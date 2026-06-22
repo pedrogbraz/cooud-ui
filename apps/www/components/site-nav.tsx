@@ -1,7 +1,8 @@
 "use client";
 
 import { useTheme } from "@cooud/theme";
-import { Badge, Sheet, SheetContent, SheetTitle, SheetTrigger } from "@cooud/ui";
+import { Badge } from "@cooud/ui/badge";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@cooud/ui/sheet";
 import { Github, Menu } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -15,6 +16,7 @@ const navLinks = [
   { label: "Components", href: "/components" },
   { label: "Blocks", href: "/blocks" },
   { label: "Create", href: "/create" },
+  { label: "Stack", href: "/stack", badge: "BETA" },
   { label: "Changelog", href: "/changelog" },
 ] as const;
 
@@ -64,9 +66,17 @@ export function SiteNav() {
             <li key={link.href}>
               <Link
                 href={link.href}
-                className="rounded-lg px-3 py-2 text-sm text-fg-secondary outline-none transition-colors hover:text-fg focus-visible:ring-2 focus-visible:ring-ring"
+                className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm text-fg-secondary outline-none transition-colors hover:text-fg focus-visible:ring-2 focus-visible:ring-ring"
               >
                 {link.label}
+                {"badge" in link && (
+                  <Badge
+                    variant="secondary"
+                    className="px-1 py-0 text-[9px] font-semibold uppercase tracking-wide"
+                  >
+                    {link.badge}
+                  </Badge>
+                )}
               </Link>
             </li>
           ))}
@@ -116,9 +126,17 @@ export function SiteNav() {
                     <Link
                       href={link.href}
                       onClick={() => setMobileOpen(false)}
-                      className="block rounded-lg px-3 py-2 text-sm font-medium text-fg-secondary outline-none transition-colors hover:bg-surface-overlay hover:text-fg focus-visible:ring-2 focus-visible:ring-ring"
+                      className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-fg-secondary outline-none transition-colors hover:bg-surface-overlay hover:text-fg focus-visible:ring-2 focus-visible:ring-ring"
                     >
                       {link.label}
+                      {"badge" in link && (
+                        <Badge
+                          variant="secondary"
+                          className="px-1 py-0 text-[9px] font-semibold uppercase tracking-wide"
+                        >
+                          {link.badge}
+                        </Badge>
+                      )}
                     </Link>
                   </li>
                 ))}

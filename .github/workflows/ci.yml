@@ -55,6 +55,8 @@ jobs:
 
       - name: Package smoke (consumer fixtures resolve subpath exports)
         run: bun run package:smoke
+        env:
+          SMOKE_FULL: "1"
 
       - name: Bundle budget check (first-load JS stays within budget)
         run: bun run bundle:check

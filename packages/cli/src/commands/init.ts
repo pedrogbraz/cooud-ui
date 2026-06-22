@@ -58,8 +58,10 @@ export async function init(options: InitOptions): Promise<void> {
   }
 
   log.title("Next steps");
-  log.step("1. Install the token engine:  add @cooud/tokens @cooud/theme (or copy tokens.css).");
-  log.step('2. In your global CSS:  @import "tailwindcss";  @import "@cooud/tokens/styles.css";');
-  log.step("3. Wrap your app in <CooudUIProvider> from @cooud/theme.");
+  log.step(
+    "1. Add Cooud CSS variables or install @cooud/tokens if your registry access allows it.",
+  );
+  log.step('2. In your global CSS:  @import "tailwindcss";  then import your Cooud token CSS.');
+  log.step("3. Wrap your app in <CooudUIProvider> from @cooud/theme if you use the theme package.");
   log.step("4. Add components:  npx cooud-ui add button card dialog");
 }

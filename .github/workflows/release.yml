@@ -53,8 +53,61 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
-      - name: "Build (turbo: tokens -> theme -> ui)"
+      - name: Validate release versions and secrets
+        run: |
+          set -euo pipefail
+
+          release_version="${GITHUB_REF_NAME#v}"
+          RELEASE_VERSION="$release_version" node --input-type=module <<'NODE'
+          import { readFileSync } from "node:fs";
+
+          const expected = process.env.RELEASE_VERSION;
+          const packages = [
+            "packages/tokens/package.json",
+            "packages/theme/package.json",
+            "packages/ui/package.json",
+            "packages/cli/package.json",
+          ];
+
+          let ok = true;
+          for (const file of packages) {
+            const pkg = JSON.parse(readFileSync(file, "utf8"));
+            if (pkg.version !== expected) {
+              console.error(`${file}: version ${pkg.version} does not match tag v${expected}`);
+              ok = false;
+            }
+          }
+
+          if (!ok) process.exit(1);
+          console.log(`release versions match v${expected}`);
+          NODE
+
+          if [ -z "${NPM_TOKEN:-}" ]; then
+            echo "::error::NPM_TOKEN is required to publish the public npm CLI package."
+            exit 1
+          fi
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Typecheck
+        run: bun run typecheck
+
+      - name: Test
+        run: bun run test
+
+      - name: Registry check
+        run: bun run registry:check
+
+      - name: Tokens check
+        run: bun run tokens:check
+
+      - name: Build packages
         run: bun run build
+
+      - name: Package smoke (full consumer fixtures)
+        run: bun run package:smoke
+        env:
+          SMOKE_FULL: "1"
 
       # --- Pack first so attestations cover the EXACT bytes we publish. ---
       # Use `bun pm pack` (NOT `npm pack`): Bun rewrites the `workspace:*`
@@ -64,12 +117,14 @@ jobs:
       - name: Pack packages
         run: |
           set -euo pipefail
-          mkdir -p dist-artifacts
-          dest="$GITHUB_WORKSPACE/dist-artifacts"
+          mkdir -p dist-artifacts/github dist-artifacts/npm
+          github_dest="$GITHUB_WORKSPACE/dist-artifacts/github"
+          npm_dest="$GITHUB_WORKSPACE/dist-artifacts/npm"
           for pkg in tokens theme ui; do
-            ( cd "packages/$pkg" && bun pm pack --destination "$dest" )
+            ( cd "packages/$pkg" && bun pm pack --destination "$github_dest" )
           done
-          ls -l dist-artifacts
+          ( cd "packages/cli" && bun pm pack --destination "$npm_dest" )
+          find dist-artifacts -maxdepth 2 -type f -print | sort
 
       # SBOM (CycloneDX) for the whole workspace, archived with the release.
       - name: Generate SBOM (CycloneDX)
@@ -86,7 +141,7 @@ jobs:
         # actions/attest-build-provenance@v1.4.4 pinned by commit SHA
         uses: actions/attest-build-provenance@ef244123eb79f2f7a7e75d99086184180e6d0018 # v1.4.4
         with:
-          subject-path: "dist-artifacts/*.tgz"
+          subject-path: "dist-artifacts/**/*.tgz"
 
       - name: Upload release artifacts (tarballs + SBOM)
         # actions/upload-artifact@v4.6.2 pinned by commit SHA
@@ -98,16 +153,29 @@ jobs:
 
       # --- Publish the exact packed tarballs in dependency order. ---
       - name: Publish @cooud/tokens
-        run: npm publish "$(ls dist-artifacts/cooud-tokens-*.tgz)"
+        run: npm publish "$(ls dist-artifacts/github/cooud-tokens-*.tgz)"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish @cooud/theme
-        run: npm publish "$(ls dist-artifacts/cooud-theme-*.tgz)"
+        run: npm publish "$(ls dist-artifacts/github/cooud-theme-*.tgz)"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish @cooud/ui
-        run: npm publish "$(ls dist-artifacts/cooud-ui-*.tgz)"
+        run: npm publish "$(ls dist-artifacts/github/cooud-ui-*.tgz)"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish cooud-ui CLI to public npm
+        run: |
+          set -euo pipefail
+          userconfig="$(mktemp)"
+          trap 'rm -f "$userconfig"' EXIT
+          printf 'registry=https://registry.npmjs.org/\n//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}\n' > "$userconfig"
+          NPM_CONFIG_USERCONFIG="$userconfig" npm publish \
+            "$(ls dist-artifacts/npm/cooud-ui-*.tgz)" \
+            --registry https://registry.npmjs.org \
+            --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

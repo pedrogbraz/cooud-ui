@@ -25,10 +25,9 @@ This is the agreed, intentional split:
   name only requires that the name `cooud-ui` is free/owned on npmjs and an
   `NPM_TOKEN` with publish rights.
 
-> The `release.yml` workflow currently wires the three **scoped** packages to
-> GitHub Packages. Publishing the CLI to public npm is a separate, additive step
-> (own the `cooud-ui` name on npmjs, add `NPM_TOKEN`, then `npm publish` the CLI
-> tarball against `https://registry.npmjs.org`). See "Publishing the CLI to npm".
+> The `release.yml` workflow publishes all four packages after approval: the
+> three **scoped** packages to GitHub Packages and the unscoped CLI to public npm.
+> A missing `NPM_TOKEN` fails the release before any publish step runs.
 
 ## How a release works
 
@@ -45,19 +44,34 @@ This is the agreed, intentional split:
    protected `release` GitHub Environment and **pauses for a required-reviewer
    approval** before any step executes. After approval it:
    - installs deps (`bun install --frozen-lockfile`),
-   - builds in dependency order via turbo (`bun run build` → tokens → theme → ui),
-   - **packs** each package to a tarball with `npm pack` (so everything below
-     operates on the exact bytes that get published),
+   - validates that every publishable package version matches the tag,
+   - validates that `NPM_TOKEN` is present for the public-npm CLI publish,
+   - runs the release gates (`typecheck`, `test`, `registry:check`, `tokens:check`),
+   - builds in dependency order via turbo (`bun run build`),
+   - runs full package smoke (`SMOKE_FULL=1 bun run package:smoke`), which packs
+     local tarballs, installs them into the Next/Vite fixtures, builds the fixtures,
+     and verifies styled CSS was emitted,
+   - **packs** each package to a tarball with `bun pm pack` (so `workspace:*`
+     ranges are rewritten and everything below operates on the exact bytes that
+     get published),
    - generates a **CycloneDX SBOM** for the workspace (archived as a build artifact),
    - emits a **build-provenance attestation** (`actions/attest-build-provenance`,
      SLSA-style) over every packed tarball, signed via OIDC,
    - uploads the tarballs + SBOM as a workflow artifact,
-   - runs `npm publish <tarball>` in dependency order: **tokens → theme → ui**.
+   - runs `npm publish <tarball>` in dependency order:
+     **tokens → theme → ui → CLI**.
 
-   Auth uses the workflow's built-in `GITHUB_TOKEN` (`packages: write`), wired
-   into `NODE_AUTH_TOKEN`. No extra secret is needed for GitHub Packages. The
+   The scoped packages use the workflow's built-in `GITHUB_TOKEN`
+   (`packages: write`), wired into `NODE_AUTH_TOKEN`; no extra secret is needed
+   for GitHub Packages. The CLI publish uses the release-environment `NPM_TOKEN`
+   against `https://registry.npmjs.org` and publishes with npm provenance. The
    job also holds `id-token: write` + `attestations: write` so it can sign and
    store the provenance attestation.
+
+> Tarball naming footgun: `@cooud/ui` and `cooud-ui` both pack to
+> `cooud-ui-<version>.tgz`. The workflow writes scoped-library tarballs under
+> `dist-artifacts/github/` and the public CLI tarball under `dist-artifacts/npm/`
+> so publish steps cannot select the wrong artifact.
 
 Each package also runs `prepublishOnly` (`tsc -p tsconfig.json`) as a safety net so `dist` is always rebuilt before a publish, even for manual publishes.
 
@@ -89,9 +103,15 @@ Either way the `@cooud` package names stay the same.
 The CLI ships to **public npm** independently of the scoped libs:
 - own the unscoped name `cooud-ui` on npmjs (it must be free or owned by you),
 - add an `NPM_TOKEN` repo secret (scoped to the `release` environment),
-- pack + publish the CLI tarball against `https://registry.npmjs.org` with that
-  token. Because the name is unscoped and on the default public registry, no
-  `@cooud` org membership is required to publish or to `npx cooud-ui`.
+- the release workflow packs + publishes the CLI tarball against
+  `https://registry.npmjs.org` with that token. Because the name is unscoped and
+  on the public registry, no `@cooud` org membership is required to publish or
+  to `npx cooud-ui`.
+
+The published CLI's default registry is pinned to its own release tag
+(`https://raw.githubusercontent.com/pedrogbraz/cooud-ui/vX.Y.Z/registry`), not
+mutable `main`. When cutting a release, bump `packages/cli/package.json` and the
+CLI version constant together; the CLI unit tests fail if they drift.
 
 ## Publishing manually
 
@@ -116,6 +136,7 @@ Publish the **CLI** to public npm separately (different registry + token):
 ```sh
 cd packages/cli
 npm publish --registry https://registry.npmjs.org \
+  --provenance \
   # --otp=<code> if 2FA is enabled on the npm account
 cd -
 ```

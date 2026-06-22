@@ -3,6 +3,26 @@
   "version": "0.1.0",
   "description": "cooud-ui — add Cooud UI components to your project, shadcn-style (copy-paste registry).",
   "type": "module",
+  "license": "UNLICENSED",
+  "author": "Cooud",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pedrogbraz/cooud-ui.git",
+    "directory": "packages/cli"
+  },
+  "homepage": "https://github.com/pedrogbraz/cooud-ui#readme",
+  "bugs": {
+    "url": "https://github.com/pedrogbraz/cooud-ui/issues"
+  },
+  "keywords": [
+    "cooud",
+    "components",
+    "design-system",
+    "registry",
+    "shadcn",
+    "tailwind",
+    "ui"
+  ],
   "bin": {
     "cooud-ui": "./dist/index.js"
   },
@@ -15,9 +35,13 @@
       "import": "./dist/index.js"
     }
   },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  },
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
+    "prepublishOnly": "tsc -p tsconfig.json",
     "registry": "bun run scripts/build-registry.ts",
     "registry:check": "bun run scripts/check-registry.ts"
   },
@@ -28,5 +52,8 @@
   "devDependencies": {
     "@types/node": "^22.10.0",
     "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }
