@@ -1,0 +1,154 @@
+import { cn } from "@cooud/ui";
+import {
+  Accessibility,
+  AppWindow,
+  Atom,
+  BookOpen,
+  Bot,
+  Box,
+  CircleDollarSign,
+  CircleSlash,
+  Cloud,
+  Component,
+  Container,
+  CreditCard,
+  Database,
+  Dog,
+  Droplets,
+  Feather,
+  Flame,
+  FlaskConical,
+  GitFork,
+  Github,
+  GitMerge,
+  Globe,
+  Hexagon,
+  Layers,
+  Layout,
+  Leaf,
+  type LucideIcon,
+  Mountain,
+  MousePointer2,
+  Package,
+  Paintbrush,
+  Plane,
+  Plug,
+  PlugZap,
+  Puzzle,
+  Rabbit,
+  Rocket,
+  Route,
+  Server,
+  Settings,
+  Shield,
+  ShieldAlert,
+  ShieldCheck,
+  Siren,
+  Smartphone,
+  Sparkles,
+  Terminal,
+  Triangle,
+  Wand,
+  WandSparkles,
+  Wind,
+  Zap,
+} from "lucide-react";
+
+/**
+ * Static map from the catalog's `icon` string (a lucide-react kebab name) to the
+ * concrete icon component. A static map (rather than lucide's lazy `DynamicIcon`)
+ * keeps the option grid free of per-card layout shift / loading flashes and is
+ * fully tree-shakeable. Every name used in `lib/stack/catalog.ts` is covered;
+ * unknown names fall back to {@link Puzzle}.
+ */
+const ICONS: Record<string, LucideIcon> = {
+  accessibility: Accessibility,
+  "app-window": AppWindow,
+  atom: Atom,
+  "book-open": BookOpen,
+  bot: Bot,
+  box: Box,
+  "circle-dollar-sign": CircleDollarSign,
+  "circle-slash": CircleSlash,
+  cloud: Cloud,
+  component: Component,
+  container: Container,
+  "credit-card": CreditCard,
+  database: Database,
+  dog: Dog,
+  droplets: Droplets,
+  feather: Feather,
+  flame: Flame,
+  "flask-conical": FlaskConical,
+  "git-fork": GitFork,
+  "git-merge": GitMerge,
+  github: Github,
+  globe: Globe,
+  hexagon: Hexagon,
+  layers: Layers,
+  layout: Layout,
+  leaf: Leaf,
+  mountain: Mountain,
+  "mouse-pointer-2": MousePointer2,
+  package: Package,
+  paintbrush: Paintbrush,
+  plane: Plane,
+  plug: Plug,
+  "plug-zap": PlugZap,
+  rabbit: Rabbit,
+  rocket: Rocket,
+  route: Route,
+  server: Server,
+  settings: Settings,
+  shield: Shield,
+  "shield-alert": ShieldAlert,
+  "shield-check": ShieldCheck,
+  siren: Siren,
+  smartphone: Smartphone,
+  sparkles: Sparkles,
+  terminal: Terminal,
+  triangle: Triangle,
+  wand: Wand,
+  "wand-sparkles": WandSparkles,
+  wind: Wind,
+  zap: Zap,
+};
+
+/** Resolve a catalog icon name to its lucide component (defaults to {@link Puzzle}). */
+export function optionIcon(name: string | undefined): LucideIcon {
+  return (name && ICONS[name]) || Puzzle;
+}
+
+export interface OptionIconProps {
+  /** Catalog icon name (a lucide kebab id); falls back to {@link Puzzle}. */
+  name: string | undefined;
+  /** Whether the owning option is currently selected (drives the accent fill). */
+  selected: boolean;
+}
+
+/**
+ * The rounded icon tile shown at the top-left of an {@link OptionCard}. A single
+ * consistent surface that shifts from a neutral resting state to a primary-tinted
+ * "selected" state, with the surrounding card driving the hover lift. Purely
+ * presentational — colour/size live here so every card's tile stays identical.
+ *
+ * All transitions are short colour/shadow tweens (no transform here — the card
+ * owns the lift) so there is never layout shift inside the grid.
+ */
+export function OptionIcon({ name, selected }: OptionIconProps) {
+  const Icon = optionIcon(name);
+  return (
+    <span
+      data-slot="option-icon"
+      data-selected={selected || undefined}
+      className={cn(
+        "grid size-9 shrink-0 place-items-center rounded-lg border transition-[background,border-color,color,box-shadow] duration-200 ease-[var(--ease-out-quart)] [&_svg]:size-4.5 [&_svg]:transition-transform [&_svg]:duration-200 [&_svg]:ease-[var(--ease-out-quart)] motion-reduce:transition-none",
+        selected
+          ? "border-primary/40 bg-primary/15 text-primary shadow-[0_0_0_3px_color-mix(in_oklch,var(--color-primary)_12%,transparent)]"
+          : "border-border bg-surface-overlay text-fg-secondary group-hover/option:border-border-strong group-hover/option:text-fg group-hover/option:[&_svg]:scale-110",
+      )}
+    >
+      <Icon aria-hidden="true" />
+    </span>
+  );
+}
