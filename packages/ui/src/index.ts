@@ -26,7 +26,11 @@ export { AnimatedButton } from "./components/animated-button.js";
 export type { AppShellProps } from "./components/app-shell.js";
 // ── Wave 5 — layout & app navigation ───────────────────────────────
 export { AppShell } from "./components/app-shell.js";
+export type { AspectRatioProps } from "./components/aspect-ratio.js";
+export { AspectRatio } from "./components/aspect-ratio.js";
 export { AuroraBackground } from "./components/aurora-background.js";
+export type { AutocompleteOption, AutocompleteProps } from "./components/autocomplete.js";
+export { Autocomplete } from "./components/autocomplete.js";
 // ── Wave 3 — data & display ────────────────────────────────────────
 export { Avatar, AvatarFallback, AvatarImage } from "./components/avatar.js";
 export type { BadgeProps } from "./components/badge.js";
@@ -66,6 +70,13 @@ export {
 } from "./components/chart.js";
 // ── Wave 1 — forms ─────────────────────────────────────────────────
 export { Checkbox } from "./components/checkbox.js";
+export type { CodeBlockProps } from "./components/code-block.js";
+export { CodeBlock } from "./components/code-block.js";
+export {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "./components/collapsible.js";
 export type { ComboboxOption, ComboboxProps } from "./components/combobox.js";
 export { Combobox } from "./components/combobox.js";
 export type { CommandDialogProps } from "./components/command.js";
@@ -80,6 +91,8 @@ export {
   CommandSeparator,
   CommandShortcut,
 } from "./components/command.js";
+export type { CopyButtonProps } from "./components/copy-button.js";
+export { CopyButton } from "./components/copy-button.js";
 export type {
   DataTableColumnHeaderProps,
   DataTableDensity,
@@ -97,6 +110,12 @@ export {
 } from "./components/data-table.js";
 export type { DatePickerProps } from "./components/date-picker.js";
 export { DatePicker } from "./components/date-picker.js";
+export type {
+  DateRange,
+  DateRangePickerProps,
+  DateRangePreset,
+} from "./components/date-range-picker.js";
+export { DateRangePicker } from "./components/date-range-picker.js";
 export {
   Dialog,
   DialogClose,
@@ -199,6 +218,8 @@ export {
   NavigationMenuViewport,
   navigationMenuTriggerStyle,
 } from "./components/navigation-menu.js";
+export type { NumberInputProps } from "./components/number-input.js";
+export { NumberInput } from "./components/number-input.js";
 export type { PaginationLinkProps } from "./components/pagination.js";
 export {
   Pagination,

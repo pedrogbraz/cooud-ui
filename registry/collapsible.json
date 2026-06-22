@@ -1,0 +1,17 @@
+{
+  "name": "collapsible",
+  "type": "registry:ui",
+  "dependencies": [
+    "@radix-ui/react-collapsible@^1.1.14"
+  ],
+  "registryDependencies": [
+    "cn"
+  ],
+  "files": [
+    {
+      "path": "collapsible.tsx",
+      "content": "import * as CollapsiblePrimitive from \"@radix-ui/react-collapsible\";\nimport { type ComponentPropsWithoutRef, type ComponentRef, forwardRef } from \"react\";\nimport { cn } from \"../lib/cn.js\";\n\nexport const Collapsible = CollapsiblePrimitive.Root;\nexport const CollapsibleTrigger = CollapsiblePrimitive.CollapsibleTrigger;\n\nexport const CollapsibleContent = forwardRef<\n  ComponentRef<typeof CollapsiblePrimitive.CollapsibleContent>,\n  ComponentPropsWithoutRef<typeof CollapsiblePrimitive.CollapsibleContent>\n>(({ className, children, ...props }, ref) => {\n  return (\n    <CollapsiblePrimitive.CollapsibleContent\n      ref={ref}\n      data-slot=\"collapsible-content\"\n      className={cn(\n        \"overflow-hidden text-sm text-fg-secondary transition-[height] duration-200 ease-[var(--ease-out-quart)] data-[state=closed]:h-0 data-[state=open]:h-[var(--radix-collapsible-content-height)] motion-reduce:transition-none\",\n        className,\n      )}\n      {...props}\n    >\n      {children}\n    </CollapsiblePrimitive.CollapsibleContent>\n  );\n});\nCollapsibleContent.displayName = \"CollapsibleContent\";\n",
+      "target": "ui"
+    }
+  ]
+}

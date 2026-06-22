@@ -39,6 +39,11 @@ export const CATEGORIES: ComponentCategory[] = [
         name: "ToggleGroup",
         description: "A set of toggles, single or multiple.",
       },
+      {
+        slug: "copy-button",
+        name: "CopyButton",
+        description: "Copy text to the clipboard with success feedback.",
+      },
     ],
   },
   {
@@ -71,6 +76,16 @@ export const CATEGORIES: ComponentCategory[] = [
         name: "FileDropzone",
         description: "Drag-and-drop file upload area.",
       },
+      {
+        slug: "number-input",
+        name: "NumberInput",
+        description: "Numeric field with steppers, clamping and keyboard control.",
+      },
+      {
+        slug: "autocomplete",
+        name: "Autocomplete",
+        description: "Free-text input with sync or async suggestions.",
+      },
     ],
   },
   {
@@ -93,6 +108,22 @@ export const CATEGORIES: ComponentCategory[] = [
       { slug: "separator", name: "Separator", description: "Visual divider between content." },
       { slug: "skeleton", name: "Skeleton", description: "Loading placeholder shimmer." },
       { slug: "scroll-area", name: "ScrollArea", description: "Custom-styled scroll container." },
+      {
+        slug: "code-block",
+        name: "CodeBlock",
+        description: "Source snippet with header, line numbers and copy.",
+      },
+      {
+        slug: "collapsible",
+        name: "Collapsible",
+        description: "Animated show/hide for a single section.",
+        importName: "Collapsible, CollapsibleTrigger, CollapsibleContent",
+      },
+      {
+        slug: "aspect-ratio",
+        name: "AspectRatio",
+        description: "Constrain content to a fixed width-to-height ratio.",
+      },
     ],
   },
   {
@@ -166,6 +197,11 @@ export const CATEGORIES: ComponentCategory[] = [
     items: [
       { slug: "calendar", name: "Calendar", description: "Date grid (react-day-picker)." },
       { slug: "date-picker", name: "DatePicker", description: "Popover-based date selection." },
+      {
+        slug: "date-range-picker",
+        name: "DateRangePicker",
+        description: "Start/end date selection with presets.",
+      },
     ],
   },
   {

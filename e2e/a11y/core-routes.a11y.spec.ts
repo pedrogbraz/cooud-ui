@@ -79,6 +79,14 @@ const CORE_ROUTES: ReadonlyArray<{ path: string; label: string }> = [
   { path: "/components/sidebar", label: "components · sidebar" },
   { path: "/components/app-shell", label: "components · app-shell" },
   { path: "/components/navigation-menu", label: "components · navigation-menu" },
+  // P3 components wave — copy/code/collapsible/aspect-ratio/number/date-range/autocomplete.
+  { path: "/components/copy-button", label: "components · copy-button" },
+  { path: "/components/code-block", label: "components · code-block" },
+  { path: "/components/collapsible", label: "components · collapsible" },
+  { path: "/components/aspect-ratio", label: "components · aspect-ratio" },
+  { path: "/components/number-input", label: "components · number-input" },
+  { path: "/components/date-range-picker", label: "components · date-range-picker" },
+  { path: "/components/autocomplete", label: "components · autocomplete" },
 ];
 
 async function runAxe(page: Page) {

@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  AspectRatio,
   Avatar,
   AvatarFallback,
   AvatarImage,
@@ -13,6 +14,10 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
+  CodeBlock,
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
   DataTable,
   DataTableColumnHeader,
   type DataTableFacetedFilter,
@@ -40,7 +45,15 @@ import {
   TableRow,
 } from "@cooud/ui";
 import type { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, Check, CircleDashed, CircleSlash, Inbox, Mail } from "lucide-react";
+import {
+  ArrowUpDown,
+  Check,
+  ChevronsUpDown,
+  CircleDashed,
+  CircleSlash,
+  Inbox,
+  Mail,
+} from "lucide-react";
 import { useState } from "react";
 import { ExampleList } from "../../components/docs/example-list";
 import type { ExampleMap } from "./types";
@@ -296,6 +309,55 @@ function DataTableErrorDemo() {
     />
   );
 }
+
+// ── Collapsible ────────────────────────────────────────────────────
+function CollapsibleDemo() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Collapsible open={open} onOpenChange={setOpen} className="w-full max-w-sm space-y-2">
+      <div className="flex items-center justify-between gap-4 rounded-lg border border-border px-4 py-2">
+        <span className="font-medium text-fg text-sm">Deployment regions</span>
+        <CollapsibleTrigger asChild>
+          <Button variant="ghost" size="icon-sm" aria-label="Toggle regions">
+            <ChevronsUpDown />
+          </Button>
+        </CollapsibleTrigger>
+      </div>
+      <CollapsibleContent className="space-y-2">
+        {["us-east-1", "eu-west-1", "ap-southeast-2"].map((region) => (
+          <div key={region} className="rounded-lg border border-border px-4 py-2 font-mono text-sm">
+            {region}
+          </div>
+        ))}
+      </CollapsibleContent>
+    </Collapsible>
+  );
+}
+
+const collapsibleDemoCode = `function CollapsibleDemo() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Collapsible open={open} onOpenChange={setOpen} className="w-full max-w-sm space-y-2">
+      <div className="flex items-center justify-between gap-4 rounded-lg border border-border px-4 py-2">
+        <span className="text-sm font-medium text-fg">Deployment regions</span>
+        <CollapsibleTrigger asChild>
+          <Button variant="ghost" size="icon-sm" aria-label="Toggle regions">
+            <ChevronsUpDown />
+          </Button>
+        </CollapsibleTrigger>
+      </div>
+      <CollapsibleContent className="space-y-2">
+        {["us-east-1", "eu-west-1", "ap-southeast-2"].map((region) => (
+          <div key={region} className="rounded-lg border border-border px-4 py-2 font-mono text-sm">
+            {region}
+          </div>
+        ))}
+      </CollapsibleContent>
+    </Collapsible>
+  );
+}`;
 
 export const dataDisplayExamples: ExampleMap = {
   avatar: [
@@ -1012,6 +1074,113 @@ const statusFilter: DataTableFacetedFilter = {
           </div>
           <ScrollBar orientation="vertical" />
         </ScrollArea>
+      ),
+    },
+  ],
+
+  "code-block": [
+    {
+      id: "default",
+      title: "Default",
+      description:
+        "Renders a source snippet with a built-in copy button. Add a `language` badge and/or a `filename` to show a header.",
+      code: `<CodeBlock
+  language="bash"
+  filename="terminal"
+  code="bunx cooud-ui add button card dialog"
+/>`,
+      preview: (
+        <CodeBlock
+          language="bash"
+          filename="terminal"
+          code="bunx cooud-ui add button card dialog"
+          className="max-w-xl"
+        />
+      ),
+    },
+    {
+      id: "line-numbers",
+      title: "Line numbers",
+      description: "Set `showLineNumbers` to render a non-selectable gutter beside the code.",
+      code: `<CodeBlock
+  language="tsx"
+  showLineNumbers
+  code={\`import { Button } from "@cooud/ui";
+
+export function Save() {
+  return <Button>Save</Button>;
+}\`}
+/>`,
+      preview: (
+        <CodeBlock
+          language="tsx"
+          showLineNumbers
+          className="max-w-xl"
+          code={`import { Button } from "@cooud/ui";
+
+export function Save() {
+  return <Button>Save</Button>;
+}`}
+        />
+      ),
+    },
+  ],
+
+  collapsible: [
+    {
+      id: "default",
+      title: "Default",
+      description:
+        "An animated show/hide for a single section. Control it with `open` and `onOpenChange`, and put the toggle inside `CollapsibleTrigger`.",
+      code: collapsibleDemoCode,
+      preview: <CollapsibleDemo />,
+    },
+  ],
+
+  "aspect-ratio": [
+    {
+      id: "default",
+      title: "Default",
+      description:
+        "Constrains its content to a fixed width-to-height `ratio` (defaults to 16 / 9). The wrapper fills the available width; stretch the child to fill it.",
+      code: `<AspectRatio ratio={16 / 9} className="overflow-hidden rounded-xl border border-border">
+  <img
+    src="/og.png"
+    alt="Cover"
+    className="h-full w-full object-cover"
+  />
+</AspectRatio>`,
+      preview: (
+        <div className="w-full max-w-sm">
+          <AspectRatio
+            ratio={16 / 9}
+            className="overflow-hidden rounded-xl border border-border bg-gradient-to-br from-primary/30 to-accent/20"
+          >
+            <div className="flex h-full w-full items-center justify-center font-mono text-fg-secondary text-sm">
+              16 / 9
+            </div>
+          </AspectRatio>
+        </div>
+      ),
+    },
+    {
+      id: "square",
+      title: "Square",
+      description: "Pass `ratio={1}` for a 1:1 box — handy for avatars, thumbnails and tiles.",
+      code: `<AspectRatio ratio={1} className="overflow-hidden rounded-xl border border-border">
+  <img src="/thumb.png" alt="Thumbnail" className="h-full w-full object-cover" />
+</AspectRatio>`,
+      preview: (
+        <div className="w-40">
+          <AspectRatio
+            ratio={1}
+            className="overflow-hidden rounded-xl border border-border bg-gradient-to-br from-accent/30 to-primary/20"
+          >
+            <div className="flex h-full w-full items-center justify-center font-mono text-fg-secondary text-sm">
+              1 / 1
+            </div>
+          </AspectRatio>
+        </div>
       ),
     },
   ],

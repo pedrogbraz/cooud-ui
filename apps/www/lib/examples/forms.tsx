@@ -1,6 +1,8 @@
 "use client";
 
 import {
+  Autocomplete,
+  type AutocompleteOption,
   Badge,
   Button,
   Checkbox,
@@ -23,6 +25,7 @@ import {
   InputOTPSlot,
   Label,
   MultiSelect,
+  NumberInput,
   RadioGroup,
   RadioGroupItem,
   Select,
@@ -730,6 +733,173 @@ const multiSelectMaxDisplayDemoCode = `function MultiSelectMaxDisplayDemo() {
   );
 }`;
 
+// ── NumberInput ────────────────────────────────────────────────────
+function NumberInputDemo() {
+  const [quantity, setQuantity] = useState<number | null>(1);
+
+  return (
+    <Field className="max-w-[12rem]">
+      <FieldLabel htmlFor="qty">Quantity</FieldLabel>
+      <NumberInput
+        id="qty"
+        value={quantity}
+        onValueChange={setQuantity}
+        min={0}
+        max={10}
+        aria-label="Quantity"
+      />
+      <FieldDescription>Between 0 and 10.</FieldDescription>
+    </Field>
+  );
+}
+
+const numberInputDemoCode = `function NumberInputDemo() {
+  const [quantity, setQuantity] = useState<number | null>(1);
+
+  return (
+    <Field className="max-w-[12rem]">
+      <FieldLabel htmlFor="qty">Quantity</FieldLabel>
+      <NumberInput
+        id="qty"
+        value={quantity}
+        onValueChange={setQuantity}
+        min={0}
+        max={10}
+        aria-label="Quantity"
+      />
+      <FieldDescription>Between 0 and 10.</FieldDescription>
+    </Field>
+  );
+}`;
+
+function NumberInputCurrencyDemo() {
+  const [price, setPrice] = useState<number | null>(19.9);
+
+  return (
+    <NumberInput
+      value={price}
+      onValueChange={setPrice}
+      min={0}
+      step={0.1}
+      precision={2}
+      format={(value) => `$${value.toFixed(2)}`}
+      aria-label="Price"
+      className="max-w-[12rem]"
+    />
+  );
+}
+
+const numberInputCurrencyDemoCode = `function NumberInputCurrencyDemo() {
+  const [price, setPrice] = useState<number | null>(19.9);
+
+  return (
+    <NumberInput
+      value={price}
+      onValueChange={setPrice}
+      min={0}
+      step={0.1}
+      precision={2}
+      format={(value) => \`$\${value.toFixed(2)}\`}
+      aria-label="Price"
+      className="max-w-[12rem]"
+    />
+  );
+}`;
+
+// ── Autocomplete ───────────────────────────────────────────────────
+const autocompleteFrameworks: AutocompleteOption[] = [
+  { value: "Next.js" },
+  { value: "Remix" },
+  { value: "Astro" },
+  { value: "SvelteKit" },
+  { value: "Nuxt" },
+  { value: "SolidStart" },
+];
+
+function AutocompleteDemo() {
+  const [value, setValue] = useState("");
+
+  return (
+    <Autocomplete
+      options={autocompleteFrameworks}
+      value={value}
+      onValueChange={setValue}
+      placeholder="Search a framework…"
+      aria-label="Framework"
+      className="max-w-xs"
+    />
+  );
+}
+
+const autocompleteDemoCode = `const frameworks: AutocompleteOption[] = [
+  { value: "Next.js" },
+  { value: "Remix" },
+  { value: "Astro" },
+  { value: "SvelteKit" },
+  { value: "Nuxt" },
+  { value: "SolidStart" },
+];
+
+function AutocompleteDemo() {
+  const [value, setValue] = useState("");
+
+  return (
+    <Autocomplete
+      options={frameworks}
+      value={value}
+      onValueChange={setValue}
+      placeholder="Search a framework…"
+      aria-label="Framework"
+      className="max-w-xs"
+    />
+  );
+}`;
+
+function AutocompleteAsyncDemo() {
+  const [value, setValue] = useState("");
+
+  // Simulated remote search over the static list (replace with a real fetch).
+  const search = async (query: string): Promise<AutocompleteOption[]> => {
+    await new Promise((resolve) => setTimeout(resolve, 350));
+    const needle = query.trim().toLowerCase();
+    return needle === ""
+      ? autocompleteFrameworks
+      : autocompleteFrameworks.filter((o) => o.value.toLowerCase().includes(needle));
+  };
+
+  return (
+    <Autocomplete
+      onSearch={search}
+      value={value}
+      onValueChange={setValue}
+      placeholder="Search (async)…"
+      aria-label="Framework (async)"
+      className="max-w-xs"
+    />
+  );
+}
+
+const autocompleteAsyncDemoCode = `function AutocompleteAsyncDemo() {
+  const [value, setValue] = useState("");
+
+  // Debounced; the component tracks its own loading state when onSearch is set.
+  const search = async (query: string): Promise<AutocompleteOption[]> => {
+    const res = await fetch(\`/api/frameworks?q=\${encodeURIComponent(query)}\`);
+    return res.json();
+  };
+
+  return (
+    <Autocomplete
+      onSearch={search}
+      value={value}
+      onValueChange={setValue}
+      placeholder="Search (async)…"
+      aria-label="Framework (async)"
+      className="max-w-xs"
+    />
+  );
+}`;
+
 export const formsExamples: ExampleMap = {
   input: [
     {
@@ -977,6 +1147,44 @@ export const formsExamples: ExampleMap = {
       description: "Drag-and-drop or click-to-browse uploads with selected-file feedback.",
       code: fileDropzoneDemoCode,
       preview: <FileDropzoneDemo />,
+    },
+  ],
+
+  "number-input": [
+    {
+      id: "default",
+      title: "Default",
+      description:
+        "A spinbutton with increment/decrement steppers. Arrow keys step, PageUp/PageDown jump, and Home/End snap to `min`/`max`. Values are clamped to the bounds on blur.",
+      code: numberInputDemoCode,
+      preview: <NumberInputDemo />,
+    },
+    {
+      id: "precision-format",
+      title: "Precision & formatting",
+      description:
+        "Use `precision` for decimal rounding and `format` to display a unit such as currency when the field is not focused.",
+      code: numberInputCurrencyDemoCode,
+      preview: <NumberInputCurrencyDemo />,
+    },
+  ],
+
+  autocomplete: [
+    {
+      id: "default",
+      title: "Default",
+      description:
+        "Free-text input that filters a static `options` list as you type. Arrow keys move the highlight, Enter commits it, and Escape dismisses the suggestions.",
+      code: autocompleteDemoCode,
+      preview: <AutocompleteDemo />,
+    },
+    {
+      id: "async",
+      title: "Async suggestions",
+      description:
+        "Pass `onSearch` to resolve suggestions remotely. Calls are debounced, stale responses are dropped, and the busy state (spinner + skeletons) is managed for you.",
+      code: autocompleteAsyncDemoCode,
+      preview: <AutocompleteAsyncDemo />,
     },
   ],
 };

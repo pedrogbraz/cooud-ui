@@ -62,11 +62,33 @@
     ]
   },
   {
+    "name": "aspect-ratio",
+    "type": "registry:ui",
+    "dependencies": [],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
     "name": "aurora-background",
     "type": "registry:ui",
     "dependencies": [],
     "registryDependencies": [
       "cn"
+    ]
+  },
+  {
+    "name": "autocomplete",
+    "type": "registry:ui",
+    "dependencies": [
+      "cmdk@^1.1.1"
+    ],
+    "registryDependencies": [
+      "cn",
+      "command",
+      "popover",
+      "skeleton",
+      "spinner"
     ]
   },
   {
@@ -153,6 +175,26 @@
     ]
   },
   {
+    "name": "code-block",
+    "type": "registry:ui",
+    "dependencies": [],
+    "registryDependencies": [
+      "badge",
+      "cn",
+      "copy-button"
+    ]
+  },
+  {
+    "name": "collapsible",
+    "type": "registry:ui",
+    "dependencies": [
+      "@radix-ui/react-collapsible@^1.1.14"
+    ],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
     "name": "combobox",
     "type": "registry:ui",
     "dependencies": [
@@ -175,6 +217,17 @@
     "registryDependencies": [
       "cn",
       "dialog"
+    ]
+  },
+  {
+    "name": "copy-button",
+    "type": "registry:ui",
+    "dependencies": [
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": [
+      "button",
+      "cn"
     ]
   },
   {
@@ -206,6 +259,21 @@
     "registryDependencies": [
       "button",
       "calendar",
+      "popover"
+    ]
+  },
+  {
+    "name": "date-range-picker",
+    "type": "registry:ui",
+    "dependencies": [
+      "date-fns@^3.6.0",
+      "lucide-react@^0.577.0",
+      "react-day-picker@^8.10.1"
+    ],
+    "registryDependencies": [
+      "button",
+      "calendar",
+      "cn",
       "popover"
     ]
   },
@@ -393,6 +461,18 @@
     ],
     "registryDependencies": [
       "cn"
+    ]
+  },
+  {
+    "name": "number-input",
+    "type": "registry:ui",
+    "dependencies": [
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": [
+      "button",
+      "cn",
+      "input"
     ]
   },
   {

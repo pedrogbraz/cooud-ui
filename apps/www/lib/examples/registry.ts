@@ -28,6 +28,7 @@ export const EXAMPLE_FAMILY_BY_SLUG: Record<string, ExampleFamily> = {
   "animated-button": "buttons",
   toggle: "buttons",
   "toggle-group": "buttons",
+  "copy-button": "buttons",
   // forms
   input: "forms",
   textarea: "forms",
@@ -43,6 +44,8 @@ export const EXAMPLE_FAMILY_BY_SLUG: Record<string, ExampleFamily> = {
   form: "forms",
   "input-otp": "forms",
   "file-dropzone": "forms",
+  "number-input": "forms",
+  autocomplete: "forms",
   // data-display
   avatar: "data-display",
   badge: "data-display",
@@ -55,6 +58,9 @@ export const EXAMPLE_FAMILY_BY_SLUG: Record<string, ExampleFamily> = {
   separator: "data-display",
   skeleton: "data-display",
   "scroll-area": "data-display",
+  "code-block": "data-display",
+  collapsible: "data-display",
+  "aspect-ratio": "data-display",
   // feedback
   spinner: "feedback",
   progress: "feedback",
@@ -81,6 +87,7 @@ export const EXAMPLE_FAMILY_BY_SLUG: Record<string, ExampleFamily> = {
   // date-time
   calendar: "date-time",
   "date-picker": "date-time",
+  "date-range-picker": "date-time",
   // charts
   chart: "charts",
   // premium

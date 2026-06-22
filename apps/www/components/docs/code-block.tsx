@@ -10,7 +10,9 @@ const theme: PrismTheme = {
   styles: [
     {
       types: ["comment", "prolog", "doctype", "cdata"],
-      style: { color: "var(--cooud-fg-muted)", fontStyle: "italic" },
+      // fg-tertiary (not fg-muted) keeps comments muted while clearing AA contrast
+      // (>=4.5:1) on the dark code surface — fg-muted fails at ~2.5:1.
+      style: { color: "var(--cooud-fg-tertiary)", fontStyle: "italic" },
     },
     { types: ["punctuation"], style: { color: "var(--cooud-fg-tertiary)" } },
     {

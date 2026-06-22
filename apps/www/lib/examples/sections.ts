@@ -30,6 +30,10 @@ export const EXAMPLE_SECTIONS: Record<string, ExampleSectionMeta[]> = {
     { id: "single", title: "Single" },
     { id: "multiple", title: "Multiple" },
   ],
+  "copy-button": [
+    { id: "default", title: "Default" },
+    { id: "inline", title: "Inline with a value" },
+  ],
   input: [
     { id: "default", title: "Default" },
     { id: "invalid-state", title: "Invalid state" },
@@ -63,6 +67,14 @@ export const EXAMPLE_SECTIONS: Record<string, ExampleSectionMeta[]> = {
   form: [{ id: "validated-form", title: "Validated form" }],
   "input-otp": [{ id: "six-digit", title: "6-digit" }],
   "file-dropzone": [{ id: "upload", title: "Upload" }],
+  "number-input": [
+    { id: "default", title: "Default" },
+    { id: "precision-format", title: "Precision & formatting" },
+  ],
+  autocomplete: [
+    { id: "default", title: "Default" },
+    { id: "async", title: "Async suggestions" },
+  ],
   avatar: [
     { id: "image-fallback", title: "Image & fallback" },
     { id: "group", title: "Group" },
@@ -91,6 +103,15 @@ export const EXAMPLE_SECTIONS: Record<string, ExampleSectionMeta[]> = {
   separator: [{ id: "horizontal-vertical", title: "Horizontal & vertical" }],
   skeleton: [{ id: "loading-card", title: "Loading card" }],
   "scroll-area": [{ id: "scrollable-list", title: "Scrollable list" }],
+  "code-block": [
+    { id: "default", title: "Default" },
+    { id: "line-numbers", title: "Line numbers" },
+  ],
+  collapsible: [{ id: "default", title: "Default" }],
+  "aspect-ratio": [
+    { id: "default", title: "Default" },
+    { id: "square", title: "Square" },
+  ],
   alert: [
     { id: "default", title: "Default" },
     { id: "variants", title: "Variants" },
@@ -117,6 +138,10 @@ export const EXAMPLE_SECTIONS: Record<string, ExampleSectionMeta[]> = {
   "app-shell": [{ id: "shell-layout", title: "Shell layout" }],
   calendar: [{ id: "single-date", title: "Single date" }],
   "date-picker": [{ id: "pick-a-date", title: "Pick a date" }],
+  "date-range-picker": [
+    { id: "range", title: "Date range" },
+    { id: "presets", title: "With presets" },
+  ],
   chart: [{ id: "bar-chart", title: "Bar chart" }],
   "glass-card": [{ id: "frosted-surface", title: "Frosted surface" }],
   "gradient-border": [
