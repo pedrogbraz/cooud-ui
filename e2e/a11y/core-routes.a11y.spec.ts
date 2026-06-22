@@ -68,6 +68,7 @@ const CORE_ROUTES: ReadonlyArray<{ path: string; label: string }> = [
   { path: "/components", label: "components overview" },
   { path: "/blocks", label: "blocks overview" },
   { path: "/create", label: "create studio" },
+  { path: "/stack", label: "stack builder" },
   { path: "/docs", label: "docs landing" },
   { path: "/docs/installation", label: "docs · installation" },
   // P3 wave 1 components — scan their live demo pages directly.
