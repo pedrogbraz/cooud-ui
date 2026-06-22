@@ -4,7 +4,7 @@
  * Pure, server-safe data — NO "use client". These are the cohesive presets and
  * palettes a user picks from. Ramps are tuned to mirror the lightness scale of
  * `@cooud/tokens` (dark surfaces ~0.11→0.31, light surfaces ~0.96→1, fg dark
- * ~0.93/0.7/0.556/0.44, fg light ~0.145/0.43/0.556/0.705) with each base ramp's
+ * ~0.93/0.7/0.62/0.44, fg light ~0.145/0.43/0.556/0.705) with each base ramp's
  * own hue + chroma applied, and harmonious brand / chart values throughout.
  */
 
@@ -37,7 +37,7 @@ export const BASE_COLORS: BaseColor[] = [
       surfaceFloating: "oklch(0.27 0 0)",
       fg: "oklch(0.93 0 0)",
       fgSecondary: "oklch(0.7 0 0)",
-      fgTertiary: "oklch(0.556 0 0)",
+      fgTertiary: "oklch(0.62 0 0)",
       fgMuted: "oklch(0.44 0 0)",
       border: "oklch(1 0 0 / 0.1)",
       borderStrong: "oklch(1 0 0 / 0.16)",
@@ -72,7 +72,7 @@ export const BASE_COLORS: BaseColor[] = [
       surfaceFloating: "oklch(0.27 0.018 252)",
       fg: "oklch(0.93 0.006 252)",
       fgSecondary: "oklch(0.7 0.013 252)",
-      fgTertiary: "oklch(0.556 0.016 252)",
+      fgTertiary: "oklch(0.62 0.016 252)",
       fgMuted: "oklch(0.44 0.016 252)",
       border: "oklch(1 0 0 / 0.1)",
       borderStrong: "oklch(1 0 0 / 0.16)",
@@ -107,7 +107,7 @@ export const BASE_COLORS: BaseColor[] = [
       surfaceFloating: "oklch(0.27 0.006 286)",
       fg: "oklch(0.93 0.003 286)",
       fgSecondary: "oklch(0.705 0.015 286)",
-      fgTertiary: "oklch(0.552 0.014 286)",
+      fgTertiary: "oklch(0.62 0.014 286)",
       fgMuted: "oklch(0.442 0.013 286)",
       border: "oklch(1 0 0 / 0.1)",
       borderStrong: "oklch(1 0 0 / 0.16)",
@@ -142,7 +142,7 @@ export const BASE_COLORS: BaseColor[] = [
       surfaceFloating: "oklch(0.27 0.011 70)",
       fg: "oklch(0.93 0.004 70)",
       fgSecondary: "oklch(0.7 0.009 70)",
-      fgTertiary: "oklch(0.556 0.011 70)",
+      fgTertiary: "oklch(0.62 0.011 70)",
       fgMuted: "oklch(0.44 0.011 70)",
       border: "oklch(1 0 0 / 0.1)",
       borderStrong: "oklch(1 0 0 / 0.16)",
@@ -177,7 +177,7 @@ export const BASE_COLORS: BaseColor[] = [
       surfaceFloating: "oklch(0.27 0.009 252)",
       fg: "oklch(0.93 0.003 252)",
       fgSecondary: "oklch(0.7 0.008 252)",
-      fgTertiary: "oklch(0.556 0.009 252)",
+      fgTertiary: "oklch(0.62 0.009 252)",
       fgMuted: "oklch(0.44 0.009 252)",
       border: "oklch(1 0 0 / 0.1)",
       borderStrong: "oklch(1 0 0 / 0.16)",
@@ -216,7 +216,7 @@ export const BRAND_COLORS: BrandColor[] = [
     accent: "oklch(0.715 0.143 215.2)",
     primaryLight: "oklch(0.54 0.165 245)",
     accentLight: "oklch(0.55 0.13 218)",
-    primaryForeground: "oklch(0.985 0 0)",
+    primaryForeground: "oklch(0.145 0 0)",
   },
   {
     id: "violet",

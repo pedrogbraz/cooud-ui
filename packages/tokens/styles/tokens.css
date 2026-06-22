@@ -22,7 +22,7 @@
 :root,
 [data-cooud-theme="aurora"] {
   --cooud-primary: oklch(0.685 0.169 237.3);
-  --cooud-primary-foreground: oklch(0.985 0 0);
+  --cooud-primary-foreground: oklch(0.145 0.005 285.8);
   --cooud-accent: oklch(0.715 0.143 215.2);
   --cooud-accent-foreground: oklch(0.145 0 0);
   --cooud-surface-base: oklch(0.145 0.005 285.8);
@@ -64,8 +64,8 @@
 }
 
 [data-cooud-theme="aurora"][data-cooud-mode="light"] {
-  --cooud-primary-foreground: oklch(0.985 0 0);
-  --cooud-accent-foreground: oklch(0.985 0 0);
+  --cooud-primary-foreground: oklch(0.145 0.005 285.8);
+  --cooud-accent-foreground: oklch(0.145 0 0);
   --cooud-surface-base: oklch(1 0 0);
   --cooud-surface-inset: oklch(0.985 0 0);
   --cooud-surface-raised: oklch(1 0 0);
@@ -137,7 +137,7 @@
   --cooud-surface-floating: oklch(0.27 0 0);
   --cooud-fg: oklch(0.93 0 0);
   --cooud-fg-secondary: oklch(0.7 0 0);
-  --cooud-fg-tertiary: oklch(0.556 0 0);
+  --cooud-fg-tertiary: oklch(0.62 0 0);
   --cooud-fg-muted: oklch(0.44 0 0);
   --cooud-fg-inverse: oklch(0.11 0 0);
   --cooud-border: oklch(1 0 0 / 0.1);

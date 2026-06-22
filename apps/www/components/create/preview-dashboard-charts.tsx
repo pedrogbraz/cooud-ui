@@ -185,7 +185,12 @@ export function SpendingCard() {
               strokeWidth={2}
             >
               {spendData.map((entry) => (
-                <Cell key={entry.category} fill={entry.fill} />
+                <Cell
+                  key={entry.category}
+                  fill={entry.fill}
+                  aria-hidden="true"
+                  role="presentation"
+                />
               ))}
             </Pie>
           </PieChart>

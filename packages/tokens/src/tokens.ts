@@ -73,7 +73,7 @@ const fonts = {
 
 const auroraDark: ThemeTokens = {
   primary: "oklch(0.685 0.169 237.3)", // sky-500 #0ea5e9
-  primaryForeground: "oklch(0.985 0 0)",
+  primaryForeground: "oklch(0.145 0.005 285.8)",
   accent: "oklch(0.715 0.143 215.2)", // cyan-500 #06b6d4
   accentForeground: "oklch(0.145 0 0)",
   surfaceBase: "oklch(0.145 0.005 285.8)", // #09090b
@@ -113,8 +113,8 @@ const auroraDark: ThemeTokens = {
 
 const auroraLight: ThemeTokens = {
   ...auroraDark,
-  primaryForeground: "oklch(0.985 0 0)",
-  accentForeground: "oklch(0.985 0 0)",
+  primaryForeground: "oklch(0.145 0.005 285.8)",
+  accentForeground: "oklch(0.145 0 0)",
   surfaceBase: "oklch(1 0 0)", // #ffffff
   surfaceInset: "oklch(0.985 0 0)", // #fafafa
   surfaceRaised: "oklch(1 0 0)",
@@ -194,7 +194,7 @@ const neutralDark: ThemeTokens = {
   surfaceFloating: "oklch(0.27 0 0)",
   fg: "oklch(0.93 0 0)",
   fgSecondary: "oklch(0.7 0 0)",
-  fgTertiary: "oklch(0.556 0 0)",
+  fgTertiary: "oklch(0.62 0 0)",
   fgMuted: "oklch(0.44 0 0)",
   fgInverse: "oklch(0.11 0 0)",
   border: "oklch(1 0 0 / 0.1)",
