@@ -68,20 +68,20 @@ export function BlockPreview({ children }: { children: ReactNode }) {
         data-cooud-mode={mode}
         style={style}
         className={cn(
-          "flex-1 overflow-y-auto bg-surface-base px-6 py-16",
+          "flex-1 overflow-x-auto overflow-y-auto bg-surface-base px-4 py-14 sm:px-6 lg:px-8",
           // Smoothly cross-fade the brand colors when a preset is chosen.
           "transition-[--cooud-primary,--cooud-accent,--cooud-ring] duration-500 ease-[var(--ease-out-quart)] motion-reduce:transition-none",
           mode === "dark" ? "dark" : "",
         )}
       >
-        <div className="mx-auto flex min-h-full w-full max-w-2xl items-center">
+        <div className="mx-auto flex min-h-full w-full min-w-0 max-w-6xl items-center">
           <div className="w-full">{children}</div>
         </div>
       </div>
 
       {/* Preset chips */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-5 z-20 flex justify-center">
-        <div className="pointer-events-auto flex items-center gap-0.5 rounded-full border border-border bg-surface-raised/80 p-1 backdrop-blur">
+      <div className="pointer-events-none absolute inset-x-3 bottom-4 z-20 flex justify-center">
+        <div className="pointer-events-auto flex max-w-full items-center gap-0.5 overflow-x-auto rounded-full border border-border bg-surface-raised/80 p-1 backdrop-blur">
           {PRESETS.map((p, i) => (
             <button
               key={p.name}

@@ -3,28 +3,32 @@
 import { Check, ChevronRight, Copy } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import { BLOCKS } from "../../lib/blocks";
-import { getBlockMeta } from "../../lib/blocks-index";
+import { resolveBlockVariation } from "../../lib/blocks";
 import { CodeBlock } from "../docs/code-block";
 import { Eyebrow } from "../showcase-ui";
 import { BlockPreview } from "./block-preview";
 import { InstallTabs } from "./install-tabs";
 
-export function BlockView({ slug }: { slug: string }) {
-  const meta = getBlockMeta(slug);
-  const block = BLOCKS[slug];
+export function BlockView({ slug, variant }: { slug: string; variant: string }) {
+  const resolved = resolveBlockVariation(slug, variant);
 
-  if (!meta || !block) {
-    return <div className="p-20 text-fg-tertiary">Unknown block: {slug}</div>;
+  if (!resolved || resolved.variant.id !== variant) {
+    return (
+      <div className="p-20 text-fg-tertiary">
+        Unknown block variation: {slug}/{variant}
+      </div>
+    );
   }
 
-  const markdown = `# ${meta.name}\n\n${meta.description}\n\n## Usage\n\n\`\`\`tsx\n${block.code}\n\`\`\`\n`;
+  const { meta, variant: selectedVariant } = resolved;
+  const markdown = `# ${meta.name} — ${selectedVariant.name}\n\n${selectedVariant.description}\n\n## Usage\n\n\`\`\`tsx\n${selectedVariant.code}\n\`\`\`\n`;
+  const preview = <BlockPreview>{selectedVariant.preview}</BlockPreview>;
 
   return (
-    <div className="lg:grid lg:grid-cols-2">
-      {/* Left — scrollable docs */}
+    <div className="2xl:grid 2xl:grid-cols-[minmax(28rem,38rem)_minmax(0,1fr)]">
+      {/* Left — docs */}
       <div className="px-6 py-10 sm:px-10 lg:py-16">
-        <div className="mx-auto max-w-xl">
+        <div className="mx-auto max-w-3xl 2xl:max-w-xl">
           <nav
             aria-label="Breadcrumb"
             className="flex items-center gap-1.5 text-sm text-fg-tertiary"
@@ -36,19 +40,32 @@ export function BlockView({ slug }: { slug: string }) {
               Blocks
             </Link>
             <ChevronRight className="size-3.5" aria-hidden="true" />
-            <span className="text-fg-secondary">{meta.name}</span>
+            <Link
+              href={`/blocks/${slug}`}
+              className="rounded outline-none hover:text-fg focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              {meta.name}
+            </Link>
+            <ChevronRight className="size-3.5" aria-hidden="true" />
+            <span className="text-fg-secondary">{selectedVariant.name}</span>
           </nav>
 
           <Eyebrow className="mt-8">{meta.category}</Eyebrow>
           <h1 className="mt-3 font-display text-5xl font-semibold tracking-tight text-fg">
-            {meta.name}
+            {selectedVariant.name}
           </h1>
-          <p className="mt-4 text-lg text-fg-secondary">{meta.description}</p>
+          <p className="mt-4 text-lg text-fg-secondary">{selectedVariant.description}</p>
 
           <div className="mt-6">
             <CopyMarkdownButton markdown={markdown} />
           </div>
+        </div>
 
+        <div className="mx-auto mt-10 min-h-[34rem] max-w-7xl overflow-hidden rounded-2xl border border-border/60 2xl:hidden">
+          {preview}
+        </div>
+
+        <div className="mx-auto max-w-3xl 2xl:max-w-xl">
           <section className="mt-14">
             <h2 className="font-display text-xl font-semibold tracking-tight text-fg">
               Installation
@@ -64,20 +81,20 @@ export function BlockView({ slug }: { slug: string }) {
           <section className="mt-12 pb-8">
             <h2 className="font-display text-xl font-semibold tracking-tight text-fg">Usage</h2>
             <p className="mt-2 text-sm text-fg-secondary">
-              Copy the source — every class is a semantic token, so it re-themes with your app.
+              Copy the source for{" "}
+              <span className="font-medium text-fg">{selectedVariant.name}</span>. Every class is a
+              semantic token, so it re-themes with your app.
             </p>
             <div className="mt-4">
-              <CodeBlock code={block.code} expandable />
+              <CodeBlock code={selectedVariant.code} expandable />
             </div>
           </section>
         </div>
       </div>
 
       {/* Right — sticky live preview */}
-      <div className="border-border/60 lg:sticky lg:top-16 lg:h-[calc(100vh-4rem)] lg:border-l">
-        <div className="h-[70vh] lg:h-full">
-          <BlockPreview>{block.preview}</BlockPreview>
-        </div>
+      <div className="hidden border-border/60 2xl:sticky 2xl:top-16 2xl:block 2xl:h-[calc(100vh-4rem)] 2xl:border-l">
+        <div className="h-full">{preview}</div>
       </div>
     </div>
   );
