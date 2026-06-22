@@ -1,0 +1,95 @@
+import { Badge } from "@cooud/ui";
+import {
+  DocCallout,
+  DocsCard,
+  DocsGrid,
+  DocsHeader,
+  DocsSection,
+  PrimaryLink,
+} from "../../components/docs/documentation";
+import { CHANGELOG_ENTRIES, INSTALL_OPTIONS } from "../../lib/docs";
+
+const foundations = [
+  {
+    title: "Tokens",
+    description:
+      "@cooud/tokens owns semantic colors, radius, fonts, chart colors, CSS variables, and Tailwind v4 mappings.",
+  },
+  {
+    title: "Theme provider",
+    description:
+      "@cooud/theme applies presets and runtime overrides with CSS variables, so theme changes do not require component rewrites.",
+  },
+  {
+    title: "Component catalog",
+    description:
+      "@cooud/ui ships accessible primitives and composed patterns built with variants, focus states, and data-slot markers.",
+  },
+  {
+    title: "Registry",
+    description:
+      "The CLI copies source-owned components into an app, resolves dependencies, and rewrites imports to local aliases.",
+  },
+] as const;
+
+export default function DocsOverviewPage() {
+  const latest = CHANGELOG_ENTRIES[0];
+
+  return (
+    <div className="py-10">
+      <DocsHeader
+        eyebrow="Documentation"
+        title="Build production interfaces with Cooud UI"
+        description="Cooud UI is a themeable component system, registry, and Create studio for teams that need consistent product surfaces across frameworks."
+      >
+        <PrimaryLink href="/docs/installation">Start installation</PrimaryLink>
+        <PrimaryLink href="/create">Open Create</PrimaryLink>
+      </DocsHeader>
+
+      <DocsSection
+        title="Project contract"
+        description="The library is designed around semantic tokens, accessible primitives, and source-owned registry output."
+      >
+        <DocsGrid columns={2}>
+          {foundations.map((item) => (
+            <DocsCard key={item.title} title={item.title} description={item.description} />
+          ))}
+        </DocsGrid>
+      </DocsSection>
+
+      <DocsSection
+        title="Choose your path"
+        description="Start visually, start from the terminal, or add Cooud UI to an existing codebase."
+      >
+        <DocsGrid>
+          {INSTALL_OPTIONS.map((option) => (
+            <DocsCard
+              key={option.title}
+              title={option.title}
+              description={option.description}
+              href={option.href}
+              action={option.action}
+            />
+          ))}
+        </DocsGrid>
+      </DocsSection>
+
+      <DocsSection title="Current release">
+        <div className="rounded-xl border border-border bg-surface-raised p-6">
+          <div className="flex flex-wrap items-center gap-3">
+            <Badge>{latest.version}</Badge>
+            <Badge variant="secondary">{latest.status}</Badge>
+            <span className="text-sm text-fg-tertiary">{latest.date}</span>
+          </div>
+          <h3 className="mt-4 font-display text-2xl font-semibold text-fg">{latest.title}</h3>
+          <p className="mt-3 max-w-3xl text-sm leading-6 text-fg-secondary">{latest.summary}</p>
+        </div>
+      </DocsSection>
+
+      <DocCallout title="Release discipline" tone="success">
+        New components should land with docs, registry metadata, accessibility notes, and a
+        changelog entry before they are considered ready for app adoption.
+      </DocCallout>
+    </div>
+  );
+}
