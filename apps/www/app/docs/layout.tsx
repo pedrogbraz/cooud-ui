@@ -11,7 +11,7 @@ export default function DocsLayout({ children }: { children: ReactNode }) {
       <SiteNav />
       <div className="mx-auto max-w-[90rem] px-6 lg:grid lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-10">
         <DocumentationSidebar />
-        <main className="min-w-0">
+        <main id="main-content" className="min-w-0">
           <div className="py-4 lg:hidden">
             <MobileDocumentationNav />
           </div>

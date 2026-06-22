@@ -248,7 +248,7 @@ export function CreateStudio() {
   }
 
   return (
-    <main className="min-h-[calc(100vh-4rem)] bg-surface-base text-fg">
+    <main id="main-content" className="min-h-[calc(100vh-4rem)] bg-surface-base text-fg">
       <span className="sr-only" aria-live="polite">
         {liveMessage}
       </span>

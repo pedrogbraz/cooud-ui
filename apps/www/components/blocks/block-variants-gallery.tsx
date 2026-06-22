@@ -51,7 +51,7 @@ export function BlockVariantsGallery({ slug }: { slug: string }) {
   }
 
   return (
-    <main className="min-h-[calc(100vh-4rem)]">
+    <div className="min-h-[calc(100vh-4rem)]">
       <div className="border-b border-border/60">
         <div className="mx-auto max-w-[92rem] px-4 py-10 sm:px-6 lg:px-8">
           <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-sm text-fg-tertiary">
@@ -192,7 +192,7 @@ export function BlockVariantsGallery({ slug }: { slug: string }) {
                     <Link
                       href={`/blocks/${slug}/${variant.id}`}
                       aria-label={`${variant.name} preview`}
-                      className="absolute inset-0 z-10 rounded-2xl outline-none"
+                      className="absolute inset-0 z-10 rounded-2xl outline-none focus-visible:ring-2 focus-visible:ring-ring"
                     />
                   </article>
                 );
@@ -205,6 +205,6 @@ export function BlockVariantsGallery({ slug }: { slug: string }) {
           )}
         </section>
       </div>
-    </main>
+    </div>
   );
 }

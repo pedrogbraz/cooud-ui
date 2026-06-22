@@ -70,7 +70,7 @@ export default function BlocksOverview() {
                   <Link
                     href={`/blocks/${item.slug}`}
                     aria-label={item.name}
-                    className="absolute inset-0 z-20 rounded-2xl outline-none"
+                    className="absolute inset-0 z-20 rounded-2xl outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   />
                 </div>
               ))}
