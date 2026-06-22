@@ -57,14 +57,17 @@ jobs:
         run: bun run build
 
       # --- Pack first so attestations cover the EXACT bytes we publish. ---
-      # `npm pack` emits one tarball per package; we attest + publish those exact bytes.
+      # Use `bun pm pack` (NOT `npm pack`): Bun rewrites the `workspace:*`
+      # protocol to the resolved version (e.g. @cooud/theme -> @cooud/tokens
+      # "0.1.0"), so the published tarball is installable by external consumers.
+      # `npm pack` would leave `workspace:*` and break `npm install`.
       - name: Pack packages
         run: |
           set -euo pipefail
           mkdir -p dist-artifacts
+          dest="$GITHUB_WORKSPACE/dist-artifacts"
           for pkg in tokens theme ui; do
-            tarball="$(npm pack ./packages/$pkg --pack-destination dist-artifacts --silent)"
-            echo "packed packages/$pkg -> dist-artifacts/$tarball"
+            ( cd "packages/$pkg" && bun pm pack --destination "$dest" )
           done
           ls -l dist-artifacts
 

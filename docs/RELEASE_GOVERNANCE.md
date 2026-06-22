@@ -82,12 +82,15 @@ order**; any failure (except `audit`) blocks the merge:
    `examples/smoke-vite/`) resolve the published subpath exports.
 7. `build`
 8. `audit` — dependency vulnerability scan. **Currently non-blocking**
-   (`continue-on-error: true`) because of an unresolved **PostCSS advisory** in
-   the transitive dependency tree.
+   (`continue-on-error: true`). The runtime PostCSS advisory is resolved
+   (`overrides: { postcss: ">=8.5.10" }`); the only remaining advisories are
+   dev-server bugs in `vite`/`esbuild` pulled transitively by `vitest` —
+   never reached by `vitest run` in CI and never shipped to consumers.
 
-> **Make `audit` a hard gate** once the PostCSS advisory is resolved: remove
-> `continue-on-error: true` from the Audit step in `ci.yml`. Track the advisory
-> here and flip the gate in the same PR that clears it.
+> **Make `audit` a hard gate** once the dev-only `vite`/`esbuild` advisories
+> clear upstream: remove `continue-on-error: true` from the Audit step in
+> `ci.yml`. Track the advisories here and flip the gate in the same PR that
+> clears them.
 
 All gate steps invoke **root `package.json` scripts** by name (`bun run <name>`),
 so the gate definition lives with the code, not hard-coded in YAML.
@@ -105,8 +108,8 @@ Configure in **Settings → Branches → Branch protection rules** for `main`:
 - **Require status checks to pass before merging**, and **require branches to be
   up to date**. Required check: the CI **`build`** job
   (typecheck → lint → test → registry:check → tokens:check → package:smoke →
-  build). `audit` is intentionally **not** required until the PostCSS advisory
-  clears.
+  build). `audit` is intentionally **not** required until the dev-only
+  `vite`/`esbuild` advisories clear.
 - **Require linear history** (no merge commits → clean, bisectable `main`).
 - **Require signed commits** (recommended).
 - **Do not allow force pushes**; **do not allow deletions**.
@@ -169,8 +172,8 @@ exist for releases to be reproducible **and** approved:
    environment with required reviewers (§5) described above.
 4. **Replace the placeholder owners** in `.github/CODEOWNERS` (`@pedrogbraz`)
    with the real `cooud` org teams/handles once the org exists.
-5. **Resolve the PostCSS advisory**, then make `audit` a blocking gate in
-   `ci.yml` (§2).
+5. **Clear the remaining dev-only `vite`/`esbuild` advisories** (bump `vitest`
+   when upstream ships a fix), then make `audit` a blocking gate in `ci.yml` (§2).
 
 Until §1–§3 are done, the workflows are correct but a real publish will not
 succeed end-to-end; this is an ops gap, not a workflow bug.

@@ -208,6 +208,10 @@ function lightCheckPackage(pkg) {
 
   // `files` whitelist dirs should actually contribute content.
   for (const f of pkgJson.files || []) {
+    // Negation patterns (e.g. "!src/**/*.test.ts") contribute by EXCLUDING,
+    // not by matching files — they are validated by the test/junk-leak guards
+    // below, so skip the "contributes content" assertion for them.
+    if (f.startsWith("!")) continue;
     const dir = f.replace(/\/?\*+.*$/, "").replace(/\/$/, "");
     if (!dir || dir.includes("*")) continue;
     const has = [...filesInTarball].some((p) => p === dir || p.startsWith(`${dir}/`));

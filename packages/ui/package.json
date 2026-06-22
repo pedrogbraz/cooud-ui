@@ -1,7 +1,7 @@
 {
   "name": "@cooud/ui",
   "version": "0.1.0",
-  "description": "Cooud UI — themeable, accessible React components (Radix + CVA + Tailwind v4).",
+  "description": "Cooud UI \u2014 themeable, accessible React components (Radix + CVA + Tailwind v4).",
   "type": "module",
   "exports": {
     ".": {
@@ -258,7 +258,11 @@
   },
   "files": [
     "dist",
-    "src"
+    "src",
+    "!src/**/*.test.ts",
+    "!src/**/*.test.tsx",
+    "!src/**/*.spec.ts",
+    "!src/**/*.spec.tsx"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
@@ -326,7 +330,7 @@
     "react-dom": "^19.2.0",
     "react-hook-form": "^7.54.2",
     "typescript": "^5.9.3",
-    "vitest": "^2.1.9",
+    "vitest": "^3.2.6",
     "zod": "^3.24.1"
   }
 }
