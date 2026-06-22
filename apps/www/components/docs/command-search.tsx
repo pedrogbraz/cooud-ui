@@ -1,29 +1,34 @@
 "use client";
 
-import {
-  CommandDialog,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@cooud/ui";
 import { Search } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
-import { CATEGORIES, getComponentDisplayName } from "../../lib/components-index";
-import { DOC_NAV_SECTIONS } from "../../lib/docs";
+import dynamic from "next/dynamic";
+import { useEffect, useState } from "react";
 
-const docItems = DOC_NAV_SECTIONS.flatMap((section) => section.items);
+/**
+ * Lightweight, always-rendered search affordance for the site nav.
+ *
+ * Only this trigger (a button + the ⌘/Ctrl-K listener) ships in the nav's
+ * first-load JS. The cmdk-backed dialog and the full search index live in
+ * `command-search-dialog`, pulled in via `next/dynamic` (`ssr: false`) **only
+ * after the user signals intent** — clicking the button or pressing the
+ * shortcut. We keep `mounted` latched so reopening is instant and the dialog's
+ * own open/close (toggle + Esc) behaves exactly as before.
+ */
+const CommandSearchDialog = dynamic(() => import("./command-search-dialog"), {
+  ssr: false,
+});
 
 export function CommandSearch() {
-  const router = useRouter();
   const [open, setOpen] = useState(false);
+  // Latched once the user first opens the palette; gates the dynamic import so
+  // cmdk + the nav index never load until intent.
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "k" && (event.metaKey || event.ctrlKey)) {
         event.preventDefault();
+        setMounted(true);
         setOpen((value) => !value);
       }
     };
@@ -31,29 +36,16 @@ export function CommandSearch() {
     return () => document.removeEventListener("keydown", onKeyDown);
   }, []);
 
-  const onSelectComponent = useCallback(
-    (slug: string) => {
-      setOpen(false);
-      router.push(`/components/${slug}`);
-    },
-    [router],
-  );
-
-  const onSelectRoute = useCallback(
-    (href: string) => {
-      setOpen(false);
-      router.push(href);
-    },
-    [router],
-  );
-
   return (
     <>
       <button
         type="button"
         aria-label="Search documentation"
         aria-keyshortcuts="Meta+K Control+K"
-        onClick={() => setOpen(true)}
+        onClick={() => {
+          setMounted(true);
+          setOpen(true);
+        }}
         className="inline-grid size-9 place-items-center rounded-lg border border-border bg-surface-inset text-xs text-fg-tertiary outline-none transition-colors hover:border-border-strong hover:text-fg-secondary focus-visible:ring-2 focus-visible:ring-ring xl:inline-flex xl:w-64 xl:justify-start xl:gap-2 xl:px-3"
       >
         <Search className="size-4 xl:size-3.5" aria-hidden="true" />
@@ -63,71 +55,7 @@ export function CommandSearch() {
         </kbd>
       </button>
 
-      <CommandDialog
-        open={open}
-        onOpenChange={setOpen}
-        title="Search documentation"
-        description="Find docs, components, studio routes, and release notes."
-      >
-        <CommandInput placeholder="Search documentation…" />
-        <CommandList>
-          <CommandEmpty>No results found.</CommandEmpty>
-          <CommandGroup heading="Documentation">
-            {docItems.map((item) => (
-              <CommandItem
-                key={item.href}
-                value={`${item.label} ${item.description}`}
-                onSelect={() => onSelectRoute(item.href)}
-                className="flex flex-col items-start gap-0.5"
-              >
-                <span className="text-sm text-fg">{item.label}</span>
-                <span className="text-xs text-fg-tertiary">{item.description}</span>
-              </CommandItem>
-            ))}
-          </CommandGroup>
-          <CommandGroup heading="Studio">
-            <CommandItem
-              value="Create design-system studio"
-              onSelect={() => onSelectRoute("/create")}
-              className="flex flex-col items-start gap-0.5"
-            >
-              <span className="text-sm text-fg">Create</span>
-              <span className="text-xs text-fg-tertiary">
-                Build, save, shuffle, and export a complete design-system preset.
-              </span>
-            </CommandItem>
-            <CommandItem
-              value="Blocks"
-              onSelect={() => onSelectRoute("/blocks")}
-              className="flex flex-col items-start gap-0.5"
-            >
-              <span className="text-sm text-fg">Blocks</span>
-              <span className="text-xs text-fg-tertiary">Browse production-ready blocks.</span>
-            </CommandItem>
-          </CommandGroup>
-          {CATEGORIES.map((category) => (
-            <CommandGroup key={category.slug} heading={category.name}>
-              {category.items.map((item) => {
-                const displayName = getComponentDisplayName(item.name);
-
-                return (
-                  <CommandItem
-                    key={item.slug}
-                    value={displayName}
-                    onSelect={() => onSelectComponent(item.slug)}
-                    className="flex flex-col items-start gap-0.5"
-                  >
-                    <span className="text-sm text-fg">{displayName}</span>
-                    {item.description ? (
-                      <span className="text-xs text-fg-tertiary">{item.description}</span>
-                    ) : null}
-                  </CommandItem>
-                );
-              })}
-            </CommandGroup>
-          ))}
-        </CommandList>
-      </CommandDialog>
+      {mounted ? <CommandSearchDialog open={open} onOpenChange={setOpen} /> : null}
     </>
   );
 }

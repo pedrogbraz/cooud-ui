@@ -23,6 +23,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@cooud/ui";
+import { ExampleList } from "../../components/docs/example-list";
 import type { ExampleMap } from "./types";
 
 export const navigationExamples: ExampleMap = {
@@ -230,3 +231,12 @@ export const navigationExamples: ExampleMap = {
     },
   ],
 };
+
+/**
+ * Default-export view for this family. Imported lazily per-slug by the
+ * `/components/[slug]` detail route, so visiting one component only loads this
+ * family chunk (not the whole catalog).
+ */
+export default function NavigationExamples({ slug }: { slug: string }) {
+  return <ExampleList examples={navigationExamples[slug] ?? []} />;
+}

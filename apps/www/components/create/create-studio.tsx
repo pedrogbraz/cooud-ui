@@ -21,6 +21,11 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerTitle,
   Input,
   Label,
   Progress,
@@ -53,6 +58,7 @@ import {
   Palette,
   Radius,
   Save,
+  SlidersHorizontal,
   Sparkles,
   Sun,
   Type,
@@ -80,7 +86,7 @@ import {
   serializeCreateProvider,
   serializePresetCode,
 } from "../../lib/create/presets";
-import type { DesignConfig, Mode, StylePreset } from "../../lib/create/types";
+import type { BrandColor, DesignConfig, Mode, StylePreset } from "../../lib/create/types";
 import { PreviewDashboard } from "./preview-dashboard";
 
 const STORAGE_KEY = "cooud-ui-create-presets-v1";
@@ -119,6 +125,7 @@ export function CreateStudio() {
   const [savedPresets, setSavedPresets] = useState<StylePreset[]>([]);
   const [presetName, setPresetName] = useState("");
   const [codeOpen, setCodeOpen] = useState(false);
+  const [controlsOpen, setControlsOpen] = useState(false);
   const [codeTab, setCodeTab] = useState<CodeTab>("install");
   const [packageManager, setPackageManager] = useState<PackageManager>("bun");
   const [locks, setLocks] = useState<Record<LockKey, boolean>>(defaultLocks);
@@ -248,262 +255,27 @@ export function CreateStudio() {
   }
 
   return (
-    <main className="min-h-[calc(100vh-4rem)] bg-surface-base text-fg">
+    <main id="main-content" className="min-h-[calc(100vh-4rem)] bg-surface-base text-fg">
       <span className="sr-only" aria-live="polite">
         {liveMessage}
       </span>
       <div className="grid min-h-[calc(100vh-4rem)] xl:grid-cols-[20rem_minmax(0,1fr)]">
-        <aside className="border-border/70 border-b bg-surface-inset/80 p-4 backdrop-blur-xl xl:sticky xl:top-16 xl:h-[calc(100vh-4rem)] xl:overflow-y-auto xl:border-r xl:border-b-0">
-          <div className="flex items-center justify-between gap-3 rounded-xl border border-border bg-surface-raised px-3 py-2.5">
-            <div className="min-w-0">
-              <p className="font-display text-sm font-semibold text-fg">Create</p>
-              <p className="truncate text-xs text-fg-tertiary">{config.style}</p>
-            </div>
-            <Badge variant={config.style === CUSTOM_STYLE_NAME ? "warning" : "primary"}>
-              {config.mode}
-            </Badge>
-          </div>
-
-          <div className="mt-5 flex flex-col gap-5">
-            <ControlGroup icon={Sparkles} title="Style">
-              <div className="grid gap-2">
-                {allPresets.map((preset) => {
-                  const active = config.style === preset.name;
-                  const brand = findBrandColor(preset.config.brand);
-                  return (
-                    <button
-                      key={preset.id}
-                      type="button"
-                      aria-pressed={active}
-                      onClick={() => applyPreset(preset)}
-                      className={cn(
-                        "flex items-center gap-3 rounded-xl border p-3 text-left outline-none transition",
-                        "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface-inset",
-                        active
-                          ? "border-primary bg-primary/10 text-fg shadow-glow"
-                          : "border-border bg-surface-raised text-fg-secondary hover:border-border-strong hover:text-fg",
-                      )}
-                    >
-                      <span
-                        className="size-8 shrink-0 rounded-lg border border-border-soft shadow-xs"
-                        style={{ backgroundColor: brand.swatch }}
-                        aria-hidden="true"
-                      />
-                      <span className="min-w-0 flex-1">
-                        <span className="block text-sm font-medium">{preset.name}</span>
-                        <span className="line-clamp-1 block text-xs text-fg-tertiary">
-                          {preset.description}
-                        </span>
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            </ControlGroup>
-
-            <ControlGroup
-              icon={Moon}
-              title="Mode"
-              action={
-                <LockToggle
-                  active={locks.mode}
-                  label="Lock mode during shuffle"
-                  onClick={() => toggleLock("mode")}
-                />
-              }
-            >
-              <div className="grid grid-cols-2 gap-2">
-                <ModeButton
-                  mode="dark"
-                  active={config.mode === "dark"}
-                  onClick={() => patchConfig({ mode: "dark" })}
-                />
-                <ModeButton
-                  mode="light"
-                  active={config.mode === "light"}
-                  onClick={() => patchConfig({ mode: "light" })}
-                />
-              </div>
-            </ControlGroup>
-
-            <ControlGroup
-              icon={Palette}
-              title="Base color"
-              action={
-                <LockToggle
-                  active={locks.base}
-                  label="Lock base color during shuffle"
-                  onClick={() => toggleLock("base")}
-                />
-              }
-            >
-              <SwatchGrid
-                items={BASE_COLORS}
-                activeId={config.baseColor}
-                onSelect={(baseColor) => patchConfig({ baseColor })}
-              />
-            </ControlGroup>
-
-            <ControlGroup
-              icon={Palette}
-              title="Brand"
-              action={
-                <LockToggle
-                  active={locks.brand}
-                  label="Lock brand during shuffle"
-                  onClick={() => toggleLock("brand")}
-                />
-              }
-            >
-              <SwatchGrid
-                items={BRAND_COLORS}
-                activeId={config.brand}
-                onSelect={(brand) =>
-                  patchConfig({ brand, primaryColor: undefined, accentColor: undefined })
-                }
-              />
-              <div className="mt-3 grid gap-2">
-                <CssValueInput
-                  id="create-primary"
-                  label="Primary"
-                  value={config.primaryColor ?? selectedBrand.swatch}
-                  onChange={(primaryColor) => patchConfig({ primaryColor })}
-                />
-                <CssValueInput
-                  id="create-accent"
-                  label="Accent"
-                  value={config.accentColor ?? selectedBrand.accent}
-                  onChange={(accentColor) => patchConfig({ accentColor })}
-                />
-              </div>
-            </ControlGroup>
-
-            <ControlGroup
-              icon={Palette}
-              title="Chart color"
-              action={
-                <LockToggle
-                  active={locks.chart}
-                  label="Lock chart palette during shuffle"
-                  onClick={() => toggleLock("chart")}
-                />
-              }
-            >
-              <div className="grid gap-2">
-                {CHART_PALETTES.map((palette) => (
-                  <button
-                    key={palette.id}
-                    type="button"
-                    aria-pressed={config.chart === palette.id}
-                    onClick={() => patchConfig({ chart: palette.id })}
-                    className={cn(
-                      "flex items-center justify-between gap-3 rounded-xl border px-3 py-2.5 text-sm outline-none transition",
-                      "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface-inset",
-                      config.chart === palette.id
-                        ? "border-primary bg-primary/10 text-fg"
-                        : "border-border bg-surface-raised text-fg-secondary hover:border-border-strong hover:text-fg",
-                    )}
-                  >
-                    <span>{palette.name}</span>
-                    <span className="flex -space-x-1.5">
-                      {palette.colors.map((color) => (
-                        <span
-                          key={color}
-                          className="size-5 rounded-full border border-surface-raised"
-                          style={{ backgroundColor: color }}
-                          aria-hidden="true"
-                        />
-                      ))}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            </ControlGroup>
-
-            <ControlGroup icon={Type} title="Typography">
-              <FontPicker
-                label="Heading"
-                value={config.headingFont}
-                onChange={(headingFont) => patchConfig({ headingFont })}
-                locked={locks.heading}
-                onToggleLock={() => toggleLock("heading")}
-              />
-              <FontPicker
-                label="Body"
-                value={config.bodyFont}
-                onChange={(bodyFont) => patchConfig({ bodyFont })}
-                locked={locks.body}
-                onToggleLock={() => toggleLock("body")}
-              />
-            </ControlGroup>
-
-            <ControlGroup
-              icon={Radius}
-              title="Radius"
-              action={
-                <LockToggle
-                  active={locks.radius}
-                  label="Lock radius during shuffle"
-                  onClick={() => toggleLock("radius")}
-                />
-              }
-            >
-              <div className="flex items-center justify-between text-sm">
-                <Label htmlFor="create-radius">Corners</Label>
-                <span className="font-mono text-fg-secondary tabular-nums">{config.radius}px</span>
-              </div>
-              <Slider
-                id="create-radius"
-                min={0}
-                max={28}
-                step={1}
-                value={[config.radius]}
-                onValueChange={(value) =>
-                  patchConfig({ radius: value[0] ?? DEFAULT_CONFIG.radius })
-                }
-                aria-label="Corner radius"
-              />
-              <div className="flex justify-between text-xs text-fg-tertiary">
-                <span>Sharp</span>
-                <span>Soft</span>
-                <span>Round</span>
-              </div>
-            </ControlGroup>
-
-            <Separator />
-
-            <div className="grid gap-2">
-              <Label htmlFor="preset-name">Preset name</Label>
-              <div className="flex gap-2">
-                <Input
-                  id="preset-name"
-                  value={presetName}
-                  onChange={(event) => setPresetName(event.target.value)}
-                  placeholder="My design system"
-                />
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={savePreset}
-                  disabled={!presetName.trim()}
-                  aria-label="Save preset"
-                >
-                  <Save aria-hidden="true" />
-                </Button>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-2">
-              <Button variant="outline" onClick={shuffle}>
-                <Dices aria-hidden="true" />
-                Shuffle
-              </Button>
-              <Button variant="gradient" onClick={() => setCodeOpen(true)}>
-                <Code2 aria-hidden="true" />
-                Get code
-              </Button>
-            </div>
-          </div>
+        <aside className="hidden border-border/70 bg-surface-inset/80 p-4 backdrop-blur-xl xl:sticky xl:top-16 xl:block xl:h-[calc(100vh-4rem)] xl:overflow-y-auto xl:border-r">
+          <CreateControls
+            idPrefix="create-desktop"
+            config={config}
+            allPresets={allPresets}
+            selectedBrand={selectedBrand}
+            locks={locks}
+            presetName={presetName}
+            onApplyPreset={applyPreset}
+            onPatchConfig={patchConfig}
+            onToggleLock={toggleLock}
+            onPresetNameChange={setPresetName}
+            onSavePreset={savePreset}
+            onShuffle={shuffle}
+            onGetCode={() => setCodeOpen(true)}
+          />
         </aside>
 
         <section className="min-w-0">
@@ -538,7 +310,7 @@ export function CreateStudio() {
             </div>
           </div>
 
-          <div className="mx-auto grid max-w-[100rem] gap-6 px-4 py-6 sm:px-6 2xl:grid-cols-[minmax(0,1fr)_22rem]">
+          <div className="mx-auto grid max-w-[100rem] gap-6 px-4 py-6 pb-24 sm:px-6 2xl:grid-cols-[minmax(0,1fr)_22rem] xl:pb-6">
             <div className="min-w-0">
               <div className="overflow-hidden rounded-2xl border border-border bg-surface-inset p-4 shadow-lg sm:p-6">
                 <PreviewDashboard />
@@ -560,6 +332,59 @@ export function CreateStudio() {
         </section>
       </div>
 
+      <div className="fixed inset-x-0 bottom-0 z-40 border-border/70 border-t bg-surface-base/90 px-4 py-3 backdrop-blur-xl xl:hidden">
+        <div className="mx-auto flex max-w-[100rem] items-center gap-2">
+          <Button
+            variant="outline"
+            className="flex-1"
+            onClick={() => setControlsOpen(true)}
+            aria-haspopup="dialog"
+            aria-expanded={controlsOpen}
+          >
+            <SlidersHorizontal aria-hidden="true" />
+            Controls
+          </Button>
+          <Button variant="outline" size="icon" onClick={shuffle} aria-label="Shuffle design">
+            <Dices aria-hidden="true" />
+          </Button>
+          <Button variant="gradient" className="flex-1" onClick={() => setCodeOpen(true)}>
+            <Code2 aria-hidden="true" />
+            Get code
+          </Button>
+        </div>
+      </div>
+
+      <Drawer open={controlsOpen} onOpenChange={setControlsOpen}>
+        <DrawerContent className="max-h-[88vh] xl:hidden">
+          <DrawerHeader className="text-left">
+            <DrawerTitle>Design controls</DrawerTitle>
+            <DrawerDescription>
+              Tune style, color, typography, and radius. The preview updates live.
+            </DrawerDescription>
+          </DrawerHeader>
+          <div className="overflow-y-auto px-4 pb-8">
+            <CreateControls
+              idPrefix="create-mobile"
+              config={config}
+              allPresets={allPresets}
+              selectedBrand={selectedBrand}
+              locks={locks}
+              presetName={presetName}
+              onApplyPreset={applyPreset}
+              onPatchConfig={patchConfig}
+              onToggleLock={toggleLock}
+              onPresetNameChange={setPresetName}
+              onSavePreset={savePreset}
+              onShuffle={shuffle}
+              onGetCode={() => {
+                setControlsOpen(false);
+                setCodeOpen(true);
+              }}
+            />
+          </div>
+        </DrawerContent>
+      </Drawer>
+
       <CodeDialog
         open={codeOpen}
         onOpenChange={setCodeOpen}
@@ -573,6 +398,289 @@ export function CreateStudio() {
         onTabChange={setCodeTab}
       />
     </main>
+  );
+}
+
+function CreateControls({
+  idPrefix,
+  config,
+  allPresets,
+  selectedBrand,
+  locks,
+  presetName,
+  onApplyPreset,
+  onPatchConfig,
+  onToggleLock,
+  onPresetNameChange,
+  onSavePreset,
+  onShuffle,
+  onGetCode,
+}: {
+  idPrefix: string;
+  config: DesignConfig;
+  allPresets: StylePreset[];
+  selectedBrand: BrandColor;
+  locks: Record<LockKey, boolean>;
+  presetName: string;
+  onApplyPreset: (preset: StylePreset) => void;
+  onPatchConfig: (patch: Partial<DesignConfig>) => void;
+  onToggleLock: (key: LockKey) => void;
+  onPresetNameChange: (value: string) => void;
+  onSavePreset: () => void;
+  onShuffle: () => void;
+  onGetCode: () => void;
+}) {
+  return (
+    <>
+      <div className="flex items-center justify-between gap-3 rounded-xl border border-border bg-surface-raised px-3 py-2.5">
+        <div className="min-w-0">
+          <p className="font-display text-sm font-semibold text-fg">Create</p>
+          <p className="truncate text-xs text-fg-tertiary">{config.style}</p>
+        </div>
+        <Badge variant={config.style === CUSTOM_STYLE_NAME ? "warning" : "primary"}>
+          {config.mode}
+        </Badge>
+      </div>
+
+      <div className="mt-5 flex flex-col gap-5">
+        <ControlGroup icon={Sparkles} title="Style">
+          <div className="grid gap-2">
+            {allPresets.map((preset) => {
+              const active = config.style === preset.name;
+              const brand = findBrandColor(preset.config.brand);
+              return (
+                <button
+                  key={preset.id}
+                  type="button"
+                  aria-pressed={active}
+                  onClick={() => onApplyPreset(preset)}
+                  className={cn(
+                    "flex items-center gap-3 rounded-xl border p-3 text-left outline-none transition",
+                    "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface-inset",
+                    active
+                      ? "border-primary bg-primary/10 text-fg shadow-glow"
+                      : "border-border bg-surface-raised text-fg-secondary hover:border-border-strong hover:text-fg",
+                  )}
+                >
+                  <span
+                    className="size-8 shrink-0 rounded-lg border border-border-soft shadow-xs"
+                    style={{ backgroundColor: brand.swatch }}
+                    aria-hidden="true"
+                  />
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-sm font-medium">{preset.name}</span>
+                    <span className="line-clamp-1 block text-xs text-fg-tertiary">
+                      {preset.description}
+                    </span>
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </ControlGroup>
+
+        <ControlGroup
+          icon={Moon}
+          title="Mode"
+          action={
+            <LockToggle
+              active={locks.mode}
+              label="Lock mode during shuffle"
+              onClick={() => onToggleLock("mode")}
+            />
+          }
+        >
+          <div className="grid grid-cols-2 gap-2">
+            <ModeButton
+              mode="dark"
+              active={config.mode === "dark"}
+              onClick={() => onPatchConfig({ mode: "dark" })}
+            />
+            <ModeButton
+              mode="light"
+              active={config.mode === "light"}
+              onClick={() => onPatchConfig({ mode: "light" })}
+            />
+          </div>
+        </ControlGroup>
+
+        <ControlGroup
+          icon={Palette}
+          title="Base color"
+          action={
+            <LockToggle
+              active={locks.base}
+              label="Lock base color during shuffle"
+              onClick={() => onToggleLock("base")}
+            />
+          }
+        >
+          <SwatchGrid
+            items={BASE_COLORS}
+            activeId={config.baseColor}
+            onSelect={(baseColor) => onPatchConfig({ baseColor })}
+          />
+        </ControlGroup>
+
+        <ControlGroup
+          icon={Palette}
+          title="Brand"
+          action={
+            <LockToggle
+              active={locks.brand}
+              label="Lock brand during shuffle"
+              onClick={() => onToggleLock("brand")}
+            />
+          }
+        >
+          <SwatchGrid
+            items={BRAND_COLORS}
+            activeId={config.brand}
+            onSelect={(brand) =>
+              onPatchConfig({ brand, primaryColor: undefined, accentColor: undefined })
+            }
+          />
+          <div className="mt-3 grid gap-2">
+            <CssValueInput
+              id={`${idPrefix}-primary`}
+              label="Primary"
+              value={config.primaryColor ?? selectedBrand.swatch}
+              onChange={(primaryColor) => onPatchConfig({ primaryColor })}
+            />
+            <CssValueInput
+              id={`${idPrefix}-accent`}
+              label="Accent"
+              value={config.accentColor ?? selectedBrand.accent}
+              onChange={(accentColor) => onPatchConfig({ accentColor })}
+            />
+          </div>
+        </ControlGroup>
+
+        <ControlGroup
+          icon={Palette}
+          title="Chart color"
+          action={
+            <LockToggle
+              active={locks.chart}
+              label="Lock chart palette during shuffle"
+              onClick={() => onToggleLock("chart")}
+            />
+          }
+        >
+          <div className="grid gap-2">
+            {CHART_PALETTES.map((palette) => (
+              <button
+                key={palette.id}
+                type="button"
+                aria-pressed={config.chart === palette.id}
+                onClick={() => onPatchConfig({ chart: palette.id })}
+                className={cn(
+                  "flex items-center justify-between gap-3 rounded-xl border px-3 py-2.5 text-sm outline-none transition",
+                  "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface-inset",
+                  config.chart === palette.id
+                    ? "border-primary bg-primary/10 text-fg"
+                    : "border-border bg-surface-raised text-fg-secondary hover:border-border-strong hover:text-fg",
+                )}
+              >
+                <span>{palette.name}</span>
+                <span className="flex -space-x-1.5">
+                  {palette.colors.map((color) => (
+                    <span
+                      key={color}
+                      className="size-5 rounded-full border border-surface-raised"
+                      style={{ backgroundColor: color }}
+                      aria-hidden="true"
+                    />
+                  ))}
+                </span>
+              </button>
+            ))}
+          </div>
+        </ControlGroup>
+
+        <ControlGroup icon={Type} title="Typography">
+          <FontPicker
+            label="Heading"
+            value={config.headingFont}
+            onChange={(headingFont) => onPatchConfig({ headingFont })}
+            locked={locks.heading}
+            onToggleLock={() => onToggleLock("heading")}
+          />
+          <FontPicker
+            label="Body"
+            value={config.bodyFont}
+            onChange={(bodyFont) => onPatchConfig({ bodyFont })}
+            locked={locks.body}
+            onToggleLock={() => onToggleLock("body")}
+          />
+        </ControlGroup>
+
+        <ControlGroup
+          icon={Radius}
+          title="Radius"
+          action={
+            <LockToggle
+              active={locks.radius}
+              label="Lock radius during shuffle"
+              onClick={() => onToggleLock("radius")}
+            />
+          }
+        >
+          <div className="flex items-center justify-between text-sm">
+            <Label htmlFor={`${idPrefix}-radius`}>Corners</Label>
+            <span className="font-mono text-fg-secondary tabular-nums">{config.radius}px</span>
+          </div>
+          <Slider
+            id={`${idPrefix}-radius`}
+            min={0}
+            max={28}
+            step={1}
+            value={[config.radius]}
+            onValueChange={(value) => onPatchConfig({ radius: value[0] ?? DEFAULT_CONFIG.radius })}
+            aria-label="Corner radius"
+          />
+          <div className="flex justify-between text-xs text-fg-tertiary">
+            <span>Sharp</span>
+            <span>Soft</span>
+            <span>Round</span>
+          </div>
+        </ControlGroup>
+
+        <Separator />
+
+        <div className="grid gap-2">
+          <Label htmlFor={`${idPrefix}-preset-name`}>Preset name</Label>
+          <div className="flex gap-2">
+            <Input
+              id={`${idPrefix}-preset-name`}
+              value={presetName}
+              onChange={(event) => onPresetNameChange(event.target.value)}
+              placeholder="My design system"
+            />
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={onSavePreset}
+              disabled={!presetName.trim()}
+              aria-label="Save preset"
+            >
+              <Save aria-hidden="true" />
+            </Button>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-2">
+          <Button variant="outline" onClick={onShuffle}>
+            <Dices aria-hidden="true" />
+            Shuffle
+          </Button>
+          <Button variant="gradient" onClick={onGetCode}>
+            <Code2 aria-hidden="true" />
+            Get code
+          </Button>
+        </div>
+      </div>
+    </>
   );
 }
 
@@ -832,7 +940,7 @@ function ComponentSampler({ config }: { config: DesignConfig }) {
               <span className="text-fg-secondary">Migration progress</span>
               <span className="font-mono text-fg">72%</span>
             </div>
-            <Progress value={72} />
+            <Progress value={72} aria-label="Migration progress" />
           </div>
           <div className="overflow-hidden rounded-lg border border-border">
             <Table>
@@ -1055,25 +1163,22 @@ function CodeDialog({
 
           <TabsContent value="install" className="min-h-0">
             <div className="border-border border-b px-4 py-3">
-              <div className="flex flex-wrap gap-2">
-                {(["bun", "pnpm", "npm", "yarn"] as const).map((pm) => (
-                  <button
-                    key={pm}
-                    type="button"
-                    aria-pressed={packageManager === pm}
-                    onClick={() => onPackageManagerChange(pm)}
-                    className={cn(
-                      "rounded-lg border px-3 py-1.5 text-sm font-medium outline-none transition",
-                      "focus-visible:ring-2 focus-visible:ring-ring",
-                      packageManager === pm
-                        ? "border-primary bg-primary text-primary-foreground"
-                        : "border-border bg-surface-inset text-fg-secondary hover:text-fg",
-                    )}
-                  >
-                    {pm}
-                  </button>
-                ))}
-              </div>
+              <Tabs
+                value={packageManager}
+                onValueChange={(value) => onPackageManagerChange(value as PackageManager)}
+              >
+                <TabsList aria-label="Package manager" className="h-auto flex-wrap gap-1">
+                  {(["bun", "pnpm", "npm", "yarn"] as const).map((pm) => (
+                    <TabsTrigger
+                      key={pm}
+                      value={pm}
+                      className="rounded-lg border border-transparent px-3 py-1.5 text-sm font-medium ring-offset-surface-base data-[state=active]:border-primary data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                    >
+                      {pm}
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
+              </Tabs>
             </div>
             <CodeBlock code={code} />
           </TabsContent>

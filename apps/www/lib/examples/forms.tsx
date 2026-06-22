@@ -40,6 +40,7 @@ import { Check, FileText } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { ExampleList } from "../../components/docs/example-list";
 import type { ExampleMap } from "./types";
 
 // ── Checkbox ───────────────────────────────────────────────────────
@@ -789,3 +790,12 @@ export const formsExamples: ExampleMap = {
     },
   ],
 };
+
+/**
+ * Default-export view for this family. Imported lazily per-slug by the
+ * `/components/[slug]` detail route, so visiting one component only loads this
+ * family chunk (not the whole catalog).
+ */
+export default function FormsExamples({ slug }: { slug: string }) {
+  return <ExampleList examples={formsExamples[slug] ?? []} />;
+}

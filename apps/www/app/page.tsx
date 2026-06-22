@@ -26,70 +26,73 @@ export default function Page() {
   return (
     <div className="min-h-screen bg-surface-base text-fg">
       <SiteNav />
-      <Hero />
+      <main id="main-content">
+        <Hero />
 
-      {/* Playground — theming + tokens */}
-      <section id="playground" className="relative border-t border-border/60">
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-72 bg-gradient-aurora opacity-[0.08] blur-3xl"
-        />
-        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24">
-          <div id="tokens" className="flex flex-col gap-3 scroll-mt-24">
-            <Eyebrow>Tokens &amp; theming</Eyebrow>
-            <h2 className="max-w-2xl font-display text-3xl font-semibold tracking-tight sm:text-4xl">
-              Theme it your way
-            </h2>
-            <p className="max-w-2xl text-fg-secondary">
-              Every component reads semantic tokens, so one change re-themes the entire page — live,
-              with no re-render. Drag the radius, pick a brand color, switch Aurora ↔ Neutral.
-            </p>
-          </div>
+        {/* Playground — theming + tokens */}
+        <section id="playground" className="relative border-t border-border/60">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-72 bg-gradient-aurora opacity-[0.08] blur-3xl"
+          />
+          <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24">
+            <div id="tokens" className="flex flex-col gap-3 scroll-mt-24">
+              <Eyebrow>Tokens &amp; theming</Eyebrow>
+              <h2 className="max-w-2xl font-display text-3xl font-semibold tracking-tight sm:text-4xl">
+                Theme it your way
+              </h2>
+              <p className="max-w-2xl text-fg-secondary">
+                Every component reads semantic tokens, so one change re-themes the entire page —
+                live, with no re-render. Drag the radius, pick a brand color, switch Aurora ↔
+                Neutral.
+              </p>
+            </div>
 
-          <div className="mt-10 grid min-w-0 items-start gap-8 lg:grid-cols-[minmax(0,24rem)_minmax(0,1fr)]">
-            <ThemeBuilder />
-            <PlaygroundPreview />
+            <div className="mt-10 grid min-w-0 items-start gap-8 lg:grid-cols-[minmax(0,24rem)_minmax(0,1fr)]">
+              <ThemeBuilder />
+              <PlaygroundPreview />
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Components CTA */}
-      <section id="components" className="scroll-mt-20 border-t border-border/60">
-        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24">
-          <div className="flex flex-col gap-3">
-            <Eyebrow>Component library</Eyebrow>
-            <h2 className="max-w-2xl font-display text-3xl font-semibold tracking-tight sm:text-4xl">
-              {CATEGORIES.reduce((n, c) => n + c.items.length, 0)} components, fully documented
-            </h2>
-            <p className="max-w-2xl text-fg-secondary">
-              Browse every component with live previews, variants, states and copy-paste code —
-              organized by category.
-            </p>
-          </div>
+        {/* Components CTA */}
+        <section id="components" className="scroll-mt-20 border-t border-border/60">
+          <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24">
+            <div className="flex flex-col gap-3">
+              <Eyebrow>Component library</Eyebrow>
+              <h2 className="max-w-2xl font-display text-3xl font-semibold tracking-tight sm:text-4xl">
+                {CATEGORIES.reduce((n, c) => n + c.items.length, 0)} components, fully documented
+              </h2>
+              <p className="max-w-2xl text-fg-secondary">
+                Browse every component with live previews, variants, states and copy-paste code —
+                organized by category.
+              </p>
+            </div>
 
-          <div className="mt-8 flex flex-wrap gap-2">
-            {CATEGORIES.map((category) => (
-              <Link
-                key={category.slug}
-                href={`/components#${category.slug}`}
-                className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface-raised px-3.5 py-1.5 text-sm text-fg-secondary outline-none transition-colors hover:border-border-strong hover:text-fg focus-visible:ring-2 focus-visible:ring-ring"
-              >
-                {category.name}
-                <span className="text-fg-tertiary">{category.items.length}</span>
-              </Link>
-            ))}
-          </div>
+            <div className="mt-8 flex flex-wrap gap-2">
+              {CATEGORIES.map((category) => (
+                <Link
+                  key={category.slug}
+                  href={`/components#${category.slug}`}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface-raised px-3.5 py-1.5 text-sm text-fg-secondary outline-none transition-colors hover:border-border-strong hover:text-fg focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  {category.name}
+                  <span className="text-fg-tertiary">{category.items.length}</span>
+                </Link>
+              ))}
+            </div>
 
-          <div className="mt-8">
-            <Button asChild variant="gradient" size="lg">
-              <Link href="/components">
-                Explore all components
-                <ArrowRight aria-hidden="true" />
-              </Link>
-            </Button>
+            <div className="mt-8">
+              <Button asChild variant="gradient" size="lg">
+                <Link href="/components">
+                  Explore all components
+                  <ArrowRight aria-hidden="true" />
+                </Link>
+              </Button>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </main>
 
       <SiteFooter />
     </div>
@@ -139,7 +142,7 @@ function PlaygroundPreview() {
             <Label htmlFor="pg-switch">Notifications</Label>
             <Switch id="pg-switch" defaultChecked />
           </div>
-          <Slider defaultValue={[60]} max={100} step={1} />
+          <Slider aria-label="Preview value" defaultValue={[60]} max={100} step={1} />
         </CardContent>
       </Card>
     </div>

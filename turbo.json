@@ -1,6 +1,12 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "ui": "stream",
+  "globalPassThroughEnv": [
+    "BUNDLE_BUDGET_SLACK",
+    "BUNDLE_STATS_FILE",
+    "BUNDLE_CHECK_STRICT",
+    "PLAYWRIGHT_PORT"
+  ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],

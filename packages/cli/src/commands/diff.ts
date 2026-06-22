@@ -1,10 +1,9 @@
 import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
-import { join } from "node:path";
 import pc from "picocolors";
 import { hasConfig, readConfig } from "../config.js";
 import { Registry } from "../registry.js";
-import { log, rewriteImports, targetDir } from "../utils.js";
+import { log, resolveSafeDest, rewriteImports, targetDir } from "../utils.js";
 
 interface DiffOptions {
   cwd: string;
@@ -34,7 +33,13 @@ export async function diff(names: string[], options: DiffOptions): Promise<void>
       continue;
     }
     for (const file of item.files) {
-      const dest = join(cwd, targetDir(config, file.target), file.path);
+      let dest: string;
+      try {
+        dest = resolveSafeDest(cwd, targetDir(config, file.target), file.path);
+      } catch (err) {
+        log.warn(`${name}: ${(err as Error).message}`);
+        continue;
+      }
       if (!existsSync(dest)) continue; // not installed locally
       const local = await readFile(dest, "utf8");
       const upstream = rewriteImports(file.content, config);

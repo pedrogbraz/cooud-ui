@@ -39,6 +39,10 @@ import {
   Users,
 } from "lucide-react";
 import { useState } from "react";
+import { BlockGalleryBody } from "../../components/blocks/block-gallery-body";
+import { BlockViewBody } from "../../components/blocks/block-view-body";
+import { getBlockMeta } from "../blocks-index";
+import { getBlockContentVariantsFrom, resolveBlockVariationFrom } from "./resolve";
 import type { BlockContentMap } from "./types";
 
 /* ──────────────────────────────────────────────────────────────────────────
@@ -1090,3 +1094,31 @@ export const applicationBlocks: BlockContentMap = {
   settings: { preview: <SettingsBlock />, code: settingsCode },
   team: { preview: <TeamBlock />, code: teamCode },
 };
+
+/* -------------------------------------------------------------------------- */
+/*  Lazily-loaded detail views                                                */
+/*                                                                            */
+/*  These are imported per-slug via next/dynamic by the block detail routes,  */
+/*  so visiting a block only loads this family chunk (not the other family).  */
+/* -------------------------------------------------------------------------- */
+
+export function ApplicationGallery({ slug }: { slug: string }) {
+  const variants = getBlockContentVariantsFrom(applicationBlocks, slug);
+  const meta = getBlockMeta(slug);
+  if (!variants || !meta) {
+    return <div className="p-20 text-fg-tertiary">Unknown block: {slug}</div>;
+  }
+  return <BlockGalleryBody slug={slug} meta={meta} variants={variants} />;
+}
+
+export function ApplicationView({ slug, variant }: { slug: string; variant: string }) {
+  const resolved = resolveBlockVariationFrom(applicationBlocks, slug, variant);
+  if (!resolved || resolved.variant.id !== variant) {
+    return (
+      <div className="p-20 text-fg-tertiary">
+        Unknown block variation: {slug}/{variant}
+      </div>
+    );
+  }
+  return <BlockViewBody slug={slug} resolved={resolved} />;
+}

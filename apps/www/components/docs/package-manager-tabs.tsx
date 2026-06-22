@@ -4,13 +4,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@cooud/ui";
 import { PACKAGE_MANAGERS, type PackageManagerCommand } from "../../lib/docs";
 import { CodeBlock } from "./code-block";
 
-type CommandKind = "init" | "add" | "existing" | "create";
+type CommandKind = "init" | "add";
 
 const commandLabels: Record<CommandKind, string> = {
-  init: "New app",
+  init: "Initialize project",
   add: "Add components",
-  existing: "Existing app",
-  create: "Create",
 };
 
 export function PackageManagerTabs({

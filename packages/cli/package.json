@@ -1,5 +1,5 @@
 {
-  "name": "@cooud/cli",
+  "name": "cooud-ui",
   "version": "0.1.0",
   "description": "cooud-ui — add Cooud UI components to your project, shadcn-style (copy-paste registry).",
   "type": "module",
@@ -18,7 +18,8 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "registry": "bun run scripts/build-registry.ts"
+    "registry": "bun run scripts/build-registry.ts",
+    "registry:check": "bun run scripts/check-registry.ts"
   },
   "dependencies": {
     "commander": "^12.1.0",

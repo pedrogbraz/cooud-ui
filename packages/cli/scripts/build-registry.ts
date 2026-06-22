@@ -14,7 +14,9 @@ const repoRoot = resolve(scriptDir, "../../..");
 const uiRoot = join(repoRoot, "packages/ui");
 const componentsDir = join(uiRoot, "src/components");
 const cnFile = join(uiRoot, "src/lib/cn.ts");
-const outDir = join(repoRoot, "registry");
+
+/** Committed registry output directory. */
+export const outDir = join(repoRoot, "registry");
 
 interface PkgJson {
   dependencies?: Record<string, string>;
@@ -36,6 +38,52 @@ interface RegistryItem {
 
 const IGNORED_NPM = new Set(["react", "react-dom", "react/jsx-runtime"]);
 
+const VALID_TYPES = new Set(["registry:ui", "registry:lib"]);
+const VALID_TARGETS = new Set(["ui", "lib"]);
+
+/**
+ * Hand-rolled schema validation (no extra deps): every emitted item must carry a
+ * non-empty `name`, a known `type`, string[] `dependencies`/`registryDependencies`,
+ * and at least one file with a non-empty `path`, string `content`, and valid `target`.
+ * Throws a clear, item-scoped Error so registry generation fails loudly on drift.
+ */
+function validateItem(item: RegistryItem): void {
+  const where = item?.name ? `item "${item.name}"` : "item (missing name)";
+  if (typeof item.name !== "string" || item.name.length === 0) {
+    throw new Error(`${where}: "name" must be a non-empty string`);
+  }
+  if (!VALID_TYPES.has(item.type)) {
+    throw new Error(`${where}: "type" must be one of ${[...VALID_TYPES].join(", ")}`);
+  }
+  if (!Array.isArray(item.dependencies) || item.dependencies.some((d) => typeof d !== "string")) {
+    throw new Error(`${where}: "dependencies" must be a string[]`);
+  }
+  if (
+    !Array.isArray(item.registryDependencies) ||
+    item.registryDependencies.some((d) => typeof d !== "string")
+  ) {
+    throw new Error(`${where}: "registryDependencies" must be a string[]`);
+  }
+  if (!Array.isArray(item.files) || item.files.length === 0) {
+    throw new Error(`${where}: "files" must be a non-empty array`);
+  }
+  for (const f of item.files) {
+    if (typeof f.path !== "string" || f.path.length === 0) {
+      throw new Error(`${where}: a file is missing a non-empty "path"`);
+    }
+    if (typeof f.content !== "string") {
+      throw new Error(`${where}: file "${f.path}" is missing string "content"`);
+    }
+    if (!VALID_TARGETS.has(f.target)) {
+      throw new Error(
+        `${where}: file "${f.path}" has invalid "target" (expected ${[...VALID_TARGETS].join(
+          " | ",
+        )})`,
+      );
+    }
+  }
+}
+
 function packageNameOf(spec: string): string {
   if (spec.startsWith("@")) return spec.split("/").slice(0, 2).join("/");
   return spec.split("/")[0] ?? spec;
@@ -52,7 +100,8 @@ function parseImports(content: string): string[] {
   return specs;
 }
 
-async function main() {
+/** Read the @cooud/ui sources and derive the full, validated set of registry items. */
+export async function buildItems(): Promise<RegistryItem[]> {
   const pkg = JSON.parse(await readFile(join(uiRoot, "package.json"), "utf8")) as PkgJson;
   const versions = { ...pkg.dependencies, ...pkg.peerDependencies };
   const resolveDep = (name: string): string => {
@@ -60,7 +109,11 @@ async function main() {
     return v ? `${name}@${v}` : name;
   };
 
-  const entries = (await readdir(componentsDir)).filter((f) => /\.(tsx?|ts)$/.test(f)).sort();
+  // Component sources only — never ship test/spec/story files into the registry
+  // (their imports would otherwise be parsed as bogus npm dependencies).
+  const entries = (await readdir(componentsDir))
+    .filter((f) => /\.tsx?$/.test(f) && !/\.(test|spec|stories)\.tsx?$/.test(f))
+    .sort();
 
   const items: RegistryItem[] = [];
 
@@ -100,28 +153,57 @@ async function main() {
     });
   }
 
-  await mkdir(outDir, { recursive: true });
+  // Validate every item (schema + duplicate-name guard) before anything ships.
+  const seenNames = new Set<string>();
+  for (const item of items) {
+    validateItem(item);
+    if (seenNames.has(item.name)) {
+      throw new Error(`duplicate registry item name: "${item.name}"`);
+    }
+    seenNames.add(item.name);
+  }
 
+  return items;
+}
+
+/**
+ * Serialize items to the exact file map written to disk:
+ * `{ "index.json": "...", "<name>.json": "..." }` — newline-terminated JSON,
+ * matching `writeFile` output byte-for-byte so checks can diff in memory.
+ */
+export function serializeRegistry(items: RegistryItem[]): Record<string, string> {
+  const out: Record<string, string> = {};
   const index = items.map(({ name, type, dependencies, registryDependencies }) => ({
     name,
     type,
     dependencies,
     registryDependencies,
   }));
-  await writeFile(join(outDir, "index.json"), `${JSON.stringify(index, null, 2)}\n`, "utf8");
-
+  out["index.json"] = `${JSON.stringify(index, null, 2)}\n`;
   for (const item of items) {
-    await writeFile(
-      join(outDir, `${item.name}.json`),
-      `${JSON.stringify(item, null, 2)}\n`,
-      "utf8",
-    );
+    out[`${item.name}.json`] = `${JSON.stringify(item, null, 2)}\n`;
   }
+  return out;
+}
 
+export async function writeRegistry(targetDir: string, items: RegistryItem[]): Promise<void> {
+  await mkdir(targetDir, { recursive: true });
+  const files = serializeRegistry(items);
+  for (const [file, content] of Object.entries(files)) {
+    await writeFile(join(targetDir, file), content, "utf8");
+  }
+}
+
+async function main() {
+  const items = await buildItems();
+  await writeRegistry(outDir, items);
   console.log(`registry: wrote ${items.length} items + index.json to ${outDir}`);
 }
 
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+// Only run when invoked directly (not when imported by check-registry.ts).
+if (import.meta.main) {
+  main().catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });
+}

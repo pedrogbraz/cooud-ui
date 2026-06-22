@@ -14,12 +14,28 @@
     "typecheck": "turbo run typecheck",
     "lint": "biome check .",
     "format": "biome format --write .",
-    "www": "turbo run dev --filter=@cooud/www"
+    "www": "turbo run dev --filter=@cooud/www",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "registry:check": "bun run -F cooud-ui registry:check",
+    "tokens:check": "bun run -F @cooud/tokens tokens:check",
+    "package:smoke": "node scripts/package-smoke.mjs",
+    "bundle:check": "node scripts/bundle-check.mjs",
+    "check:example-sections": "node scripts/check-example-sections.mjs",
+    "audit": "bun audit",
+    "test:a11y": "playwright test --project=a11y",
+    "test:e2e": "playwright test --project=e2e"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.11.3",
     "@biomejs/biome": "^2.0.6",
+    "@playwright/test": "^1.61.0",
     "turbo": "^2.3.3",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.6"
+  },
+  "overrides": {
+    "postcss": ">=8.5.10"
   },
   "engines": {
     "node": ">=20"

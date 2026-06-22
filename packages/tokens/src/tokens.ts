@@ -84,7 +84,7 @@ const auroraDark: ThemeTokens = {
   surfaceFloating: "oklch(0.31 0.006 286)", // #27272a
   fg: "oklch(0.985 0.001 106.4)", // #fafaf9
   fgSecondary: "oklch(0.705 0.015 286)", // #a1a1aa
-  fgTertiary: "oklch(0.552 0.014 286)", // #71717a
+  fgTertiary: "oklch(0.62 0.014 286)", // #83838c — WCAG AA: >=4.5:1 over dark surfaces (base/inset/raised/overlay)
   fgMuted: "oklch(0.442 0.013 286)", // #52525b
   fgInverse: "oklch(0.235 0.006 285.9)",
   border: "oklch(1 0 0 / 0.1)",

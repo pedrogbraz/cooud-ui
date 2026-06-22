@@ -29,7 +29,7 @@ const registryFlow = [
   },
 ] as const;
 
-const buildCommand = `bun run -F @cooud/cli registry
+const buildCommand = `bun run -F cooud-ui registry
 pnpm dlx cooud-ui@latest list --registry ./registry
 pnpm dlx cooud-ui@latest add button card --registry ./registry`;
 

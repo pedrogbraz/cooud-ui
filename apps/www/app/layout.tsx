@@ -12,6 +12,12 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" data-cooud-theme="aurora" data-cooud-mode="dark" className="dark">
       <body>
+        <a
+          href="#main-content"
+          className="sr-only z-[100] rounded-lg border border-border bg-surface-floating px-4 py-2 text-sm font-medium text-fg shadow-lg outline-none focus-visible:not-sr-only focus-visible:fixed focus-visible:left-4 focus-visible:top-4 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base"
+        >
+          Skip to content
+        </a>
         <CooudUIProvider
           asRoot
           defaultThemeName="aurora"

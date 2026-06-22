@@ -61,6 +61,37 @@ const ChartContainer = forwardRef<
 });
 ChartContainer.displayName = "ChartContainer";
 
+// ── CSS-injection hardening ────────────────────────────────────────
+// ChartStyle injects per-chart CSS custom properties via a <style> tag
+// (dangerouslySetInnerHTML). Both the config key and the color value flow
+// into that raw CSS, so each is validated against a strict allowlist before
+// being emitted. Anything that does not match is dropped (the line is not
+// emitted) so a malicious value like `red;} body{display:none` cannot break
+// out of the declaration.
+
+// Keys become part of `--color-<key>`. Restrict to identifier-safe chars.
+const CHART_KEY_RE = /^[a-zA-Z0-9_-]+$/;
+
+// Allowed color value forms:
+//  - hex: #rgb / #rgba / #rrggbb / #rrggbbaa
+//  - functional: rgb()/rgba()/hsl()/hsla()/oklch()/oklab() with numeric args
+//    (digits, %, ., -, /, spaces and commas only — no nested fns, no ; or {})
+//  - var(--token) reference (optionally chained: var(--a, var(--b)))
+//  - a bare named token reference: letters/digits/_/- (e.g. a CSS var name or
+//    a keyword like `transparent` / `currentColor`)
+const HEX_RE = /^#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/;
+const FUNC_RE = /^(?:rgb|rgba|hsl|hsla|oklch|oklab)\(\s*[0-9.\-%/,\s]+\)$/;
+const VAR_RE = /^var\(\s*--[a-zA-Z0-9_-]+\s*(?:,\s*[a-zA-Z0-9_\-#%.,()/\s]+)?\)$/;
+const NAMED_RE = /^[a-zA-Z][a-zA-Z0-9_-]*$/;
+
+function isSafeChartColor(value: string): boolean {
+  const v = value.trim();
+  if (!v || v.length > 128) {
+    return false;
+  }
+  return HEX_RE.test(v) || FUNC_RE.test(v) || VAR_RE.test(v) || NAMED_RE.test(v);
+}
+
 const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
   const colorConfig = Object.entries(config).filter(([, conf]) => conf.theme || conf.color);
 
@@ -68,26 +99,47 @@ const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
     return null;
   }
 
+  // `id` is interpolated into the CSS selector; restrict it to identifier-safe
+  // chars so it cannot terminate the selector and inject arbitrary rules.
+  const safeId = CHART_KEY_RE.test(id) ? id : null;
+  if (!safeId) {
+    return null;
+  }
+
+  const css = Object.entries(THEMES)
+    .map(([theme, prefix]) => {
+      const decls = colorConfig
+        .map(([key, itemConfig]) => {
+          const color =
+            itemConfig.theme?.[theme as keyof typeof itemConfig.theme] || itemConfig.color;
+          // Skip entries with an unsafe key or an unsafe/absent color value.
+          if (!color || typeof color !== "string" || !CHART_KEY_RE.test(key)) {
+            return null;
+          }
+          if (!isSafeChartColor(color)) {
+            return null;
+          }
+          return `  --color-${key}: ${color.trim()};`;
+        })
+        .filter(Boolean)
+        .join("\n");
+
+      if (!decls) {
+        return null;
+      }
+      return `${prefix} [data-chart=${safeId}] {\n${decls}\n}`;
+    })
+    .filter(Boolean)
+    .join("\n");
+
+  if (!css) {
+    return null;
+  }
+
   return (
     <style
-      // biome-ignore lint/security/noDangerouslySetInnerHtml: injecting per-chart CSS vars is the canonical recharts pattern
-      dangerouslySetInnerHTML={{
-        __html: Object.entries(THEMES)
-          .map(
-            ([theme, prefix]) => `
-${prefix} [data-chart=${id}] {
-${colorConfig
-  .map(([key, itemConfig]) => {
-    const color = itemConfig.theme?.[theme as keyof typeof itemConfig.theme] || itemConfig.color;
-    return color ? `  --color-${key}: ${color};` : null;
-  })
-  .filter(Boolean)
-  .join("\n")}
-}
-`,
-          )
-          .join("\n"),
-      }}
+      // biome-ignore lint/security/noDangerouslySetInnerHtml: injecting per-chart CSS vars is the canonical recharts pattern; key + color are validated against a strict allowlist above
+      dangerouslySetInnerHTML={{ __html: css }}
     />
   );
 };
@@ -309,4 +361,7 @@ export {
   ChartStyle,
   ChartTooltip,
   ChartTooltipContent,
+  // Exported for unit testing of the CSS-injection allowlist. Not re-exported
+  // from the package barrel, so the public API is unchanged.
+  isSafeChartColor,
 };

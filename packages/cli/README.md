@@ -3,12 +3,21 @@
 Add Cooud UI components to your project, shadcn-style — you own the source.
 
 ```sh
-npx cooud-ui init                 # create cooud-ui.json + lib/cn.ts + base deps
+npx cooud-ui init                 # write cooud-ui.json + lib/cn.ts + base deps
 npx cooud-ui add button card      # copy components in (resolves dependencies)
 npx cooud-ui add date-picker      # auto-pulls button, calendar, popover
-npx cooud-ui list                 # list everything in the registry
+npx cooud-ui list                 # list everything in the registry (alias: ls)
 npx cooud-ui diff                 # show which installed components drifted
 ```
+
+## Commands & flags
+
+| Command            | Args               | Flags                                                            |
+| ------------------ | ------------------ | --------------------------------------------------------------- |
+| `init`             | —                  | `-c, --cwd <dir>` · `-r, --registry <source>` · `-y, --yes` · `--skip-install` |
+| `add`              | `[components...]`  | `-c, --cwd <dir>` · `-r, --registry <source>` · `-o, --overwrite` · `--skip-install` |
+| `list` (`ls`)      | —                  | `-c, --cwd <dir>` · `-r, --registry <source>`                   |
+| `diff`             | `[components...]`  | `-c, --cwd <dir>` · `-r, --registry <source>`                   |
 
 ## How it works
 
@@ -32,5 +41,7 @@ npx cooud-ui diff                 # show which installed components drifted
 }
 ```
 
-Point `--registry <path-or-url>` at a local `registry/` directory for offline use or
-testing. Regenerate the registry after changing components: `bun run -F @cooud/cli registry`.
+Point `-r, --registry <path-or-url>` at a local `registry/` directory for offline use
+or testing. Regenerate the registry after changing components:
+`bun run -F cooud-ui registry`. Verify it is in sync in CI with
+`bun run -F cooud-ui registry:check`.

@@ -1,0 +1,38 @@
+# CODEOWNERS — required reviewers per area.
+#
+# GitHub matches the LAST matching pattern for a path, so order is
+# general -> specific. Owners are auto-requested for review on PRs and,
+# when "Require review from Code Owners" branch protection is on, are a
+# hard merge gate.
+#
+# NOTE: the owners below are placeholders pointing at the intended GitHub
+# org/team. Replace @cooud/* teams (or @pedrogbraz) with the real handles
+# once the repo moves under the `cooud` org (see docs/RELEASE_GOVERNANCE.md).
+
+# ----------------------------------------------------------------------------
+# Default owner for everything not matched by a more specific rule below.
+# ----------------------------------------------------------------------------
+*                               @pedrogbraz
+
+# ----------------------------------------------------------------------------
+# Published library packages (the public API surface — review with care).
+# ----------------------------------------------------------------------------
+/packages/tokens/              @pedrogbraz
+/packages/theme/               @pedrogbraz
+/packages/ui/                  @pedrogbraz
+
+# CLI is the unscoped public-npm entry point ("cooud-ui").
+/packages/cli/                 @pedrogbraz
+
+# ----------------------------------------------------------------------------
+# Release & supply-chain critical surfaces — tightest review.
+# CI/CD, publishing, governance, owners file, and dependency lockfile.
+# ----------------------------------------------------------------------------
+/.github/                      @pedrogbraz
+/.github/workflows/            @pedrogbraz
+/.github/CODEOWNERS            @pedrogbraz
+/RELEASE.md                    @pedrogbraz
+/docs/RELEASE_GOVERNANCE.md    @pedrogbraz
+/bun.lock                      @pedrogbraz
+/.npmrc                        @pedrogbraz
+/package.json                  @pedrogbraz

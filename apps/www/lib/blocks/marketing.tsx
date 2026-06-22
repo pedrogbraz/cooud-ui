@@ -26,6 +26,10 @@ import {
   Workflow,
   Zap,
 } from "lucide-react";
+import { BlockGalleryBody } from "../../components/blocks/block-gallery-body";
+import { BlockViewBody } from "../../components/blocks/block-view-body";
+import { getBlockMeta } from "../blocks-index";
+import { getBlockContentVariantsFrom, resolveBlockVariationFrom } from "./resolve";
 import type { BlockContentMap } from "./types";
 
 /* ──────────────────────────────────────────────────────────────────
@@ -1115,3 +1119,31 @@ export const marketingBlocks: BlockContentMap = {
   },
   cta: { preview: <CtaBlock />, code: ctaCode },
 };
+
+/* -------------------------------------------------------------------------- */
+/*  Lazily-loaded detail views                                                */
+/*                                                                            */
+/*  These are imported per-slug via next/dynamic by the block detail routes,  */
+/*  so visiting a block only loads this family chunk (not the other family).  */
+/* -------------------------------------------------------------------------- */
+
+export function MarketingGallery({ slug }: { slug: string }) {
+  const variants = getBlockContentVariantsFrom(marketingBlocks, slug);
+  const meta = getBlockMeta(slug);
+  if (!variants || !meta) {
+    return <div className="p-20 text-fg-tertiary">Unknown block: {slug}</div>;
+  }
+  return <BlockGalleryBody slug={slug} meta={meta} variants={variants} />;
+}
+
+export function MarketingView({ slug, variant }: { slug: string; variant: string }) {
+  const resolved = resolveBlockVariationFrom(marketingBlocks, slug, variant);
+  if (!resolved || resolved.variant.id !== variant) {
+    return (
+      <div className="p-20 text-fg-tertiary">
+        Unknown block variation: {slug}/{variant}
+      </div>
+    );
+  }
+  return <BlockViewBody slug={slug} resolved={resolved} />;
+}

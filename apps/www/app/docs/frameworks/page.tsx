@@ -30,7 +30,7 @@ export default function FrameworksPage() {
 
       <DocsSection
         title="Choose your framework"
-        description="The commands below are starter paths. Use the package-manager tabs on the installation page when you need npm, yarn, or bun."
+        description="Create the app with the framework's official tool, then run cooud-ui init inside it. The init command is framework-agnostic and acts on the current directory."
       >
         <FrameworkGrid />
       </DocsSection>
@@ -54,8 +54,8 @@ export default function FrameworksPage() {
       >
         <p className="text-sm leading-6 text-fg-secondary">
           Start with <InlineCode>laravel new app</InlineCode>, choose the frontend stack, then run{" "}
-          <InlineCode>cooud-ui init -t laravel</InlineCode>. Server validation errors should map
-          into <InlineCode>FieldError</InlineCode> or equivalent visible form feedback.
+          <InlineCode>cooud-ui init</InlineCode> inside the project. Server validation errors should
+          map into <InlineCode>FieldError</InlineCode> or equivalent visible form feedback.
         </p>
       </DocsSection>
     </div>

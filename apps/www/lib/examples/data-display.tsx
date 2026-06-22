@@ -39,6 +39,7 @@ import {
 } from "@cooud/ui";
 import type { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, Check, Inbox } from "lucide-react";
+import { ExampleList } from "../../components/docs/example-list";
 import type { ExampleMap } from "./types";
 
 // ── DataTable demo data ───────────────────────────────────────────────
@@ -578,3 +579,12 @@ const data: Payment[] = [
     },
   ],
 };
+
+/**
+ * Default-export view for this family. Imported lazily per-slug by the
+ * `/components/[slug]` detail route, so visiting one component only loads this
+ * family chunk (not the whole catalog).
+ */
+export default function DataDisplayExamples({ slug }: { slug: string }) {
+  return <ExampleList examples={dataDisplayExamples[slug] ?? []} />;
+}
