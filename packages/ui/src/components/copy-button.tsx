@@ -5,6 +5,42 @@ import { forwardRef, useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "../lib/cn.js";
 import { Button, type ButtonProps } from "./button.js";
 
+/**
+ * Write `text` to the clipboard, returning whether it succeeded. Prefers the
+ * async Clipboard API and falls back to a temporary textarea + `execCommand`
+ * for insecure (http) contexts or browsers without `navigator.clipboard`.
+ */
+async function copyToClipboard(text: string): Promise<boolean> {
+  if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      // Permission denied or insecure context — fall through to execCommand.
+    }
+  }
+  if (typeof document === "undefined") return false;
+  try {
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    // Keep it out of view and out of the layout/scroll flow.
+    textarea.setAttribute("readonly", "");
+    textarea.style.position = "fixed";
+    textarea.style.top = "0";
+    textarea.style.left = "0";
+    textarea.style.opacity = "0";
+    textarea.style.pointerEvents = "none";
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+    const ok = document.execCommand("copy");
+    document.body.removeChild(textarea);
+    return ok;
+  } catch {
+    return false;
+  }
+}
+
 export interface CopyButtonProps extends Omit<ButtonProps, "value" | "children"> {
   /** Text written to the clipboard when the button is pressed. */
   value: string;
@@ -45,19 +81,17 @@ export const CopyButton = forwardRef<HTMLButtonElement, CopyButtonProps>(
       async (event: React.MouseEvent<HTMLButtonElement>) => {
         onClick?.(event);
         if (event.defaultPrevented) return;
-        try {
-          await navigator.clipboard.writeText(value);
-          setCopied(true);
-          if (timerRef.current) clearTimeout(timerRef.current);
-          timerRef.current = setTimeout(() => setCopied(false), timeout);
-        } catch {
-          // Clipboard access can be denied (no permission / insecure context); stay idle.
-        }
+        const ok = await copyToClipboard(value);
+        // Only enter the "copied" state when the write actually succeeded, so we
+        // never announce success in an insecure context or when the API is
+        // missing and the fallback also fails.
+        if (!ok) return;
+        setCopied(true);
+        if (timerRef.current) clearTimeout(timerRef.current);
+        timerRef.current = setTimeout(() => setCopied(false), timeout);
       },
       [onClick, value, timeout],
     );
-
-    const label = copied ? copiedLabel : (ariaLabel ?? copyLabel);
 
     return (
       <Button
@@ -67,7 +101,10 @@ export const CopyButton = forwardRef<HTMLButtonElement, CopyButtonProps>(
         data-copied={copied || undefined}
         variant={variant}
         size={size}
-        aria-label={label}
+        // The button keeps a single, stable accessible name. State changes are
+        // announced once via the polite live region below — not by mutating this
+        // label — to avoid the double announcement.
+        aria-label={ariaLabel ?? copyLabel}
         className={cn(className)}
         onClick={handleClick}
         {...props}

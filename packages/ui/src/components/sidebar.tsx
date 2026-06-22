@@ -17,6 +17,7 @@ import {
   useEffect,
   useMemo,
   useState,
+  useSyncExternalStore,
 } from "react";
 import { cn } from "../lib/cn.js";
 import { Button } from "./button.js";
@@ -36,6 +37,35 @@ const SIDEBAR_MOBILE_BREAKPOINT = 768;
 const SIDEBAR_KEYBOARD_SHORTCUT = "b";
 
 type SidebarState = "expanded" | "collapsed";
+
+/* ------------------------------------------------------------------ *
+ * Mobile-breakpoint store (SSR-safe via useSyncExternalStore)
+ * ------------------------------------------------------------------ */
+
+const MOBILE_MEDIA_QUERY = `(max-width: ${SIDEBAR_MOBILE_BREAKPOINT - 1}px)`;
+
+function subscribeMobile(callback: () => void): () => void {
+  if (typeof window === "undefined" || !window.matchMedia) {
+    return () => {};
+  }
+  const query = window.matchMedia(MOBILE_MEDIA_QUERY);
+  query.addEventListener("change", callback);
+  return () => query.removeEventListener("change", callback);
+}
+
+function getMobileSnapshot(): boolean {
+  if (typeof window === "undefined" || !window.matchMedia) {
+    return false;
+  }
+  return window.matchMedia(MOBILE_MEDIA_QUERY).matches;
+}
+
+// Server snapshot must be a stable value to keep SSR markup deterministic;
+// React reconciles the real client value right after hydration without a
+// hydration-mismatch warning (it's a post-mount store read, not render markup).
+function getMobileServerSnapshot(): boolean {
+  return false;
+}
 
 /* ------------------------------------------------------------------ *
  * Provider / context
@@ -90,7 +120,11 @@ export const SidebarProvider = forwardRef<HTMLDivElement, SidebarProviderProps>(
     },
     ref,
   ) => {
-    const [isMobile, setIsMobile] = useState(false);
+    const isMobile = useSyncExternalStore(
+      subscribeMobile,
+      getMobileSnapshot,
+      getMobileServerSnapshot,
+    );
     const [openMobile, setOpenMobile] = useState(false);
 
     // Internal state for the uncontrolled case.
@@ -107,18 +141,6 @@ export const SidebarProvider = forwardRef<HTMLDivElement, SidebarProviderProps>(
       [openProp, onOpenChange],
     );
 
-    // Track the mobile breakpoint via matchMedia.
-    useEffect(() => {
-      if (typeof window === "undefined" || !window.matchMedia) {
-        return;
-      }
-      const query = window.matchMedia(`(max-width: ${SIDEBAR_MOBILE_BREAKPOINT - 1}px)`);
-      const onChange = () => setIsMobile(query.matches);
-      onChange();
-      query.addEventListener("change", onChange);
-      return () => query.removeEventListener("change", onChange);
-    }, []);
-
     const toggleSidebar = useCallback(() => {
       if (isMobile) {
         setOpenMobile((value) => !value);
@@ -133,10 +155,28 @@ export const SidebarProvider = forwardRef<HTMLDivElement, SidebarProviderProps>(
         return;
       }
       const onKeyDown = (event: KeyboardEvent) => {
+        // Ignore auto-repeat from a held key.
+        if (event.repeat) {
+          return;
+        }
         if (
           event.key.toLowerCase() === SIDEBAR_KEYBOARD_SHORTCUT &&
           (event.metaKey || event.ctrlKey)
         ) {
+          // Don't hijack the shortcut while the user is typing in an editable
+          // field (input/textarea/select/contenteditable).
+          const target = event.target as HTMLElement | null;
+          if (target) {
+            const tag = target.tagName;
+            if (
+              tag === "INPUT" ||
+              tag === "TEXTAREA" ||
+              tag === "SELECT" ||
+              target.isContentEditable
+            ) {
+              return;
+            }
+          }
           event.preventDefault();
           toggleSidebar();
         }
@@ -210,6 +250,7 @@ export const Sidebar = forwardRef<HTMLDivElement, SidebarProps>(
     ref,
   ) => {
     const { isMobile, state, openMobile, setOpenMobile } = useSidebar();
+    const isOffcanvasCollapsed = collapsible === "offcanvas" && state === "collapsed";
 
     // Mobile: render the sidebar contents inside a Sheet.
     if (isMobile) {
@@ -221,7 +262,7 @@ export const Sidebar = forwardRef<HTMLDivElement, SidebarProps>(
             data-mobile="true"
             side={side}
             aria-label={ariaLabel}
-            className="w-[--sidebar-width-mobile] gap-0 bg-surface-base p-0 [&>button]:hidden"
+            className="w-(--sidebar-width-mobile) gap-0 bg-surface-base p-0 [&>button]:hidden"
             style={{ "--sidebar-width-mobile": SIDEBAR_WIDTH_MOBILE } as CSSProperties}
             {...props}
           >
@@ -243,15 +284,16 @@ export const Sidebar = forwardRef<HTMLDivElement, SidebarProps>(
           data-slot="sidebar"
           data-variant={variant}
           data-side={side}
-          aria-label={ariaLabel}
           className={cn(
-            "flex h-svh w-[--sidebar-width] flex-col bg-surface-base text-fg",
+            "flex h-svh w-(--sidebar-width) flex-col bg-surface-base text-fg",
             side === "left" ? "border-r border-border" : "border-l border-border",
             className,
           )}
           {...props}
         >
-          {children}
+          <nav aria-label={ariaLabel} className="flex h-full w-full flex-col">
+            {children}
+          </nav>
         </aside>
       );
     }
@@ -264,12 +306,15 @@ export const Sidebar = forwardRef<HTMLDivElement, SidebarProps>(
         data-collapsible={state === "collapsed" ? collapsible : ""}
         data-variant={variant}
         data-side={side}
-        aria-label={ariaLabel}
+        // When collapsed offcanvas, take the whole aside out of the a11y tree
+        // and tab order so the hidden links/buttons aren't focusable or
+        // announced. `inert` also implies aria-hidden for the subtree.
+        inert={isOffcanvasCollapsed || undefined}
         className={cn(
           "group/sidebar relative flex h-svh flex-col text-fg",
           // Width: expanded vs icon-collapsed vs offcanvas-collapsed.
-          "w-[--sidebar-width]",
-          "data-[collapsible=icon]:w-[--sidebar-width-icon]",
+          "w-(--sidebar-width)",
+          "data-[collapsible=icon]:w-(--sidebar-width-icon)",
           "data-[collapsible=offcanvas]:w-0",
           // Smooth width/transform transition (respects prefers-reduced-motion globally).
           "transition-[width] duration-200 ease-[var(--ease-out-quart)] motion-reduce:transition-none",
@@ -288,7 +333,9 @@ export const Sidebar = forwardRef<HTMLDivElement, SidebarProps>(
         )}
         {...props}
       >
-        {children}
+        <nav aria-label={ariaLabel} className="flex h-full w-full flex-col">
+          {children}
+        </nav>
       </aside>
     );
   },

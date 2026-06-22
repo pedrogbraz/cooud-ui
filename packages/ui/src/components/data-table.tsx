@@ -158,8 +158,16 @@ export interface DataTableProps<TData, TValue> {
   bulkActions?: (rows: Row<TData>[]) => ReactNode;
 
   /* ---- Density (opt-in) ---- */
-  /** Cell padding density. Defaults to "comfortable" (historical look). */
+  /**
+   * Controlled cell padding density. When provided, the toolbar toggle becomes
+   * controlled and you must update it via {@link onDensityChange}. Omit it to
+   * let the table manage density internally (see {@link initialDensity}).
+   */
   density?: DataTableDensity;
+  /** Called when the density toggle is pressed (controlled or uncontrolled). */
+  onDensityChange?: (density: DataTableDensity) => void;
+  /** Initial density when uncontrolled. Defaults to "comfortable". */
+  initialDensity?: DataTableDensity;
   /** Show a comfortable/compact density toggle in the toolbar. */
   enableDensityToggle?: boolean;
 
@@ -218,6 +226,20 @@ const arrIncludesSomeFilter: FilterFn<unknown> = (row, columnId, filterValue) =>
 };
 
 /**
+ * Resolve the effective TanStack column id for a `ColumnDef`, mirroring
+ * table-core's own derivation: explicit `id`, else `accessorKey` (with `.`
+ * normalised to `_`), else a string `header`. Used to match a column to a
+ * faceted-filter `columnId` so we can attach the correct multi-select filterFn.
+ */
+function resolveColumnDefId<TData, TValue>(column: ColumnDef<TData, TValue>): string | undefined {
+  if (column.id != null) return column.id;
+  const accessorKey = (column as { accessorKey?: string | number }).accessorKey;
+  if (accessorKey != null) return String(accessorKey).replace(/\./g, "_");
+  if (typeof column.header === "string") return column.header;
+  return undefined;
+}
+
+/**
  * Build the leading checkbox selection column. Exposed so callers who supply
  * their own `columns` can prepend an identical, accessible selection column
  * instead of relying on `enableRowSelection` injection.
@@ -257,7 +279,9 @@ export function tableRowsToCsv<TData>(table: TanstackTable<TData>): string {
 
   const escapeCell = (value: unknown): string => {
     const str = value == null ? "" : String(value);
-    return /[",\n]/.test(str) ? `"${str.replace(/"/g, '""')}"` : str;
+    // Quote per RFC 4180 when the value contains a comma, double-quote, or any
+    // line break (LF *or* CR — an unquoted CR also breaks row boundaries).
+    return /[",\r\n]/.test(str) ? `"${str.replace(/"/g, '""')}"` : str;
   };
 
   const header = visibleLeafColumns
@@ -460,12 +484,14 @@ function DataTableToolbar<TData>({
   const isFiltered = table.getState().columnFilters.length > 0 || globalFilter.length > 0;
 
   return (
-    <div
-      role="toolbar"
-      aria-label={label}
-      aria-orientation="horizontal"
-      className="flex flex-wrap items-center gap-2"
-    >
+    // `role="group"` (not "toolbar"): a toolbar carries a WAI-ARIA keyboard
+    // contract (roving tabindex + arrow-key navigation) we don't implement.
+    // A labelled group is honest — it names the region for assistive tech while
+    // leaving each control individually tabbable, which is the expected and
+    // accessible behaviour here. <fieldset> (the rule's suggestion) is wrong:
+    // these are toolbar controls, not grouped form fields with a <legend>.
+    // biome-ignore lint/a11y/useSemanticElements: a group of toolbar controls is not a <fieldset>.
+    <div role="group" aria-label={label} className="flex flex-wrap items-center gap-2">
       {toolbarStart}
 
       {searchable ? (
@@ -700,6 +726,8 @@ export function DataTable<TData, TValue>(props: DataTableProps<TData, TValue>) {
     onRowSelectionChange,
     bulkActions,
     density: densityProp,
+    onDensityChange,
+    initialDensity = "comfortable",
     enableDensityToggle = false,
     enableCsvExport = false,
     csvFileName = "export",
@@ -722,7 +750,7 @@ export function DataTable<TData, TValue>(props: DataTableProps<TData, TValue>) {
     pageIndex: 0,
     pageSize: initialPageSize,
   });
-  const [densityState, setDensityState] = useState<DataTableDensity>("comfortable");
+  const [densityState, setDensityState] = useState<DataTableDensity>(initialDensity);
 
   const sorting = sortingProp ?? sortingState;
   const columnFilters = columnFiltersProp ?? columnFiltersState;
@@ -734,11 +762,35 @@ export function DataTable<TData, TValue>(props: DataTableProps<TData, TValue>) {
 
   const selectionEnabled = Boolean(enableRowSelection);
 
-  /* ---- Compose columns: prepend selection column when enabled ---- */
+  /* ---- Compose columns ---- *
+   * 1. For every faceted-filter target, guarantee `filterFn: "arrIncludesSome"`
+   *    when the author hasn't set one. The toolbar control writes an array of
+   *    selected values; without this, table-core's `auto` filterFn resolves to
+   *    `includesString` for string columns, which coerces the array via
+   *    `toString()` ("active,invited") and filters every row out once 2+ values
+   *    are selected. We only override the default ("auto"), never an explicit
+   *    author choice, so this is backward-compatible.
+   * 2. Prepend the selection column when row selection is enabled.
+   */
+  const facetedColumnIds = useMemo(
+    () => new Set((facetedFilters ?? []).map((f) => f.columnId)),
+    [facetedFilters],
+  );
+
   const resolvedColumns = useMemo<ColumnDef<TData, TValue>[]>(() => {
-    if (!selectionEnabled) return columns;
-    return [createSelectionColumn<TData>() as ColumnDef<TData, TValue>, ...columns];
-  }, [columns, selectionEnabled]);
+    const withFacetFilterFn =
+      facetedColumnIds.size === 0
+        ? columns
+        : columns.map((column) => {
+            if (column.filterFn != null && column.filterFn !== "auto") return column;
+            const id = resolveColumnDefId(column);
+            if (id == null || !facetedColumnIds.has(id)) return column;
+            return { ...column, filterFn: "arrIncludesSome" as const };
+          });
+
+    if (!selectionEnabled) return withFacetFilterFn;
+    return [createSelectionColumn<TData>() as ColumnDef<TData, TValue>, ...withFacetFilterFn];
+  }, [columns, facetedColumnIds, selectionEnabled]);
 
   /* ---- Feature detection: only wire optional models/state when used ---- */
   const filteringEnabled =
@@ -833,7 +885,12 @@ export function DataTable<TData, TValue>(props: DataTableProps<TData, TValue>) {
           enableColumnVisibility={enableColumnVisibility}
           density={density}
           enableDensityToggle={enableDensityToggle}
-          onDensityChange={(value) => setDensityState(value)}
+          onDensityChange={(value) => {
+            // Uncontrolled: drive internal state. Controlled (`density` set):
+            // leave state alone so the prop stays the single source of truth.
+            if (densityProp == null) setDensityState(value);
+            onDensityChange?.(value);
+          }}
           enableCsvExport={enableCsvExport}
           onExportCsv={() => downloadCsv(tableRowsToCsv(table), csvFileName)}
           {...(toolbarStart ? { toolbarStart } : {})}

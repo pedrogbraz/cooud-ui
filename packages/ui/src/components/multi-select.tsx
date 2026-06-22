@@ -6,7 +6,6 @@ import {
   type KeyboardEvent,
   type ReactNode,
   useCallback,
-  useId,
   useMemo,
   useState,
 } from "react";
@@ -90,7 +89,6 @@ export const MultiSelect = forwardRef<HTMLDivElement, MultiSelectProps>(
     },
     ref,
   ) => {
-    const listId = useId();
     const [search, setSearch] = useState("");
 
     // --- Uncontrolled / controlled selection ---------------------------------
@@ -196,7 +194,9 @@ export const MultiSelect = forwardRef<HTMLDivElement, MultiSelectProps>(
             tabIndex={disabled ? -1 : 0}
             aria-expanded={isOpen}
             aria-haspopup="listbox"
-            aria-controls={listId}
+            // No aria-controls: cmdk overwrites the id we set on CommandList with
+            // its own generated id, so any id we reference here would be dangling.
+            // aria-haspopup + aria-expanded already convey the popup relationship.
             aria-disabled={disabled || undefined}
             aria-label={ariaLabel}
             aria-labelledby={ariaLabelledby}
@@ -269,16 +269,18 @@ export const MultiSelect = forwardRef<HTMLDivElement, MultiSelectProps>(
               onValueChange={setSearch}
               onKeyDown={handleSearchKeyDown}
             />
-            <CommandList id={listId}>
+            <CommandList>
               <CommandEmpty>{emptyText}</CommandEmpty>
               {options.map((option) => {
                 const isSelected = selected.includes(option.value);
                 return (
                   <CommandItem
+                    // cmdk indexes/highlights by `value`; duplicate labels would
+                    // collide, so include the stable value to keep it unique while
+                    // still matching the visible label for text search.
                     key={option.value}
-                    value={option.label}
+                    value={`${option.label} ${option.value}`}
                     disabled={option.disabled}
-                    aria-selected={isSelected}
                     onSelect={() => toggle(option.value)}
                   >
                     <span
@@ -295,6 +297,10 @@ export const MultiSelect = forwardRef<HTMLDivElement, MultiSelectProps>(
                       {isSelected ? <Check className="size-3" /> : null}
                     </span>
                     <span className="flex-1 truncate">{option.label}</span>
+                    {/* cmdk overwrites aria-selected to mean "highlighted" and the
+                        check indicator is aria-hidden, so expose the checked state
+                        to assistive tech with a visually-hidden announcement. */}
+                    {isSelected ? <span className="sr-only">, selected</span> : null}
                   </CommandItem>
                 );
               })}

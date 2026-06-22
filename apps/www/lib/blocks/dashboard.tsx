@@ -296,7 +296,12 @@ export function DashboardAnalyticsBlock() {
 
   return (
     <div className={SHELL_HOST_CLASS}>
-      <AppShell sidebar={sidebar} header={header} className="!min-h-0 h-full">
+      <AppShell
+        sidebar={sidebar}
+        header={header}
+        className="!min-h-0 h-full"
+        providerProps={{ enableKeyboardShortcut: false }}
+      >
         <div className="flex flex-col gap-6 p-6">
           <header className="flex flex-wrap items-end justify-between gap-3">
             <div className="flex flex-col gap-1">
@@ -498,10 +503,10 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 const activity = [
-  { id: "INV-2048", customer: "Mara Castillo", email: "mara@northwind.io", initials: "MC", amount: "$1,290.00", status: "Paid", statusVariant: "success" as const },
-  { id: "INV-2047", customer: "Devon Lane", email: "devon@acme.dev", initials: "DL", amount: "$640.00", status: "Pending", statusVariant: "warning" as const },
+  { id: "INV-2048", customer: "Mara Castillo", email: "mara@northwind.io", initials: "MC", avatar: "https://i.pravatar.cc/96?img=12", amount: "$1,290.00", status: "Paid", statusVariant: "success" as const },
+  { id: "INV-2047", customer: "Devon Lane", email: "devon@acme.dev", initials: "DL", avatar: "https://i.pravatar.cc/96?img=33", amount: "$640.00", status: "Pending", statusVariant: "warning" as const },
   { id: "INV-2046", customer: "Priya Sharma", email: "priya@lumon.co", initials: "PS", amount: "$2,180.00", status: "Paid", statusVariant: "success" as const },
-  { id: "INV-2045", customer: "Tobias Funke", email: "tobias@bluth.com", initials: "TF", amount: "$320.00", status: "Refunded", statusVariant: "secondary" as const },
+  { id: "INV-2045", customer: "Tobias Funke", email: "tobias@bluth.com", initials: "TF", avatar: "https://i.pravatar.cc/96?img=68", amount: "$320.00", status: "Refunded", statusVariant: "secondary" as const },
 ];
 
 const topbar = [
@@ -600,7 +605,7 @@ export function DashboardAnalyticsBlock() {
 
   return (
     <div className="h-[40rem] w-full overflow-hidden rounded-xl border border-border bg-surface-base">
-      <AppShell sidebar={sidebar} header={header} className="h-full">
+      <AppShell sidebar={sidebar} header={header} className="h-full" providerProps={{ enableKeyboardShortcut: false }}>
         <div className="flex flex-col gap-6 p-6">
           <header className="flex flex-wrap items-end justify-between gap-3">
             <div className="flex flex-col gap-1">
@@ -669,6 +674,7 @@ export function DashboardAnalyticsBlock() {
                       <TableCell>
                         <div className="flex items-center gap-3">
                           <Avatar className="size-8">
+                            {row.avatar ? <AvatarImage src={row.avatar} alt={row.customer} /> : null}
                             <AvatarFallback>{row.initials}</AvatarFallback>
                           </Avatar>
                           <div className="flex min-w-0 flex-col">
@@ -724,7 +730,7 @@ const adminStatus = [
     label: "Refund rate",
     value: "2.1%",
     delta: "+0.5%",
-    trend: "down" as const,
+    trend: "up" as const,
     badge: { text: "Watch", variant: "warning" as const },
   },
 ];
@@ -897,7 +903,7 @@ export function DashboardAdminOverviewBlock() {
         sidebar={sidebar}
         header={header}
         className="!min-h-0 h-full"
-        providerProps={{ defaultOpen: false }}
+        providerProps={{ defaultOpen: false, enableKeyboardShortcut: false }}
       >
         <div className="flex flex-col gap-6 p-6">
           {/* Status cards */}
@@ -1077,7 +1083,7 @@ const nav = [
 const status = [
   { label: "Monthly volume", value: "$312.8k", delta: "+8.4%", trend: "up" as const, badge: { text: "Healthy", variant: "success" as const } },
   { label: "Open orders", value: "184", delta: "+12", trend: "up" as const, badge: { text: "Processing", variant: "info" as const } },
-  { label: "Refund rate", value: "2.1%", delta: "+0.5%", trend: "down" as const, badge: { text: "Watch", variant: "warning" as const } },
+  { label: "Refund rate", value: "2.1%", delta: "+0.5%", trend: "up" as const, badge: { text: "Watch", variant: "warning" as const } },
 ];
 
 const signupsData = [
@@ -1095,10 +1101,10 @@ const signupsConfig = {
 } satisfies ChartConfig;
 
 const rows = [
-  { id: "u1", name: "Mara Castillo", email: "mara@northwind.io", initials: "MC", role: "Owner", roleVariant: "primary" as const, orders: 42, spend: "$18,240", status: "Active", statusVariant: "success" as const },
-  { id: "u2", name: "Devon Lane", email: "devon@acme.dev", initials: "DL", role: "Admin", roleVariant: "info" as const, orders: 28, spend: "$9,610", status: "Active", statusVariant: "success" as const },
+  { id: "u1", name: "Mara Castillo", email: "mara@northwind.io", initials: "MC", avatar: "https://i.pravatar.cc/96?img=12", role: "Owner", roleVariant: "primary" as const, orders: 42, spend: "$18,240", status: "Active", statusVariant: "success" as const },
+  { id: "u2", name: "Devon Lane", email: "devon@acme.dev", initials: "DL", avatar: "https://i.pravatar.cc/96?img=33", role: "Admin", roleVariant: "info" as const, orders: 28, spend: "$9,610", status: "Active", statusVariant: "success" as const },
   { id: "u3", name: "Priya Sharma", email: "priya@lumon.co", initials: "PS", role: "Member", roleVariant: "secondary" as const, orders: 11, spend: "$3,180", status: "Invited", statusVariant: "warning" as const },
-  { id: "u4", name: "Tobias Funke", email: "tobias@bluth.com", initials: "TF", role: "Member", roleVariant: "secondary" as const, orders: 6, spend: "$1,420", status: "Suspended", statusVariant: "error" as const },
+  { id: "u4", name: "Tobias Funke", email: "tobias@bluth.com", initials: "TF", avatar: "https://i.pravatar.cc/96?img=68", role: "Member", roleVariant: "secondary" as const, orders: 6, spend: "$1,420", status: "Suspended", statusVariant: "error" as const },
   { id: "u5", name: "Aiko Tanaka", email: "aiko@hooli.com", initials: "AT", role: "Member", roleVariant: "secondary" as const, orders: 19, spend: "$6,050", status: "Active", statusVariant: "success" as const },
 ];
 
@@ -1165,7 +1171,7 @@ export function DashboardAdminOverviewBlock() {
 
   return (
     <div className="h-[40rem] w-full overflow-hidden rounded-xl border border-border bg-surface-base">
-      <AppShell sidebar={sidebar} header={header} className="h-full" providerProps={{ defaultOpen: false }}>
+      <AppShell sidebar={sidebar} header={header} className="h-full" providerProps={{ defaultOpen: false, enableKeyboardShortcut: false }}>
         <div className="flex flex-col gap-6 p-6">
           <div className="grid gap-4 md:grid-cols-3">
             {status.map(({ label, value, delta, trend, badge }) => (
@@ -1236,6 +1242,7 @@ export function DashboardAdminOverviewBlock() {
                     <TableCell>
                       <div className="flex items-center gap-3">
                         <Avatar className="size-8">
+                          {row.avatar ? <AvatarImage src={row.avatar} alt={row.name} /> : null}
                           <AvatarFallback>{row.initials}</AvatarFallback>
                         </Avatar>
                         <div className="flex min-w-0 flex-col">

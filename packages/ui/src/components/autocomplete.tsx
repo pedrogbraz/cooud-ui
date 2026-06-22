@@ -83,6 +83,14 @@ function optionLabel(option: AutocompleteOption): string {
   return option.label ?? option.value;
 }
 
+// cmdk indexes/filters/highlights by `value`; identical labels would collide, so
+// we feed it a value that is unique per option while still surfacing the label
+// (we own filtering via shouldFilter={false}, so the composite is never matched
+// against the query). The trailing value keeps duplicates distinct.
+function optionCmdkValue(option: AutocompleteOption): string {
+  return `${optionLabel(option)} ${option.value}`;
+}
+
 function defaultLocalFilter(options: AutocompleteOption[], query: string): AutocompleteOption[] {
   if (query.trim() === "") return options;
   const needle = query.toLowerCase();
@@ -128,11 +136,14 @@ export const Autocomplete = forwardRef<HTMLInputElement, AutocompleteProps>(
     // Async results + internally tracked loading state.
     const [asyncOptions, setAsyncOptions] = useState<AutocompleteOption[]>([]);
     const [internalLoading, setInternalLoading] = useState(false);
+    // Real ids read back from the cmdk DOM. cmdk overwrites any id we set on the
+    // list/items with its own useId, so we must reference its generated ids to
+    // keep aria-controls / aria-activedescendant pointing at nodes that exist.
+    const [listboxId, setListboxId] = useState<string>();
+    const [activeDescendant, setActiveDescendant] = useState<string>();
 
     const reactId = useId();
     const id = idProp ?? `${reactId}-autocomplete`;
-    const listId = `${reactId}-listbox`;
-    const optionId = useCallback((optionValue: string) => `${listId}-${optionValue}`, [listId]);
 
     // Expose the underlying input while keeping a local handle for focus mgmt.
     const inputRef = useRef<HTMLInputElement>(null);
@@ -140,6 +151,8 @@ export const Autocomplete = forwardRef<HTMLInputElement, AutocompleteProps>(
     // The cmdk root, used to forward navigation keys into its roving listbox.
     const commandRef = useRef<HTMLDivElement>(null);
     // Last value that matched a real suggestion, for allowCustomValue=false revert.
+    // Seeded with the initial value; kept in sync below so a controlled value that
+    // changes after the first render does not leave a stale revert target.
     const lastValidValue = useRef(value);
     // Guards a blur that is the result of clicking an option inside the popover.
     const selectingRef = useRef(false);
@@ -165,7 +178,15 @@ export const Autocomplete = forwardRef<HTMLInputElement, AutocompleteProps>(
     // Debounced async search. Stale responses are dropped via a request token.
     const requestToken = useRef(0);
     useEffect(() => {
-      if (!isAsync || !open) return;
+      if (!isAsync || !open) {
+        // Closing (or leaving async mode) invalidates any in-flight request so a
+        // late-resolving promise cannot write stale results, and drops the old
+        // suggestions/loading so reopening never flashes a previous query.
+        requestToken.current++;
+        setAsyncOptions([]);
+        setInternalLoading(false);
+        return;
+      }
       const token = ++requestToken.current;
       setInternalLoading(true);
       const handle = setTimeout(() => {
@@ -257,7 +278,7 @@ export const Autocomplete = forwardRef<HTMLInputElement, AutocompleteProps>(
           }
           case "Enter": {
             if (!open) return;
-            const active = localOptions.find((option) => optionLabel(option) === highlighted);
+            const active = localOptions.find((option) => optionCmdkValue(option) === highlighted);
             if (active && !active.disabled) {
               event.preventDefault();
               commitSelection(active);
@@ -321,13 +342,29 @@ export const Autocomplete = forwardRef<HTMLInputElement, AutocompleteProps>(
       [onFocus, value],
     );
 
-    // `highlighted` holds the cmdk value (the label); map it back to the option
-    // so the referenced id matches the rendered node even when label !== value.
-    const highlightedOption =
-      open && highlighted
-        ? localOptions.find((option) => optionLabel(option) === highlighted)
-        : undefined;
-    const activeDescendant = highlightedOption ? optionId(highlightedOption.value) : undefined;
+    // Resolve the real cmdk-generated ids from the DOM after each render that can
+    // change the list or the highlight. cmdk marks the active item with
+    // aria-selected="true" and assigns its own ids, so reading them here keeps
+    // aria-controls / aria-activedescendant referencing nodes that truly exist.
+    useEffect(() => {
+      if (!open) {
+        setListboxId(undefined);
+        setActiveDescendant(undefined);
+        return;
+      }
+      const root = commandRef.current;
+      const list = root?.querySelector<HTMLElement>("[cmdk-list]");
+      setListboxId(list?.id || undefined);
+      // While loading we render skeletons (no items) and an empty list has nothing
+      // highlightable. `highlighted` is cmdk's roving value — re-resolve whenever
+      // it or the rendered list changes so the id reflects the node cmdk marks.
+      const active =
+        loading || !highlighted || localOptions.length === 0
+          ? null
+          : root?.querySelector<HTMLElement>('[cmdk-item][aria-selected="true"]');
+      setActiveDescendant(active?.id || undefined);
+    }, [open, highlighted, localOptions, loading]);
+
     const showEmpty = !loading && localOptions.length === 0;
 
     return (
@@ -345,7 +382,7 @@ export const Autocomplete = forwardRef<HTMLInputElement, AutocompleteProps>(
               spellCheck={false}
               aria-autocomplete="list"
               aria-expanded={open && !disabled}
-              aria-controls={open ? listId : undefined}
+              aria-controls={open ? listboxId : undefined}
               aria-activedescendant={activeDescendant}
               aria-label={ariaLabel}
               aria-labelledby={ariaLabelledby}
@@ -407,9 +444,9 @@ export const Autocomplete = forwardRef<HTMLInputElement, AutocompleteProps>(
             className="flex h-full w-full flex-col overflow-hidden rounded-lg bg-surface-floating text-fg"
           >
             <CommandList
-              id={listId}
-              role="listbox"
-              aria-label={ariaLabel ?? "Suggestions"}
+              // cmdk sets role="listbox" and its own id; the accessible name must
+              // go through its `label` prop (it overrides any aria-label we pass).
+              label={ariaLabel ?? "Suggestions"}
               // Block the blur-revert when a pointer lands on the list.
               onMouseDown={(event) => {
                 selectingRef.current = true;
@@ -440,9 +477,11 @@ export const Autocomplete = forwardRef<HTMLInputElement, AutocompleteProps>(
                     return (
                       <CommandItem
                         key={option.value}
-                        id={optionId(option.value)}
-                        // cmdk highlights by value; keep it aligned with the label.
-                        value={label}
+                        // cmdk overwrites any id we set with its own; we read the
+                        // generated id back from the DOM for aria-activedescendant.
+                        // Use a value unique per option so duplicate labels do not
+                        // collide in cmdk's index/highlight.
+                        value={optionCmdkValue(option)}
                         disabled={option.disabled}
                         onSelect={() => commitSelection(option)}
                       >

@@ -1,7 +1,7 @@
 "use client";
 
 import { Check, ChevronsUpDown } from "lucide-react";
-import { forwardRef, useCallback, useId, useMemo, useState } from "react";
+import { forwardRef, useCallback, useMemo, useState } from "react";
 import { cn } from "../lib/cn.js";
 import { Button } from "./button.js";
 import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from "./command.js";
@@ -65,8 +65,6 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
     const isControlled = valueProp !== undefined;
     const value = isControlled ? valueProp : uncontrolledValue;
 
-    const listId = useId();
-
     const selectedOption = useMemo(
       () => options.find((option) => option.value === value),
       [options, value],
@@ -91,7 +89,9 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            aria-controls={open ? listId : undefined}
+            aria-haspopup="listbox"
+            // No aria-controls: cmdk overwrites the id we set on CommandList with
+            // its own generated id, so any id we reference here would be dangling.
             aria-label={ariaLabel}
             aria-labelledby={ariaLabelledby}
             disabled={disabled}
@@ -117,23 +117,29 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
         >
           <Command>
             <CommandInput placeholder={searchPlaceholder} />
-            <CommandList id={listId}>
+            <CommandList>
               <CommandEmpty>{emptyText}</CommandEmpty>
               {options.map((option) => {
                 const isSelected = option.value === value;
                 return (
                   <CommandItem
+                    // cmdk indexes/highlights by `value`; duplicate labels would
+                    // collide, so include the stable value to keep it unique while
+                    // still matching the visible label for text search.
                     key={option.value}
-                    value={option.label}
+                    value={`${option.label} ${option.value}`}
                     disabled={option.disabled}
                     onSelect={() => handleSelect(option.value)}
-                    aria-selected={isSelected}
                   >
                     <Check
                       className={cn("size-4 shrink-0", isSelected ? "opacity-100" : "opacity-0")}
                       aria-hidden="true"
                     />
                     <span className="truncate">{option.label}</span>
+                    {/* cmdk overwrites aria-selected to mean "highlighted" and the
+                        check icon is aria-hidden, so expose the selected state to
+                        assistive tech with a visually-hidden announcement. */}
+                    {isSelected ? <span className="sr-only">, selected</span> : null}
                   </CommandItem>
                 );
               })}

@@ -1,3 +1,5 @@
+"use client";
+
 import { forwardRef, type HTMLAttributes, useId, useMemo } from "react";
 import { cn } from "../lib/cn.js";
 import { Badge } from "./badge.js";

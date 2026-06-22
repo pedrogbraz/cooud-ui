@@ -7,6 +7,8 @@ import {
   forwardRef,
   type KeyboardEvent,
   useCallback,
+  useEffect,
+  useRef,
   useState,
 } from "react";
 import { cn } from "../lib/cn.js";
@@ -107,6 +109,18 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
     );
     const [focused, setFocused] = useState(false);
 
+    // Re-sync the visible text when the value changes from outside (controlled
+    // updates, programmatic resets) without clobbering the user's in-progress
+    // typing while the field is focused. We track the last value we mirrored so
+    // our own commits don't trigger a redundant text rewrite.
+    const lastSyncedValue = useRef(value);
+    useEffect(() => {
+      if (focused) return;
+      if (value === lastSyncedValue.current) return;
+      lastSyncedValue.current = value;
+      setText(value === null || value === undefined ? "" : String(value));
+    }, [value, focused]);
+
     const pageStep = largeStep ?? step * 10;
 
     const commit = useCallback(
@@ -140,9 +154,15 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
       (event: ChangeEvent<HTMLInputElement>) => {
         const raw = event.target.value;
         setText(raw);
-        if (raw === "" || raw === "-" || raw === "." || raw === "-.") {
-          // Empty / partial input maps to null without forcing a clamp mid-type.
-          commit(raw === "" ? null : (value ?? null));
+        if (raw === "") {
+          // Clearing the field maps to null.
+          commit(null);
+          return;
+        }
+        if (raw === "-" || raw === "." || raw === "-.") {
+          // Partial input ("-", ".", "-.") isn't a number yet. Keep the visible
+          // text but don't re-commit the previous value on every keystroke — that
+          // would fight the user mid-type. We wait for a valid number (or blur).
           return;
         }
         const parsed = Number(raw);
@@ -152,7 +172,7 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
           commit(roundTo(parsed, precision));
         }
       },
-      [commit, precision, value],
+      [commit, precision],
     );
 
     const handleBlur = useCallback(

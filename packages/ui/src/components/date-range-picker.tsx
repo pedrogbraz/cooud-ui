@@ -185,6 +185,14 @@ export const DateRangePicker = forwardRef<HTMLButtonElement, DateRangePickerProp
           className={cn("w-auto p-0", contentClassName)}
         >
           <div className="flex flex-col sm:flex-row">
+            {/*
+              Names the calendar grid for assistive tech. The Calendar below
+              references this element via aria-labelledby, so it must carry the
+              matching id (the reference was previously dangling).
+            */}
+            <span id={labelId} className="sr-only">
+              {placeholder}
+            </span>
             {presets && presets.length > 0 ? (
               <fieldset
                 data-slot="date-range-picker-presets"

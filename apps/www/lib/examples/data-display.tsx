@@ -243,6 +243,13 @@ const memberColumns: ColumnDef<Member>[] = [
   },
   {
     accessorKey: "status",
+    // Multi-select faceted filtering: the toolbar writes an array of selected
+    // values, so the column must use a set-membership filterFn. With 2+ values
+    // selected (e.g. Active + Invited) `arrIncludesSome` keeps any matching row;
+    // the default `auto`/`includesString` would coerce the array to a string and
+    // drop every row. `DataTable` also auto-applies this for faceted columns, so
+    // this is belt-and-suspenders for anyone copying the column defs verbatim.
+    filterFn: "arrIncludesSome",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
     cell: ({ row }) => {
       const status = row.getValue<Member["status"]>("status");

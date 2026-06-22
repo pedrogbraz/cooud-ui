@@ -76,8 +76,19 @@ export const AppShell = forwardRef<HTMLDivElement, AppShellProps>(
       </>
     );
 
+    // Pull className out of both prop sources and merge them explicitly so the
+    // provider's className spread can't clobber the AppShell's className (the
+    // original `{...props} {...providerProps}` order dropped it). providerProps
+    // keeps precedence over the rest props for any other overlapping keys.
+    const { className: providerClassName, ...restProviderProps } = providerProps ?? {};
+
     return (
-      <SidebarProvider ref={ref} className={cn(className)} {...props} {...providerProps}>
+      <SidebarProvider
+        ref={ref}
+        {...props}
+        {...restProviderProps}
+        className={cn(className, providerClassName)}
+      >
         {sidebar}
         {inset ? (
           <SidebarInset data-slot="app-shell-content">{body}</SidebarInset>
