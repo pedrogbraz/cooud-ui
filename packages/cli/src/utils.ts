@@ -1,7 +1,7 @@
 import { spawn } from "node:child_process";
 import { existsSync } from "node:fs";
 import { mkdir, writeFile } from "node:fs/promises";
-import { dirname, join } from "node:path";
+import { dirname, isAbsolute, join, resolve, sep } from "node:path";
 import pc from "picocolors";
 import type { CooudUIConfig } from "./config.js";
 import type { RegistryItem } from "./registry.js";
@@ -68,6 +68,27 @@ export async function writeFileEnsured(filePath: string, content: string): Promi
   await writeFile(filePath, content, "utf8");
 }
 
+/**
+ * Resolve a registry-supplied `filePath` against `<cwd>/<dir>` while guaranteeing
+ * the result stays inside that directory. `filePath` arrives raw from a remote
+ * registry, so it is untrusted: reject absolute paths and any `..` traversal that
+ * would escape the target root (e.g. "../escape" or "/etc/passwd").
+ *
+ * Returns the resolved absolute destination; throws a clear Error naming the
+ * offending path otherwise.
+ */
+export function resolveSafeDest(cwd: string, dir: string, filePath: string): string {
+  if (isAbsolute(filePath)) {
+    throw new Error(`Refusing to write absolute registry path: ${filePath}`);
+  }
+  const resolvedRoot = resolve(join(cwd, dir));
+  const resolvedDest = resolve(join(cwd, dir, filePath));
+  if (resolvedDest !== resolvedRoot && !resolvedDest.startsWith(resolvedRoot + sep)) {
+    throw new Error(`Refusing to write registry path outside target directory: ${filePath}`);
+  }
+  return resolvedDest;
+}
+
 /** Write all files of a resolved item, applying alias rewrites, return written paths. */
 export async function writeItemFiles(
   item: RegistryItem,
@@ -79,7 +100,7 @@ export async function writeItemFiles(
   const skipped: string[] = [];
   for (const file of item.files) {
     const dir = targetDir(config, file.target);
-    const dest = join(cwd, dir, file.path);
+    const dest = resolveSafeDest(cwd, dir, file.path);
     if (existsSync(dest) && !overwrite) {
       skipped.push(join(dir, file.path));
       continue;
