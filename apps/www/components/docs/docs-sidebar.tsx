@@ -4,7 +4,7 @@ import { cn } from "@cooud/ui";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
-import { CATEGORIES } from "../../lib/components-index";
+import { CATEGORIES, getComponentDisplayName } from "../../lib/components-index";
 
 export function DocsSidebar() {
   return (
@@ -47,7 +47,7 @@ export function ComponentNavList({ onNavigate }: { onNavigate?: () => void }) {
               return (
                 <li key={item.slug}>
                   <SidebarLink href={href} active={pathname === href} onNavigate={onNavigate}>
-                    {item.name}
+                    {getComponentDisplayName(item.name)}
                   </SidebarLink>
                 </li>
               );

@@ -1,6 +1,10 @@
 import { notFound } from "next/navigation";
 import { ComponentDocView } from "../../../components/docs/component-doc-view";
-import { COMPONENT_SLUGS, getComponentMeta } from "../../../lib/components-index";
+import {
+  COMPONENT_SLUGS,
+  getComponentDisplayName,
+  getComponentMeta,
+} from "../../../lib/components-index";
 
 export const dynamicParams = false;
 
@@ -12,7 +16,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const meta = getComponentMeta(slug);
   return {
-    title: meta ? `${meta.name} — Cooud UI` : "Cooud UI",
+    title: meta ? `${getComponentDisplayName(meta.name)} — Cooud UI` : "Cooud UI",
     description: meta?.description,
   };
 }

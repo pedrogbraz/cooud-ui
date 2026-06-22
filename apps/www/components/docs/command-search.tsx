@@ -11,7 +11,7 @@ import {
 import { Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { CATEGORIES } from "../../lib/components-index";
+import { CATEGORIES, getComponentDisplayName } from "../../lib/components-index";
 import { DOC_NAV_SECTIONS } from "../../lib/docs";
 
 const docItems = DOC_NAV_SECTIONS.flatMap((section) => section.items);
@@ -107,19 +107,23 @@ export function CommandSearch() {
           </CommandGroup>
           {CATEGORIES.map((category) => (
             <CommandGroup key={category.slug} heading={category.name}>
-              {category.items.map((item) => (
-                <CommandItem
-                  key={item.slug}
-                  value={item.name}
-                  onSelect={() => onSelectComponent(item.slug)}
-                  className="flex flex-col items-start gap-0.5"
-                >
-                  <span className="text-sm text-fg">{item.name}</span>
-                  {item.description ? (
-                    <span className="text-xs text-fg-tertiary">{item.description}</span>
-                  ) : null}
-                </CommandItem>
-              ))}
+              {category.items.map((item) => {
+                const displayName = getComponentDisplayName(item.name);
+
+                return (
+                  <CommandItem
+                    key={item.slug}
+                    value={displayName}
+                    onSelect={() => onSelectComponent(item.slug)}
+                    className="flex flex-col items-start gap-0.5"
+                  >
+                    <span className="text-sm text-fg">{displayName}</span>
+                    {item.description ? (
+                      <span className="text-xs text-fg-tertiary">{item.description}</span>
+                    ) : null}
+                  </CommandItem>
+                );
+              })}
             </CommandGroup>
           ))}
         </CommandList>

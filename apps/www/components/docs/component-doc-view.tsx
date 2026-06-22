@@ -1,6 +1,6 @@
 "use client";
 
-import { getComponentMeta } from "../../lib/components-index";
+import { getComponentDisplayName, getComponentMeta } from "../../lib/components-index";
 import { EXAMPLES } from "../../lib/examples";
 import { Eyebrow } from "../showcase-ui";
 import { CodeBlock } from "./code-block";
@@ -15,6 +15,7 @@ export function ComponentDocView({ slug }: { slug: string }) {
     return <div className="py-20 text-fg-tertiary">Unknown component: {slug}</div>;
   }
 
+  const displayName = getComponentDisplayName(meta.name);
   const toc = [
     { id: "import", title: "Import" },
     ...examples.map((example) => ({ id: example.id, title: example.title })),
@@ -25,7 +26,7 @@ export function ComponentDocView({ slug }: { slug: string }) {
       <article className="min-w-0 py-10">
         <Eyebrow>{meta.category}</Eyebrow>
         <h1 className="mt-3 font-display text-4xl font-semibold tracking-tight text-fg">
-          {meta.name}
+          {displayName}
         </h1>
         <p className="mt-3 max-w-2xl text-lg text-fg-secondary">{meta.description}</p>
 
@@ -43,7 +44,7 @@ export function ComponentDocView({ slug }: { slug: string }) {
           ))}
           {examples.length === 0 && (
             <p className="rounded-xl border border-dashed border-border bg-surface-inset/40 px-6 py-10 text-center text-sm text-fg-tertiary">
-              Interactive examples for {meta.name} are coming soon.
+              Interactive examples for {displayName} are coming soon.
             </p>
           )}
         </div>

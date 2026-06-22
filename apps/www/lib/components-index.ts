@@ -162,6 +162,10 @@ export const ALL_COMPONENTS: (ComponentMeta & { category: string })[] = CATEGORI
   c.items.map((item) => ({ ...item, category: c.name })),
 );
 
+export function getComponentDisplayName(name: string) {
+  return name.replace(/([A-Z]+)([A-Z][a-z])/g, "$1 $2").replace(/([a-z0-9])([A-Z])/g, "$1 $2");
+}
+
 export function getComponentMeta(slug: string): (ComponentMeta & { category: string }) | undefined {
   return ALL_COMPONENTS.find((c) => c.slug === slug);
 }

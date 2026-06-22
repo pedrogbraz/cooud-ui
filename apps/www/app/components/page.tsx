@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { CATEGORIES } from "../../lib/components-index";
+import { CATEGORIES, getComponentDisplayName } from "../../lib/components-index";
 import { EXAMPLES } from "../../lib/examples";
 
 export default function ComponentsOverview() {
@@ -26,6 +26,8 @@ export default function ComponentsOverview() {
             <div className="mt-6 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
               {category.items.map((item) => {
                 const preview = EXAMPLES[item.slug]?.[0]?.preview;
+                const displayName = getComponentDisplayName(item.name);
+
                 return (
                   <div
                     key={item.slug}
@@ -38,13 +40,15 @@ export default function ComponentsOverview() {
                       />
                       <div className="pointer-events-none relative flex max-h-full max-w-full scale-90 flex-wrap items-center justify-center gap-2">
                         {preview ?? (
-                          <span className="font-display text-lg text-fg-tertiary">{item.name}</span>
+                          <span className="font-display text-lg text-fg-tertiary">
+                            {displayName}
+                          </span>
                         )}
                       </div>
                     </div>
                     <div className="flex flex-col gap-1 px-5 py-4">
                       <span className="font-medium text-fg transition-colors group-hover:text-primary">
-                        {item.name}
+                        {displayName}
                       </span>
                       <span className="line-clamp-1 text-sm text-fg-tertiary">
                         {item.description}
@@ -54,7 +58,7 @@ export default function ComponentsOverview() {
                         that contain their own anchors never nest inside an <a>. */}
                     <Link
                       href={`/components/${item.slug}`}
-                      aria-label={item.name}
+                      aria-label={displayName}
                       className="absolute inset-0 z-20 rounded-2xl outline-none"
                     />
                   </div>
