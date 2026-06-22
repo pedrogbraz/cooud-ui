@@ -4,7 +4,12 @@ import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { Eyebrow } from "../../components/showcase-ui";
 import { BLOCKS } from "../../lib/blocks";
-import { BLOCK_CATEGORIES, BLOCK_COUNT } from "../../lib/blocks-index";
+import {
+  BLOCK_CATEGORIES,
+  BLOCK_COUNT,
+  BLOCK_VARIANT_COUNT,
+  getBlockVariantMetas,
+} from "../../lib/blocks-index";
 
 export default function BlocksOverview() {
   return (
@@ -15,8 +20,8 @@ export default function BlocksOverview() {
           Ready-made sections
         </h1>
         <p className="max-w-2xl text-lg text-fg-secondary">
-          {BLOCK_COUNT} copy-paste blocks composed from Cooud UI — marketing sections and app
-          panels. Open one to preview it live, recolor it with a preset, and copy the source.
+          {BLOCK_COUNT} block families and {BLOCK_VARIANT_COUNT} copy-paste variations composed from
+          Cooud UI. Open a family, compare variations, then launch the live preview and source.
         </p>
       </header>
 
@@ -49,6 +54,10 @@ export default function BlocksOverview() {
                       </span>
                       <span className="line-clamp-1 text-sm text-fg-tertiary">
                         {item.description}
+                      </span>
+                      <span className="mt-1 text-xs text-fg-tertiary">
+                        {getBlockVariantMetas(item.slug).length}{" "}
+                        {getBlockVariantMetas(item.slug).length === 1 ? "variation" : "variations"}
                       </span>
                     </div>
                     <ArrowRight

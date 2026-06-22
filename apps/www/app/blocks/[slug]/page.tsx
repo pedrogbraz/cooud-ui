@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { BlockView } from "../../../components/blocks/block-view";
+import { BlockVariantsGallery } from "../../../components/blocks/block-variants-gallery";
 import { BLOCK_SLUGS, getBlockMeta } from "../../../lib/blocks-index";
 
 export const dynamicParams = false;
@@ -12,7 +12,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const meta = getBlockMeta(slug);
   return {
-    title: meta ? `${meta.name} — Cooud UI Blocks` : "Blocks — Cooud UI",
+    title: meta ? `${meta.name} Variations — Cooud UI Blocks` : "Blocks — Cooud UI",
     description: meta?.description,
   };
 }
@@ -20,5 +20,5 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 export default async function BlockPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   if (!getBlockMeta(slug)) notFound();
-  return <BlockView slug={slug} />;
+  return <BlockVariantsGallery slug={slug} />;
 }
