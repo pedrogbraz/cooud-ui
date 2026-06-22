@@ -23,6 +23,9 @@ export {
 export type { AnimatedButtonProps } from "./components/animated-button.js";
 // ── Wave 4 — premium & brand ───────────────────────────────────────
 export { AnimatedButton } from "./components/animated-button.js";
+export type { AppShellProps } from "./components/app-shell.js";
+// ── Wave 5 — layout & app navigation ───────────────────────────────
+export { AppShell } from "./components/app-shell.js";
 export { AuroraBackground } from "./components/aurora-background.js";
 // ── Wave 3 — data & display ────────────────────────────────────────
 export { Avatar, AvatarFallback, AvatarImage } from "./components/avatar.js";
@@ -172,6 +175,17 @@ export {
 } from "./components/motion-presets.js";
 export type { MultiSelectOption, MultiSelectProps } from "./components/multi-select.js";
 export { MultiSelect } from "./components/multi-select.js";
+export {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuIndicator,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  NavigationMenuViewport,
+  navigationMenuTriggerStyle,
+} from "./components/navigation-menu.js";
 export type { PaginationLinkProps } from "./components/pagination.js";
 export {
   Pagination,
@@ -214,6 +228,37 @@ export {
   sheetVariants,
 } from "./components/sheet.js";
 export { Shimmer } from "./components/shimmer.js";
+export type {
+  SidebarContextValue,
+  SidebarGroupLabelProps,
+  SidebarMenuButtonProps,
+  SidebarMenuSubButtonProps,
+  SidebarProps,
+  SidebarProviderProps,
+  SidebarTriggerProps,
+} from "./components/sidebar.js";
+export {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarInset,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
+  SidebarProvider,
+  SidebarRail,
+  SidebarSeparator,
+  SidebarTrigger,
+  sidebarMenuButtonVariants,
+  useSidebar,
+} from "./components/sidebar.js";
 export { Skeleton } from "./components/skeleton.js";
 export { Slider } from "./components/slider.js";
 export type { ToasterProps } from "./components/sonner.js";

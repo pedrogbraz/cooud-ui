@@ -5,12 +5,20 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
+  AppShell,
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
   Pagination,
   PaginationContent,
   PaginationEllipsis,
@@ -18,11 +26,24 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarProvider,
+  SidebarTrigger,
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
 } from "@cooud/ui";
+import { Calendar, Home, Inbox, Search, Settings } from "lucide-react";
 import { ExampleList } from "../../components/docs/example-list";
 import type { ExampleMap } from "./types";
 
@@ -227,6 +248,270 @@ export const navigationExamples: ExampleMap = {
             </PaginationItem>
           </PaginationContent>
         </Pagination>
+      ),
+    },
+  ],
+
+  "navigation-menu": [
+    {
+      id: "menu-bar",
+      title: "Menu bar",
+      description:
+        "A horizontal menu bar with a disclosure panel of links and a flat link, fully keyboard navigable.",
+      code: `<NavigationMenu>
+  <NavigationMenuList>
+    <NavigationMenuItem>
+      <NavigationMenuTrigger>Products</NavigationMenuTrigger>
+      <NavigationMenuContent>
+        <ul className="grid w-[22rem] gap-1 p-2">
+          <li>
+            <NavigationMenuLink href="#">
+              <span className="font-medium text-fg">Analytics</span>
+              <span className="text-fg-tertiary">Real-time dashboards and reports.</span>
+            </NavigationMenuLink>
+          </li>
+          <li>
+            <NavigationMenuLink href="#">
+              <span className="font-medium text-fg">Automations</span>
+              <span className="text-fg-tertiary">Wire up rules and workflows.</span>
+            </NavigationMenuLink>
+          </li>
+        </ul>
+      </NavigationMenuContent>
+    </NavigationMenuItem>
+    <NavigationMenuItem>
+      <NavigationMenuLink href="#" className={navigationMenuTriggerStyle()}>
+        Docs
+      </NavigationMenuLink>
+    </NavigationMenuItem>
+  </NavigationMenuList>
+</NavigationMenu>`,
+      preview: (
+        <NavigationMenu>
+          <NavigationMenuList>
+            <NavigationMenuItem>
+              <NavigationMenuTrigger>Products</NavigationMenuTrigger>
+              <NavigationMenuContent>
+                <ul className="grid w-[22rem] gap-1 p-2">
+                  <li>
+                    <NavigationMenuLink href="#">
+                      <span className="font-medium text-fg">Analytics</span>
+                      <span className="text-fg-tertiary">Real-time dashboards and reports.</span>
+                    </NavigationMenuLink>
+                  </li>
+                  <li>
+                    <NavigationMenuLink href="#">
+                      <span className="font-medium text-fg">Automations</span>
+                      <span className="text-fg-tertiary">Wire up rules and workflows.</span>
+                    </NavigationMenuLink>
+                  </li>
+                </ul>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <NavigationMenuLink href="#" className={navigationMenuTriggerStyle()}>
+                Docs
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+          </NavigationMenuList>
+        </NavigationMenu>
+      ),
+    },
+  ],
+
+  sidebar: [
+    {
+      id: "collapsible-nav",
+      title: "Collapsible navigation",
+      description:
+        "A composable app sidebar with grouped menu items, a header and footer. Use the trigger to collapse it to icons.",
+      code: `<SidebarProvider className="!min-h-0 h-full">
+  <Sidebar collapsible="icon" className="!h-full">
+    <SidebarHeader>
+      <span className="px-2 text-sm font-semibold text-fg">Acme Inc.</span>
+    </SidebarHeader>
+    <SidebarContent>
+      <SidebarGroup>
+        <SidebarGroupLabel>Workspace</SidebarGroupLabel>
+        <SidebarGroupContent>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton isActive tooltip="Home">
+                <Home />
+                <span>Home</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton tooltip="Inbox">
+                <Inbox />
+                <span>Inbox</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton tooltip="Calendar">
+                <Calendar />
+                <span>Calendar</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarGroupContent>
+      </SidebarGroup>
+    </SidebarContent>
+    <SidebarFooter>
+      <SidebarMenu>
+        <SidebarMenuItem>
+          <SidebarMenuButton tooltip="Settings">
+            <Settings />
+            <span>Settings</span>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      </SidebarMenu>
+    </SidebarFooter>
+  </Sidebar>
+  <div className="flex flex-1 flex-col gap-3 p-4">
+    <SidebarTrigger />
+    <p className="text-sm text-fg-secondary">Toggle the sidebar with the button above.</p>
+  </div>
+</SidebarProvider>`,
+      preview: (
+        <div className="h-[28rem] w-full overflow-hidden rounded-xl border border-border">
+          <SidebarProvider className="!min-h-0 h-full">
+            <Sidebar collapsible="icon" className="!h-full">
+              <SidebarHeader>
+                <span className="px-2 text-sm font-semibold text-fg">Acme Inc.</span>
+              </SidebarHeader>
+              <SidebarContent>
+                <SidebarGroup>
+                  <SidebarGroupLabel>Workspace</SidebarGroupLabel>
+                  <SidebarGroupContent>
+                    <SidebarMenu>
+                      <SidebarMenuItem>
+                        <SidebarMenuButton isActive tooltip="Home">
+                          <Home />
+                          <span>Home</span>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                      <SidebarMenuItem>
+                        <SidebarMenuButton tooltip="Inbox">
+                          <Inbox />
+                          <span>Inbox</span>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                      <SidebarMenuItem>
+                        <SidebarMenuButton tooltip="Calendar">
+                          <Calendar />
+                          <span>Calendar</span>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    </SidebarMenu>
+                  </SidebarGroupContent>
+                </SidebarGroup>
+              </SidebarContent>
+              <SidebarFooter>
+                <SidebarMenu>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton tooltip="Settings">
+                      <Settings />
+                      <span>Settings</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                </SidebarMenu>
+              </SidebarFooter>
+            </Sidebar>
+            <div className="flex flex-1 flex-col gap-3 p-4">
+              <SidebarTrigger />
+              <p className="text-sm text-fg-secondary">Toggle the sidebar with the button above.</p>
+            </div>
+          </SidebarProvider>
+        </div>
+      ),
+    },
+  ],
+
+  "app-shell": [
+    {
+      id: "shell-layout",
+      title: "Shell layout",
+      description:
+        "AppShell composes a sidebar, a sticky header and a content region in one step. It never renders a <main> — the route owns that landmark.",
+      code: `<AppShell
+  header={
+    <>
+      <SidebarTrigger />
+      <span className="text-sm font-medium text-fg">Dashboard</span>
+    </>
+  }
+  sidebar={
+    <Sidebar collapsible="icon">
+      <SidebarHeader>
+        <span className="px-2 text-sm font-semibold text-fg">Acme Inc.</span>
+      </SidebarHeader>
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton isActive tooltip="Home">
+                  <Home />
+                  <span>Home</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton tooltip="Search">
+                  <Search />
+                  <span>Search</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+    </Sidebar>
+  }
+>
+  <div className="p-6 text-sm text-fg-secondary">Your page content goes here.</div>
+</AppShell>`,
+      preview: (
+        <div className="h-[28rem] w-full overflow-hidden rounded-xl border border-border [&_[data-slot=app-shell-content]]:!min-h-0 [&_[data-slot=sidebar-wrapper]]:!min-h-0 [&_[data-slot=sidebar]]:!h-full">
+          <AppShell
+            className="h-full"
+            header={
+              <>
+                <SidebarTrigger />
+                <span className="text-sm font-medium text-fg">Dashboard</span>
+              </>
+            }
+            sidebar={
+              <Sidebar collapsible="icon">
+                <SidebarHeader>
+                  <span className="px-2 text-sm font-semibold text-fg">Acme Inc.</span>
+                </SidebarHeader>
+                <SidebarContent>
+                  <SidebarGroup>
+                    <SidebarGroupContent>
+                      <SidebarMenu>
+                        <SidebarMenuItem>
+                          <SidebarMenuButton isActive tooltip="Home">
+                            <Home />
+                            <span>Home</span>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                        <SidebarMenuItem>
+                          <SidebarMenuButton tooltip="Search">
+                            <Search />
+                            <span>Search</span>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                      </SidebarMenu>
+                    </SidebarGroupContent>
+                  </SidebarGroup>
+                </SidebarContent>
+              </Sidebar>
+            }
+          >
+            <div className="p-6 text-sm text-fg-secondary">Your page content goes here.</div>
+          </AppShell>
+        </div>
       ),
     },
   ],

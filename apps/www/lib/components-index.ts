@@ -133,6 +133,26 @@ export const CATEGORIES: ComponentCategory[] = [
       { slug: "accordion", name: "Accordion", description: "Collapsible content sections." },
       { slug: "breadcrumb", name: "Breadcrumb", description: "Hierarchical page trail." },
       { slug: "pagination", name: "Pagination", description: "Navigate between pages." },
+      {
+        slug: "navigation-menu",
+        name: "NavigationMenu",
+        description: "Horizontal menu bar with disclosure panels.",
+        importName:
+          "NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuTrigger, NavigationMenuContent, NavigationMenuLink",
+      },
+      {
+        slug: "sidebar",
+        name: "Sidebar",
+        description: "Composable, collapsible app sidebar.",
+        importName:
+          "Sidebar, SidebarProvider, SidebarTrigger, SidebarContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton",
+      },
+      {
+        slug: "app-shell",
+        name: "AppShell",
+        description: "Sidebar + header + content layout in one step.",
+        importName: "AppShell",
+      },
     ],
   },
   {

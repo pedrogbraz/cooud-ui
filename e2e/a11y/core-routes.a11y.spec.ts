@@ -74,6 +74,10 @@ const CORE_ROUTES: ReadonlyArray<{ path: string; label: string }> = [
   { path: "/components/alert", label: "components · alert" },
   { path: "/components/combobox", label: "components · combobox" },
   { path: "/components/multi-select", label: "components · multi-select" },
+  // P3 layout & app-navigation components — mini-layout demos in fixed frames.
+  { path: "/components/sidebar", label: "components · sidebar" },
+  { path: "/components/app-shell", label: "components · app-shell" },
+  { path: "/components/navigation-menu", label: "components · navigation-menu" },
 ];
 
 async function runAxe(page: Page) {

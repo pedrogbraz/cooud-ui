@@ -75,6 +75,9 @@ export const EXAMPLE_FAMILY_BY_SLUG: Record<string, ExampleFamily> = {
   accordion: "navigation",
   breadcrumb: "navigation",
   pagination: "navigation",
+  "navigation-menu": "navigation",
+  sidebar: "navigation",
+  "app-shell": "navigation",
   // date-time
   calendar: "date-time",
   "date-picker": "date-time",

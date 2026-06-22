@@ -53,6 +53,15 @@
     ]
   },
   {
+    "name": "app-shell",
+    "type": "registry:ui",
+    "dependencies": [],
+    "registryDependencies": [
+      "cn",
+      "sidebar"
+    ]
+  },
+  {
     "name": "aurora-background",
     "type": "registry:ui",
     "dependencies": [],
@@ -366,6 +375,18 @@
     ]
   },
   {
+    "name": "navigation-menu",
+    "type": "registry:ui",
+    "dependencies": [
+      "@radix-ui/react-navigation-menu@^1.2.16",
+      "class-variance-authority@^0.7.1",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
     "name": "pagination",
     "type": "registry:ui",
     "dependencies": [
@@ -466,6 +487,22 @@
     "dependencies": [],
     "registryDependencies": [
       "cn"
+    ]
+  },
+  {
+    "name": "sidebar",
+    "type": "registry:ui",
+    "dependencies": [
+      "@radix-ui/react-slot@^1.2.3",
+      "class-variance-authority@^0.7.1"
+    ],
+    "registryDependencies": [
+      "button",
+      "cn",
+      "scroll-area",
+      "separator",
+      "sheet",
+      "tooltip"
     ]
   },
   {
