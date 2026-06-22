@@ -4,6 +4,7 @@ import {
   Badge,
   Button,
   Checkbox,
+  Combobox,
   Field,
   FieldDescription,
   FieldError,
@@ -21,6 +22,7 @@ import {
   InputOTPSeparator,
   InputOTPSlot,
   Label,
+  MultiSelect,
   RadioGroup,
   RadioGroupItem,
   Select,
@@ -565,6 +567,169 @@ function FormDemo() {
   );
 }`;
 
+// ── Combobox ───────────────────────────────────────────────────────
+const frameworkOptions = [
+  { value: "next", label: "Next.js" },
+  { value: "remix", label: "Remix" },
+  { value: "astro", label: "Astro" },
+  { value: "nuxt", label: "Nuxt" },
+  { value: "sveltekit", label: "SvelteKit" },
+  { value: "solidstart", label: "SolidStart", disabled: true },
+];
+
+function ComboboxDemo() {
+  const [framework, setFramework] = useState<string>();
+
+  return (
+    <Field className="max-w-xs">
+      <FieldLabel id="framework-label">Framework</FieldLabel>
+      <Combobox
+        options={frameworkOptions}
+        value={framework}
+        onValueChange={setFramework}
+        placeholder="Select a framework…"
+        searchPlaceholder="Search frameworks…"
+        aria-labelledby="framework-label"
+      />
+      <FieldDescription>
+        {framework
+          ? `Selected: ${frameworkOptions.find((o) => o.value === framework)?.label}`
+          : "Search and pick a single framework."}
+      </FieldDescription>
+    </Field>
+  );
+}
+
+const comboboxDemoCode = `const frameworkOptions = [
+  { value: "next", label: "Next.js" },
+  { value: "remix", label: "Remix" },
+  { value: "astro", label: "Astro" },
+  { value: "nuxt", label: "Nuxt" },
+  { value: "sveltekit", label: "SvelteKit" },
+  { value: "solidstart", label: "SolidStart", disabled: true },
+];
+
+function ComboboxDemo() {
+  const [framework, setFramework] = useState<string>();
+
+  return (
+    <Field className="max-w-xs">
+      <FieldLabel id="framework-label">Framework</FieldLabel>
+      <Combobox
+        options={frameworkOptions}
+        value={framework}
+        onValueChange={setFramework}
+        placeholder="Select a framework…"
+        searchPlaceholder="Search frameworks…"
+        aria-labelledby="framework-label"
+      />
+      <FieldDescription>
+        {framework
+          ? \`Selected: \${frameworkOptions.find((o) => o.value === framework)?.label}\`
+          : "Search and pick a single framework."}
+      </FieldDescription>
+    </Field>
+  );
+}`;
+
+// ── MultiSelect ────────────────────────────────────────────────────
+const skillOptions = [
+  { value: "typescript", label: "TypeScript" },
+  { value: "react", label: "React" },
+  { value: "node", label: "Node.js" },
+  { value: "postgres", label: "PostgreSQL" },
+  { value: "tailwind", label: "Tailwind CSS" },
+  { value: "graphql", label: "GraphQL" },
+  { value: "rust", label: "Rust", disabled: true },
+];
+
+function MultiSelectDemo() {
+  const [skills, setSkills] = useState<string[]>(["typescript", "react"]);
+
+  return (
+    <Field className="max-w-sm">
+      <FieldLabel id="skills-label">Skills</FieldLabel>
+      <MultiSelect
+        options={skillOptions}
+        value={skills}
+        onValueChange={setSkills}
+        placeholder="Select skills…"
+        aria-labelledby="skills-label"
+      />
+      <FieldDescription>
+        {skills.length > 0 ? `${skills.length} selected.` : "Pick one or more skills."}
+      </FieldDescription>
+    </Field>
+  );
+}
+
+const multiSelectDemoCode = `const skillOptions = [
+  { value: "typescript", label: "TypeScript" },
+  { value: "react", label: "React" },
+  { value: "node", label: "Node.js" },
+  { value: "postgres", label: "PostgreSQL" },
+  { value: "tailwind", label: "Tailwind CSS" },
+  { value: "graphql", label: "GraphQL" },
+  { value: "rust", label: "Rust", disabled: true },
+];
+
+function MultiSelectDemo() {
+  const [skills, setSkills] = useState<string[]>(["typescript", "react"]);
+
+  return (
+    <Field className="max-w-sm">
+      <FieldLabel id="skills-label">Skills</FieldLabel>
+      <MultiSelect
+        options={skillOptions}
+        value={skills}
+        onValueChange={setSkills}
+        placeholder="Select skills…"
+        aria-labelledby="skills-label"
+      />
+      <FieldDescription>
+        {skills.length > 0 ? \`\${skills.length} selected.\` : "Pick one or more skills."}
+      </FieldDescription>
+    </Field>
+  );
+}`;
+
+function MultiSelectMaxDisplayDemo() {
+  const [skills, setSkills] = useState<string[]>(["typescript", "react", "node", "postgres"]);
+
+  return (
+    <MultiSelect
+      options={skillOptions}
+      value={skills}
+      onValueChange={setSkills}
+      maxDisplay={2}
+      placeholder="Select skills…"
+      aria-label="Skills"
+      className="max-w-sm"
+    />
+  );
+}
+
+const multiSelectMaxDisplayDemoCode = `function MultiSelectMaxDisplayDemo() {
+  const [skills, setSkills] = useState<string[]>([
+    "typescript",
+    "react",
+    "node",
+    "postgres",
+  ]);
+
+  return (
+    <MultiSelect
+      options={skillOptions}
+      value={skills}
+      onValueChange={setSkills}
+      maxDisplay={2}
+      placeholder="Select skills…"
+      aria-label="Skills"
+      className="max-w-sm"
+    />
+  );
+}`;
+
 export const formsExamples: ExampleMap = {
   input: [
     {
@@ -710,6 +875,31 @@ export const formsExamples: ExampleMap = {
       description: "A grouped dropdown with labels, items, and a separator.",
       code: selectDemoCode,
       preview: <SelectDemo />,
+    },
+  ],
+  combobox: [
+    {
+      id: "single-select",
+      title: "Single select",
+      description: "A searchable, single-value picker built on Command inside a Popover.",
+      code: comboboxDemoCode,
+      preview: <ComboboxDemo />,
+    },
+  ],
+  "multi-select": [
+    {
+      id: "default",
+      title: "Default",
+      description: "Select multiple values; each shows as a removable chip in the trigger.",
+      code: multiSelectDemoCode,
+      preview: <MultiSelectDemo />,
+    },
+    {
+      id: "max-display",
+      title: "Max display",
+      description: "Cap visible chips with `maxDisplay`; the rest collapse into a +N badge.",
+      code: multiSelectMaxDisplayDemoCode,
+      preview: <MultiSelectMaxDisplayDemo />,
     },
   ],
   slider: [

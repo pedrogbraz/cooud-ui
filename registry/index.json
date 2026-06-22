@@ -31,6 +31,16 @@
     ]
   },
   {
+    "name": "alert",
+    "type": "registry:ui",
+    "dependencies": [
+      "class-variance-authority@^0.7.1"
+    ],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
     "name": "animated-button",
     "type": "registry:ui",
     "dependencies": [
@@ -131,6 +141,19 @@
     ],
     "registryDependencies": [
       "cn"
+    ]
+  },
+  {
+    "name": "combobox",
+    "type": "registry:ui",
+    "dependencies": [
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": [
+      "button",
+      "cn",
+      "command",
+      "popover"
     ]
   },
   {
@@ -328,6 +351,19 @@
       "motion@^12.23.0"
     ],
     "registryDependencies": []
+  },
+  {
+    "name": "multi-select",
+    "type": "registry:ui",
+    "dependencies": [
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": [
+      "badge",
+      "cn",
+      "command",
+      "popover"
+    ]
   },
   {
     "name": "pagination",

@@ -36,6 +36,8 @@ export const EXAMPLE_FAMILY_BY_SLUG: Record<string, ExampleFamily> = {
   "radio-group": "forms",
   switch: "forms",
   select: "forms",
+  combobox: "forms",
+  "multi-select": "forms",
   slider: "forms",
   field: "forms",
   form: "forms",
@@ -57,6 +59,7 @@ export const EXAMPLE_FAMILY_BY_SLUG: Record<string, ExampleFamily> = {
   spinner: "feedback",
   progress: "feedback",
   sonner: "feedback",
+  alert: "feedback",
   "alert-dialog": "feedback",
   // overlays
   dialog: "overlays",

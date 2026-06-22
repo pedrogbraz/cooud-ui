@@ -7,6 +7,8 @@ export {
   AccordionItem,
   AccordionTrigger,
 } from "./components/accordion.js";
+export type { AlertProps } from "./components/alert.js";
+export { Alert, AlertDescription, AlertTitle, alertVariants } from "./components/alert.js";
 export {
   AlertDialog,
   AlertDialogAction,
@@ -61,6 +63,8 @@ export {
 } from "./components/chart.js";
 // ── Wave 1 — forms ─────────────────────────────────────────────────
 export { Checkbox } from "./components/checkbox.js";
+export type { ComboboxOption, ComboboxProps } from "./components/combobox.js";
+export { Combobox } from "./components/combobox.js";
 export type { CommandDialogProps } from "./components/command.js";
 export {
   Command,
@@ -166,6 +170,8 @@ export {
   springSoft,
   staggerContainer,
 } from "./components/motion-presets.js";
+export type { MultiSelectOption, MultiSelectProps } from "./components/multi-select.js";
+export { MultiSelect } from "./components/multi-select.js";
 export type { PaginationLinkProps } from "./components/pagination.js";
 export {
   Pagination,

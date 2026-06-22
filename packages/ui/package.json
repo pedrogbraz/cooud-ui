@@ -16,6 +16,10 @@
       "types": "./dist/components/accordion.d.ts",
       "import": "./dist/components/accordion.js"
     },
+    "./alert": {
+      "types": "./dist/components/alert.d.ts",
+      "import": "./dist/components/alert.js"
+    },
     "./alert-dialog": {
       "types": "./dist/components/alert-dialog.d.ts",
       "import": "./dist/components/alert-dialog.js"
@@ -59,6 +63,10 @@
     "./checkbox": {
       "types": "./dist/components/checkbox.d.ts",
       "import": "./dist/components/checkbox.js"
+    },
+    "./combobox": {
+      "types": "./dist/components/combobox.d.ts",
+      "import": "./dist/components/combobox.js"
     },
     "./command": {
       "types": "./dist/components/command.d.ts",
@@ -139,6 +147,10 @@
     "./motion-presets": {
       "types": "./dist/components/motion-presets.d.ts",
       "import": "./dist/components/motion-presets.js"
+    },
+    "./multi-select": {
+      "types": "./dist/components/multi-select.d.ts",
+      "import": "./dist/components/multi-select.js"
     },
     "./pagination": {
       "types": "./dist/components/pagination.d.ts",

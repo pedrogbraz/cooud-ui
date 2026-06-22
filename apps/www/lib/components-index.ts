@@ -52,6 +52,16 @@ export const CATEGORIES: ComponentCategory[] = [
       { slug: "radio-group", name: "RadioGroup", description: "Single choice among options." },
       { slug: "switch", name: "Switch", description: "Toggle a setting on or off." },
       { slug: "select", name: "Select", description: "Composable dropdown with groups." },
+      {
+        slug: "combobox",
+        name: "Combobox",
+        description: "Searchable single-select with autocomplete.",
+      },
+      {
+        slug: "multi-select",
+        name: "MultiSelect",
+        description: "Pick multiple values shown as removable chips.",
+      },
       { slug: "slider", name: "Slider", description: "Pick a value or a range." },
       { slug: "field", name: "Field", description: "Label + description + error layout." },
       { slug: "form", name: "Form", description: "react-hook-form + zod integration." },
@@ -84,6 +94,12 @@ export const CATEGORIES: ComponentCategory[] = [
     slug: "feedback",
     name: "Feedback",
     items: [
+      {
+        slug: "alert",
+        name: "Alert",
+        description: "Inline callout banner with semantic variants.",
+        importName: "Alert, AlertTitle, AlertDescription",
+      },
       { slug: "spinner", name: "Spinner", description: "Indeterminate loading indicator." },
       { slug: "progress", name: "Progress", description: "Determinate progress bar." },
       {

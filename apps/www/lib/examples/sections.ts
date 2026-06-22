@@ -47,6 +47,11 @@ export const EXAMPLE_SECTIONS: Record<string, ExampleSectionMeta[]> = {
   "radio-group": [{ id: "options", title: "Options" }],
   switch: [{ id: "default", title: "Default" }],
   select: [{ id: "grouped", title: "Grouped" }],
+  combobox: [{ id: "single-select", title: "Single select" }],
+  "multi-select": [
+    { id: "default", title: "Default" },
+    { id: "max-display", title: "Max display" },
+  ],
   slider: [
     { id: "single-thumb", title: "Single thumb" },
     { id: "range", title: "Range" },
@@ -75,6 +80,11 @@ export const EXAMPLE_SECTIONS: Record<string, ExampleSectionMeta[]> = {
   separator: [{ id: "horizontal-vertical", title: "Horizontal & vertical" }],
   skeleton: [{ id: "loading-card", title: "Loading card" }],
   "scroll-area": [{ id: "scrollable-list", title: "Scrollable list" }],
+  alert: [
+    { id: "default", title: "Default" },
+    { id: "variants", title: "Variants" },
+    { id: "title-only", title: "Title only" },
+  ],
   spinner: [{ id: "sizes", title: "Sizes" }],
   progress: [{ id: "determinate", title: "Determinate" }],
   sonner: [{ id: "toasts", title: "Toasts" }],

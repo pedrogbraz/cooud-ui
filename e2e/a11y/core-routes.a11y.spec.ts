@@ -70,6 +70,10 @@ const CORE_ROUTES: ReadonlyArray<{ path: string; label: string }> = [
   { path: "/create", label: "create studio" },
   { path: "/docs", label: "docs landing" },
   { path: "/docs/installation", label: "docs · installation" },
+  // P3 wave 1 components — scan their live demo pages directly.
+  { path: "/components/alert", label: "components · alert" },
+  { path: "/components/combobox", label: "components · combobox" },
+  { path: "/components/multi-select", label: "components · multi-select" },
 ];
 
 async function runAxe(page: Page) {
