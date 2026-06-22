@@ -14,6 +14,8 @@ import {
   CardHeader,
   CardTitle,
   DataTable,
+  DataTableColumnHeader,
+  type DataTableFacetedFilter,
   Empty,
   EmptyContent,
   EmptyDescription,
@@ -38,7 +40,8 @@ import {
   TableRow,
 } from "@cooud/ui";
 import type { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, Check, Inbox } from "lucide-react";
+import { ArrowUpDown, Check, CircleDashed, CircleSlash, Inbox, Mail } from "lucide-react";
+import { useState } from "react";
 import { ExampleList } from "../../components/docs/example-list";
 import type { ExampleMap } from "./types";
 
@@ -93,6 +96,206 @@ const paymentData: Payment[] = [
   { id: "bhqecj4p", amount: 721, status: "failed", email: "carmella@example.com" },
   { id: "p0r9twq2", amount: 459, status: "pending", email: "jason.lee@example.com" },
 ];
+
+// ── DataTable Pro demo data — a "team members" directory ──────────────
+type Member = {
+  id: string;
+  name: string;
+  email: string;
+  role: "Owner" | "Admin" | "Member" | "Viewer";
+  status: "active" | "invited" | "suspended";
+  seats: number;
+};
+
+const memberData: Member[] = [
+  {
+    id: "u-1024",
+    name: "Ada Lovelace",
+    email: "ada@cooud.dev",
+    role: "Owner",
+    status: "active",
+    seats: 5,
+  },
+  {
+    id: "u-1025",
+    name: "Grace Hopper",
+    email: "grace@cooud.dev",
+    role: "Admin",
+    status: "active",
+    seats: 3,
+  },
+  {
+    id: "u-1026",
+    name: "Alan Turing",
+    email: "alan@cooud.dev",
+    role: "Member",
+    status: "active",
+    seats: 1,
+  },
+  {
+    id: "u-1027",
+    name: "Katherine Johnson",
+    email: "katherine@cooud.dev",
+    role: "Member",
+    status: "invited",
+    seats: 1,
+  },
+  {
+    id: "u-1028",
+    name: "Margaret Hamilton",
+    email: "margaret@cooud.dev",
+    role: "Admin",
+    status: "active",
+    seats: 2,
+  },
+  {
+    id: "u-1029",
+    name: "Dennis Ritchie",
+    email: "dennis@cooud.dev",
+    role: "Viewer",
+    status: "suspended",
+    seats: 0,
+  },
+  {
+    id: "u-1030",
+    name: "Barbara Liskov",
+    email: "barbara@cooud.dev",
+    role: "Member",
+    status: "active",
+    seats: 1,
+  },
+  {
+    id: "u-1031",
+    name: "Donald Knuth",
+    email: "donald@cooud.dev",
+    role: "Member",
+    status: "invited",
+    seats: 1,
+  },
+  {
+    id: "u-1032",
+    name: "Edsger Dijkstra",
+    email: "edsger@cooud.dev",
+    role: "Viewer",
+    status: "active",
+    seats: 1,
+  },
+  {
+    id: "u-1033",
+    name: "Linus Torvalds",
+    email: "linus@cooud.dev",
+    role: "Admin",
+    status: "active",
+    seats: 4,
+  },
+  {
+    id: "u-1034",
+    name: "Tim Berners-Lee",
+    email: "tim@cooud.dev",
+    role: "Member",
+    status: "suspended",
+    seats: 0,
+  },
+  {
+    id: "u-1035",
+    name: "Radia Perlman",
+    email: "radia@cooud.dev",
+    role: "Member",
+    status: "active",
+    seats: 2,
+  },
+];
+
+const STATUS_VARIANT: Record<Member["status"], "success" | "warning" | "error"> = {
+  active: "success",
+  invited: "warning",
+  suspended: "error",
+};
+
+const memberColumns: ColumnDef<Member>[] = [
+  {
+    accessorKey: "name",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
+    cell: ({ row }) => <span className="font-medium text-fg">{row.getValue("name")}</span>,
+  },
+  {
+    accessorKey: "email",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Email" />,
+    cell: ({ row }) => <span className="text-fg-secondary">{row.getValue("email")}</span>,
+  },
+  {
+    accessorKey: "role",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Role" />,
+    cell: ({ row }) => <Badge variant="outline">{row.getValue("role")}</Badge>,
+  },
+  {
+    accessorKey: "status",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
+    cell: ({ row }) => {
+      const status = row.getValue<Member["status"]>("status");
+      return (
+        <Badge variant={STATUS_VARIANT[status]} className="capitalize">
+          {status}
+        </Badge>
+      );
+    },
+  },
+  {
+    accessorKey: "seats",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Seats" />,
+    cell: ({ row }) => (
+      <span className="font-mono tabular-nums text-fg-secondary">{row.getValue("seats")}</span>
+    ),
+  },
+];
+
+const memberStatusFilter: DataTableFacetedFilter = {
+  columnId: "status",
+  title: "Status",
+  options: [
+    { label: "Active", value: "active", icon: Check },
+    { label: "Invited", value: "invited", icon: CircleDashed },
+    { label: "Suspended", value: "suspended", icon: CircleSlash },
+  ],
+};
+
+/** Loading demo: toggles a fake fetch so the skeleton → data swap is visible. */
+function DataTableLoadingDemo() {
+  const [loading, setLoading] = useState(true);
+  return (
+    <div className="flex flex-col gap-3">
+      <Button
+        variant="outline"
+        size="sm"
+        className="self-start"
+        onClick={() => setLoading((l) => !l)}
+      >
+        {loading ? "Show data" : "Show loading"}
+      </Button>
+      <DataTable
+        columns={memberColumns}
+        data={memberData.slice(0, 4)}
+        loading={loading}
+        loadingRowCount={4}
+      />
+    </div>
+  );
+}
+
+/** Error demo: a retry button clears the error and reveals the rows. */
+function DataTableErrorDemo() {
+  const [failed, setFailed] = useState(true);
+  return (
+    <DataTable
+      columns={memberColumns}
+      data={failed ? [] : memberData.slice(0, 4)}
+      error={
+        failed ? "Couldn’t load team members. Check your connection and try again." : undefined
+      }
+      onRetry={() => setFailed(false)}
+    />
+  );
+}
 
 export const dataDisplayExamples: ExampleMap = {
   avatar: [
@@ -320,10 +523,10 @@ export const dataDisplayExamples: ExampleMap = {
 
   "data-table": [
     {
-      id: "sortable",
-      title: "Sortable",
+      id: "basic",
+      title: "Basic",
       description:
-        "A TanStack-powered table with a sortable Amount column — click the header to sort.",
+        "The smallest setup: pass `columns` + `data`. With no opt-in props it renders a plain, accessible table — no toolbar, pagination, or selection.",
       code: `type Payment = {
   id: string;
   status: "pending" | "processing" | "success" | "failed";
@@ -377,6 +580,240 @@ const data: Payment[] = [
 
 <DataTable columns={columns} data={data} />`,
       preview: <DataTable columns={paymentColumns} data={paymentData} />,
+    },
+    {
+      id: "sortable",
+      title: "Sortable",
+      description:
+        "Use the exported `DataTableColumnHeader` in a column header to get an accessible, three-state sort toggle (asc → desc → none) with the right icon and aria-label. Click any header to sort.",
+      code: `import { DataTable, DataTableColumnHeader } from "@cooud/ui";
+
+const columns: ColumnDef<Member>[] = [
+  {
+    accessorKey: "name",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
+    cell: ({ row }) => <span className="font-medium text-fg">{row.getValue("name")}</span>,
+  },
+  {
+    accessorKey: "role",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Role" />,
+    cell: ({ row }) => <Badge variant="outline">{row.getValue("role")}</Badge>,
+  },
+  {
+    accessorKey: "seats",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Seats" />,
+    cell: ({ row }) => (
+      <span className="font-mono tabular-nums text-fg-secondary">{row.getValue("seats")}</span>
+    ),
+  },
+];
+
+<DataTable columns={columns} data={members} />`,
+      preview: <DataTable columns={memberColumns} data={memberData.slice(0, 6)} />,
+    },
+    {
+      id: "search-filter",
+      title: "Search & filter",
+      description:
+        "Opt into the toolbar with `searchable` for a debounce-free global search, and `facetedFilters` for multi-select column filters with live facet counts. A Reset clears everything.",
+      code: `const statusOptions = [
+  { label: "Active", value: "active", icon: Check },
+  { label: "Invited", value: "invited", icon: CircleDashed },
+  { label: "Suspended", value: "suspended", icon: CircleSlash },
+];
+
+const statusFilter: DataTableFacetedFilter = {
+  columnId: "status",
+  title: "Status",
+  options: statusOptions,
+};
+
+<DataTable
+  columns={columns}
+  data={members}
+  searchable
+  searchPlaceholder="Search members…"
+  facetedFilters={[statusFilter]}
+/>`,
+      preview: (
+        <DataTable
+          columns={memberColumns}
+          data={memberData}
+          searchable
+          searchPlaceholder="Search members…"
+          facetedFilters={[memberStatusFilter]}
+        />
+      ),
+    },
+    {
+      id: "pagination",
+      title: "Pagination",
+      description:
+        "Set `pagination` to render the footer with a rows-per-page select, a row-range readout, and first/prev/next/last controls. Defaults are uncontrolled; pass `initialPageSize` and `pageSizeOptions` to tune.",
+      code: `<DataTable
+  columns={columns}
+  data={members}
+  pagination
+  initialPageSize={5}
+  pageSizeOptions={[5, 10, 20]}
+/>`,
+      preview: (
+        <DataTable
+          columns={memberColumns}
+          data={memberData}
+          pagination
+          initialPageSize={5}
+          pageSizeOptions={[5, 10, 20]}
+        />
+      ),
+    },
+    {
+      id: "selection-bulk",
+      title: "Selection & bulk actions",
+      description:
+        "`enableRowSelection` prepends an accessible select-all/row checkbox column. Render contextual actions with `bulkActions` — a bar that appears only while rows are selected and receives the selected rows.",
+      code: `<DataTable
+  columns={columns}
+  data={members}
+  enableRowSelection
+  pagination
+  initialPageSize={5}
+  bulkActions={(rows) => (
+    <>
+      <Button variant="outline" size="sm">
+        <Mail aria-hidden="true" />
+        Email {rows.length}
+      </Button>
+      <Button variant="destructive" size="sm">
+        Remove
+      </Button>
+    </>
+  )}
+/>`,
+      preview: (
+        <DataTable
+          columns={memberColumns}
+          data={memberData}
+          enableRowSelection
+          pagination
+          initialPageSize={5}
+          bulkActions={(rows) => (
+            <>
+              <Button variant="outline" size="sm">
+                <Mail aria-hidden="true" />
+                Email {rows.length}
+              </Button>
+              <Button variant="destructive" size="sm">
+                Remove
+              </Button>
+            </>
+          )}
+        />
+      ),
+    },
+    {
+      id: "column-visibility",
+      title: "Column visibility",
+      description:
+        "`enableColumnVisibility` adds a “View” menu that toggles each hideable column on or off, so users can tailor the table to what they care about.",
+      code: `<DataTable
+  columns={columns}
+  data={members}
+  searchable
+  enableColumnVisibility
+/>`,
+      preview: (
+        <DataTable
+          columns={memberColumns}
+          data={memberData.slice(0, 6)}
+          searchable
+          enableColumnVisibility
+        />
+      ),
+    },
+    {
+      id: "density",
+      title: "Density",
+      description:
+        "`enableDensityToggle` exposes a comfortable/compact switch in the toolbar; the `aria-pressed` button trims cell padding for data-dense views without touching your columns.",
+      code: `<DataTable
+  columns={columns}
+  data={members}
+  searchable
+  enableDensityToggle
+/>`,
+      preview: (
+        <DataTable
+          columns={memberColumns}
+          data={memberData.slice(0, 6)}
+          searchable
+          enableDensityToggle
+        />
+      ),
+    },
+    {
+      id: "loading",
+      title: "Loading",
+      description:
+        "Pass `loading` to swap the body for shimmer rows that match your column count — no layout shift when the real data arrives. Toggle below to see the swap.",
+      code: `const [loading, setLoading] = useState(true);
+
+<DataTable
+  columns={columns}
+  data={members}
+  loading={loading}
+  loadingRowCount={4}
+/>`,
+      preview: <DataTableLoadingDemo />,
+    },
+    {
+      id: "empty",
+      title: "Empty",
+      description:
+        "With no rows, the table renders a centered empty state. Override the copy — or drop in a full `Empty` composition — via the `emptyState` prop.",
+      code: `<DataTable
+  columns={columns}
+  data={[]}
+  emptyState={
+    <Empty>
+      <EmptyIcon>
+        <Inbox aria-hidden="true" />
+      </EmptyIcon>
+      <EmptyTitle>No members yet</EmptyTitle>
+      <EmptyDescription>Invite teammates to see them listed here.</EmptyDescription>
+    </Empty>
+  }
+/>`,
+      preview: (
+        <DataTable
+          columns={memberColumns}
+          data={[]}
+          emptyState={
+            <Empty>
+              <EmptyIcon>
+                <Inbox aria-hidden="true" />
+              </EmptyIcon>
+              <EmptyTitle>No members yet</EmptyTitle>
+              <EmptyDescription>Invite teammates to see them listed here.</EmptyDescription>
+            </Empty>
+          }
+        />
+      ),
+    },
+    {
+      id: "error",
+      title: "Error",
+      description:
+        'Pass `error` to render an inline, `role="alert"` failure state. Provide `onRetry` to surface a Retry button — handy for refetching after a transient network error.',
+      code: `const [failed, setFailed] = useState(true);
+
+<DataTable
+  columns={columns}
+  data={failed ? [] : members}
+  error={failed ? "Couldn't load team members. Check your connection and try again." : undefined}
+  onRetry={() => setFailed(false)}
+/>`,
+      preview: <DataTableErrorDemo />,
     },
   ],
 

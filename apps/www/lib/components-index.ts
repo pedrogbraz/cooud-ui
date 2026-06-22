@@ -81,7 +81,12 @@ export const CATEGORIES: ComponentCategory[] = [
       { slug: "badge", name: "Badge", description: "Small status / category label." },
       { slug: "card", name: "Card", description: "Surface that groups related content." },
       { slug: "table", name: "Table", description: "Styled semantic table primitives." },
-      { slug: "data-table", name: "DataTable", description: "Sortable table powered by TanStack." },
+      {
+        slug: "data-table",
+        name: "DataTable",
+        description:
+          "TanStack table with sorting, search & faceted filters, pagination, row selection with bulk actions, column visibility, density, and loading/empty/error states.",
+      },
       { slug: "metric", name: "Metric", description: "KPI value with trend delta." },
       { slug: "kbd", name: "Kbd", description: "Keyboard key hint." },
       { slug: "empty", name: "Empty", description: "Empty-state placeholder." },

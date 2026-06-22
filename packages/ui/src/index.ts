@@ -80,8 +80,21 @@ export {
   CommandSeparator,
   CommandShortcut,
 } from "./components/command.js";
-export type { DataTableProps } from "./components/data-table.js";
-export { DataTable } from "./components/data-table.js";
+export type {
+  DataTableColumnHeaderProps,
+  DataTableDensity,
+  DataTableFacetedFilter,
+  DataTableFacetOption,
+  DataTableProps,
+} from "./components/data-table.js";
+export {
+  createSelectionColumn,
+  DataTable,
+  DataTableColumnHeader,
+  fuzzyTextFilter,
+  SELECTION_COLUMN_ID,
+  tableRowsToCsv,
+} from "./components/data-table.js";
 export type { DatePickerProps } from "./components/date-picker.js";
 export { DatePicker } from "./components/date-picker.js";
 export {
