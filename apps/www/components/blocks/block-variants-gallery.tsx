@@ -39,6 +39,15 @@ const GALLERY_VIEWS: Record<BlockFamily, GalleryView> = {
     () => import("../../lib/blocks/application").then((m) => m.ApplicationGallery),
     { loading: GallerySkeleton },
   ),
+  dashboard: dynamic(() => import("../../lib/blocks/dashboard").then((m) => m.DashboardGallery), {
+    loading: GallerySkeleton,
+  }),
+  billing: dynamic(() => import("../../lib/blocks/billing").then((m) => m.BillingGallery), {
+    loading: GallerySkeleton,
+  }),
+  page: dynamic(() => import("../../lib/blocks/page-sections").then((m) => m.PageGallery), {
+    loading: GallerySkeleton,
+  }),
 };
 
 export function BlockVariantsGallery({ slug }: { slug: string }) {

@@ -8,7 +8,7 @@
  * a detail route only loads the one family it needs.
  */
 
-export type BlockFamily = "marketing" | "application";
+export type BlockFamily = "marketing" | "application" | "dashboard" | "billing" | "page";
 
 /** slug → the family module that owns its content. */
 export const BLOCK_FAMILY_BY_SLUG: Record<string, BlockFamily> = {
@@ -22,6 +22,14 @@ export const BLOCK_FAMILY_BY_SLUG: Record<string, BlockFamily> = {
   login: "application",
   settings: "application",
   team: "application",
+  // dashboard
+  dashboard: "dashboard",
+  // billing
+  billing: "billing",
+  // page sections
+  "page-header": "page",
+  "filter-bar": "page",
+  "empty-state": "page",
 };
 
 export function getBlockFamily(slug: string): BlockFamily | undefined {
