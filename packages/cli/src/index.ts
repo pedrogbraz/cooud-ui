@@ -4,13 +4,14 @@ import { add } from "./commands/add.js";
 import { diff } from "./commands/diff.js";
 import { init } from "./commands/init.js";
 import { list } from "./commands/list.js";
+import { CLI_VERSION } from "./config.js";
 
 const program = new Command();
 
 program
   .name("cooud-ui")
   .description("Add Cooud UI components to your project, shadcn-style.")
-  .version("0.1.0");
+  .version(CLI_VERSION);
 
 program
   .command("init")
