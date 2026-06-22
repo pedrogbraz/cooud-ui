@@ -48,11 +48,13 @@ jobs:
       - name: Example sections check (docs TOC metadata is in sync)
         run: bun run check:example-sections
 
-      - name: Package smoke (consumer fixtures resolve subpath exports)
-        run: bun run package:smoke
-
+      # Build before the artifact gates: package:smoke packs the built dist and
+      # bundle:check reads the built apps/www bundle stats.
       - name: Build
         run: bun run build
+
+      - name: Package smoke (consumer fixtures resolve subpath exports)
+        run: bun run package:smoke
 
       - name: Bundle budget check (first-load JS stays within budget)
         run: bun run bundle:check
