@@ -17,7 +17,7 @@ export default function InstallationPage() {
       <DocsHeader
         eyebrow="Installation"
         title="Install Cooud UI in the path that matches your project"
-        description="Use Create for visual preset work, the CLI for new templates, or the existing-project path when the app already has routing and styling decisions."
+        description="Use Create for visual preset work, then run the CLI inside any project — new or existing — to wire tokens, providers, and config."
       />
 
       <div className="mt-8">
@@ -50,21 +50,22 @@ export default function InstallationPage() {
 
       <DocsSection
         title="Use the CLI"
-        description="Scaffold a new project directly from the terminal. Replace the template flag with the framework you need."
+        description="Create the app with your framework's official tool, then run init inside it. The CLI is framework-agnostic and acts on the current directory."
       >
-        <PackageManagerTabs command="init" description="New project command" />
+        <PackageManagerTabs command="init" description="Initialize the current project" />
         <p className="mt-4 text-sm leading-6 text-fg-secondary">
-          Supported templates include <InlineCode>next</InlineCode>, <InlineCode>vite</InlineCode>,{" "}
-          <InlineCode>start</InlineCode>, <InlineCode>react-router</InlineCode>,{" "}
-          <InlineCode>astro</InlineCode>, and <InlineCode>laravel</InlineCode>.
+          Works in any project — including <InlineCode>next</InlineCode>,{" "}
+          <InlineCode>vite</InlineCode>, <InlineCode>tanstack-start</InlineCode>,{" "}
+          <InlineCode>react-router</InlineCode>, <InlineCode>astro</InlineCode>, and{" "}
+          <InlineCode>laravel</InlineCode> apps.
         </p>
       </DocsSection>
 
       <DocsSection
-        title="Existing project"
-        description="Run the existing-project initializer, then add the provider and token CSS in the framework root."
+        title="Add components"
+        description="After init, copy components from the registry into your app. Imports are rewritten to your local aliases."
       >
-        <PackageManagerTabs command="existing" description="Existing app command" />
+        <PackageManagerTabs command="add" description="Copy components into your app" />
       </DocsSection>
 
       <DocsSection

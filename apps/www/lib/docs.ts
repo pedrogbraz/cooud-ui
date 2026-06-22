@@ -13,8 +13,6 @@ export type PackageManagerCommand = {
   label: string;
   init: string;
   add: string;
-  existing: string;
-  create: string;
 };
 
 export const DOC_NAV_SECTIONS: { heading: string; items: DocNavItem[] }[] = [
@@ -34,7 +32,7 @@ export const DOC_NAV_SECTIONS: { heading: string; items: DocNavItem[] }[] = [
       {
         label: "Installation",
         href: "/docs/installation",
-        description: "Start from create, CLI, or an existing app.",
+        description: "Start from Create, the CLI, or an existing app.",
       },
       {
         label: "Theming",
@@ -86,52 +84,45 @@ export const PACKAGE_MANAGERS: PackageManagerCommand[] = [
   {
     id: "pnpm",
     label: "pnpm",
-    init: "pnpm dlx cooud-ui@latest init -t next",
+    init: "pnpm dlx cooud-ui@latest init",
     add: "pnpm dlx cooud-ui@latest add button card dialog",
-    existing: "pnpm dlx cooud-ui@latest init --existing",
-    create: "pnpm dlx cooud-ui@latest create",
   },
   {
     id: "npm",
     label: "npm",
-    init: "npx cooud-ui@latest init -t next",
+    init: "npx cooud-ui@latest init",
     add: "npx cooud-ui@latest add button card dialog",
-    existing: "npx cooud-ui@latest init --existing",
-    create: "npx cooud-ui@latest create",
   },
   {
     id: "yarn",
     label: "yarn",
-    init: "yarn dlx cooud-ui@latest init -t next",
+    init: "yarn dlx cooud-ui@latest init",
     add: "yarn dlx cooud-ui@latest add button card dialog",
-    existing: "yarn dlx cooud-ui@latest init --existing",
-    create: "yarn dlx cooud-ui@latest create",
   },
   {
     id: "bun",
     label: "bun",
-    init: "bunx cooud-ui@latest init -t next",
+    init: "bunx cooud-ui@latest init",
     add: "bunx cooud-ui@latest add button card dialog",
-    existing: "bunx cooud-ui@latest init --existing",
-    create: "bunx cooud-ui@latest create",
   },
 ];
 
 export const INSTALL_OPTIONS = [
   {
     title: "Use Cooud Create",
-    description: "Build a preset visually, save it, and generate a framework-specific command.",
+    description:
+      "Build a preset visually, save it, and generate the setup snippets for your stack.",
     href: "/create",
     action: "Open Create",
   },
   {
     title: "Use the CLI",
-    description: "Scaffold a supported template directly from the terminal.",
+    description: "Run init inside your project to wire tokens, providers, and config.",
     href: "/docs/cli",
     action: "Read CLI docs",
   },
   {
-    title: "Existing Project",
+    title: "Choose your framework",
     description: "Add tokens, providers, and components to an app you already created.",
     href: "/docs/frameworks",
     action: "Choose framework",
@@ -142,7 +133,7 @@ export const FRAMEWORKS = [
   {
     slug: "next",
     name: "Next.js",
-    command: "pnpm dlx cooud-ui@latest init -t next",
+    command: "npx create-next-app@latest app && cd app && npx cooud-ui@latest init",
     description: "App Router, RSC-safe provider placement, metadata, and route-level themes.",
     checks: [
       "Provider in app/layout.tsx",
@@ -153,14 +144,14 @@ export const FRAMEWORKS = [
   {
     slug: "vite",
     name: "Vite",
-    command: "pnpm dlx cooud-ui@latest init -t vite",
+    command: "npm create vite@latest app && cd app && npx cooud-ui@latest init",
     description: "SPA setup with a root provider, CSS token import, and fast registry adds.",
     checks: ["Provider wraps <App />", "semantic tokens in src/index.css", "keyboard traps tested"],
   },
   {
     slug: "tanstack-start",
     name: "TanStack Start",
-    command: "pnpm dlx cooud-ui@latest init -t start",
+    command: "npm create @tanstack/start@latest app && cd app && npx cooud-ui@latest init",
     description:
       "File routes, server functions, and persistent theme state across route transitions.",
     checks: [
@@ -172,14 +163,14 @@ export const FRAMEWORKS = [
   {
     slug: "react-router",
     name: "React Router",
-    command: "pnpm dlx cooud-ui@latest init -t react-router",
+    command: "npx create-react-router@latest app && cd app && npx cooud-ui@latest init",
     description: "Framework mode with route modules, loader-friendly forms, and progressive UX.",
     checks: ["Root.tsx owns provider", "forms expose field errors", "links keep visible focus"],
   },
   {
     slug: "astro",
     name: "Astro",
-    command: "pnpm dlx cooud-ui@latest init -t astro",
+    command: "npm create astro@latest app && cd app && npx cooud-ui@latest init",
     description: "Island components with shared CSS tokens and isolated interactive surfaces.",
     checks: [
       "client islands import UI only where needed",
@@ -190,7 +181,7 @@ export const FRAMEWORKS = [
   {
     slug: "laravel",
     name: "Laravel",
-    command: "laravel new app && pnpm dlx cooud-ui@latest init -t laravel",
+    command: "laravel new app && cd app && npx cooud-ui@latest init",
     description: "Blade or Inertia setup with Vite, shared token CSS, and server-rendered forms.",
     checks: [
       "Vite entry imports tokens",

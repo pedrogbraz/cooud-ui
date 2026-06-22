@@ -33,6 +33,9 @@ const cliCommands = [
   },
 ] as const;
 
+const inspectCommands = `npx cooud-ui@latest list
+npx cooud-ui@latest diff button`;
+
 const config = `{
   "aliases": {
     "ui": "@/components/ui",
@@ -54,7 +57,7 @@ export default function CliPage() {
         description="The CLI is the shadcn-style distribution path for apps that should own their component source while still following Cooud UI conventions."
       />
 
-      <DocsSection title="New project command">
+      <DocsSection title="Initialize a project">
         <PackageManagerTabs command="init" description="Select your package manager" />
       </DocsSection>
 
@@ -62,8 +65,11 @@ export default function CliPage() {
         <PackageManagerTabs command="add" description="Copy components into your app" />
       </DocsSection>
 
-      <DocsSection title="Open Create from the terminal">
-        <PackageManagerTabs command="create" description="Launch the visual preset workflow" />
+      <DocsSection
+        title="Inspect the registry"
+        description="List available registry items, or diff a copied component against the registry version to spot local drift."
+      >
+        <CodeBlock code={inspectCommands} language="bash" />
       </DocsSection>
 
       <DocsSection
