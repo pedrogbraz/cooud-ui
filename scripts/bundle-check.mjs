@@ -56,18 +56,19 @@ const strict = process.env.BUNDLE_CHECK_STRICT === "1";
  * pre-optimization. Budgets = baseline rounded up with ~12-15% headroom so a
  * normal dependency bump doesn't trip the gate before the apps/www diet.
  *
- * APERTAR após Fase apps/www: drop these toward the optimized sizes and flip
- * BUNDLE_CHECK_STRICT=1 in CI.
+ * Tightened after the apps/www code-splitting phase: budgets now sit ~10% above
+ * the optimized first-load sizes, locking in the win and surfacing regressions.
+ * Run STRICT (BUNDLE_CHECK_STRICT=1) in CI so a missing route also fails.
  */
 const BUDGETS = /** @type {Record<string, number>} */ ({
-  // task-critical routes
-  "/components/[slug]": 2_100_000, // baseline ~1.81 MB
-  "/components": 2_000_000, // baseline ~1.72 MB
-  "/create": 1_450_000, // baseline ~1.23 MB
-  "/blocks": 920_000, // baseline ~0.78 MB
+  // task-critical routes (current optimized size in comment)
+  "/components/[slug]": 780_000, // now ~692 KiB (was ~1.81 MB before splitting)
+  "/components": 680_000, // now ~600 KiB (was ~1.72 MB)
+  "/create": 895_000, // now ~794 KiB (was ~1.23 MB)
+  "/blocks": 680_000, // now ~598 KiB (was ~0.78 MB)
   // adjacent heavy routes (kept honest so regressions surface)
-  "/blocks/[slug]": 920_000, // baseline ~0.78 MB
-  "/blocks/[slug]/[variant]": 1_020_000, // baseline ~0.87 MB
+  "/blocks/[slug]": 680_000, // now ~600 KiB
+  "/blocks/[slug]/[variant]": 700_000, // now ~600 KiB
 });
 
 /** @typedef {{ route: string, firstLoadUncompressedJsBytes: number }} RouteStat */
