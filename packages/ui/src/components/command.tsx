@@ -42,12 +42,12 @@ export const CommandDialog = ({
 }: CommandDialogProps) => {
   return (
     <Dialog {...props}>
-      <DialogContent className="overflow-hidden p-0">
+      <DialogContent className="gap-0 overflow-hidden rounded-2xl border-border-soft bg-surface-floating/65 p-0 shadow-[0_28px_90px_-12px_rgba(0,0,0,0.6)] backdrop-blur-2xl backdrop-saturate-150 before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:z-10 before:h-px before:bg-gradient-to-r before:from-transparent before:via-fg/20 before:to-transparent">
         <DialogHeader className="sr-only">
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
-        <Command className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:text-fg-tertiary [&_[cmdk-input-wrapper]_svg]:size-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:size-5">
+        <Command className="bg-transparent [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:text-fg-tertiary [&_[cmdk-input-wrapper]]:border-border/60 [&_[cmdk-input-wrapper]_svg]:size-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:rounded-lg [&_[cmdk-item]]:px-3 [&_[cmdk-item]]:py-2.5 [&_[cmdk-item]_svg]:size-5 [&_[cmdk-item][data-selected=true]]:bg-fg/10">
           {children}
         </Command>
       </DialogContent>
