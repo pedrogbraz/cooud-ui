@@ -1,16 +1,34 @@
 # Releasing cooud-ui
 
-This monorepo publishes three library packages:
+This monorepo publishes **four** packages across **two** registries:
 
-| Package         | Name             | Notes                                   |
-| --------------- | ---------------- | --------------------------------------- |
-| `packages/tokens` | `@cooud/tokens` | Design tokens + CSS bridge + TW preset  |
-| `packages/theme`  | `@cooud/theme`  | Runtime theming engine (depends tokens) |
-| `packages/ui`     | `@cooud/ui`     | React components (depends theme/tokens) |
+| Package           | Name            | Registry             | Notes                                   |
+| ----------------- | --------------- | -------------------- | --------------------------------------- |
+| `packages/tokens` | `@cooud/tokens` | GitHub Packages      | Design tokens + CSS bridge + TW preset  |
+| `packages/theme`  | `@cooud/theme`  | GitHub Packages      | Runtime theming engine (depends tokens) |
+| `packages/ui`     | `@cooud/ui`     | GitHub Packages      | React components (depends theme/tokens) |
+| `packages/cli`    | `cooud-ui`      | **public npm**       | shadcn-style component installer (CLI)  |
 
-`apps/www` (showcase) and `packages/cli` are **not** published (`"private": true` / not wired into the release workflow).
+`apps/www` (showcase) is **not** published (not wired into the release workflow).
 
-Target registry: **GitHub Packages** — `https://npm.pkg.github.com`.
+## Distribution decision (ownership & scope)
+
+This is the agreed, intentional split:
+
+- **Scoped libraries `@cooud/{tokens,theme,ui}` → GitHub Packages**
+  (`https://npm.pkg.github.com`). GitHub Packages requires the npm **scope** to
+  match the **owning org/user**, so the `@cooud` scope must be owned by a GitHub
+  org named `cooud` (see "Operational prerequisites" below).
+- **CLI `cooud-ui` (unscoped) → public npm** (`https://registry.npmjs.org`).
+  It is deliberately **unscoped** so `npx cooud-ui@latest add button` works for
+  anyone, with no auth and no `@cooud` org membership. Publishing an unscoped
+  name only requires that the name `cooud-ui` is free/owned on npmjs and an
+  `NPM_TOKEN` with publish rights.
+
+> The `release.yml` workflow currently wires the three **scoped** packages to
+> GitHub Packages. Publishing the CLI to public npm is a separate, additive step
+> (own the `cooud-ui` name on npmjs, add `NPM_TOKEN`, then `npm publish` the CLI
+> tarball against `https://registry.npmjs.org`). See "Publishing the CLI to npm".
 
 ## How a release works
 
@@ -22,49 +40,104 @@ Target registry: **GitHub Packages** — `https://npm.pkg.github.com`.
    git push origin v0.1.1
    ```
 
-3. The `.github/workflows/release.yml` workflow triggers on any `v*` tag. It:
+3. The `.github/workflows/release.yml` workflow triggers on any `v*` tag.
+   **It does not publish automatically** — the `publish` job runs in the
+   protected `release` GitHub Environment and **pauses for a required-reviewer
+   approval** before any step executes. After approval it:
    - installs deps (`bun install --frozen-lockfile`),
    - builds in dependency order via turbo (`bun run build` → tokens → theme → ui),
-   - runs `npm publish` from each package dir in order: **tokens → theme → ui**.
+   - **packs** each package to a tarball with `npm pack` (so everything below
+     operates on the exact bytes that get published),
+   - generates a **CycloneDX SBOM** for the workspace (archived as a build artifact),
+   - emits a **build-provenance attestation** (`actions/attest-build-provenance`,
+     SLSA-style) over every packed tarball, signed via OIDC,
+   - uploads the tarballs + SBOM as a workflow artifact,
+   - runs `npm publish <tarball>` in dependency order: **tokens → theme → ui**.
 
-   Auth uses the workflow's built-in `GITHUB_TOKEN` (`packages: write` permission), wired into `NODE_AUTH_TOKEN`. No extra secret is needed for GitHub Packages.
+   Auth uses the workflow's built-in `GITHUB_TOKEN` (`packages: write`), wired
+   into `NODE_AUTH_TOKEN`. No extra secret is needed for GitHub Packages. The
+   job also holds `id-token: write` + `attestations: write` so it can sign and
+   store the provenance attestation.
 
 Each package also runs `prepublishOnly` (`tsc -p tsconfig.json`) as a safety net so `dist` is always rebuilt before a publish, even for manual publishes.
 
-## ⚠️ Known caveat: the `@cooud` scope vs. the repo owner
+## `@cooud` scope vs. repo owner — how to make publishing reproducible & approved
 
-GitHub Packages requires the **npm scope to match the hosting org/user**. This repo currently lives at `github.com/pedrogbraz/cooud-ui` (a personal account), but the packages are scoped `@cooud`. As-is, a *real* publish to GitHub Packages will be **rejected** because `@cooud` ≠ `pedrogbraz`.
+GitHub Packages requires the **npm scope to match the hosting org/user**. The
+packages are scoped `@cooud`, so the publish target must be a GitHub **org named
+`cooud`** that owns the `@cooud` scope. This is a one-time **operational
+prerequisite**, not a code change — once it is satisfied, every tagged release
+publishes reproducibly through the approval-gated workflow.
 
-The `@cooud` names are kept intentionally as the intended brand. To actually publish, pick one of:
+### Prerequisite A — Host the repo under a `cooud` GitHub org (recommended)
+Create a GitHub org named `cooud` and host/transfer this repo there. Then
+`@cooud/*` publishes cleanly to `https://npm.pkg.github.com` under that org using
+the workflow's `GITHUB_TOKEN`. No package renames, no extra secret. This is the
+path the current `release.yml` is wired for.
 
-### Option A — Move the repo under a `cooud` / `cooudmaster` GitHub org (recommended)
-Create a GitHub org named `cooud` (or `cooudmaster`), transfer/host this repo there. Then `@cooud/*` packages publish cleanly to `https://npm.pkg.github.com` under that org, using the workflow's `GITHUB_TOKEN`. No package renames required.
-
-### Option B — Publish to the public npm registry under an `@cooud` org
-Create an `@cooud` org on [npmjs.com](https://www.npmjs.com), then:
-- change each `publishConfig.registry` to `https://registry.npmjs.org` (or drop it),
-- add an `NPM_TOKEN` repo secret and pass it as `NODE_AUTH_TOKEN` in the release workflow,
+### Prerequisite B — (alternative) Publish `@cooud/*` to public npm
+If you prefer public npm instead of GitHub Packages for the scoped libs, create
+an `@cooud` org on [npmjs.com](https://www.npmjs.com), then:
+- set each `publishConfig.registry` to `https://registry.npmjs.org` (or drop it),
+- add an `NPM_TOKEN` repo secret (scoped to the `release` environment) and pass
+  it as `NODE_AUTH_TOKEN` in the publish steps,
 - point `actions/setup-node` `registry-url` at `https://registry.npmjs.org`.
 
 Either way the `@cooud` package names stay the same.
 
+### Publishing the CLI to npm (`cooud-ui`, unscoped)
+The CLI ships to **public npm** independently of the scoped libs:
+- own the unscoped name `cooud-ui` on npmjs (it must be free or owned by you),
+- add an `NPM_TOKEN` repo secret (scoped to the `release` environment),
+- pack + publish the CLI tarball against `https://registry.npmjs.org` with that
+  token. Because the name is unscoped and on the default public registry, no
+  `@cooud` org membership is required to publish or to `npx cooud-ui`.
+
 ## Publishing manually
 
-Build first, then publish each package from its directory with an auth token in `NODE_AUTH_TOKEN`:
+Build first, then publish the **scoped libraries** to GitHub Packages with an
+auth token in `NODE_AUTH_TOKEN`:
 
 ```sh
 bun run build
 
-export NODE_AUTH_TOKEN=<your-token>
+export NODE_AUTH_TOKEN=<github-packages-token>
 
 cd packages/tokens && npm publish && cd -
 cd packages/theme  && npm publish && cd -
 cd packages/ui     && npm publish && cd -
 ```
 
-The repo-root `.npmrc` already routes `@cooud` to GitHub Packages and reads the token from `${NODE_AUTH_TOKEN}`.
+The repo-root `.npmrc` routes `@cooud` to GitHub Packages and reads the token
+from `${NODE_AUTH_TOKEN}`.
+
+Publish the **CLI** to public npm separately (different registry + token):
+
+```sh
+cd packages/cli
+npm publish --registry https://registry.npmjs.org \
+  # --otp=<code> if 2FA is enabled on the npm account
+cd -
+```
+
+> The CLI is unscoped (`cooud-ui`) and has no `publishConfig.registry`, so it
+> defaults to public npm. Make sure you are authenticated to npmjs (e.g.
+> `npm login` or an `NPM_TOKEN` in `~/.npmrc`) and **not** to GitHub Packages
+> when publishing it.
 
 ## Token scopes
 
-- **GitHub Packages**: a Personal Access Token (classic) with the **`write:packages`** scope (and `read:packages`). It must belong to an account/org that owns the `@cooud` scope (see caveat above).
-- **npmjs (Option B)**: an automation/publish token for the `@cooud` org.
+- **GitHub Packages** (scoped libs): a Personal Access Token (classic) with the
+  **`write:packages`** scope (and `read:packages`). It must belong to an
+  account/org that owns the `@cooud` scope (see the prerequisites above). In CI
+  the workflow's built-in `GITHUB_TOKEN` covers this.
+- **public npm** (CLI, and `@cooud/*` under Prerequisite B): an
+  automation/publish token (`NPM_TOKEN`) with publish rights for the target
+  name/org, stored as a repo secret scoped to the `release` environment.
+
+## Branch & tag protection / governance
+
+Release and supply-chain governance — branch protection, tag protection, the
+`release` environment with required reviewers, CODEOWNERS, and the SHA-pinned,
+attested CI/CD — is documented in **[`docs/RELEASE_GOVERNANCE.md`](docs/RELEASE_GOVERNANCE.md)**.
+That doc is the source of truth for the repo-settings that the workflows assume.
