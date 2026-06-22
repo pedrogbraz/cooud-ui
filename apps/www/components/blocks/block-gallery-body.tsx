@@ -3,12 +3,86 @@
 import { cn } from "@cooud/ui";
 import { ArrowRight, Grid2X2, Search, SlidersHorizontal } from "lucide-react";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { type ReactNode, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { BlockVariant, BlockVariantAppearance } from "../../lib/blocks/types";
 import type { BlockMeta } from "../../lib/blocks-index";
 import { Eyebrow } from "../showcase-ui";
 
 type AppearanceFilter = "all" | BlockVariantAppearance;
+
+/**
+ * Intrinsic width (px) of the block preview canvas. Each variant's preview is a
+ * fixed `w-[64rem]` (= 64 × 16px) desktop layout; the thumbnail shrinks that
+ * canvas to fit the card. Deriving the scale from this constant — instead of
+ * viewport breakpoints — is what keeps previews from clipping on narrow cards.
+ */
+const PREVIEW_WIDTH_PX = 64 * 16;
+
+/** `useLayoutEffect` on the client, `useEffect` on the server (SSG-safe). */
+const useIsoLayoutEffect = typeof window === "undefined" ? useEffect : useLayoutEffect;
+
+/**
+ * Renders a fixed-width block preview shrunk to *exactly* fit its card.
+ *
+ * The previous version scaled the `w-[64rem]` canvas by hard-coded viewport
+ * breakpoints (`scale-[0.38] sm:scale-[0.48] …`). Those key off the *viewport*,
+ * not the *card*, so on narrow screens — or whenever the card is narrower than
+ * the breakpoint assumed — the 1024px canvas overflowed and was cropped (a
+ * gradient mask was hiding the clipped right edge).
+ *
+ * Here we measure the card via `ResizeObserver` and set `scale =
+ * cardWidth / 1024`, so the full canvas width always fits regardless of column
+ * count or screen size. The first render (and SSG HTML) uses a CSS-only
+ * fallback derived from the container width via a clamp, so the thumbnail is
+ * already correctly sized before hydration and never flashes a clipped frame.
+ */
+function ScaledPreview({ children }: { children: ReactNode }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState<number | null>(null);
+
+  useIsoLayoutEffect(() => {
+    const node = containerRef.current;
+    if (!node || typeof ResizeObserver === "undefined") return;
+
+    // The inner padding (p-6 → 24px each side) is *outside* the scaled canvas,
+    // so the available canvas width is the content-box width of the padded host.
+    const measure = (innerWidth: number) => {
+      if (innerWidth > 0) setScale(innerWidth / PREVIEW_WIDTH_PX);
+    };
+
+    const readInnerWidth = () => {
+      const style = getComputedStyle(node);
+      const padX = Number.parseFloat(style.paddingLeft) + Number.parseFloat(style.paddingRight);
+      return node.clientWidth - padX;
+    };
+
+    measure(readInnerWidth());
+
+    const observer = new ResizeObserver(() => measure(readInnerWidth()));
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    // `[container-type:inline-size]` lets the no-JS / pre-hydration fallback
+    // size the canvas from the card width via `cqw`, so SSG HTML already fits.
+    <div
+      ref={containerRef}
+      className="absolute inset-0 overflow-hidden p-6 [container-type:inline-size]"
+    >
+      <div
+        className="origin-top-left"
+        style={
+          scale === null
+            ? { width: `${PREVIEW_WIDTH_PX}px`, transform: "scale(min(1, calc(100cqw / 64rem)))" }
+            : { width: `${PREVIEW_WIDTH_PX}px`, transform: `scale(${scale})` }
+        }
+      >
+        <div className="max-w-none">{children}</div>
+      </div>
+    </div>
+  );
+}
 
 const APPEARANCE_FILTERS: { value: AppearanceFilter; label: string }[] = [
   { value: "all", label: "All" },
@@ -168,8 +242,8 @@ export function BlockGalleryBody({
                         aria-hidden="true"
                         className="absolute inset-0 bg-[radial-gradient(var(--cooud-border)_1px,transparent_1px)] opacity-45 [background-size:18px_18px]"
                       />
-                      <div className="pointer-events-none absolute left-1/2 top-0 w-[64rem] origin-top -translate-x-1/2 scale-[0.38] p-6 sm:scale-[0.48] 2xl:scale-[0.52]">
-                        <div className="mx-auto max-w-none">{variant.preview}</div>
+                      <div className="pointer-events-none absolute inset-0">
+                        <ScaledPreview>{variant.preview}</ScaledPreview>
                       </div>
                       <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-surface-raised via-surface-raised/80 to-transparent" />
                     </div>
