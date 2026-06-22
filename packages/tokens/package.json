@@ -8,7 +8,12 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
-    "./styles.css": "./styles/tokens.css"
+    "./styles.css": "./styles/tokens.css",
+    "./tokens.json": "./styles/tokens.json",
+    "./preset": {
+      "types": "./preset/index.d.ts",
+      "import": "./preset/index.js"
+    }
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -40,12 +45,15 @@
   },
   "files": [
     "dist",
-    "styles"
+    "styles",
+    "preset"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "tokens:generate": "bun run scripts/build-tokens.ts",
+    "tokens:check": "bun run scripts/build-tokens.ts --check",
+    "build": "bun run scripts/build-tokens.ts && tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "prepublishOnly": "tsc -p tsconfig.json"
+    "prepublishOnly": "bun run scripts/build-tokens.ts --check && tsc -p tsconfig.json"
   },
   "devDependencies": {
     "typescript": "^5.9.3"
