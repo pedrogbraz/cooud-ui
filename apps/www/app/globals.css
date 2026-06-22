@@ -6,6 +6,24 @@
 @source "../app/**/*.{ts,tsx}";
 @source "../components/**/*.{ts,tsx}";
 
+/* Register brand color vars as typed custom properties so they can be smoothly
+   animated (e.g. the Blocks preset switcher cross-fades primary/accent/ring). */
+@property --cooud-primary {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: oklch(0.685 0.169 237.3);
+}
+@property --cooud-accent {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: oklch(0.715 0.143 215.2);
+}
+@property --cooud-ring {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: oklch(0.685 0.169 237.3);
+}
+
 html,
 body {
   min-height: 100%;

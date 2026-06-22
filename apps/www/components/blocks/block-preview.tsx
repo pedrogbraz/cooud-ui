@@ -69,6 +69,8 @@ export function BlockPreview({ children }: { children: ReactNode }) {
         style={style}
         className={cn(
           "flex-1 overflow-y-auto bg-surface-base px-6 py-16",
+          // Smoothly cross-fade the brand colors when a preset is chosen.
+          "transition-[--cooud-primary,--cooud-accent,--cooud-ring] duration-500 ease-[var(--ease-out-quart)] motion-reduce:transition-none",
           mode === "dark" ? "dark" : "",
         )}
       >
