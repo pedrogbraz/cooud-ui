@@ -76,12 +76,11 @@ jobs:
       - name: End-to-end (Playwright) core flows
         run: bun run test:e2e
 
-      # The runtime PostCSS advisory is resolved (overrides: postcss >=8.5.10).
-      # The only remaining advisories are dev-server bugs in vite/esbuild pulled
-      # transitively by vitest — never reached by `vitest run` in CI and never
-      # shipped to consumers (dev-only). Kept non-blocking and tracked in
-      # docs/RELEASE_GOVERNANCE.md; flip continue-on-error to false to make audit
-      # a hard gate once those dev advisories clear upstream.
+      # Hard gate: `bun audit` is currently clean. The runtime PostCSS advisory
+      # is resolved (overrides: postcss >=8.5.10) and the prior dev-only
+      # vite/esbuild advisories (pulled transitively by vitest, never reached by
+      # `vitest run` and never shipped to consumers) have cleared upstream. A new
+      # advisory now fails CI; see docs/RELEASE_GOVERNANCE.md if a justified,
+      # time-boxed exception is needed.
       - name: Audit (dependency vulnerabilities)
         run: bun run audit
-        continue-on-error: true
