@@ -1,6 +1,7 @@
 import { hasConfig, readConfig } from "../config.js";
 import { Registry } from "../registry.js";
 import {
+  closestName,
   collectDependencies,
   detectPackageManager,
   log,
@@ -31,6 +32,30 @@ export async function add(names: string[], options: AddOptions): Promise<void> {
 
   const config = await readConfig(cwd);
   const registry = new Registry(options.registry ?? config.registry);
+
+  // Validate requested names against the registry index up front so a typo gets
+  // a "did you mean" hint instead of an opaque 404 from resolve(). If the index
+  // itself cannot be read we fall through and let resolve() report the failure.
+  try {
+    const available = (await registry.index()).map((i) => i.name);
+    const known = new Set(available);
+    const unknown = names.filter((name) => !known.has(name));
+    if (unknown.length > 0) {
+      for (const name of unknown) {
+        const suggestion = closestName(name, available);
+        log.err(
+          suggestion
+            ? `Unknown item "${name}". Did you mean "${suggestion}"?`
+            : `Unknown item "${name}".`,
+        );
+      }
+      log.step("Run `cooud-ui list` to see all available items.");
+      process.exitCode = 1;
+      return;
+    }
+  } catch {
+    // Index unavailable (e.g. offline local registry) — defer to resolve() below.
+  }
 
   let items: Awaited<ReturnType<Registry["resolve"]>>;
   try {

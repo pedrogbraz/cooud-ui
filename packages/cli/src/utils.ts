@@ -111,9 +111,89 @@ export async function writeItemFiles(
   return { written, skipped };
 }
 
-/** Collect + de-duplicate npm deps across resolved items. */
+/**
+ * A valid npm package spec: an optionally-scoped name with an optional
+ * `@version`/range suffix (e.g. "react", "@radix-ui/react-slot", "clsx@^2.1.1").
+ * Case-insensitive.
+ */
+const VALID_DEPENDENCY_RE = /^(@[a-z0-9-~][a-z0-9-._~]*\/)?[a-z0-9-~][a-z0-9-._~]*(@[^\s]+)?$/i;
+
+/**
+ * Guard a single registry-supplied dependency token before it is handed to the
+ * package manager. Dependency strings arrive raw from a remote registry, so a
+ * malicious entry like "--registry=http://evil" or "-g" would otherwise be
+ * spawned as a package-manager flag (arg injection). Reject anything that is not
+ * a plain npm package spec, naming the offending token in the thrown Error.
+ *
+ * Note the explicit leading-`-` check: a literal `-` is a legal *internal*
+ * package-name character (so the name char class permits it), which means the
+ * regex alone would accept "-g". We reject a leading dash outright so a spec can
+ * never be parsed as a CLI flag.
+ */
+export function assertValidDependency(dep: string): void {
+  if (dep.startsWith("-") || !VALID_DEPENDENCY_RE.test(dep)) {
+    throw new Error(`Refusing to install invalid dependency spec from registry: ${dep}`);
+  }
+}
+
+/**
+ * Collect + de-duplicate npm deps across resolved items. Every dependency is
+ * validated here — the single point all registry deps pass through before the
+ * package-manager spawn — so an injected/malformed spec throws before install.
+ */
 export function collectDependencies(items: RegistryItem[]): string[] {
   const set = new Set<string>();
-  for (const item of items) for (const dep of item.dependencies) set.add(dep);
+  for (const item of items) {
+    for (const dep of item.dependencies) {
+      assertValidDependency(dep);
+      set.add(dep);
+    }
+  }
   return [...set].sort();
+}
+
+/** Levenshtein edit distance between two strings (small inputs: registry names). */
+export function levenshtein(a: string, b: string): number {
+  // Single rolling row of the DP matrix (row 0 = distances against an empty `a`).
+  const row = Array.from({ length: b.length + 1 }, (_, j) => j);
+  for (let i = 1; i <= a.length; i++) {
+    let prevDiag = row[0] ?? 0; // dist[i-1][0]
+    row[0] = i;
+    for (let j = 1; j <= b.length; j++) {
+      const above = row[j] ?? 0; // dist[i-1][j], not yet overwritten
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      row[j] = Math.min(above + 1, (row[j - 1] ?? 0) + 1, prevDiag + cost);
+      prevDiag = above;
+    }
+  }
+  return row[b.length] ?? 0;
+}
+
+/**
+ * Find the closest registry name to a (presumably mistyped) `name`. Prefers a
+ * substring match, then falls back to the nearest by edit distance, but only
+ * when that distance is small enough to be a plausible typo. Returns undefined
+ * when nothing is close enough to suggest.
+ */
+export function closestName(name: string, candidates: string[]): string | undefined {
+  if (candidates.length === 0) return undefined;
+  const needle = name.toLowerCase();
+
+  const substring = candidates.find(
+    (c) => c.toLowerCase().includes(needle) || needle.includes(c.toLowerCase()),
+  );
+  if (substring) return substring;
+
+  let best: string | undefined;
+  let bestDist = Number.POSITIVE_INFINITY;
+  for (const candidate of candidates) {
+    const dist = levenshtein(needle, candidate.toLowerCase());
+    if (dist < bestDist) {
+      bestDist = dist;
+      best = candidate;
+    }
+  }
+  // Only suggest when it is a plausible typo (scaled to the name length).
+  const threshold = Math.max(2, Math.floor(name.length / 2));
+  return best !== undefined && bestDist <= threshold ? best : undefined;
 }
