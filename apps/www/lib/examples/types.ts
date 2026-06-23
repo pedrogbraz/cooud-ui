@@ -7,6 +7,13 @@ export interface Example {
   /** Section heading, e.g. "Variants". */
   title: string;
   description?: string;
+  /** Optional install metadata rendered between the preview and source code. */
+  install?: {
+    /** Registry item name for `cooud-ui add`. Defaults to the component slug when omitted by callers. */
+    registryItem: string;
+    /** Extra package dependencies required for manual copy-paste installs. */
+    dependencies?: string[];
+  };
   /** The JSX snippet shown in the code block (should match `preview`). */
   code: string;
   /** The rendered example. */

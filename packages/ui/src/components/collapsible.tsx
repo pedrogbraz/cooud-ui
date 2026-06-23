@@ -14,7 +14,7 @@ export const CollapsibleContent = forwardRef<
       ref={ref}
       data-slot="collapsible-content"
       className={cn(
-        "overflow-hidden text-sm text-fg-secondary transition-[height] duration-200 ease-[var(--ease-out-quart)] data-[state=closed]:h-0 data-[state=open]:h-[var(--radix-collapsible-content-height)] motion-reduce:transition-none",
+        "overflow-hidden text-sm text-fg-secondary data-[state=open]:animate-[cooud-collapsible-down_220ms_var(--ease-out-quart)] data-[state=closed]:animate-[cooud-collapsible-up_180ms_var(--ease-out-quart)]",
         className,
       )}
       {...props}

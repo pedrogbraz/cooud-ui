@@ -22,7 +22,7 @@ const SheetOverlay = forwardRef<
       ref={ref}
       data-slot="sheet-overlay"
       className={cn(
-        "fixed inset-0 z-50 bg-black/50 backdrop-blur-sm transition-opacity data-[state=closed]:opacity-0",
+        "fixed inset-0 z-50 bg-black/50 backdrop-blur-sm data-[state=open]:animate-[cooud-overlay-in_300ms_var(--ease-out-quart)] data-[state=closed]:animate-[cooud-overlay-out_240ms_var(--ease-out-quart)]",
         className,
       )}
       {...props}
@@ -32,15 +32,16 @@ const SheetOverlay = forwardRef<
 SheetOverlay.displayName = "SheetOverlay";
 
 const sheetVariants = cva(
-  "fixed z-50 flex flex-col gap-4 bg-surface-floating p-6 text-fg shadow-lg border-border transition-transform duration-300",
+  "fixed z-50 flex flex-col gap-4 bg-surface-floating p-6 text-fg shadow-lg border-border",
   {
     variants: {
       side: {
-        top: "inset-x-0 top-0 border-b w-full data-[state=closed]:-translate-y-full",
-        bottom: "inset-x-0 bottom-0 border-t w-full data-[state=closed]:translate-y-full",
-        left: "inset-y-0 left-0 border-r h-full w-3/4 max-w-sm data-[state=closed]:-translate-x-full",
+        top: "inset-x-0 top-0 border-b w-full data-[state=open]:animate-[cooud-slide-in-top_320ms_var(--ease-out-quart)_both] data-[state=closed]:animate-[cooud-slide-out-top_260ms_var(--ease-out-quart)_both]",
+        bottom:
+          "inset-x-0 bottom-0 border-t w-full data-[state=open]:animate-[cooud-slide-in-bottom_320ms_var(--ease-out-quart)_both] data-[state=closed]:animate-[cooud-slide-out-bottom_260ms_var(--ease-out-quart)_both]",
+        left: "inset-y-0 left-0 border-r h-full w-3/4 max-w-sm data-[state=open]:animate-[cooud-slide-in-left_320ms_var(--ease-out-quart)_both] data-[state=closed]:animate-[cooud-slide-out-left_260ms_var(--ease-out-quart)_both]",
         right:
-          "inset-y-0 right-0 border-l h-full w-3/4 max-w-sm data-[state=closed]:translate-x-full",
+          "inset-y-0 right-0 border-l h-full w-3/4 max-w-sm data-[state=open]:animate-[cooud-slide-in-right_320ms_var(--ease-out-quart)_both] data-[state=closed]:animate-[cooud-slide-out-right_260ms_var(--ease-out-quart)_both]",
       },
     },
     defaultVariants: { side: "right" },

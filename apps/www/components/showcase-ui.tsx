@@ -90,6 +90,7 @@ interface PreviewFrameProps {
 export function PreviewFrame({ label, children, className }: PreviewFrameProps) {
   return (
     <div
+      data-slot="preview-frame"
       className={cn(
         "relative flex min-h-[8rem] items-center justify-center gap-4 overflow-x-auto overflow-y-hidden rounded-2xl border border-border bg-surface-inset/50 p-8",
         className,

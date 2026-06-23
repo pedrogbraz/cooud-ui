@@ -151,8 +151,17 @@ export const EXAMPLE_SECTIONS: Record<string, ExampleSectionMeta[]> = {
   "gradient-text": [{ id: "headline", title: "Headline" }],
   "spotlight-card": [{ id: "hover-spotlight", title: "Hover spotlight" }],
   "aurora-background": [{ id: "animated-backdrop", title: "Animated backdrop" }],
+  "logo-carousel": [{ id: "hero-lockup", title: "Hero lockup" }],
+  "morphing-popover": [
+    { id: "feedback", title: "Feedback" },
+    { id: "quick-actions", title: "Quick actions" },
+  ],
   shimmer: [{ id: "loading-sheen", title: "Loading sheen" }],
   reveal: [{ id: "scroll-reveal", title: "Scroll reveal" }],
+  "animated-number": [{ id: "count-up", title: "Count up" }],
+  carousel: [{ id: "slides", title: "Slides" }],
+  "segmented-control": [{ id: "single-select", title: "Single select" }],
+  "text-effect": [{ id: "headline", title: "Headline" }],
 };
 
 export function getExampleSections(slug: string): ExampleSectionMeta[] {

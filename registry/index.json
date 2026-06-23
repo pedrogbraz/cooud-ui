@@ -53,6 +53,16 @@
     ]
   },
   {
+    "name": "animated-number",
+    "type": "registry:ui",
+    "dependencies": [
+      "motion@^12.23.0"
+    ],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
     "name": "app-shell",
     "type": "registry:ui",
     "dependencies": [],
@@ -150,6 +160,17 @@
     "type": "registry:ui",
     "dependencies": [],
     "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "carousel",
+    "type": "registry:ui",
+    "dependencies": [
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": [
+      "button",
       "cn"
     ]
   },
@@ -421,10 +442,32 @@
     ]
   },
   {
+    "name": "logo-carousel",
+    "type": "registry:ui",
+    "dependencies": [
+      "motion@^12.23.0"
+    ],
+    "registryDependencies": [
+      "cn",
+      "motion-presets"
+    ]
+  },
+  {
     "name": "metric",
     "type": "registry:ui",
     "dependencies": [
       "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "morphing-popover",
+    "type": "registry:ui",
+    "dependencies": [
+      "lucide-react@^0.577.0",
+      "motion@^12.23.0"
     ],
     "registryDependencies": [
       "cn"
@@ -532,6 +575,16 @@
     "type": "registry:ui",
     "dependencies": [
       "@radix-ui/react-scroll-area@^1.2.9"
+    ],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "segmented-control",
+    "type": "registry:ui",
+    "dependencies": [
+      "motion@^12.23.0"
     ],
     "registryDependencies": [
       "cn"
@@ -661,6 +714,16 @@
     "type": "registry:ui",
     "dependencies": [
       "@radix-ui/react-tabs@^1.1.12"
+    ],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "text-effect",
+    "type": "registry:ui",
+    "dependencies": [
+      "motion@^12.23.0"
     ],
     "registryDependencies": [
       "cn"

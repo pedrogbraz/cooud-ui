@@ -88,7 +88,7 @@ export const NavigationMenuContent = forwardRef<
       ref={ref}
       data-slot="navigation-menu-content"
       className={cn(
-        "left-0 top-0 w-full p-2 transition-[transform,opacity] duration-200 ease-[var(--ease-out-quart)] md:absolute md:w-auto",
+        "left-0 top-0 w-full p-1 transition-[transform,opacity] duration-200 ease-[var(--ease-out-quart)] md:absolute md:w-auto",
         "data-[motion=from-start]:-translate-x-12 data-[motion=from-start]:opacity-0",
         "data-[motion=from-end]:translate-x-12 data-[motion=from-end]:opacity-0",
         "data-[motion=to-start]:-translate-x-12 data-[motion=to-start]:opacity-0",
@@ -110,7 +110,7 @@ export const NavigationMenuLink = forwardRef<
       ref={ref}
       data-slot="navigation-menu-link"
       className={cn(
-        "flex select-none flex-col gap-1 rounded-md p-3 text-sm leading-none no-underline outline-none transition-colors duration-150 ease-[var(--ease-out-quart)] hover:bg-surface-overlay hover:text-fg focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base data-[active]:bg-surface-overlay data-[active]:text-fg",
+        "flex select-none flex-col gap-0.5 rounded-md px-3 py-2 text-sm leading-snug no-underline outline-none transition-colors duration-150 ease-[var(--ease-out-quart)] hover:bg-surface-overlay hover:text-fg focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base data-[active]:bg-surface-overlay data-[active]:text-fg",
         className,
       )}
       {...props}
@@ -144,12 +144,12 @@ export const NavigationMenuViewport = forwardRef<
   ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Viewport>
 >(({ className, ...props }, ref) => {
   return (
-    <div className="absolute left-0 top-full flex w-full justify-center">
+    <div className="absolute left-0 top-full flex w-max justify-center">
       <NavigationMenuPrimitive.Viewport
         ref={ref}
         data-slot="navigation-menu-viewport"
         className={cn(
-          "relative mt-1.5 h-[var(--radix-navigation-menu-viewport-height)] w-full origin-top-center overflow-hidden rounded-lg border border-border bg-surface-floating text-fg shadow-lg transition-[width,height] duration-200 ease-[var(--ease-out-quart)] data-[state=closed]:opacity-0 md:w-[var(--radix-navigation-menu-viewport-width)]",
+          "relative mt-1.5 h-[var(--radix-navigation-menu-viewport-height)] w-full shrink-0 origin-top-center overflow-hidden rounded-lg border border-border bg-surface-floating text-fg shadow-lg transition-[width,height] duration-200 ease-[var(--ease-out-quart)] data-[state=closed]:opacity-0 md:w-[var(--radix-navigation-menu-viewport-width)]",
           className,
         )}
         {...props}

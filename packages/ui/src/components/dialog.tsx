@@ -22,7 +22,7 @@ export const DialogOverlay = forwardRef<
       ref={ref}
       data-slot="dialog-overlay"
       className={cn(
-        "fixed inset-0 z-50 bg-black/50 backdrop-blur-sm transition-opacity data-[state=closed]:opacity-0",
+        "fixed inset-0 z-50 bg-black/50 backdrop-blur-sm data-[state=open]:animate-[cooud-overlay-in_200ms_var(--ease-out-quart)] data-[state=closed]:animate-[cooud-overlay-out_160ms_var(--ease-out-quart)]",
         className,
       )}
       {...props}
@@ -42,7 +42,7 @@ export const DialogContent = forwardRef<
         ref={ref}
         data-slot="dialog-content"
         className={cn(
-          "fixed left-1/2 top-1/2 z-50 grid w-full max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4 rounded-xl border border-border bg-surface-floating p-6 text-fg shadow-lg transition-all duration-200 data-[state=closed]:opacity-0 data-[state=closed]:scale-95",
+          "fixed inset-0 z-50 m-auto grid h-fit w-full max-w-lg gap-4 rounded-xl border border-border bg-surface-floating p-6 text-fg shadow-lg data-[state=open]:animate-[cooud-pop-in_200ms_var(--ease-out-quart)_both] data-[state=closed]:animate-[cooud-pop-out_160ms_var(--ease-out-quart)_both]",
           className,
         )}
         {...props}

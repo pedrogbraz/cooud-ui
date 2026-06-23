@@ -30,7 +30,7 @@
   --cooud-surface-raised: oklch(0.195 0.005 285.8);
   --cooud-surface-overlay: oklch(0.235 0.006 285.9);
   --cooud-surface-elevated: oklch(0.27 0.006 286);
-  --cooud-surface-floating: oklch(0.31 0.006 286);
+  --cooud-surface-floating: oklch(0.2 0.006 286);
   --cooud-fg: oklch(0.985 0.001 106.4);
   --cooud-fg-secondary: oklch(0.705 0.015 286);
   --cooud-fg-tertiary: oklch(0.62 0.014 286);
@@ -134,7 +134,7 @@
   --cooud-surface-raised: oklch(0.16 0 0);
   --cooud-surface-overlay: oklch(0.2 0 0);
   --cooud-surface-elevated: oklch(0.23 0 0);
-  --cooud-surface-floating: oklch(0.27 0 0);
+  --cooud-surface-floating: oklch(0.165 0 0);
   --cooud-fg: oklch(0.93 0 0);
   --cooud-fg-secondary: oklch(0.7 0 0);
   --cooud-fg-tertiary: oklch(0.62 0 0);
@@ -217,6 +217,19 @@
   background-image: linear-gradient(135deg, var(--cooud-primary), var(--cooud-accent));
 }
 
+/*
+ * Darkened brand gradient for SOLID FILLS that carry white text (e.g. the
+ * gradient button). Derived from primary/accent so it re-themes, but mixed
+ * toward black so white label text clears WCAG AA contrast across the sweep.
+ */
+@utility bg-gradient-primary-strong {
+  background-image: linear-gradient(
+    135deg,
+    color-mix(in oklch, var(--cooud-primary), black 30%),
+    color-mix(in oklch, var(--cooud-accent), black 30%)
+  );
+}
+
 @utility bg-gradient-aurora {
   background-image: linear-gradient(
     135deg,
@@ -262,10 +275,121 @@
   }
 }
 
+/*
+ * Overlay enter/exit animations driven by Radix `data-[state=open|closed]`.
+ * Keyframes (not transitions) so Radix waits for the EXIT animation before
+ * unmounting — both directions stay fluid. Consume via arbitrary utilities,
+ * e.g. `data-[state=open]:animate-[cooud-pop-in_180ms_var(--ease-out-quart)_both]`.
+ * `--ease-out-quart` is the shared easing; `both` fill-mode avoids first/last
+ * frame flashes.
+ */
+@keyframes cooud-overlay-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes cooud-overlay-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes cooud-pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+@keyframes cooud-pop-out {
+  to {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+@keyframes cooud-slide-in-right {
+  from {
+    transform: translateX(100%);
+  }
+}
+@keyframes cooud-slide-out-right {
+  to {
+    transform: translateX(100%);
+  }
+}
+@keyframes cooud-slide-in-left {
+  from {
+    transform: translateX(-100%);
+  }
+}
+@keyframes cooud-slide-out-left {
+  to {
+    transform: translateX(-100%);
+  }
+}
+@keyframes cooud-slide-in-top {
+  from {
+    transform: translateY(-100%);
+  }
+}
+@keyframes cooud-slide-out-top {
+  to {
+    transform: translateY(-100%);
+  }
+}
+@keyframes cooud-slide-in-bottom {
+  from {
+    transform: translateY(100%);
+  }
+}
+@keyframes cooud-slide-out-bottom {
+  to {
+    transform: translateY(100%);
+  }
+}
+/* Height collapse/expand — drive off the Radix content-height vars. */
+@keyframes cooud-accordion-down {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--radix-accordion-content-height);
+  }
+}
+@keyframes cooud-accordion-up {
+  from {
+    height: var(--radix-accordion-content-height);
+  }
+  to {
+    height: 0;
+  }
+}
+@keyframes cooud-collapsible-down {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--radix-collapsible-content-height);
+  }
+}
+@keyframes cooud-collapsible-up {
+  from {
+    height: var(--radix-collapsible-content-height);
+  }
+  to {
+    height: 0;
+  }
+}
+
+/*
+ * Honour `prefers-reduced-motion` by collapsing animations/transitions — the
+ * accessible default every consumer gets. An app that needs to DEMONSTRATE
+ * motion regardless (e.g. the component showcase) opts out by setting
+ * `data-force-motion` on the <html> root; `:where()` keeps the selector at the
+ * same (zero) specificity as a bare `*` reset.
+ */
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
+  :where(:root:not([data-force-motion])) *,
+  :where(:root:not([data-force-motion])) *::before,
+  :where(:root:not([data-force-motion])) *::after {
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;

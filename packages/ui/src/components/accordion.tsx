@@ -51,7 +51,10 @@ export const AccordionContent = forwardRef<
     <AccordionPrimitive.Content
       ref={ref}
       data-slot="accordion-content"
-      className={cn("overflow-hidden text-sm text-fg-secondary", className)}
+      className={cn(
+        "overflow-hidden text-sm text-fg-secondary data-[state=open]:animate-[cooud-accordion-down_220ms_var(--ease-out-quart)] data-[state=closed]:animate-[cooud-accordion-up_180ms_var(--ease-out-quart)]",
+        className,
+      )}
       {...props}
     >
       <div className="pb-4 pt-0">{children}</div>

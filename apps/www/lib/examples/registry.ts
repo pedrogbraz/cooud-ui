@@ -96,8 +96,14 @@ export const EXAMPLE_FAMILY_BY_SLUG: Record<string, ExampleFamily> = {
   "gradient-text": "premium",
   "spotlight-card": "premium",
   "aurora-background": "premium",
+  "logo-carousel": "premium",
+  "morphing-popover": "premium",
   shimmer: "premium",
   reveal: "premium",
+  "animated-number": "premium",
+  carousel: "premium",
+  "segmented-control": "premium",
+  "text-effect": "premium",
 };
 
 export function getExampleFamily(slug: string): ExampleFamily | undefined {
