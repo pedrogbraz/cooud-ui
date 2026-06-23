@@ -21,6 +21,7 @@
     "test:coverage": "vitest run --coverage",
     "registry:check": "bun run -F cooud-ui registry:check",
     "tokens:check": "bun run -F @cooud/tokens tokens:check",
+    "props:check": "bun run -F @cooud/www props:check",
     "package:smoke": "node scripts/package-smoke.mjs",
     "bundle:check": "node scripts/bundle-check.mjs",
     "check:example-sections": "node scripts/check-example-sections.mjs",

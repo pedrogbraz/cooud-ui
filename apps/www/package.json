@@ -7,7 +7,9 @@
     "dev": "next dev --port 4747",
     "build": "next build",
     "start": "next start --port 4747",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "props": "bun run scripts/build-props.ts",
+    "props:check": "bun run scripts/check-props.ts"
   },
   "dependencies": {
     "@cooud/theme": "workspace:*",
