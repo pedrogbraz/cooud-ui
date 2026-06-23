@@ -73,10 +73,30 @@ export function BlockViewBody({
               Installation
             </h2>
             <p className="mt-2 text-sm text-fg-secondary">
-              Install the Cooud UI packages, then paste the block below.
+              Install with the CLI, or add the packages and paste the source below.
             </p>
-            <div className="mt-4">
-              <InstallTabs packages="@cooud/ui @cooud/tokens @cooud/theme" />
+
+            <div className="mt-6">
+              <h3 className="font-display text-base font-semibold tracking-tight text-fg">CLI</h3>
+              <p className="mt-1.5 text-sm text-fg-secondary">
+                Add <span className="font-medium text-fg">{meta.name}</span> to your app with its
+                source-owned dependencies.
+              </p>
+              <div className="mt-3">
+                <CodeBlock code={`npx cooud-ui add ${slug}`} language="bash" />
+              </div>
+            </div>
+
+            <div className="mt-8">
+              <h3 className="font-display text-base font-semibold tracking-tight text-fg">
+                Manual
+              </h3>
+              <p className="mt-1.5 text-sm text-fg-secondary">
+                Install the Cooud UI packages, then paste the block below.
+              </p>
+              <div className="mt-3">
+                <InstallTabs packages="@cooud/ui @cooud/tokens @cooud/theme" />
+              </div>
             </div>
           </section>
 

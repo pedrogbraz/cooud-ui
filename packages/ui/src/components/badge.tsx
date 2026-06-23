@@ -13,6 +13,9 @@ const badgeVariants = cva(
         outline: "text-fg border-border",
         success: "bg-success/15 text-success border-transparent",
         warning: "bg-warning/15 text-warning border-transparent",
+        destructive: "bg-error/15 text-error border-transparent",
+        // `error` is a deprecated alias of `destructive`; kept for backward
+        // compatibility. Prefer `destructive` to match Button/Alert.
         error: "bg-error/15 text-error border-transparent",
         info: "bg-info/15 text-info border-transparent",
       },

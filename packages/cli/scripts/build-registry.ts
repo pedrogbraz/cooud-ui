@@ -8,17 +8,20 @@
 import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import { basename, dirname, extname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import ts from "typescript";
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(scriptDir, "../../..");
 const uiRoot = join(repoRoot, "packages/ui");
 const componentsDir = join(uiRoot, "src/components");
 const cnFile = join(uiRoot, "src/lib/cn.ts");
+const blocksDir = join(repoRoot, "apps/www/lib/blocks");
 
 /** Committed registry output directory. */
 export const outDir = join(repoRoot, "registry");
 
 interface PkgJson {
+  version?: string;
   dependencies?: Record<string, string>;
   peerDependencies?: Record<string, string>;
 }
@@ -26,11 +29,11 @@ interface PkgJson {
 interface RegistryFile {
   path: string;
   content: string;
-  target: "ui" | "lib";
+  target: "ui" | "lib" | "block";
 }
 interface RegistryItem {
   name: string;
-  type: "registry:ui" | "registry:lib";
+  type: "registry:ui" | "registry:lib" | "registry:block";
   dependencies: string[];
   registryDependencies: string[];
   files: RegistryFile[];
@@ -38,8 +41,30 @@ interface RegistryItem {
 
 const IGNORED_NPM = new Set(["react", "react-dom", "react/jsx-runtime"]);
 
-const VALID_TYPES = new Set(["registry:ui", "registry:lib"]);
-const VALID_TARGETS = new Set(["ui", "lib"]);
+const VALID_TYPES = new Set(["registry:ui", "registry:lib", "registry:block"]);
+const VALID_TARGETS = new Set(["ui", "lib", "block"]);
+
+/**
+ * Installable product blocks. Each entry maps a registry slug to the family
+ * source file under `apps/www/lib/blocks/` and the exported template-literal
+ * const that holds the block's copy-paste source. The source is TS-parsed out
+ * of these files (never imported) so block generation never pulls in React.
+ */
+const BLOCK_MANIFEST: ReadonlyArray<{ slug: string; file: string; constName: string }> = [
+  { slug: "hero", file: "marketing.tsx", constName: "heroCode" },
+  { slug: "pricing", file: "marketing.tsx", constName: "pricingCode" },
+  { slug: "feature-grid", file: "marketing.tsx", constName: "featureGridCode" },
+  { slug: "cta", file: "marketing.tsx", constName: "ctaCode" },
+  { slug: "stats", file: "application.tsx", constName: "statsCode" },
+  { slug: "login", file: "application.tsx", constName: "loginCode" },
+  { slug: "settings", file: "application.tsx", constName: "settingsCode" },
+  { slug: "team", file: "application.tsx", constName: "teamCode" },
+  { slug: "dashboard", file: "dashboard.tsx", constName: "dashboardAnalyticsCode" },
+  { slug: "billing", file: "billing.tsx", constName: "subscriptionCode" },
+  { slug: "page-header", file: "page-sections.tsx", constName: "pageHeaderCode" },
+  { slug: "filter-bar", file: "page-sections.tsx", constName: "filterBarCode" },
+  { slug: "empty-state", file: "page-sections.tsx", constName: "emptyStateCode" },
+];
 
 /**
  * Hand-rolled schema validation (no extra deps): every emitted item must carry a
@@ -100,6 +125,53 @@ function parseImports(content: string): string[] {
   return specs;
 }
 
+/**
+ * TS-parse a block family file and return the cooked source held by `constName`.
+ * The const must be a top-level `const <constName> = \`...\`` whose initializer is
+ * a plain (no-substitution) template literal; we return its `.text` (the exact
+ * block source). Throws a clear, slug-scoped Error if the const is missing or its
+ * initializer is anything else, so future source drift fails the build loudly.
+ */
+function extractBlockSource(
+  filePath: string,
+  fileText: string,
+  constName: string,
+  slug: string,
+): string {
+  const sourceFile = ts.createSourceFile(
+    filePath,
+    fileText,
+    ts.ScriptTarget.Latest,
+    true,
+    ts.ScriptKind.TSX,
+  );
+
+  let source: string | null = null;
+  let sawConst = false;
+
+  for (const statement of sourceFile.statements) {
+    if (!ts.isVariableStatement(statement)) continue;
+    for (const declaration of statement.declarationList.declarations) {
+      if (declaration.name.getText(sourceFile) !== constName) continue;
+      sawConst = true;
+      const initializer = declaration.initializer;
+      if (initializer && ts.isNoSubstitutionTemplateLiteral(initializer)) {
+        source = initializer.text;
+      }
+    }
+  }
+
+  if (source === null) {
+    const reason = sawConst
+      ? `its initializer is not a plain (no-substitution) template literal`
+      : `the const was not found`;
+    throw new Error(
+      `block "${slug}": cannot extract source from ${basename(filePath)} — ${reason} (expected \`const ${constName} = \`...\`\`)`,
+    );
+  }
+  return source;
+}
+
 /** Read the @cooud/ui sources and derive the full, validated set of registry items. */
 export async function buildItems(): Promise<RegistryItem[]> {
   const pkg = JSON.parse(await readFile(join(uiRoot, "package.json"), "utf8")) as PkgJson;
@@ -150,6 +222,40 @@ export async function buildItems(): Promise<RegistryItem[]> {
       dependencies: [...npm].sort(),
       registryDependencies: [...reg].sort(),
       files: [{ path: file, content, target: "ui" }],
+    });
+  }
+
+  // Installable blocks: copy-paste product sections that depend on the published
+  // @cooud/ui PACKAGE (not on copied component files), so they carry npm
+  // `dependencies` only and an empty `registryDependencies`. Their source is
+  // TS-parsed out of the app's block family files — never imported/executed.
+  const uiPackage = `@cooud/ui@${pkg.version ?? "latest"}`;
+  const blockSources = new Map<string, string>();
+  for (const block of BLOCK_MANIFEST) {
+    const filePath = join(blocksDir, block.file);
+    let fileText = blockSources.get(filePath);
+    if (fileText === undefined) {
+      fileText = await readFile(filePath, "utf8");
+      blockSources.set(filePath, fileText);
+    }
+    const source = extractBlockSource(filePath, fileText, block.constName, block.slug);
+
+    // @cooud/ui is a bare import in every block but is not in the ui package's
+    // own dependency map, so pin it explicitly to the ui package version.
+    const npm = new Set<string>([uiPackage]);
+    for (const spec of parseImports(source)) {
+      if (spec.startsWith(".")) continue;
+      const pkgName = packageNameOf(spec);
+      if (pkgName === "@cooud/ui" || IGNORED_NPM.has(pkgName)) continue;
+      npm.add(resolveDep(pkgName));
+    }
+
+    items.push({
+      name: block.slug,
+      type: "registry:block",
+      dependencies: [...npm].sort(),
+      registryDependencies: [],
+      files: [{ path: `${block.slug}.tsx`, content: source, target: "block" }],
     });
   }
 

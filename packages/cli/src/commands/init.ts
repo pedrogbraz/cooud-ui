@@ -32,7 +32,8 @@ export async function init(options: InitOptions): Promise<void> {
 
   await mkdir(join(cwd, config.paths.ui), { recursive: true });
   await mkdir(join(cwd, config.paths.lib), { recursive: true });
-  log.ok(`Created ${config.paths.ui} and ${config.paths.lib}`);
+  await mkdir(join(cwd, config.paths.blocks), { recursive: true });
+  log.ok(`Created ${config.paths.ui}, ${config.paths.lib} and ${config.paths.blocks}`);
 
   // Pull the shared cn() helper from the registry.
   try {

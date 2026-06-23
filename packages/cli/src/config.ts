@@ -13,19 +13,21 @@ export interface CooudUIConfig {
   aliases: {
     ui: string;
     lib: string;
+    blocks: string;
   };
   /** Filesystem paths (relative to cwd) where files are written. */
   paths: {
     ui: string;
     lib: string;
+    blocks: string;
   };
   /** Registry source (http base URL or local directory). */
   registry: string;
 }
 
 export const DEFAULT_CONFIG: CooudUIConfig = {
-  aliases: { ui: "@/components/ui", lib: "@/lib" },
-  paths: { ui: "components/ui", lib: "lib" },
+  aliases: { ui: "@/components/ui", lib: "@/lib", blocks: "@/components/blocks" },
+  paths: { ui: "components/ui", lib: "lib", blocks: "components/blocks" },
   registry: DEFAULT_REGISTRY,
 };
 

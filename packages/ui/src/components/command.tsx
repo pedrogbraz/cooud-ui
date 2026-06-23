@@ -71,7 +71,7 @@ export const CommandInput = forwardRef<
         ref={ref}
         data-slot="command-input"
         className={cn(
-          "flex h-10 w-full bg-transparent py-3 text-sm outline-none placeholder:text-fg-muted disabled:opacity-50",
+          "flex h-10 w-full bg-transparent py-3 text-sm outline-none placeholder:text-fg-tertiary disabled:opacity-50",
           className,
         )}
         {...props}

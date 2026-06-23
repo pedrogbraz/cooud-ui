@@ -396,7 +396,7 @@ export const Autocomplete = forwardRef<HTMLInputElement, AutocompleteProps>(
               onFocus={handleFocus}
               className={cn(
                 "flex h-10 w-full rounded-lg border border-border bg-surface-inset px-3 text-sm text-fg",
-                "placeholder:text-fg-muted",
+                "placeholder:text-fg-tertiary",
                 "transition-[border-color,box-shadow] duration-150 ease-[var(--ease-out-quart)]",
                 "outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base",
                 "disabled:opacity-50 disabled:pointer-events-none",

@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "cooud-ui — add Cooud UI components to your project, shadcn-style (copy-paste registry).",
   "type": "module",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "author": "Cooud",
   "repository": {
     "type": "git",

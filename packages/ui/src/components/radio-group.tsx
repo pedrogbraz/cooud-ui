@@ -1,3 +1,5 @@
+"use client";
+
 import * as RadioGroupPrimitive from "@radix-ui/react-radio-group";
 import { Circle } from "lucide-react";
 import { type ComponentPropsWithoutRef, type ComponentRef, forwardRef } from "react";
@@ -27,7 +29,7 @@ export const RadioGroupItem = forwardRef<
       ref={ref}
       data-slot="radio-group-item"
       className={cn(
-        "aspect-square size-4 rounded-full border border-border bg-surface-inset text-primary shadow-xs outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base disabled:opacity-50 disabled:pointer-events-none data-[state=checked]:border-primary",
+        "aspect-square size-4 rounded-full border border-border bg-surface-inset text-primary shadow-xs outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base disabled:opacity-50 disabled:pointer-events-none data-[state=checked]:border-primary aria-invalid:border-error aria-invalid:ring-2 aria-invalid:ring-error/30",
         className,
       )}
       {...props}
