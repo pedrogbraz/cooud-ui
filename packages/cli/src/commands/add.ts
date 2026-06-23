@@ -67,8 +67,23 @@ export async function add(names: string[], options: AddOptions): Promise<void> {
   }
 
   const requested = new Set(names);
-  const pulledIn = items.filter((i) => !requested.has(i.name) && i.type === "registry:ui");
-  log.title(`Adding ${names.length} component(s)`);
+  // Transitive registry items pulled in to satisfy a requested item's
+  // registryDependencies. Blocks import the @cooud/ui package rather than
+  // copied source, so they never pull in components — only ui/lib items do.
+  const pulledIn = items.filter(
+    (i) => !requested.has(i.name) && (i.type === "registry:ui" || i.type === "registry:lib"),
+  );
+  const blockCount = items.filter(
+    (i) => requested.has(i.name) && i.type === "registry:block",
+  ).length;
+  const componentCount = names.length - blockCount;
+  const summary = [
+    componentCount > 0 ? `${componentCount} component(s)` : null,
+    blockCount > 0 ? `${blockCount} block(s)` : null,
+  ]
+    .filter(Boolean)
+    .join(" and ");
+  log.title(`Adding ${summary}`);
   if (pulledIn.length > 0) {
     log.step(`Pulling in dependencies: ${pulledIn.map((i) => i.name).join(", ")}`);
   }
