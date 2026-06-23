@@ -14,13 +14,11 @@ Cooud color/typography/elevation scale in your own components.
 
 ## Install
 
-> Cooud UI is distributed today through a private registry (GitHub Packages) and
-> the `cooud-ui` CLI; it is not yet on the public npm registry. Configure your
-> `@cooud` scope to point at the registry, then:
+> Published on npm under the `@cooud` scope (available once `v0.1.0` is released).
 
 ```sh
 # npm
-npm install @cooud/tokens
+npm i @cooud/tokens
 # pnpm
 pnpm add @cooud/tokens
 # bun

@@ -40,13 +40,16 @@
     "components"
   ],
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com",
-    "access": "restricted"
+    "access": "public"
   },
   "files": [
     "dist",
     "styles",
-    "preset"
+    "preset",
+    "LICENSE",
+    "README.md",
+    "!dist/**/*.map",
+    "!preset/**/*.map"
   ],
   "scripts": {
     "tokens:generate": "bun run scripts/build-tokens.ts",

@@ -15,13 +15,12 @@ with `npx cooud-ui add` (see [Copy-in option](#copy-in-option-cli)).
 
 ## Install
 
-> Cooud UI is distributed today through a private registry (GitHub Packages) and
-> the `cooud-ui` CLI; it is not yet on the public npm registry. Configure your
-> `@cooud` scope to point at the registry, then install all three packages:
+> Published on npm under the `@cooud` scope (available once `v0.1.0` is released).
+> Install all three packages:
 
 ```sh
 # npm
-npm install @cooud/ui @cooud/tokens @cooud/theme
+npm i @cooud/ui @cooud/tokens @cooud/theme
 # pnpm
 pnpm add @cooud/ui @cooud/tokens @cooud/theme
 # bun

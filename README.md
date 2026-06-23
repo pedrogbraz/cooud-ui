@@ -42,8 +42,8 @@ bun run lint        # biome
 
 ## Install (external consumer)
 
-Install the three library packages from your registry (GitHub Packages — see
-[RELEASE.md](RELEASE.md)):
+Install the three library packages from public npm (published under the `@cooud`
+scope once `v0.1.0` is released — see [RELEASE.md](RELEASE.md)):
 
 ```sh
 npm i @cooud/ui @cooud/tokens @cooud/theme
@@ -155,9 +155,10 @@ distribution modes (npm package + CLI registry) share one source of truth.
 ## Publishing
 
 The three library packages (`@cooud/tokens`, `@cooud/theme`, `@cooud/ui`) are
-publish-ready for GitHub Packages — see [RELEASE.md](RELEASE.md). Tag `vX.Y.Z` to
-trigger `.github/workflows/release.yml`. (Note: a real publish needs the `@cooud`
-scope hosted under a matching GitHub org or an npmjs `@cooud` org + token.)
+publish-ready for public npm under the `@cooud` scope (with `access: public`) — see
+[RELEASE.md](RELEASE.md). Nothing is published yet; tag `vX.Y.Z` to cut the release
+via `bun run release --publish`. (Note: a real publish needs the `@cooud` org on
+npmjs and the publisher logged in to it with `npm login`.)
 
 ## Components
 
@@ -187,5 +188,5 @@ See `CONTRACT.md` — semantic tokens only, CVA variants, `forwardRef`, `data-sl
 
 ## Roadmap
 ~~Wave 1 (forms)~~ ✅ → ~~Wave 2 (overlays/nav)~~ ✅ → ~~Wave 3 (data)~~ ✅ → ~~Wave 4 (premium/brand)~~ ✅ →
-`cooud-ui` CLI registry (`npx cooud-ui add`) → publish to GitHub Packages → migrate
-`dashboard` first. Full plan in the SDD.
+`cooud-ui` CLI registry (`npx cooud-ui add`) → publish to public npm under `@cooud`
+→ migrate `dashboard` first. Full plan in the SDD.

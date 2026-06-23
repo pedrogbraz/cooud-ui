@@ -32,11 +32,13 @@
     "components"
   ],
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com",
-    "access": "restricted"
+    "access": "public"
   },
   "files": [
-    "dist"
+    "dist",
+    "LICENSE",
+    "README.md",
+    "!dist/**/*.map"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
@@ -55,6 +57,7 @@
     "@types/react-dom": "^19.0.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.9"
   }
 }
