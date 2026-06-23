@@ -1,8 +1,10 @@
 import { getComponentDisplayName, getComponentMeta } from "../../lib/components-index";
 import { getExampleSections } from "../../lib/examples/sections";
+import { COMPONENT_PROPS } from "../../lib/props.generated";
 import { Eyebrow } from "../showcase-ui";
 import { CodeBlock } from "./code-block";
 import { ComponentExamples } from "./component-examples";
+import { PropsTable } from "./props-table";
 import { Toc } from "./toc";
 
 export function ComponentDocView({ slug }: { slug: string }) {
@@ -17,7 +19,16 @@ export function ComponentDocView({ slug }: { slug: string }) {
   // pulled into this route — only the one family chunk loads, lazily, below.
   const sections = getExampleSections(slug);
   const displayName = getComponentDisplayName(meta.name);
-  const toc = [{ id: "import", title: "Import" }, ...sections];
+  // The Props/API tables are auto-generated from the component's `*Props` types
+  // (see lib/props.generated.ts) so they can't drift from the source. Only add
+  // the section + anchor when there's something to document.
+  const propsDocs = COMPONENT_PROPS[slug];
+  const hasProps = (propsDocs?.length ?? 0) > 0;
+  const toc = [
+    { id: "import", title: "Import" },
+    ...sections,
+    ...(hasProps ? [{ id: "props", title: "Props" }] : []),
+  ];
 
   return (
     <div className="grid gap-10 xl:grid-cols-[minmax(0,1fr)_13rem]">
@@ -39,6 +50,20 @@ export function ComponentDocView({ slug }: { slug: string }) {
         <div className="mt-12 flex flex-col gap-12">
           <ComponentExamples slug={slug} displayName={displayName} />
         </div>
+
+        {hasProps && propsDocs ? (
+          <section id="props" className="mt-16 scroll-mt-24">
+            <h2 className="font-display text-xl font-semibold tracking-tight text-fg">
+              API Reference
+            </h2>
+            <p className="mt-2 max-w-2xl text-sm text-fg-tertiary">
+              Generated from the component's exported types.
+            </p>
+            <div className="mt-6">
+              <PropsTable docs={propsDocs} />
+            </div>
+          </section>
+        ) : null}
       </article>
 
       <Toc items={toc} />
