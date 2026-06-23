@@ -20,7 +20,7 @@
   "sideEffects": [
     "./styles/tokens.css"
   ],
-  "license": "UNLICENSED",
+  "license": "MIT",
   "author": "Cooud",
   "repository": {
     "type": "git",
