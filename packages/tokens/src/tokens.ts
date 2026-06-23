@@ -10,7 +10,7 @@
  * cooud-exchange) and the Neutral language (dashboard / refund / status).
  */
 
-export type ThemeName = "aurora" | "neutral";
+export type ThemeName = "aurora" | "neutral" | "midnight" | "sunset" | "emerald";
 export type Mode = "light" | "dark";
 
 export interface ThemeTokens {
@@ -212,12 +212,125 @@ const neutralDark: ThemeTokens = {
   shadowGlow: "0 0 0 4px oklch(0.6 0 0 / 0.3)",
 };
 
+/*
+ * Brand presets — each spreads the matching Aurora base (keeping its WCAG-tuned
+ * surface / fg / border ramps) and overrides ONLY the brand-relative tokens:
+ * primary, accent, their foregrounds, ring, the chart ramp, the brand-hued glow,
+ * and a hue-matched info/success tint. This keeps a11y proven while making each
+ * preset visually distinct.
+ */
+
+// Midnight — deep indigo → violet, premium dark-first.
+const midnightDark: ThemeTokens = {
+  ...auroraDark,
+  primary: "oklch(0.55 0.205 280)", // indigo #6158e4
+  primaryForeground: "oklch(0.985 0.005 285)",
+  accent: "oklch(0.53 0.2 292)", // violet #734ad3
+  accentForeground: "oklch(0.985 0.005 285)",
+  ring: "oklch(0.55 0.205 280)",
+  info: "oklch(0.62 0.16 280)", // indigo-tinted info
+  chart1: "oklch(0.55 0.205 280)",
+  chart2: "oklch(0.6 0.2 295)",
+  chart3: "oklch(0.66 0.2 300)", // #a76ef8
+  chart4: "oklch(0.62 0.19 268)",
+  chart5: "oklch(0.7 0.16 315)",
+  shadowGlow: "0 12px 32px rgba(97,88,228,0.34)",
+};
+
+const midnightLight: ThemeTokens = {
+  ...auroraLight,
+  primary: "oklch(0.55 0.205 280)",
+  primaryForeground: "oklch(0.985 0.005 285)",
+  accent: "oklch(0.53 0.2 292)",
+  accentForeground: "oklch(0.985 0.005 285)",
+  ring: "oklch(0.55 0.205 280)",
+  info: "oklch(0.5 0.17 280)",
+  chart1: "oklch(0.55 0.205 280)",
+  chart2: "oklch(0.6 0.2 295)",
+  chart3: "oklch(0.66 0.2 300)",
+  chart4: "oklch(0.62 0.19 268)",
+  chart5: "oklch(0.7 0.16 315)",
+  shadowGlow: "0 12px 32px rgba(97,88,228,0.24)",
+};
+
+// Sunset — warm amber → rose, energetic.
+const sunsetDark: ThemeTokens = {
+  ...auroraDark,
+  primary: "oklch(0.78 0.16 65)", // amber #fc9f30
+  primaryForeground: "oklch(0.24 0.05 55)",
+  accent: "oklch(0.585 0.22 18)", // rose #e01f47
+  accentForeground: "oklch(0.99 0.01 40)",
+  ring: "oklch(0.78 0.16 65)",
+  success: "oklch(0.74 0.16 130)", // warm-leaning green to fit the palette
+  info: "oklch(0.72 0.13 55)", // amber-tinted info
+  chart1: "oklch(0.78 0.16 65)",
+  chart2: "oklch(0.7 0.19 40)",
+  chart3: "oklch(0.585 0.22 18)", // #e01f47
+  chart4: "oklch(0.82 0.16 85)",
+  chart5: "oklch(0.66 0.18 4)",
+  shadowGlow: "0 12px 32px rgba(252,159,48,0.34)",
+};
+
+const sunsetLight: ThemeTokens = {
+  ...auroraLight,
+  primary: "oklch(0.78 0.16 65)",
+  primaryForeground: "oklch(0.24 0.05 55)",
+  accent: "oklch(0.585 0.22 18)",
+  accentForeground: "oklch(0.99 0.01 40)",
+  ring: "oklch(0.78 0.16 65)",
+  success: "oklch(0.55 0.15 130)",
+  info: "oklch(0.55 0.13 55)",
+  chart1: "oklch(0.7 0.16 60)",
+  chart2: "oklch(0.62 0.19 40)",
+  chart3: "oklch(0.585 0.22 18)",
+  chart4: "oklch(0.76 0.16 85)",
+  chart5: "oklch(0.58 0.18 4)",
+  shadowGlow: "0 12px 32px rgba(252,159,48,0.24)",
+};
+
+// Emerald — fresh green → teal.
+const emeraldDark: ThemeTokens = {
+  ...auroraDark,
+  primary: "oklch(0.74 0.16 160)", // green #23c987
+  primaryForeground: "oklch(0.2 0.04 160)",
+  accent: "oklch(0.76 0.12 185)", // teal #3bcabb
+  accentForeground: "oklch(0.2 0.04 185)",
+  ring: "oklch(0.74 0.16 160)",
+  info: "oklch(0.74 0.12 185)", // teal-tinted info
+  chart1: "oklch(0.74 0.16 160)",
+  chart2: "oklch(0.76 0.12 185)",
+  chart3: "oklch(0.68 0.15 145)",
+  chart4: "oklch(0.7 0.13 200)",
+  chart5: "oklch(0.8 0.15 130)",
+  shadowGlow: "0 12px 32px rgba(35,201,135,0.34)",
+};
+
+const emeraldLight: ThemeTokens = {
+  ...auroraLight,
+  primary: "oklch(0.74 0.16 160)",
+  primaryForeground: "oklch(0.2 0.04 160)",
+  accent: "oklch(0.76 0.12 185)",
+  accentForeground: "oklch(0.2 0.04 185)",
+  ring: "oklch(0.74 0.16 160)",
+  success: "oklch(0.52 0.14 160)",
+  info: "oklch(0.52 0.11 185)",
+  chart1: "oklch(0.6 0.15 160)",
+  chart2: "oklch(0.62 0.11 185)",
+  chart3: "oklch(0.55 0.14 145)",
+  chart4: "oklch(0.58 0.12 200)",
+  chart5: "oklch(0.68 0.14 130)",
+  shadowGlow: "0 12px 32px rgba(35,201,135,0.22)",
+};
+
 export const themes: Record<ThemeName, Record<Mode, ThemeTokens>> = {
   aurora: { light: auroraLight, dark: auroraDark },
   neutral: { light: neutralLight, dark: neutralDark },
+  midnight: { light: midnightLight, dark: midnightDark },
+  sunset: { light: sunsetLight, dark: sunsetDark },
+  emerald: { light: emeraldLight, dark: emeraldDark },
 };
 
-export const themeNames: ThemeName[] = ["aurora", "neutral"];
+export const themeNames: ThemeName[] = ["aurora", "neutral", "midnight", "sunset", "emerald"];
 export const modes: Mode[] = ["light", "dark"];
 export const defaultTheme: ThemeName = "aurora";
 export const defaultMode: Mode = "dark";
