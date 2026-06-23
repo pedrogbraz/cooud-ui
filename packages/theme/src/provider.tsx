@@ -54,10 +54,22 @@ export function CooudUIProvider({
 }: CooudUIProviderProps) {
   const [theme, setThemeState] = useState<ThemeName>(defaultThemeName);
   const [mode, setModeState] = useState<Mode>(defaultModeName);
-  // `overrides` seeds the initial value only; further changes go through
-  // setOverrides() (e.g. the ThemeBuilder). Syncing an inline-object prop on
-  // every render would create a new reference each time and loop.
+  // `overrides` seeds the initial value; the effect below keeps it in sync when
+  // the prop's CONTENT changes (controlled usage), while setScopedOverrides
+  // still drives uncontrolled changes via setOverrides() (e.g. the
+  // ThemeBuilder). Syncing on a stable serialization — not the object identity —
+  // means a re-render with an equal-content new reference neither loops nor
+  // resets the live overrides.
   const [scopedOverrides, setScopedOverrides] = useState<ThemeOverrides>(() => overrides ?? {});
+
+  // Make the controlled `overrides` prop reactive. Keying on the JSON instead of
+  // the object reference avoids the infinite loop an inline `overrides={{...}}`
+  // (new reference every render) would otherwise cause.
+  const overridesKey = JSON.stringify(overrides ?? {});
+  // biome-ignore lint/correctness/useExhaustiveDependencies: `overridesKey` is the stable serialization of `overrides`; depending on the object reference is exactly what we must avoid.
+  useEffect(() => {
+    setScopedOverrides(overrides ?? {});
+  }, [overridesKey]);
 
   // Hydrate from storage once on mount.
   useEffect(() => {
