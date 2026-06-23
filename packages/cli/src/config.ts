@@ -50,6 +50,5 @@ export async function readConfig(cwd: string): Promise<CooudUIConfig> {
 }
 
 export async function writeConfig(cwd: string, config: CooudUIConfig): Promise<void> {
-  const body = { $schema: "https://cooud-ui.dev/schema.json", ...config };
-  await writeFile(configPath(cwd), `${JSON.stringify(body, null, 2)}\n`, "utf8");
+  await writeFile(configPath(cwd), `${JSON.stringify(config, null, 2)}\n`, "utf8");
 }
