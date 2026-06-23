@@ -86,6 +86,13 @@ export const CATEGORIES: ComponentCategory[] = [
         name: "Autocomplete",
         description: "Free-text input with sync or async suggestions.",
       },
+      {
+        slug: "stepper",
+        name: "Stepper",
+        description: "Multi-step wizard progress with optional clickable steps.",
+        importName:
+          "Stepper, StepperList, StepperItem, StepperIndicator, StepperSeparator, StepperTitle, StepperDescription",
+      },
     ],
   },
   {
@@ -158,6 +165,13 @@ export const CATEGORIES: ComponentCategory[] = [
       { slug: "hover-card", name: "HoverCard", description: "Preview content on hover." },
       { slug: "tooltip", name: "Tooltip", description: "Short hint on hover or focus." },
       { slug: "dropdown-menu", name: "DropdownMenu", description: "Actions menu with submenus." },
+      {
+        slug: "context-menu",
+        name: "ContextMenu",
+        description: "Right-click menu with items, checkboxes and submenus.",
+        importName:
+          "ContextMenu, ContextMenuTrigger, ContextMenuContent, ContextMenuItem, ContextMenuSeparator",
+      },
       { slug: "command", name: "Command", description: "⌘K command palette (cmdk)." },
     ],
   },
@@ -177,6 +191,13 @@ export const CATEGORIES: ComponentCategory[] = [
           "NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuTrigger, NavigationMenuContent, NavigationMenuLink",
       },
       {
+        slug: "menubar",
+        name: "Menubar",
+        description: "Desktop-style menu bar with File / Edit / View menus.",
+        importName:
+          "Menubar, MenubarMenu, MenubarTrigger, MenubarContent, MenubarItem, MenubarSeparator, MenubarShortcut",
+      },
+      {
         slug: "sidebar",
         name: "Sidebar",
         description: "Composable, collapsible app sidebar.",
@@ -188,6 +209,12 @@ export const CATEGORIES: ComponentCategory[] = [
         name: "AppShell",
         description: "Sidebar + header + content layout in one step.",
         importName: "AppShell",
+      },
+      {
+        slug: "resizable",
+        name: "Resizable",
+        description: "Draggable split panes for resizable layouts.",
+        importName: "ResizablePanelGroup, ResizablePanel, ResizableHandle",
       },
     ],
   },

@@ -37,6 +37,14 @@ import {
   SelectTrigger,
   SelectValue,
   Slider,
+  Stepper,
+  StepperDescription,
+  StepperIndicator,
+  StepperItem,
+  StepperList,
+  StepperSeparator,
+  StepperTitle,
+  StepperTrigger,
   Switch,
   Textarea,
 } from "@cooud-ui/ui";
@@ -900,6 +908,53 @@ const autocompleteAsyncDemoCode = `function AutocompleteAsyncDemo() {
   );
 }`;
 
+const STEPPER_STEPS = [
+  { title: "Account", description: "Your details" },
+  { title: "Shipping", description: "Where to send it" },
+  { title: "Payment", description: "Confirm & pay" },
+];
+
+function StepperDemo() {
+  const [step, setStep] = useState(1);
+  const lastStep = STEPPER_STEPS.length - 1;
+
+  return (
+    <div className="flex w-full max-w-xl flex-col gap-6">
+      <Stepper value={step} onValueChange={setStep}>
+        <StepperList>
+          {STEPPER_STEPS.map((item, index) => (
+            <StepperItem key={item.title} step={index}>
+              <StepperTrigger>
+                <StepperIndicator />
+                <span className="flex flex-col">
+                  <StepperTitle>{item.title}</StepperTitle>
+                  <StepperDescription>{item.description}</StepperDescription>
+                </span>
+              </StepperTrigger>
+              {index < lastStep ? <StepperSeparator /> : null}
+            </StepperItem>
+          ))}
+        </StepperList>
+      </Stepper>
+      <div className="flex justify-between">
+        <Button
+          variant="outline"
+          disabled={step === 0}
+          onClick={() => setStep((value) => Math.max(0, value - 1))}
+        >
+          Back
+        </Button>
+        <Button
+          disabled={step === lastStep}
+          onClick={() => setStep((value) => Math.min(lastStep, value + 1))}
+        >
+          Next
+        </Button>
+      </div>
+    </div>
+  );
+}
+
 export const formsExamples: ExampleMap = {
   input: [
     {
@@ -1185,6 +1240,62 @@ export const formsExamples: ExampleMap = {
         "Pass `onSearch` to resolve suggestions remotely. Calls are debounced, stale responses are dropped, and the busy state (spinner + skeletons) is managed for you.",
       code: autocompleteAsyncDemoCode,
       preview: <AutocompleteAsyncDemo />,
+    },
+  ],
+
+  stepper: [
+    {
+      id: "wizard",
+      title: "Wizard",
+      description:
+        "A three-step flow with clickable steps. The indicator checks off completed steps; Back / Next drive the active value.",
+      code: `const STEPPER_STEPS = [
+  { title: "Account", description: "Your details" },
+  { title: "Shipping", description: "Where to send it" },
+  { title: "Payment", description: "Confirm & pay" },
+];
+
+function StepperDemo() {
+  const [step, setStep] = useState(1);
+  const lastStep = STEPPER_STEPS.length - 1;
+
+  return (
+    <div className="flex w-full max-w-xl flex-col gap-6">
+      <Stepper value={step} onValueChange={setStep}>
+        <StepperList>
+          {STEPPER_STEPS.map((item, index) => (
+            <StepperItem key={item.title} step={index}>
+              <StepperTrigger>
+                <StepperIndicator />
+                <span className="flex flex-col">
+                  <StepperTitle>{item.title}</StepperTitle>
+                  <StepperDescription>{item.description}</StepperDescription>
+                </span>
+              </StepperTrigger>
+              {index < lastStep ? <StepperSeparator /> : null}
+            </StepperItem>
+          ))}
+        </StepperList>
+      </Stepper>
+      <div className="flex justify-between">
+        <Button
+          variant="outline"
+          disabled={step === 0}
+          onClick={() => setStep((value) => Math.max(0, value - 1))}
+        >
+          Back
+        </Button>
+        <Button
+          disabled={step === lastStep}
+          onClick={() => setStep((value) => Math.min(lastStep, value + 1))}
+        >
+          Next
+        </Button>
+      </div>
+    </div>
+  );
+}`,
+      preview: <StepperDemo />,
     },
   ],
 };

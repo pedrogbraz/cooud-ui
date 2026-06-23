@@ -46,6 +46,7 @@ export const EXAMPLE_FAMILY_BY_SLUG: Record<string, ExampleFamily> = {
   "file-dropzone": "forms",
   "number-input": "forms",
   autocomplete: "forms",
+  stepper: "forms",
   // data-display
   avatar: "data-display",
   badge: "data-display",
@@ -75,6 +76,7 @@ export const EXAMPLE_FAMILY_BY_SLUG: Record<string, ExampleFamily> = {
   "hover-card": "overlays",
   tooltip: "overlays",
   "dropdown-menu": "overlays",
+  "context-menu": "overlays",
   command: "overlays",
   // navigation
   tabs: "navigation",
@@ -82,8 +84,10 @@ export const EXAMPLE_FAMILY_BY_SLUG: Record<string, ExampleFamily> = {
   breadcrumb: "navigation",
   pagination: "navigation",
   "navigation-menu": "navigation",
+  menubar: "navigation",
   sidebar: "navigation",
   "app-shell": "navigation",
+  resizable: "navigation",
   // date-time
   calendar: "date-time",
   "date-picker": "date-time",

@@ -12,6 +12,19 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
+  Menubar,
+  MenubarCheckboxItem,
+  MenubarContent,
+  MenubarItem,
+  MenubarMenu,
+  MenubarRadioGroup,
+  MenubarRadioItem,
+  MenubarSeparator,
+  MenubarShortcut,
+  MenubarSub,
+  MenubarSubContent,
+  MenubarSubTrigger,
+  MenubarTrigger,
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuItem,
@@ -26,6 +39,9 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
   Sidebar,
   SidebarContent,
   SidebarFooter,
@@ -44,8 +60,71 @@ import {
   TabsTrigger,
 } from "@cooud-ui/ui";
 import { Calendar, Home, Inbox, Search, Settings } from "lucide-react";
+import { useState } from "react";
 import { ExampleList } from "../../components/docs/example-list";
 import type { ExampleMap } from "./types";
+
+function MenubarDemo() {
+  const [showFullPath, setShowFullPath] = useState(true);
+  const [profile, setProfile] = useState("benoit");
+
+  return (
+    <Menubar>
+      <MenubarMenu>
+        <MenubarTrigger>File</MenubarTrigger>
+        <MenubarContent>
+          <MenubarItem>
+            New Tab
+            <MenubarShortcut>⌘T</MenubarShortcut>
+          </MenubarItem>
+          <MenubarItem>
+            New Window
+            <MenubarShortcut>⌘N</MenubarShortcut>
+          </MenubarItem>
+          <MenubarSeparator />
+          <MenubarSub>
+            <MenubarSubTrigger>Share</MenubarSubTrigger>
+            <MenubarSubContent>
+              <MenubarItem>Email link</MenubarItem>
+              <MenubarItem>Messages</MenubarItem>
+            </MenubarSubContent>
+          </MenubarSub>
+          <MenubarSeparator />
+          <MenubarItem>
+            Print…
+            <MenubarShortcut>⌘P</MenubarShortcut>
+          </MenubarItem>
+        </MenubarContent>
+      </MenubarMenu>
+      <MenubarMenu>
+        <MenubarTrigger>Edit</MenubarTrigger>
+        <MenubarContent>
+          <MenubarItem>
+            Undo
+            <MenubarShortcut>⌘Z</MenubarShortcut>
+          </MenubarItem>
+          <MenubarItem>
+            Redo
+            <MenubarShortcut>⇧⌘Z</MenubarShortcut>
+          </MenubarItem>
+        </MenubarContent>
+      </MenubarMenu>
+      <MenubarMenu>
+        <MenubarTrigger>View</MenubarTrigger>
+        <MenubarContent>
+          <MenubarCheckboxItem checked={showFullPath} onCheckedChange={setShowFullPath}>
+            Always Show Full URLs
+          </MenubarCheckboxItem>
+          <MenubarSeparator />
+          <MenubarRadioGroup value={profile} onValueChange={setProfile}>
+            <MenubarRadioItem value="benoit">Benoit</MenubarRadioItem>
+            <MenubarRadioItem value="evil-rabbit">Evil Rabbit</MenubarRadioItem>
+          </MenubarRadioGroup>
+        </MenubarContent>
+      </MenubarMenu>
+    </Menubar>
+  );
+}
 
 export const navigationExamples: ExampleMap = {
   tabs: [
@@ -323,6 +402,77 @@ export const navigationExamples: ExampleMap = {
     },
   ],
 
+  menubar: [
+    {
+      id: "menus",
+      title: "Menus",
+      description:
+        "A desktop-style menu bar with File / Edit / View menus — shortcuts, a checkbox and a radio group.",
+      code: `function MenubarDemo() {
+  const [showFullPath, setShowFullPath] = useState(true);
+  const [profile, setProfile] = useState("benoit");
+
+  return (
+    <Menubar>
+      <MenubarMenu>
+        <MenubarTrigger>File</MenubarTrigger>
+        <MenubarContent>
+          <MenubarItem>
+            New Tab
+            <MenubarShortcut>⌘T</MenubarShortcut>
+          </MenubarItem>
+          <MenubarItem>
+            New Window
+            <MenubarShortcut>⌘N</MenubarShortcut>
+          </MenubarItem>
+          <MenubarSeparator />
+          <MenubarSub>
+            <MenubarSubTrigger>Share</MenubarSubTrigger>
+            <MenubarSubContent>
+              <MenubarItem>Email link</MenubarItem>
+              <MenubarItem>Messages</MenubarItem>
+            </MenubarSubContent>
+          </MenubarSub>
+          <MenubarSeparator />
+          <MenubarItem>
+            Print…
+            <MenubarShortcut>⌘P</MenubarShortcut>
+          </MenubarItem>
+        </MenubarContent>
+      </MenubarMenu>
+      <MenubarMenu>
+        <MenubarTrigger>Edit</MenubarTrigger>
+        <MenubarContent>
+          <MenubarItem>
+            Undo
+            <MenubarShortcut>⌘Z</MenubarShortcut>
+          </MenubarItem>
+          <MenubarItem>
+            Redo
+            <MenubarShortcut>⇧⌘Z</MenubarShortcut>
+          </MenubarItem>
+        </MenubarContent>
+      </MenubarMenu>
+      <MenubarMenu>
+        <MenubarTrigger>View</MenubarTrigger>
+        <MenubarContent>
+          <MenubarCheckboxItem checked={showFullPath} onCheckedChange={setShowFullPath}>
+            Always Show Full URLs
+          </MenubarCheckboxItem>
+          <MenubarSeparator />
+          <MenubarRadioGroup value={profile} onValueChange={setProfile}>
+            <MenubarRadioItem value="benoit">Benoit</MenubarRadioItem>
+            <MenubarRadioItem value="evil-rabbit">Evil Rabbit</MenubarRadioItem>
+          </MenubarRadioGroup>
+        </MenubarContent>
+      </MenubarMenu>
+    </Menubar>
+  );
+}`,
+      preview: <MenubarDemo />,
+    },
+  ],
+
   sidebar: [
     {
       id: "collapsible-nav",
@@ -516,6 +666,69 @@ export const navigationExamples: ExampleMap = {
             <div className="p-6 text-sm text-fg-secondary">Your page content goes here.</div>
           </AppShell>
         </div>
+      ),
+    },
+  ],
+
+  resizable: [
+    {
+      id: "split-panes",
+      title: "Split panes",
+      description:
+        "Drag the divider to resize. A horizontal group nests a vertical one for a three-pane layout.",
+      code: `<ResizablePanelGroup
+  direction="horizontal"
+  className="h-48 max-w-2xl rounded-lg border border-border"
+>
+  <ResizablePanel defaultSize={35} minSize={20}>
+    <div className="flex h-full items-center justify-center p-4 text-sm text-fg-secondary">
+      Sidebar
+    </div>
+  </ResizablePanel>
+  <ResizableHandle withHandle />
+  <ResizablePanel defaultSize={65}>
+    <ResizablePanelGroup direction="vertical">
+      <ResizablePanel defaultSize={60}>
+        <div className="flex h-full items-center justify-center p-4 text-sm text-fg-secondary">
+          Content
+        </div>
+      </ResizablePanel>
+      <ResizableHandle />
+      <ResizablePanel defaultSize={40}>
+        <div className="flex h-full items-center justify-center p-4 text-sm text-fg-secondary">
+          Console
+        </div>
+      </ResizablePanel>
+    </ResizablePanelGroup>
+  </ResizablePanel>
+</ResizablePanelGroup>`,
+      preview: (
+        <ResizablePanelGroup
+          direction="horizontal"
+          className="h-48 max-w-2xl rounded-lg border border-border"
+        >
+          <ResizablePanel defaultSize={35} minSize={20}>
+            <div className="flex h-full items-center justify-center p-4 text-sm text-fg-secondary">
+              Sidebar
+            </div>
+          </ResizablePanel>
+          <ResizableHandle withHandle />
+          <ResizablePanel defaultSize={65}>
+            <ResizablePanelGroup direction="vertical">
+              <ResizablePanel defaultSize={60}>
+                <div className="flex h-full items-center justify-center p-4 text-sm text-fg-secondary">
+                  Content
+                </div>
+              </ResizablePanel>
+              <ResizableHandle />
+              <ResizablePanel defaultSize={40}>
+                <div className="flex h-full items-center justify-center p-4 text-sm text-fg-secondary">
+                  Console
+                </div>
+              </ResizablePanel>
+            </ResizablePanelGroup>
+          </ResizablePanel>
+        </ResizablePanelGroup>
       ),
     },
   ],
