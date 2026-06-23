@@ -8,9 +8,10 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        primary: "bg-primary text-primary-foreground hover:opacity-90 shadow-xs",
+        primary:
+          "bg-[color-mix(in_oklch,var(--cooud-primary),black_30%)] text-white hover:opacity-90 shadow-xs",
         gradient:
-          "bg-gradient-primary text-primary-foreground hover:shadow-glow hover:opacity-95 shadow-xs",
+          "bg-gradient-primary-strong text-white hover:shadow-glow hover:opacity-95 shadow-xs",
         secondary: "bg-surface-overlay text-fg border border-border hover:border-border-strong",
         outline: "border border-border text-fg hover:bg-surface-overlay",
         ghost: "text-fg-secondary hover:bg-surface-overlay hover:text-fg",
