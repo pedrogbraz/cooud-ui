@@ -263,7 +263,7 @@ export const navigationExamples: ExampleMap = {
     <NavigationMenuItem>
       <NavigationMenuTrigger>Products</NavigationMenuTrigger>
       <NavigationMenuContent>
-        <ul className="grid w-[22rem] gap-1 p-2">
+        <ul className="grid w-[22rem] gap-1">
           <li>
             <NavigationMenuLink href="#">
               <span className="font-medium text-fg">Analytics</span>
@@ -287,34 +287,38 @@ export const navigationExamples: ExampleMap = {
   </NavigationMenuList>
 </NavigationMenu>`,
       preview: (
-        <NavigationMenu>
-          <NavigationMenuList>
-            <NavigationMenuItem>
-              <NavigationMenuTrigger>Products</NavigationMenuTrigger>
-              <NavigationMenuContent>
-                <ul className="grid w-[22rem] gap-1 p-2">
-                  <li>
-                    <NavigationMenuLink href="#">
-                      <span className="font-medium text-fg">Analytics</span>
-                      <span className="text-fg-tertiary">Real-time dashboards and reports.</span>
-                    </NavigationMenuLink>
-                  </li>
-                  <li>
-                    <NavigationMenuLink href="#">
-                      <span className="font-medium text-fg">Automations</span>
-                      <span className="text-fg-tertiary">Wire up rules and workflows.</span>
-                    </NavigationMenuLink>
-                  </li>
-                </ul>
-              </NavigationMenuContent>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <NavigationMenuLink href="#" className={navigationMenuTriggerStyle()}>
-                Docs
-              </NavigationMenuLink>
-            </NavigationMenuItem>
-          </NavigationMenuList>
-        </NavigationMenu>
+        // Reserve vertical room + top-align so the disclosure panel (an absolute
+        // viewport) opens *inside* the preview frame instead of being clipped.
+        <div className="flex min-h-[16rem] w-full items-start justify-center pt-6">
+          <NavigationMenu>
+            <NavigationMenuList>
+              <NavigationMenuItem>
+                <NavigationMenuTrigger>Products</NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <ul className="grid w-[22rem] gap-1">
+                    <li>
+                      <NavigationMenuLink href="#">
+                        <span className="font-medium text-fg">Analytics</span>
+                        <span className="text-fg-tertiary">Real-time dashboards and reports.</span>
+                      </NavigationMenuLink>
+                    </li>
+                    <li>
+                      <NavigationMenuLink href="#">
+                        <span className="font-medium text-fg">Automations</span>
+                        <span className="text-fg-tertiary">Wire up rules and workflows.</span>
+                      </NavigationMenuLink>
+                    </li>
+                  </ul>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <NavigationMenuLink href="#" className={navigationMenuTriggerStyle()}>
+                  Docs
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+            </NavigationMenuList>
+          </NavigationMenu>
+        </div>
       ),
     },
   ],
