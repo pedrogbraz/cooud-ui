@@ -1,5 +1,6 @@
 import { CodeBlock } from "../../../components/docs/code-block";
 import {
+  DocCallout,
   DocsCard,
   DocsGrid,
   DocsHeader,
@@ -17,6 +18,28 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         <CooudUIProvider asRoot defaultThemeName="aurora" defaultModeName="dark">
+          {children}
+        </CooudUIProvider>
+      </body>
+    </html>
+  );
+}`;
+
+const themeScriptCode = `import { CooudThemeScript, CooudUIProvider } from "@cooud/theme";
+
+export default function RootLayout({ children }) {
+  return (
+    // suppressHydrationWarning: the script mutates <html> before hydration.
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <CooudThemeScript
+          storageKey="cooud-ui-theme"
+          defaultThemeName="aurora"
+          defaultModeName="dark"
+        />
+      </head>
+      <body>
+        <CooudUIProvider asRoot storageKey="cooud-ui-theme">
           {children}
         </CooudUIProvider>
       </body>
@@ -87,6 +110,20 @@ export default function ThemingPage() {
         description="Import tokens once, then wrap the app in the provider at the framework root."
       >
         <CodeBlock code={providerCode} language="tsx" expandable />
+      </DocsSection>
+
+      <DocsSection
+        title="Avoiding a flash of the wrong theme"
+        description="The provider restores a saved theme from localStorage after first paint, so a returning visitor can briefly see the default theme. Render CooudThemeScript in the document head to apply the saved theme before paint."
+      >
+        <CodeBlock code={themeScriptCode} language="tsx" expandable />
+        <DocCallout title="Pass the same storageKey to both">
+          The script and <InlineCode>CooudUIProvider</InlineCode> must share the same{" "}
+          <InlineCode>storageKey</InlineCode>. Add <InlineCode>suppressHydrationWarning</InlineCode>{" "}
+          to <InlineCode>&lt;html&gt;</InlineCode> because the script changes its attributes before
+          hydration. Under a strict CSP, forward a <InlineCode>nonce</InlineCode> to{" "}
+          <InlineCode>CooudThemeScript</InlineCode>.
+        </DocCallout>
       </DocsSection>
 
       <DocsSection

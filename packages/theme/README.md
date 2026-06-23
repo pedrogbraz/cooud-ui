@@ -14,13 +14,11 @@ inject the `--cooud-*` variables when running on Tailwind v3.)
 
 ## Install
 
-> Cooud UI is distributed today through a private registry (GitHub Packages) and
-> the `cooud-ui` CLI; it is not yet on the public npm registry. Configure your
-> `@cooud` scope to point at the registry, then:
+> Published on npm under the `@cooud` scope (available once `v0.1.0` is released).
 
 ```sh
 # npm
-npm install @cooud/theme @cooud/tokens
+npm i @cooud/theme @cooud/tokens
 # pnpm
 pnpm add @cooud/theme @cooud/tokens
 # bun
@@ -56,6 +54,48 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   );
 }
 ```
+
+### Avoiding a flash of the wrong theme
+
+When you use `asRoot` with a `storageKey`, the provider restores the saved
+theme/mode from `localStorage` in an effect that runs **after** first paint — so
+a returning visitor whose saved choice differs from the defaults briefly sees the
+default theme before it swaps (a "flash of the wrong theme", or FOUC).
+
+Render `<CooudThemeScript>` in your document `<head>` to apply the saved
+theme/mode **before** paint. It emits one tiny inline script that reads the same
+`storageKey` and sets the `data-cooud-theme` / `data-cooud-mode` attributes and
+the `dark` class on `<html>` exactly as the provider does.
+
+```tsx
+// app/layout.tsx (Next.js App Router)
+import { CooudThemeScript, CooudUIProvider } from "@cooud/theme";
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    // suppressHydrationWarning: the script mutates <html> before React hydrates.
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <CooudThemeScript
+          storageKey="cooud-ui-theme"
+          defaultThemeName="aurora"
+          defaultModeName="dark"
+        />
+      </head>
+      <body>
+        <CooudUIProvider asRoot storageKey="cooud-ui-theme">
+          {children}
+        </CooudUIProvider>
+      </body>
+    </html>
+  );
+}
+```
+
+Pass the **same** `storageKey` to both the script and the provider. Add
+`suppressHydrationWarning` to `<html>` because the script changes those
+attributes before hydration; without it React logs a hydration mismatch. For a
+strict CSP, pass a `nonce` to `<CooudThemeScript nonce={nonce} />`.
 
 ### `useTheme`
 
@@ -108,6 +148,23 @@ Calling `useTheme()` outside a `<CooudUIProvider>` throws.
 
 When `asRoot` is `false`, the provider renders a `<div>` that themes only its
 subtree — useful for previews and isolated brand sections.
+
+> `overrides` is reactive: change its **content** (e.g. from a controlled
+> parent) and the themed element updates. A re-render that passes a new object of
+> equal content does not loop or reset live overrides. `setOverrides` from
+> `useTheme` still drives uncontrolled changes.
+
+### `<CooudThemeScript>`
+
+Inline anti-FOUC head script (see [Avoiding a flash of the wrong
+theme](#avoiding-a-flash-of-the-wrong-theme)).
+
+| Prop               | Type        | Default    | Description                                                       |
+| ------------------ | ----------- | ---------- | ----------------------------------------------------------------- |
+| `storageKey`       | `string`    | —          | Required. The same key passed to `<CooudUIProvider storageKey>`.  |
+| `defaultThemeName` | `ThemeName` | `"aurora"` | Theme applied when storage is empty or unreadable.                |
+| `defaultModeName`  | `Mode`      | `"dark"`   | Mode applied when storage is empty or unreadable.                 |
+| `nonce`            | `string`    | —          | CSP nonce forwarded to the inline `<script>`.                     |
 
 ### `useTheme(): ThemeContextValue`
 

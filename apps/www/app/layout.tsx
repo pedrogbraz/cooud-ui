@@ -1,4 +1,4 @@
-import { CooudUIProvider } from "@cooud/theme";
+import { CooudThemeScript, CooudUIProvider } from "@cooud/theme";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import "./globals.css";
@@ -16,7 +16,17 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       data-cooud-mode="dark"
       data-force-motion
       className="dark"
+      // The CooudThemeScript below mutates <html> (theme/mode/dark class) before
+      // hydration, so React must not warn about the resulting attribute mismatch.
+      suppressHydrationWarning
     >
+      <head>
+        <CooudThemeScript
+          storageKey="cooud-ui-theme"
+          defaultThemeName="aurora"
+          defaultModeName="dark"
+        />
+      </head>
       <body>
         <a
           href="#main-content"
