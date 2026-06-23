@@ -59,8 +59,15 @@ export function rewriteImports(content: string, config: CooudUIConfig): string {
     .replace(/(["'])\.\/([\w-]+)\.js\1/g, `"${config.aliases.ui}/$2"`);
 }
 
-export function targetDir(config: CooudUIConfig, target: "ui" | "lib"): string {
-  return target === "ui" ? config.paths.ui : config.paths.lib;
+export function targetDir(config: CooudUIConfig, target: "ui" | "lib" | "block"): string {
+  switch (target) {
+    case "ui":
+      return config.paths.ui;
+    case "block":
+      return config.paths.blocks;
+    default:
+      return config.paths.lib;
+  }
 }
 
 export async function writeFileEnsured(filePath: string, content: string): Promise<void> {
