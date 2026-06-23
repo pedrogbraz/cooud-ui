@@ -1,3 +1,5 @@
+"use client";
+
 import * as SelectPrimitive from "@radix-ui/react-select";
 import { Check, ChevronDown, ChevronUp } from "lucide-react";
 import { type ComponentPropsWithoutRef, type ComponentRef, forwardRef } from "react";
@@ -16,7 +18,7 @@ export const SelectTrigger = forwardRef<
       ref={ref}
       data-slot="select-trigger"
       className={cn(
-        "flex h-10 w-full items-center justify-between gap-2 rounded-lg border border-border bg-surface-inset px-3 py-2 text-sm text-fg outline-none data-[placeholder]:text-fg-muted focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base disabled:opacity-50 disabled:pointer-events-none [&_svg]:size-4 [&_svg]:opacity-60",
+        "flex h-10 w-full items-center justify-between gap-2 rounded-lg border border-border bg-surface-inset px-3 py-2 text-sm text-fg outline-none data-[placeholder]:text-fg-tertiary focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base disabled:opacity-50 disabled:pointer-events-none aria-invalid:border-error aria-invalid:ring-2 aria-invalid:ring-error/30 [&_svg]:size-4 [&_svg]:opacity-60",
         className,
       )}
       {...props}

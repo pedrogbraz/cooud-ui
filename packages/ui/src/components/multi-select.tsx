@@ -58,6 +58,8 @@ export interface MultiSelectProps {
   "aria-label"?: string;
   /** id of an element that labels the trigger. */
   "aria-labelledby"?: string;
+  /** Marks the trigger as invalid (e.g. from a Form layer), applying error styling. */
+  "aria-invalid"?: boolean | "true" | "false";
   /** Controls the popover open state (controlled). */
   open?: boolean;
   /** Initial popover open state (uncontrolled). */
@@ -86,6 +88,7 @@ export const MultiSelect = forwardRef<HTMLDivElement, MultiSelectProps>(
       onOpenChange,
       "aria-label": ariaLabel,
       "aria-labelledby": ariaLabelledby,
+      "aria-invalid": ariaInvalid,
     },
     ref,
   ) => {
@@ -198,6 +201,7 @@ export const MultiSelect = forwardRef<HTMLDivElement, MultiSelectProps>(
             // its own generated id, so any id we reference here would be dangling.
             // aria-haspopup + aria-expanded already convey the popup relationship.
             aria-disabled={disabled || undefined}
+            aria-invalid={ariaInvalid}
             aria-label={ariaLabel}
             aria-labelledby={ariaLabelledby}
             data-slot="multi-select-trigger"
@@ -205,7 +209,7 @@ export const MultiSelect = forwardRef<HTMLDivElement, MultiSelectProps>(
             data-placeholder={hasSelection ? undefined : ""}
             onKeyDown={handleTriggerKeyDown}
             className={cn(
-              "flex min-h-10 w-full cursor-default items-center justify-between gap-2 rounded-lg border border-border bg-surface-inset px-3 py-1.5 text-sm text-fg outline-none transition-[border-color,box-shadow] focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base data-[disabled]:opacity-50 data-[disabled]:pointer-events-none data-[state=open]:border-border-strong",
+              "flex min-h-10 w-full cursor-default items-center justify-between gap-2 rounded-lg border border-border bg-surface-inset px-3 py-1.5 text-sm text-fg outline-none transition-[border-color,box-shadow] focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base data-[disabled]:opacity-50 data-[disabled]:pointer-events-none data-[state=open]:border-border-strong aria-invalid:border-error aria-invalid:ring-2 aria-invalid:ring-error/30",
               className,
             )}
           >
