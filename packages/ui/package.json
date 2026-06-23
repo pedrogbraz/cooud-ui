@@ -28,6 +28,10 @@
       "types": "./dist/components/animated-button.d.ts",
       "import": "./dist/components/animated-button.js"
     },
+    "./animated-number": {
+      "types": "./dist/components/animated-number.d.ts",
+      "import": "./dist/components/animated-number.js"
+    },
     "./app-shell": {
       "types": "./dist/components/app-shell.d.ts",
       "import": "./dist/components/app-shell.js"
@@ -63,6 +67,10 @@
     "./calendar": {
       "types": "./dist/components/calendar.d.ts",
       "import": "./dist/components/calendar.js"
+    },
+    "./carousel": {
+      "types": "./dist/components/carousel.d.ts",
+      "import": "./dist/components/carousel.js"
     },
     "./card": {
       "types": "./dist/components/card.d.ts",
@@ -168,6 +176,10 @@
       "types": "./dist/components/label.d.ts",
       "import": "./dist/components/label.js"
     },
+    "./logo-carousel": {
+      "types": "./dist/components/logo-carousel.d.ts",
+      "import": "./dist/components/logo-carousel.js"
+    },
     "./metric": {
       "types": "./dist/components/metric.d.ts",
       "import": "./dist/components/metric.js"
@@ -196,6 +208,10 @@
       "types": "./dist/components/popover.d.ts",
       "import": "./dist/components/popover.js"
     },
+    "./morphing-popover": {
+      "types": "./dist/components/morphing-popover.d.ts",
+      "import": "./dist/components/morphing-popover.js"
+    },
     "./progress": {
       "types": "./dist/components/progress.d.ts",
       "import": "./dist/components/progress.js"
@@ -211,6 +227,10 @@
     "./scroll-area": {
       "types": "./dist/components/scroll-area.d.ts",
       "import": "./dist/components/scroll-area.js"
+    },
+    "./segmented-control": {
+      "types": "./dist/components/segmented-control.d.ts",
+      "import": "./dist/components/segmented-control.js"
     },
     "./select": {
       "types": "./dist/components/select.d.ts",
@@ -267,6 +287,10 @@
     "./textarea": {
       "types": "./dist/components/textarea.d.ts",
       "import": "./dist/components/textarea.js"
+    },
+    "./text-effect": {
+      "types": "./dist/components/text-effect.d.ts",
+      "import": "./dist/components/text-effect.js"
     },
     "./toggle": {
       "types": "./dist/components/toggle.d.ts",

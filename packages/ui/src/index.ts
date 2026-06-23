@@ -23,6 +23,8 @@ export {
 export type { AnimatedButtonProps } from "./components/animated-button.js";
 // ── Wave 4 — premium & brand ───────────────────────────────────────
 export { AnimatedButton } from "./components/animated-button.js";
+export type { AnimatedNumberProps, AnimatedNumberSpring } from "./components/animated-number.js";
+export { AnimatedNumber } from "./components/animated-number.js";
 export type { AppShellProps } from "./components/app-shell.js";
 // ── Wave 5 — layout & app navigation ───────────────────────────────
 export { AppShell } from "./components/app-shell.js";
@@ -59,6 +61,24 @@ export {
   CardHeader,
   CardTitle,
 } from "./components/card.js";
+export type {
+  CarouselAlign,
+  CarouselContentProps,
+  CarouselDotsProps,
+  CarouselItemProps,
+  CarouselNextProps,
+  CarouselOptions,
+  CarouselPreviousProps,
+  CarouselProps,
+} from "./components/carousel.js";
+export {
+  Carousel,
+  CarouselContent,
+  CarouselDots,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "./components/carousel.js";
 export type { ChartConfig } from "./components/chart.js";
 export {
   ChartContainer,
@@ -194,8 +214,36 @@ export {
 } from "./components/input-otp.js";
 export { Kbd } from "./components/kbd.js";
 export { Label } from "./components/label.js";
+export type {
+  LogoCarouselItem,
+  LogoCarouselMotionPreference,
+  LogoCarouselProps,
+  LogoCarouselSize,
+  LogoCarouselVariant,
+} from "./components/logo-carousel.js";
+export { LogoCarousel } from "./components/logo-carousel.js";
 export type { MetricDeltaProps } from "./components/metric.js";
 export { Metric, MetricDelta, MetricLabel, MetricValue } from "./components/metric.js";
+export type {
+  MorphingPopoverBodyProps,
+  MorphingPopoverButtonProps,
+  MorphingPopoverCloseProps,
+  MorphingPopoverContentProps,
+  MorphingPopoverFooterProps,
+  MorphingPopoverHeaderProps,
+  MorphingPopoverProps,
+  MorphingPopoverTriggerProps,
+} from "./components/morphing-popover.js";
+export {
+  MorphingPopover,
+  MorphingPopoverBody,
+  MorphingPopoverButton,
+  MorphingPopoverClose,
+  MorphingPopoverContent,
+  MorphingPopoverFooter,
+  MorphingPopoverHeader,
+  MorphingPopoverTrigger,
+} from "./components/morphing-popover.js";
 export {
   easeOutQuart,
   fadeIn,
@@ -236,6 +284,11 @@ export { RadioGroup, RadioGroupItem } from "./components/radio-group.js";
 export type { RevealProps } from "./components/reveal.js";
 export { Reveal } from "./components/reveal.js";
 export { ScrollArea, ScrollBar } from "./components/scroll-area.js";
+export type {
+  SegmentedControlItemProps,
+  SegmentedControlProps,
+} from "./components/segmented-control.js";
+export { SegmentedControl, SegmentedControlItem } from "./components/segmented-control.js";
 export {
   Select,
   SelectContent,
@@ -312,6 +365,13 @@ export {
   TableRow,
 } from "./components/table.js";
 export { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/tabs.js";
+export type {
+  TextEffectPer,
+  TextEffectPreset,
+  TextEffectProps,
+  TextEffectTrigger,
+} from "./components/text-effect.js";
+export { TextEffect } from "./components/text-effect.js";
 export type { TextareaProps } from "./components/textarea.js";
 export { Textarea } from "./components/textarea.js";
 export type { ToggleProps } from "./components/toggle.js";
