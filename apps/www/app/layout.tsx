@@ -10,7 +10,13 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" data-cooud-theme="aurora" data-cooud-mode="dark" className="dark">
+    <html
+      lang="en"
+      data-cooud-theme="aurora"
+      data-cooud-mode="dark"
+      data-force-motion
+      className="dark"
+    >
       <body>
         <a
           href="#main-content"
