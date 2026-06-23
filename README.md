@@ -1,12 +1,16 @@
 # Cooud UI
 
+[![@cooud-ui/ui on npm](https://img.shields.io/npm/v/@cooud-ui/ui?label=%40cooud-ui%2Fui&color=0ea5e9)](https://www.npmjs.com/package/@cooud-ui/ui)
+[![npm downloads](https://img.shields.io/npm/dm/@cooud-ui/ui?color=0ea5e9)](https://www.npmjs.com/package/@cooud-ui/ui)
+[![cooud-ui CLI](https://img.shields.io/npm/v/cooud-ui?label=cooud-ui&color=0ea5e9)](https://www.npmjs.com/package/cooud-ui)
+[![license](https://img.shields.io/npm/l/@cooud-ui/ui?color=0ea5e9)](LICENSE)
+
 The Cooud design system — a themeable, accessible, shadcn-class React component
 library that **is** the Cooud design language. Default theme **Aurora** (premium
 sky/cyan), with **Neutral** as a first-class preset and arbitrary brand override.
 
-> Status: **v0.1 — Wave 0** (foundation + theming engine + showcase). Built from a
-> 2026-06-21 audit of all 17 Cooud production frontends. Plan/SDD:
-> `../../harness/specs/SDD-cooud-ui-design-system-2026-06-21.md`.
+> **v0.1.0** — published on npm under the `@cooud-ui` scope. Install the packages,
+> or copy components in with `npx cooud-ui add`.
 
 ## Monorepo layout
 

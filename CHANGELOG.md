@@ -7,10 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-`0.1.0` is the initial public surface of Cooud UI. It has not been tagged or
-published to a registry yet, so everything below is currently unreleased.
+_Nothing yet._
 
-## [0.1.0] — Unreleased
+## [0.1.0] — 2026-06-23
 
 The first public release of **Cooud UI** — a themeable, accessible, shadcn-class
 React component library that is the Cooud design language. Distributed two ways:
@@ -110,5 +109,5 @@ as installable packages and as copy-paste registry items you own.
 - Added per-entry gzipped bundle budgets for the published `@cooud-ui/ui` so a
   dependency or code-size regression is caught at build time.
 
-[Unreleased]: https://github.com/pedrogbraz/cooud-ui/compare/main...HEAD
+[Unreleased]: https://github.com/pedrogbraz/cooud-ui/compare/v0.1.0...main
 [0.1.0]: https://github.com/pedrogbraz/cooud-ui/releases/tag/v0.1.0
