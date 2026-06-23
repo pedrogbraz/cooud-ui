@@ -8,10 +8,10 @@ export interface RegistryFile {
   /** Raw source, with canonical `../lib/cn.js` / `./x.js` specifiers. */
   content: string;
   /** Where it is written in the consumer. */
-  target: "ui" | "lib";
+  target: "ui" | "lib" | "block";
 }
 
-export type RegistryItemType = "registry:ui" | "registry:lib";
+export type RegistryItemType = "registry:ui" | "registry:lib" | "registry:block";
 
 export interface RegistryItem {
   name: string;
