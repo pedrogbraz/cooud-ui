@@ -62,6 +62,13 @@ const CORE_ROUTES: ReadonlyArray<{ path: string; label: string }> = [
   { path: "/components/number-input", label: "components · number-input" },
   { path: "/components/date-range-picker", label: "components · date-range-picker" },
   { path: "/components/autocomplete", label: "components · autocomplete" },
+  // Premium overlays — morphing popover (trigger morphs into a non-modal dialog).
+  { path: "/components/morphing-popover", label: "components · morphing-popover" },
+  // Animated premium components — count-up, scroll-snap gallery, sliding toggle, staggered text.
+  { path: "/components/animated-number", label: "components · animated-number" },
+  { path: "/components/carousel", label: "components · carousel" },
+  { path: "/components/segmented-control", label: "components · segmented-control" },
+  { path: "/components/text-effect", label: "components · text-effect" },
 ];
 
 async function runAxe(page: Page) {
