@@ -278,7 +278,13 @@ export function tableRowsToCsv<TData>(table: TanstackTable<TData>): string {
     .filter((c) => c.id !== SELECTION_COLUMN_ID);
 
   const escapeCell = (value: unknown): string => {
-    const str = value == null ? "" : String(value);
+    let str = value == null ? "" : String(value);
+    // CSV-injection (formula injection) neutralisation: a leading =, +, -, @,
+    // tab, or carriage return makes Excel/Sheets treat the cell as a formula and
+    // execute it on open. Prefix such values with a single apostrophe so the
+    // spreadsheet renders them as literal text. This intentionally also prefixes
+    // negative numbers (leading `-`) — the accepted, standard tradeoff for safety.
+    if (/^[=+\-@\t\r]/.test(str)) str = `'${str}`;
     // Quote per RFC 4180 when the value contains a comma, double-quote, or any
     // line break (LF *or* CR — an unquoted CR also breaks row boundaries).
     return /[",\r\n]/.test(str) ? `"${str.replace(/"/g, '""')}"` : str;
