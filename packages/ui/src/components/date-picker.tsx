@@ -27,7 +27,7 @@ export function DatePicker({ value, onChange, placeholder, disabled }: DatePicke
           {value ? format(value, "PPP") : (placeholder ?? "Pick a date")}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0">
+      <PopoverContent aria-label="Choose a date" className="w-auto p-0">
         <Calendar mode="single" selected={value} onSelect={onChange} initialFocus />
       </PopoverContent>
     </Popover>
