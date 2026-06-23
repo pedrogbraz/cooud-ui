@@ -46,7 +46,7 @@ export const TooltipContent = forwardRef<
         data-slot="tooltip-content"
         sideOffset={sideOffset}
         className={cn(
-          "z-50 overflow-hidden rounded-md border border-border bg-surface-floating px-2.5 py-1 text-xs text-fg shadow-md transition-opacity data-[state=closed]:opacity-0",
+          "z-50 overflow-hidden rounded-md border border-border bg-surface-floating px-2.5 py-1 text-xs text-fg shadow-md data-[state=open]:animate-[cooud-pop-in_150ms_var(--ease-out-quart)_both] data-[state=closed]:animate-[cooud-pop-out_110ms_var(--ease-out-quart)_both]",
           className,
         )}
         {...props}

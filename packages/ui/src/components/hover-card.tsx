@@ -17,7 +17,7 @@ export const HoverCardContent = forwardRef<
         align={align}
         sideOffset={sideOffset}
         className={cn(
-          "z-50 w-64 rounded-lg border border-border bg-surface-floating p-4 text-fg shadow-lg outline-none transition-all data-[state=closed]:opacity-0",
+          "z-50 w-64 rounded-lg border border-border bg-surface-floating p-3 text-fg shadow-lg outline-none data-[state=open]:animate-[cooud-pop-in_180ms_var(--ease-out-quart)_both] data-[state=closed]:animate-[cooud-pop-out_140ms_var(--ease-out-quart)_both]",
           className,
         )}
         {...props}
