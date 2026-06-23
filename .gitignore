@@ -16,3 +16,8 @@ playwright-report
 .playwright
 blob-report
 .cache/ms-playwright
+
+# Scratch PR bodies + local release pipeline output
+*.pr-body.md
+.pr-body.md
+.release-tarballs
