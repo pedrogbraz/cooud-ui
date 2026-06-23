@@ -1,5 +1,5 @@
 {
-  "name": "@cooud/theme",
+  "name": "@cooud-ui/theme",
   "version": "0.1.0",
   "description": "Cooud runtime theming engine — CooudUIProvider + useTheme (CSS-var only, no re-render).",
   "type": "module",
@@ -46,7 +46,7 @@
     "prepublishOnly": "tsc -p tsconfig.json"
   },
   "dependencies": {
-    "@cooud/tokens": "workspace:*"
+    "@cooud-ui/tokens": "workspace:*"
   },
   "peerDependencies": {
     "react": "^18.3.0 || ^19.0.0",

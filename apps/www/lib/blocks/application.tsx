@@ -26,7 +26,7 @@ import {
   MetricValue,
   Separator,
   Switch,
-} from "@cooud/ui";
+} from "@cooud-ui/ui";
 import {
   Activity,
   ChartColumnIncreasing,
@@ -115,7 +115,7 @@ const statsCode = `import {
   MetricDelta,
   MetricLabel,
   MetricValue,
-} from "@cooud/ui";
+} from "@cooud-ui/ui";
 import { Activity, DollarSign, TrendingDown, Users } from "lucide-react";
 
 export function StatsBlock() {
@@ -218,7 +218,7 @@ const statsCompactCode = `import {
   MetricDelta,
   MetricLabel,
   MetricValue,
-} from "@cooud/ui";
+} from "@cooud-ui/ui";
 
 export function StatsCompactBlock() {
   const stats = [
@@ -315,7 +315,7 @@ const statsPipelineCode = `import {
   MetricDelta,
   MetricLabel,
   MetricValue,
-} from "@cooud/ui";
+} from "@cooud-ui/ui";
 import { Activity, DollarSign, Users } from "lucide-react";
 
 export function StatsPipelineBlock() {
@@ -477,7 +477,7 @@ const loginCode = `import {
   Input,
   Label,
   Separator,
-} from "@cooud/ui";
+} from "@cooud-ui/ui";
 import { ChartColumnIncreasing, Chrome, Github } from "lucide-react";
 
 export function LoginBlock() {
@@ -686,7 +686,7 @@ const settingsCode = `import {
   Label,
   Separator,
   Switch,
-} from "@cooud/ui";
+} from "@cooud-ui/ui";
 import { useState } from "react";
 
 interface Preference {
@@ -934,7 +934,7 @@ const teamCode = `import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
   Separator,
-} from "@cooud/ui";
+} from "@cooud-ui/ui";
 import { MoreHorizontal, UserMinus, Users } from "lucide-react";
 
 interface Member {

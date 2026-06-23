@@ -1,11 +1,11 @@
 # smoke-vite
 
 A minimal **external-consumer** fixture: a Vite + React app that imports
-`@cooud/ui` + `@cooud/tokens` + `@cooud/theme` exactly as a real consumer would,
+`@cooud-ui/ui` + `@cooud-ui/tokens` + `@cooud-ui/theme` exactly as a real consumer would,
 and proves the published components render **styled** on Tailwind v4 (via the
 first-party `@tailwindcss/vite` plugin).
 
-This is not a workspace package — `@cooud/*` are intentionally **absent** from
+This is not a workspace package — `@cooud-ui/*` are intentionally **absent** from
 `dependencies`. The smoke runner injects them as locally-packed tarballs so the
 test exercises the *published* artifact, never the workspace source.
 
@@ -14,13 +14,13 @@ test exercises the *published* artifact, never the workspace source.
 - `src/index.css` wires Tailwind v4 the way an external app must:
   ```css
   @import "tailwindcss";
-  @import "@cooud/tokens/styles.css";
-  @source "../node_modules/@cooud/ui/dist/**/*.js"; /* REQUIRED */
+  @import "@cooud-ui/tokens/styles.css";
+  @source "../node_modules/@cooud-ui/ui/dist/**/*.js"; /* REQUIRED */
   ```
   The `@source` line is what makes Tailwind scan the shipped components (it skips
   `node_modules` by default), so their utility classes are emitted.
 - `src/main.tsx` mounts `<CooudUIProvider>` (Aurora / dark).
-- `src/App.tsx` renders `<Button>` + `<Card>` from `@cooud/ui`.
+- `src/App.tsx` renders `<Button>` + `<Card>` from `@cooud-ui/ui`.
 
 ## Run it via the smoke runner (recommended)
 

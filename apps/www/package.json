@@ -1,5 +1,5 @@
 {
-  "name": "@cooud/www",
+  "name": "@cooud-ui/www",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -12,9 +12,9 @@
     "props:check": "bun run scripts/check-props.ts"
   },
   "dependencies": {
-    "@cooud/theme": "workspace:*",
-    "@cooud/tokens": "workspace:*",
-    "@cooud/ui": "workspace:*",
+    "@cooud-ui/theme": "workspace:*",
+    "@cooud-ui/tokens": "workspace:*",
+    "@cooud-ui/ui": "workspace:*",
     "@hookform/resolvers": "^3.10.0",
     "@tanstack/react-table": "^8.21.3",
     "lucide-react": "^0.577.0",

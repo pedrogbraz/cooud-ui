@@ -1,4 +1,4 @@
-import type { ThemeOverrides } from "@cooud/tokens";
+import type { ThemeOverrides } from "@cooud-ui/tokens";
 import { render } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { CooudUIProvider } from "./provider.js";

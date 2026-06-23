@@ -1,6 +1,6 @@
 "use client";
 
-import { Calendar, DatePicker, type DateRange, DateRangePicker } from "@cooud/ui";
+import { Calendar, DatePicker, type DateRange, DateRangePicker } from "@cooud-ui/ui";
 import { useState } from "react";
 import { ExampleList } from "../../components/docs/example-list";
 import type { ExampleMap } from "./types";

@@ -42,7 +42,7 @@ export function ComponentDocView({ slug }: { slug: string }) {
         <section id="import" className="mt-10 scroll-mt-24">
           <h2 className="font-display text-xl font-semibold tracking-tight text-fg">Import</h2>
           <div className="mt-4 flex flex-col gap-3">
-            <CodeBlock code={`import { ${meta.importName ?? meta.name} } from "@cooud/ui";`} />
+            <CodeBlock code={`import { ${meta.importName ?? meta.name} } from "@cooud-ui/ui";`} />
             <CodeBlock code={`npx cooud-ui add ${slug}`} language="bash" />
           </div>
         </section>

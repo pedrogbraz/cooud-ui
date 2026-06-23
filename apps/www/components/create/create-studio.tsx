@@ -1,7 +1,7 @@
 "use client";
 
-import { useTheme } from "@cooud/theme";
-import type { ThemeOverrides } from "@cooud/tokens";
+import { useTheme } from "@cooud-ui/theme";
+import type { ThemeOverrides } from "@cooud-ui/tokens";
 import {
   Accordion,
   AccordionContent,
@@ -45,7 +45,7 @@ import {
   TabsList,
   TabsTrigger,
   Textarea,
-} from "@cooud/ui";
+} from "@cooud-ui/ui";
 import {
   Check,
   Code2,
@@ -102,10 +102,10 @@ const codeTabs: { id: CodeTab; label: string }[] = [
 ];
 
 const installCommands: Record<PackageManager, string> = {
-  bun: "bun add @cooud/ui @cooud/theme @cooud/tokens",
-  pnpm: "pnpm add @cooud/ui @cooud/theme @cooud/tokens",
-  npm: "npm install @cooud/ui @cooud/theme @cooud/tokens",
-  yarn: "yarn add @cooud/ui @cooud/theme @cooud/tokens",
+  bun: "bun add @cooud-ui/ui @cooud-ui/theme @cooud-ui/tokens",
+  pnpm: "pnpm add @cooud-ui/ui @cooud-ui/theme @cooud-ui/tokens",
+  npm: "npm install @cooud-ui/ui @cooud-ui/theme @cooud-ui/tokens",
+  yarn: "yarn add @cooud-ui/ui @cooud-ui/theme @cooud-ui/tokens",
 };
 
 const defaultLocks: Record<LockKey, boolean> = {

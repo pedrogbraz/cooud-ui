@@ -3,12 +3,12 @@
  *
  * Pure, server-safe data — NO "use client". These are the cohesive presets and
  * palettes a user picks from. Ramps are tuned to mirror the lightness scale of
- * `@cooud/tokens` (dark surfaces ~0.11→0.31, light surfaces ~0.96→1, fg dark
+ * `@cooud-ui/tokens` (dark surfaces ~0.11→0.31, light surfaces ~0.96→1, fg dark
  * ~0.93/0.7/0.62/0.44, fg light ~0.145/0.43/0.556/0.705) with each base ramp's
  * own hue + chroma applied, and harmonious brand / chart values throughout.
  */
 
-import type { ThemeOverrides } from "@cooud/tokens";
+import type { ThemeOverrides } from "@cooud-ui/tokens";
 import type {
   BaseColor,
   BrandColor,
@@ -605,7 +605,7 @@ export function serializeCreateProvider(config: DesignConfig): string {
     .replace(/"([^"]+)":/g, "$1:")
     .replace(/"/g, '"');
 
-  return `import { CooudUIProvider } from "@cooud/theme";
+  return `import { CooudUIProvider } from "@cooud-ui/theme";
 
 export function AppProviders({ children }: { children: React.ReactNode }) {
   return (

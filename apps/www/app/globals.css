@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import "@cooud/tokens/styles.css";
+@import "@cooud-ui/tokens/styles.css";
 
 /* Scan the UI package source + this app so utilities used in components emit. */
 @source "../../../packages/ui/src/**/*.{ts,tsx}";
@@ -7,7 +7,7 @@
 @source "../components/**/*.{ts,tsx}";
 
 /* The typed `@property --cooud-*` registrations that make token overrides
-   cross-fade now ship in @cooud/tokens (imported above), so every adopter — not
+   cross-fade now ship in @cooud-ui/tokens (imported above), so every adopter — not
    just this app — gets smooth token transitions. */
 
 html,

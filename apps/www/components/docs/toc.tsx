@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@cooud/ui";
+import { cn } from "@cooud-ui/ui";
 import { useEffect, useState } from "react";
 
 export interface TocItem {

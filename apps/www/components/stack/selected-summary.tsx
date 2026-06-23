@@ -1,6 +1,6 @@
 "use client";
 
-import { Badge, Button, cn, GlassCard, ScrollArea } from "@cooud/ui";
+import { Badge, Button, cn, GlassCard, ScrollArea } from "@cooud-ui/ui";
 import { Layers, RotateCcw, Shuffle } from "lucide-react";
 import { useMemo } from "react";
 import type { Catalog, Resolution } from "@/lib/stack/types";

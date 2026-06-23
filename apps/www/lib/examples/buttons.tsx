@@ -8,7 +8,7 @@ import {
   Toggle,
   ToggleGroup,
   ToggleGroupItem,
-} from "@cooud/ui";
+} from "@cooud-ui/ui";
 import {
   AlignCenter,
   AlignLeft,
@@ -390,8 +390,8 @@ return (
       title: "Default",
       description:
         "An icon button that writes `value` to the clipboard and swaps to a check for a moment. It manages its own copied state.",
-      code: `<CopyButton value="npm install @cooud/ui" />`,
-      preview: <CopyButton value="npm install @cooud/ui" />,
+      code: `<CopyButton value="npm install @cooud-ui/ui" />`,
+      preview: <CopyButton value="npm install @cooud-ui/ui" />,
     },
     {
       id: "inline",

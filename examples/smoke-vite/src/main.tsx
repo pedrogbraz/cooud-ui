@@ -1,4 +1,4 @@
-import { CooudUIProvider } from "@cooud/theme";
+import { CooudUIProvider } from "@cooud-ui/theme";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { App } from "./App";

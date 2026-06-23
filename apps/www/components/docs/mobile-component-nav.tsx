@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Sheet, SheetContent, SheetTitle, SheetTrigger } from "@cooud/ui";
+import { Button, Sheet, SheetContent, SheetTitle, SheetTrigger } from "@cooud-ui/ui";
 import { PanelLeft } from "lucide-react";
 import { useState } from "react";
 import { ComponentNavList } from "./docs-sidebar";

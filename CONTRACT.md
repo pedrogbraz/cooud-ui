@@ -1,4 +1,4 @@
-# `@cooud/ui` component authoring contract
+# `@cooud-ui/ui` component authoring contract
 
 Every component MUST follow this contract so the library stays consistent,
 themeable, and tree-shakeable. Read this fully before writing a component.

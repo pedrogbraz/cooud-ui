@@ -1,6 +1,6 @@
 "use client";
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@cooud/ui";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@cooud-ui/ui";
 import type { Example } from "../../lib/examples/types";
 import { PreviewFrame } from "../showcase-ui";
 import { CodeBlock } from "./code-block";

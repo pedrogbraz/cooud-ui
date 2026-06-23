@@ -41,7 +41,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@cooud/ui";
+} from "@cooud-ui/ui";
 import {
   Activity,
   Bell,
@@ -458,7 +458,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@cooud/ui";
+} from "@cooud-ui/ui";
 import {
   Activity,
   Bell,
@@ -1061,7 +1061,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@cooud/ui";
+} from "@cooud-ui/ui";
 import {
   ChartColumnIncreasing,
   CreditCard,

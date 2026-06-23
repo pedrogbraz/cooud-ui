@@ -1,6 +1,6 @@
 "use client";
 
-import type { Mode, ThemeName, ThemeOverrides } from "@cooud/tokens";
+import type { Mode, ThemeName, ThemeOverrides } from "@cooud-ui/tokens";
 import { createContext, useContext } from "react";
 
 export interface ThemeContextValue {

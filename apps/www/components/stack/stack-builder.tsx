@@ -1,6 +1,6 @@
 "use client";
 
-import { Badge, cn, Input, Label, Reveal } from "@cooud/ui";
+import { Badge, cn, Input, Label, Reveal } from "@cooud-ui/ui";
 import { FlaskConical, ListChecks, SlidersHorizontal } from "lucide-react";
 import { useCallback, useId, useMemo, useRef, useState } from "react";
 import { catalog } from "@/lib/stack/catalog";

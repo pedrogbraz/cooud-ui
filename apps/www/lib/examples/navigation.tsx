@@ -42,7 +42,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@cooud/ui";
+} from "@cooud-ui/ui";
 import { Calendar, Home, Inbox, Search, Settings } from "lucide-react";
 import { ExampleList } from "../../components/docs/example-list";
 import type { ExampleMap } from "./types";

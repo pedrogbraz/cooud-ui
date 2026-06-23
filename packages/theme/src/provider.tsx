@@ -7,7 +7,7 @@ import {
   type ThemeName,
   type ThemeOverrides,
   tokensToCssVars,
-} from "@cooud/tokens";
+} from "@cooud-ui/tokens";
 import { type ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { ThemeContext, type ThemeContextValue } from "./use-theme.js";
 

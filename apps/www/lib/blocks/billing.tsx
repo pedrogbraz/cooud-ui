@@ -17,7 +17,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@cooud/ui";
+} from "@cooud-ui/ui";
 import { Check, CreditCard, Download } from "lucide-react";
 import { useState } from "react";
 import { BlockGalleryBody } from "../../components/blocks/block-gallery-body";
@@ -216,7 +216,7 @@ const subscriptionCode = `import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@cooud/ui";
+} from "@cooud-ui/ui";
 import { CreditCard, Download } from "lucide-react";
 
 interface UsageMeter {
@@ -513,7 +513,7 @@ const plansCode = `import {
   CardTitle,
   Separator,
   Switch,
-} from "@cooud/ui";
+} from "@cooud-ui/ui";
 import { Check } from "lucide-react";
 import { useState } from "react";
 

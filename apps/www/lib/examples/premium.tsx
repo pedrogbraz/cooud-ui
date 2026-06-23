@@ -32,7 +32,7 @@ import {
   Shimmer,
   SpotlightCard,
   TextEffect,
-} from "@cooud/ui";
+} from "@cooud-ui/ui";
 import {
   ArrowRight,
   Copy,

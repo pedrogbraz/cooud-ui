@@ -28,7 +28,7 @@ import {
   Separator,
   Slider,
   Textarea,
-} from "@cooud/ui";
+} from "@cooud-ui/ui";
 import {
   ArrowDownLeft,
   ArrowUpRight,

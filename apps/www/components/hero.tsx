@@ -18,7 +18,7 @@ import {
   MetricValue,
   Slider,
   Switch,
-} from "@cooud/ui";
+} from "@cooud-ui/ui";
 import { ArrowRight, BookOpen, Check, Copy, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { COMPONENT_COUNT } from "../lib/components-index";

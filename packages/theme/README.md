@@ -1,14 +1,14 @@
-# @cooud/theme
+# @cooud-ui/theme
 
 The Cooud UI runtime theming engine — a React provider and hook that apply
-[`@cooud/tokens`](../tokens) to your app and let you re-theme any subtree live.
+[`@cooud-ui/tokens`](../tokens) to your app and let you re-theme any subtree live.
 
 Theming happens entirely through CSS custom properties: switching theme, toggling
 light/dark, or overriding a token (radius, primary, border, …) updates the whole
 subtree instantly **without re-rendering the components below it**. This is what
 makes brand portals, per-tenant styling, and visual preview builders cheap.
 
-You need this package if you render `@cooud/ui` components and want runtime theme
+You need this package if you render `@cooud-ui/ui` components and want runtime theme
 control, mode switching, or token overrides. (It is also the only supported way to
 inject the `--cooud-*` variables when running on Tailwind v3.)
 
@@ -18,19 +18,19 @@ inject the `--cooud-*` variables when running on Tailwind v3.)
 
 ```sh
 # npm
-npm i @cooud/theme @cooud/tokens
+npm i @cooud-ui/theme @cooud-ui/tokens
 # pnpm
-pnpm add @cooud/theme @cooud/tokens
+pnpm add @cooud-ui/theme @cooud-ui/tokens
 # bun
-bun add @cooud/theme @cooud/tokens
+bun add @cooud-ui/theme @cooud-ui/tokens
 ```
 
 ### Prerequisites
 
 - **React 19** (also works with React 18.3+) — `react` and `react-dom` are peer
   dependencies.
-- [`@cooud/tokens`](../tokens) — the token data this provider applies (installed
-  alongside above; on Tailwind v4 also import `@cooud/tokens/styles.css` once).
+- [`@cooud-ui/tokens`](../tokens) — the token data this provider applies (installed
+  alongside above; on Tailwind v4 also import `@cooud-ui/tokens/styles.css` once).
 
 ## Usage
 
@@ -39,8 +39,8 @@ are written to `<html>` and the whole document is themed.
 
 ```tsx
 // app/layout.tsx (Next.js App Router) — or your root component
-import "@cooud/tokens/styles.css";
-import { CooudUIProvider } from "@cooud/theme";
+import "@cooud-ui/tokens/styles.css";
+import { CooudUIProvider } from "@cooud-ui/theme";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -69,7 +69,7 @@ the `dark` class on `<html>` exactly as the provider does.
 
 ```tsx
 // app/layout.tsx (Next.js App Router)
-import { CooudThemeScript, CooudUIProvider } from "@cooud/theme";
+import { CooudThemeScript, CooudUIProvider } from "@cooud-ui/theme";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -103,7 +103,7 @@ Read and control the active theme from anywhere inside the provider.
 
 ```tsx
 "use client";
-import { useTheme } from "@cooud/theme";
+import { useTheme } from "@cooud-ui/theme";
 
 export function ThemeControls() {
   const { theme, mode, setTheme, setMode, toggleMode, setOverrides } = useTheme();
@@ -169,20 +169,20 @@ theme](#avoiding-a-flash-of-the-wrong-theme)).
 ### `useTheme(): ThemeContextValue`
 
 Returns `{ theme, mode, overrides, setTheme, setMode, toggleMode, setOverrides }`.
-`ThemeName`, `Mode`, and `ThemeOverrides` come from [`@cooud/tokens`](../tokens).
+`ThemeName`, `Mode`, and `ThemeOverrides` come from [`@cooud-ui/tokens`](../tokens).
 
 ## How it works
 
 `overrides` are converted to a `{ "--cooud-*": value }` style object
-(via `@cooud/tokens`) and set on the themed element; the `@cooud/tokens` Tailwind
+(via `@cooud-ui/tokens`) and set on the themed element; the `@cooud-ui/tokens` Tailwind
 bridge maps utilities like `bg-primary` and `rounded-lg` onto those variables.
 Because everything resolves through CSS variables, overriding a token restyles the
 subtree with no React re-render of the components it contains.
 
 ## Related packages
 
-- [`@cooud/tokens`](../tokens) — the token source this provider applies.
-- [`@cooud/ui`](../ui) — the components that render against the applied tokens.
+- [`@cooud-ui/tokens`](../tokens) — the token source this provider applies.
+- [`@cooud-ui/ui`](../ui) — the components that render against the applied tokens.
 - See the [docs site](../../apps/www) for the live theme builder.
 
 ## License

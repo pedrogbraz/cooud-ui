@@ -1,4 +1,4 @@
-import { Badge, Button, cn } from "@cooud/ui";
+import { Badge, Button, cn } from "@cooud-ui/ui";
 import { ArrowRight, CheckCircle2, Info } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";

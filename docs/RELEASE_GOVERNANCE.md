@@ -61,10 +61,10 @@ The release job **packs first, then attests, then publishes the same bytes**:
 3. `actions/attest-build-provenance` signs a SLSA-style provenance attestation
    over each tarball via OIDC (no long-lived signing key).
 4. `npm publish <tarball>` ships the attested bytes: all four packages
-   (`@cooud/tokens`, `@cooud/theme`, `@cooud/ui`, and `cooud-ui`) to public npm.
+   (`@cooud-ui/tokens`, `@cooud-ui/theme`, `@cooud-ui/ui`, and `cooud-ui`) to public npm.
 
 The separate `scoped/` and `cli/` artifact directories are intentional:
-`@cooud/ui` and `cooud-ui` both pack to `cooud-ui-<version>.tgz`.
+`@cooud-ui/ui` and `cooud-ui` both pack to `cooud-ui-<version>.tgz`.
 
 Consumers can verify provenance with:
 
@@ -163,7 +163,7 @@ The `publish` job runs in `environment: name: release`. Configure in
   run from an arbitrary branch.
 - **Environment secrets:** store publish secrets here so they are only exposed
   to the approved `release` deployment, never to PR/CI runs:
-  - `NPM_TOKEN` — for all four packages on public npm (the scoped `@cooud/*`
+  - `NPM_TOKEN` — for all four packages on public npm (the scoped `@cooud-ui/*`
     libs and the unscoped CLI `cooud-ui`). The release workflow validates this
     secret before any package publish step runs.
 - **Wait timer (optional):** a short delay gives a window to cancel a bad release.
@@ -176,7 +176,7 @@ These are **not** code changes — they are account/settings actions that must
 exist for releases to be reproducible **and** approved:
 
 1. **Create the `@cooud` org on npmjs** (and be a member with publish rights) so
-   the scoped `@cooud/*` libs can publish with `access: public`; otherwise the
+   the scoped `@cooud-ui/*` libs can publish with `access: public`; otherwise the
    scoped publishes are rejected.
 2. **Own the unscoped npm name `cooud-ui`** on npmjs for the CLI, and add an
    `NPM_TOKEN` as a `release`-environment secret.

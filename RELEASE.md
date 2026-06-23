@@ -6,9 +6,9 @@ This monorepo publishes **four** packages. They are versioned in lockstep at
 
 | Package           | Name            | Registry                          | `publishConfig`     | Notes                                   |
 | ----------------- | --------------- | --------------------------------- | ------------------- | --------------------------------------- |
-| `packages/tokens` | `@cooud/tokens` | `https://registry.npmjs.org`      | `access: public`    | Design tokens + CSS bridge + TW preset  |
-| `packages/theme`  | `@cooud/theme`  | `https://registry.npmjs.org`      | `access: public`    | Runtime theming engine (depends tokens) |
-| `packages/ui`     | `@cooud/ui`     | `https://registry.npmjs.org`      | `access: public`    | React components (depends theme/tokens) |
+| `packages/tokens` | `@cooud-ui/tokens` | `https://registry.npmjs.org`      | `access: public`    | Design tokens + CSS bridge + TW preset  |
+| `packages/theme`  | `@cooud-ui/theme`  | `https://registry.npmjs.org`      | `access: public`    | Runtime theming engine (depends tokens) |
+| `packages/ui`     | `@cooud-ui/ui`     | `https://registry.npmjs.org`      | `access: public`    | React components (depends theme/tokens) |
 | `packages/cli`    | `cooud-ui`      | `https://registry.npmjs.org`      | `access: public`    | shadcn-style component installer (CLI)  |
 
 `apps/www` (showcase) is **not** published.
@@ -69,7 +69,7 @@ All four packages publish to **public npm**, so one credential covers the whole
 release. Be logged in to npmjs as a member of the `@cooud` org with publish
 rights (`npm login`), or have an `NPM_TOKEN` with publish rights in your user
 `~/.npmrc`. No repo-level `.npmrc` and no GitHub Packages token are needed —
-publishing the scoped `@cooud/*` libs requires only that you belong to the
+publishing the scoped `@cooud-ui/*` libs requires only that you belong to the
 `@cooud` org on npmjs.
 
 `--publish` fails loudly at the first package the registry rejects; earlier
@@ -94,7 +94,7 @@ needed).
    tokens → theme → ui → cli and tags + pushes `vX.Y.Z`.
 
    > For the very first release this tags `v0.1.0` and publishes
-   > `@cooud/tokens@0.1.0`, `@cooud/theme@0.1.0`, `@cooud/ui@0.1.0`, and
+   > `@cooud-ui/tokens@0.1.0`, `@cooud-ui/theme@0.1.0`, `@cooud-ui/ui@0.1.0`, and
    > `cooud-ui@0.1.0`.
 
 5. **Make the GitHub repo public.** After publishing, make
@@ -147,7 +147,7 @@ builds them, and asserts styled CSS was emitted); pack each package with
 attestation** (`actions/attest-build-provenance`, SLSA-style, OIDC-signed) over
 every tarball; and `npm publish` in the order tokens → theme → ui → cli.
 
-> Tarball naming footgun (still relevant to manual packs): `@cooud/ui` and
+> Tarball naming footgun (still relevant to manual packs): `@cooud-ui/ui` and
 > `cooud-ui` both pack to `cooud-ui-<version>.tgz`. The local pipeline packs into
 > a temporary `.release-tarballs/` one package at a time, so a stale tarball
 > can't be selected by mistake.

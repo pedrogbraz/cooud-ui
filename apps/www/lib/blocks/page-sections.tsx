@@ -26,7 +26,7 @@ import {
   TabsTrigger,
   ToggleGroup,
   ToggleGroupItem,
-} from "@cooud/ui";
+} from "@cooud-ui/ui";
 import {
   Download,
   FileQuestion,
@@ -115,7 +115,7 @@ const pageHeaderCode = `import {
   BreadcrumbPage,
   BreadcrumbSeparator,
   Button,
-} from "@cooud/ui";
+} from "@cooud-ui/ui";
 import { Download, Plus } from "lucide-react";
 
 export function PageHeaderBlock() {
@@ -226,7 +226,7 @@ const pageHeaderTabsCode = `import {
   Tabs,
   TabsList,
   TabsTrigger,
-} from "@cooud/ui";
+} from "@cooud-ui/ui";
 
 export function PageHeaderTabsBlock() {
   return (
@@ -390,7 +390,7 @@ const filterBarCode = `import {
   SelectValue,
   ToggleGroup,
   ToggleGroupItem,
-} from "@cooud/ui";
+} from "@cooud-ui/ui";
 import { LayoutGrid, List, Search, SlidersHorizontal, X } from "lucide-react";
 
 const statusOptions = [
@@ -521,7 +521,7 @@ const emptyStateCode = `import {
   EmptyDescription,
   EmptyIcon,
   EmptyTitle,
-} from "@cooud/ui";
+} from "@cooud-ui/ui";
 import { Inbox, Plus } from "lucide-react";
 
 export function EmptyStateBlock() {
@@ -579,7 +579,7 @@ const emptyStateErrorCode = `import {
   EmptyDescription,
   EmptyIcon,
   EmptyTitle,
-} from "@cooud/ui";
+} from "@cooud-ui/ui";
 import { FileQuestion, RefreshCw } from "lucide-react";
 
 export function EmptyStateErrorBlock() {

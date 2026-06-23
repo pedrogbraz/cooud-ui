@@ -1,4 +1,4 @@
-import { cn } from "@cooud/ui";
+import { cn } from "@cooud-ui/ui";
 import type { ReactNode } from "react";
 
 /**

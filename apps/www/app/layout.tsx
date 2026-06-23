@@ -1,4 +1,4 @@
-import { CooudThemeScript, CooudUIProvider } from "@cooud/theme";
+import { CooudThemeScript, CooudUIProvider } from "@cooud-ui/theme";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import "./globals.css";

@@ -10,8 +10,8 @@ import {
 } from "../../../components/docs/documentation";
 import { STYLE_PRESETS } from "../../../lib/create/presets";
 
-const providerCode = `import "@cooud/tokens/styles.css";
-import { CooudUIProvider } from "@cooud/theme";
+const providerCode = `import "@cooud-ui/tokens/styles.css";
+import { CooudUIProvider } from "@cooud-ui/theme";
 
 export default function RootLayout({ children }) {
   return (
@@ -25,7 +25,7 @@ export default function RootLayout({ children }) {
   );
 }`;
 
-const themeScriptCode = `import { CooudThemeScript, CooudUIProvider } from "@cooud/theme";
+const themeScriptCode = `import { CooudThemeScript, CooudUIProvider } from "@cooud-ui/theme";
 
 export default function RootLayout({ children }) {
   return (
@@ -47,7 +47,7 @@ export default function RootLayout({ children }) {
   );
 }`;
 
-const overridesCode = `import { useTheme } from "@cooud/theme";
+const overridesCode = `import { useTheme } from "@cooud-ui/theme";
 
 export function BrandThemeControls() {
   const { setOverrides } = useTheme();

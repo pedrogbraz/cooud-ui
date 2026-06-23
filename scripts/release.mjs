@@ -93,9 +93,9 @@ function run(cmd, args, opts = {}) {
  * package matrix — dependency order: tokens → theme → ui → cli
  * ------------------------------------------------------------------ */
 const PACKAGES = [
-  { dir: "packages/tokens", name: "@cooud/tokens" },
-  { dir: "packages/theme", name: "@cooud/theme" },
-  { dir: "packages/ui", name: "@cooud/ui" },
+  { dir: "packages/tokens", name: "@cooud-ui/tokens" },
+  { dir: "packages/theme", name: "@cooud-ui/theme" },
+  { dir: "packages/ui", name: "@cooud-ui/ui" },
   { dir: "packages/cli", name: "cooud-ui" },
 ];
 
@@ -200,9 +200,9 @@ function smoke() {
  * the tarball's embedded publishConfig, so the pipeline never hard-codes a
  * channel and the npm-vs-GitHub-Packages decision stays in each package.json.
  *
- * Tarball-naming footgun: `@cooud/ui` and the CLI `cooud-ui` BOTH pack to
+ * Tarball-naming footgun: `@cooud-ui/ui` and the CLI `cooud-ui` BOTH pack to
  * `cooud-ui-<version>.tgz`. We pack each package into its OWN subdir so the CLI
- * tarball can't overwrite (and be confused with) the @cooud/ui one.
+ * tarball can't overwrite (and be confused with) the @cooud-ui/ui one.
  */
 function packTarball(absDir, destDir) {
   run("mkdir", ["-p", destDir]);
@@ -237,7 +237,7 @@ function publishAll(version) {
       const pj = readPkg(pkg.dir);
       const registry = pj.publishConfig?.registry || "https://registry.npmjs.org (npm default)";
 
-      // Per-package subdir: @cooud/ui and the CLI cooud-ui share a tarball name,
+      // Per-package subdir: @cooud-ui/ui and the CLI cooud-ui share a tarball name,
       // so isolate each so one can't clobber the other.
       const pkgDest = join(destDir, pkg.dir.replace(/^packages\//, ""));
       let tarball;

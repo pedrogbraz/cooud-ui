@@ -1,6 +1,6 @@
 /**
  * Fails (exit 1) when the committed `registry/*.json` has drifted from the current
- * @cooud/ui sources. Regenerates the registry into a temporary directory, then
+ * @cooud-ui/ui sources. Regenerates the registry into a temporary directory, then
  * diffs every file (content + presence) against the committed `registry/`.
  *
  * Run:  bun run packages/cli/scripts/check-registry.ts

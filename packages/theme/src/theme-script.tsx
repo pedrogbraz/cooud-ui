@@ -1,4 +1,4 @@
-import { defaultMode, defaultTheme, type Mode, type ThemeName } from "@cooud/tokens";
+import { defaultMode, defaultTheme, type Mode, type ThemeName } from "@cooud-ui/tokens";
 
 export interface CooudThemeScriptProps {
   /**

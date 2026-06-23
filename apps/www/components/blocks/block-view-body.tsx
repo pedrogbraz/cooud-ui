@@ -95,7 +95,7 @@ export function BlockViewBody({
                 Install the Cooud UI packages, then paste the block below.
               </p>
               <div className="mt-3">
-                <InstallTabs packages="@cooud/ui @cooud/tokens @cooud/theme" />
+                <InstallTabs packages="@cooud-ui/ui @cooud-ui/tokens @cooud-ui/theme" />
               </div>
             </div>
           </section>

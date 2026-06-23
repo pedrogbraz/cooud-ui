@@ -1,5 +1,5 @@
-import { Button } from "@cooud/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@cooud/ui/card";
+import { Button } from "@cooud-ui/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@cooud-ui/ui/card";
 
 export default function Page() {
   return (
@@ -8,7 +8,7 @@ export default function Page() {
         <CardHeader>
           <CardTitle>Cooud UI — external install</CardTitle>
           <CardDescription>
-            Rendered from the published @cooud/ui tarball on Tailwind v4.
+            Rendered from the published @cooud-ui/ui tarball on Tailwind v4.
           </CardDescription>
         </CardHeader>
         <CardContent className="flex gap-3">

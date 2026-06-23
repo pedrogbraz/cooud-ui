@@ -311,7 +311,7 @@ describe("generateKickoff & generateStackJson", () => {
     const md = generateKickoff(base({ web: "web-next" }), "my-app");
     expect(md).toContain("# KICKOFF — my-app");
     expect(md).toContain("Cooud UI contract");
-    expect(md).toContain("@cooud/ui");
+    expect(md).toContain("@cooud-ui/ui");
     expect(md).toContain("Definition of Done");
   });
 

@@ -11,7 +11,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@cooud/ui";
+} from "@cooud-ui/ui";
 import { Check, FileCode2, Sparkles, Terminal } from "lucide-react";
 import { type HTMLAttributes, useId, useMemo } from "react";
 import { generateCommand, generateKickoff, generateStackJson } from "@/lib/stack/kickoff";

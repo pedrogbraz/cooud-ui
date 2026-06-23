@@ -9,7 +9,7 @@
  * Two modes:
  *
  *   LIGHT (default) — `node scripts/package-smoke.mjs`
- *     For every publishable package (@cooud/ui, @cooud/tokens, @cooud/theme,
+ *     For every publishable package (@cooud-ui/ui, @cooud-ui/tokens, @cooud-ui/theme,
  *     cooud-ui) run `npm pack --dry-run --json` and validate the tarball:
  *       - it contains every file referenced by package.json `main`/`types`/`bin`
  *         and each `exports` target,
@@ -23,8 +23,8 @@
  *     No install, no network, fast — safe for CI gates.
  *
  *   FULL  (`SMOKE_FULL=1 node scripts/package-smoke.mjs`)
- *     Additionally: `npm pack` real tarballs for @cooud/ui + @cooud/tokens +
- *     @cooud/theme, install them (plus peers) into examples/smoke-next and
+ *     Additionally: `npm pack` real tarballs for @cooud-ui/ui + @cooud-ui/tokens +
+ *     @cooud-ui/theme, install them (plus peers) into examples/smoke-next and
  *     examples/smoke-vite, build each fixture, and assert the compiled CSS
  *     contains the component utility classes (bg-primary, rounded-lg,
  *     bg-surface-raised, …). This is the real proof-of-style. Heavier and needs
@@ -117,9 +117,9 @@ function run(cmd, args, opts = {}) {
  * package matrix
  * ------------------------------------------------------------------ */
 const PACKAGES = [
-  { dir: "packages/ui", name: "@cooud/ui" },
-  { dir: "packages/tokens", name: "@cooud/tokens" },
-  { dir: "packages/theme", name: "@cooud/theme" },
+  { dir: "packages/ui", name: "@cooud-ui/ui" },
+  { dir: "packages/tokens", name: "@cooud-ui/tokens" },
+  { dir: "packages/theme", name: "@cooud-ui/theme" },
   { dir: "packages/cli", name: "cooud-ui" },
 ];
 
@@ -484,7 +484,7 @@ function fullSmokeFixture({ name, dir, tarballs, buildOutDirs, restoreFiles = []
 
   try {
     // Install the local tarballs alongside the fixture's declared deps. Passing
-    // the tarball paths explicitly makes the @cooud/* packages resolve to the
+    // the tarball paths explicitly makes the @cooud-ui/* packages resolve to the
     // PUBLISHED artifact (not a workspace symlink). We let npm save (so the
     // dependency graph is deterministic) and restore package.json below.
     const installArgs = [
@@ -501,8 +501,8 @@ function fullSmokeFixture({ name, dir, tarballs, buildOutDirs, restoreFiles = []
       throw new Error(`[${name}] npm install failed: ${err.message}`);
     }
 
-    // Verify the @cooud/* packages were materialized into node_modules.
-    for (const scoped of ["@cooud/ui", "@cooud/tokens", "@cooud/theme"]) {
+    // Verify the @cooud-ui/* packages were materialized into node_modules.
+    for (const scoped of ["@cooud-ui/ui", "@cooud-ui/tokens", "@cooud-ui/theme"]) {
       check(
         existsSync(join(fixtureAbs, "node_modules", scoped, "package.json")),
         `[${name}] installed ${scoped} from tarball`,
@@ -577,7 +577,7 @@ function main() {
       tmp = mkdtempSync(join(tmpdir(), "cooud-smoke-"));
       group("packing real tarballs");
       const tarballs = {};
-      for (const name of ["@cooud/ui", "@cooud/tokens", "@cooud/theme"]) {
+      for (const name of ["@cooud-ui/ui", "@cooud-ui/tokens", "@cooud-ui/theme"]) {
         const pkg = PACKAGES.find((p) => p.name === name);
         const pj = JSON.parse(readFileSync(join(ROOT, pkg.dir, "package.json"), "utf8"));
         const raw = realPack(join(ROOT, pkg.dir), tmp);

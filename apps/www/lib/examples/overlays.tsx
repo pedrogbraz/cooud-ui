@@ -59,7 +59,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@cooud/ui";
+} from "@cooud-ui/ui";
 import {
   CalendarDays,
   Copy,

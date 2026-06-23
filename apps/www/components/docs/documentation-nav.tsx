@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@cooud/ui";
+import { cn } from "@cooud-ui/ui";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
