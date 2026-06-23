@@ -229,8 +229,43 @@ export const CATEGORIES: ComponentCategory[] = [
         name: "AuroraBackground",
         description: "Animated aurora backdrop.",
       },
+      {
+        slug: "logo-carousel",
+        name: "LogoCarousel",
+        description: "Animated hero logo carousel with reduced-motion fallback.",
+      },
+      {
+        slug: "morphing-popover",
+        name: "MorphingPopover",
+        description: "Trigger that morphs into a non-modal dialog surface.",
+        importName:
+          "MorphingPopover, MorphingPopoverTrigger, MorphingPopoverContent, MorphingPopoverClose, MorphingPopoverHeader, MorphingPopoverBody, MorphingPopoverFooter, MorphingPopoverButton",
+      },
       { slug: "shimmer", name: "Shimmer", description: "Premium shimmer surface." },
       { slug: "reveal", name: "Reveal", description: "Scroll-into-view reveal wrapper." },
+      {
+        slug: "animated-number",
+        name: "AnimatedNumber",
+        description: "Number that springs to its target — counts up or down.",
+      },
+      {
+        slug: "carousel",
+        name: "Carousel",
+        description: "Scroll-snap slide gallery with prev/next, dots and keyboard nav.",
+        importName:
+          "Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext, CarouselDots",
+      },
+      {
+        slug: "segmented-control",
+        name: "SegmentedControl",
+        description: "Single-select toggle row with a thumb that slides between options.",
+        importName: "SegmentedControl, SegmentedControlItem",
+      },
+      {
+        slug: "text-effect",
+        name: "TextEffect",
+        description: "Reveal text by staggering words or characters (fade / blur / slide).",
+      },
     ],
   },
 ];

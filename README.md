@@ -166,7 +166,8 @@ Kbd · Breadcrumb.
 
 **Wave 4 — premium & brand:** GlassCard · GradientBorder · GradientText ·
 SpotlightCard · AuroraBackground · Shimmer · AnimatedButton (motion) · Reveal ·
-motion presets. The premium Aurora layer (glass, gradients, springs, scroll reveals).
+LogoCarousel · motion presets. The premium Aurora layer (glass, gradients,
+springs, scroll reveals, rotating brand surfaces).
 
 ## Conventions
 See `CONTRACT.md` — semantic tokens only, CVA variants, `forwardRef`, `data-slot`,
