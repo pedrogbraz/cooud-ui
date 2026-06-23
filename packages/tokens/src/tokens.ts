@@ -81,7 +81,11 @@ const auroraDark: ThemeTokens = {
   surfaceRaised: "oklch(0.195 0.005 285.8)", // #111113
   surfaceOverlay: "oklch(0.235 0.006 285.9)", // #18181b
   surfaceElevated: "oklch(0.27 0.006 286)", // #1f1f23
-  surfaceFloating: "oklch(0.31 0.006 286)", // #27272a
+  // Floating panels (popover, dropdown, hover-card, navigation viewport,
+  // morphing-popover) sit DARK and rely on border + shadow for separation —
+  // kept below `overlay` so item hover (surface-overlay) reads as a lighter
+  // highlight on a near-black surface rather than a flat mid-grey panel.
+  surfaceFloating: "oklch(0.2 0.006 286)", // #121216
   fg: "oklch(0.985 0.001 106.4)", // #fafaf9
   fgSecondary: "oklch(0.705 0.015 286)", // #a1a1aa
   fgTertiary: "oklch(0.62 0.014 286)", // #83838c — WCAG AA: >=4.5:1 over dark surfaces (base/inset/raised/overlay)
@@ -191,7 +195,7 @@ const neutralDark: ThemeTokens = {
   surfaceRaised: "oklch(0.16 0 0)",
   surfaceOverlay: "oklch(0.2 0 0)",
   surfaceElevated: "oklch(0.23 0 0)",
-  surfaceFloating: "oklch(0.27 0 0)",
+  surfaceFloating: "oklch(0.165 0 0)", // #121212 — dark floating panel (below overlay so item hover lifts)
   fg: "oklch(0.93 0 0)",
   fgSecondary: "oklch(0.7 0 0)",
   fgTertiary: "oklch(0.62 0 0)",
