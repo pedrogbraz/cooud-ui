@@ -1,164 +1,159 @@
 # Releasing cooud-ui
 
-This monorepo publishes **four** packages across **two** registries:
+This monorepo publishes **four** packages. They are versioned in lockstep at
+`0.x` and released **locally** (GitHub Actions was removed — see
+[Future / not active](#future--not-active-ci-was-removed) below).
 
-| Package           | Name            | Registry             | Notes                                   |
-| ----------------- | --------------- | -------------------- | --------------------------------------- |
-| `packages/tokens` | `@cooud/tokens` | GitHub Packages      | Design tokens + CSS bridge + TW preset  |
-| `packages/theme`  | `@cooud/theme`  | GitHub Packages      | Runtime theming engine (depends tokens) |
-| `packages/ui`     | `@cooud/ui`     | GitHub Packages      | React components (depends theme/tokens) |
-| `packages/cli`    | `cooud-ui`      | **public npm**       | shadcn-style component installer (CLI)  |
+| Package           | Name            | Registry                          | `publishConfig`     | Notes                                   |
+| ----------------- | --------------- | --------------------------------- | ------------------- | --------------------------------------- |
+| `packages/tokens` | `@cooud/tokens` | `https://registry.npmjs.org`      | `access: public`    | Design tokens + CSS bridge + TW preset  |
+| `packages/theme`  | `@cooud/theme`  | `https://registry.npmjs.org`      | `access: public`    | Runtime theming engine (depends tokens) |
+| `packages/ui`     | `@cooud/ui`     | `https://registry.npmjs.org`      | `access: public`    | React components (depends theme/tokens) |
+| `packages/cli`    | `cooud-ui`      | `https://registry.npmjs.org`      | `access: public`    | shadcn-style component installer (CLI)  |
 
-`apps/www` (showcase) is **not** published (not wired into the release workflow).
+`apps/www` (showcase) is **not** published.
 
-## Distribution decision (ownership & scope)
+The release tooling is **channel-agnostic**: it never hard-codes a registry. Each
+package publishes according to its own `publishConfig` — all four use
+`access: public` and default to npmjs (`https://registry.npmjs.org`), so the
+registry question is decided in the `package.json` files, not in the release
+script. (Point a package elsewhere by adding a `publishConfig.registry`; none do
+today.)
 
-This is the agreed, intentional split:
+## The release pipeline — `bun run release` (primary path)
 
-- **Scoped libraries `@cooud/{tokens,theme,ui}` → GitHub Packages**
-  (`https://npm.pkg.github.com`). GitHub Packages requires the npm **scope** to
-  match the **owning org/user**, so the `@cooud` scope must be owned by a GitHub
-  org named `cooud` (see "Operational prerequisites" below).
-- **CLI `cooud-ui` (unscoped) → public npm** (`https://registry.npmjs.org`).
-  It is deliberately **unscoped** so `npx cooud-ui@latest add button` works for
-  anyone, with no auth and no `@cooud` org membership. Publishing an unscoped
-  name only requires that the name `cooud-ui` is free/owned on npmjs and an
-  `NPM_TOKEN` with publish rights.
+Everything runs from your machine via [`scripts/release.mjs`](scripts/release.mjs),
+wrapped by the root `release` script. It is **dry-run by default** and requires an
+explicit `--publish` flag to actually publish and tag.
 
-> The `release.yml` workflow publishes all four packages after approval: the
-> three **scoped** packages to GitHub Packages and the unscoped CLI to public npm.
-> A missing `NPM_TOKEN` fails the release before any publish step runs.
+```sh
+bun run release            # DRY-RUN (default): prints exactly what it would publish + tag
+bun run release --publish  # really publish the tarballs and push the tag
+```
 
-## How a release works
+In order, the script:
 
-1. Bump the `version` in each publishable `package.json` (they are versioned in lockstep at `0.x`).
-2. Tag the commit with `vX.Y.Z` and push the tag:
+1. **Preflight** — asserts the git working tree is **clean** and that all four
+   publishable packages share the **same `version`**, and that the `v<version>`
+   tag does not already exist.
+2. **Gate** — runs, in this order:
+   `typecheck` · `lint` · `test` · `registry:check` · `tokens:check` ·
+   `props:check` · `build`. Any failure aborts the release.
+3. **Smoke** — runs `package:smoke` (packs each package with `npm pack --dry-run`,
+   validates the tarball structure, and dynamically `import()`s every built main
+   entry offline to prove it loads).
+4. **Publish** — for each package in dependency order
+   **tokens → theme → ui → cli**:
+   - packs it with `bun pm pack` (this rewrites `workspace:*` ranges to the
+     concrete version **and** carries each package's `publishConfig`),
+   - runs `npm publish <tarball>`, which honors the tarball's embedded
+     `publishConfig` — so all four packages go to public npm (the scoped libs as
+     `access: public`) with no per-package flags.
 
-   ```sh
-   git tag v0.1.1
-   git push origin v0.1.1
-   ```
+   In a dry-run this step runs `npm publish --dry-run` (validates the tarball and
+   prints the target registry) and leaves the packed tarballs in
+   `.release-tarballs/` for inspection. With `--publish` it publishes for real.
+5. **Tag** — creates an annotated git tag `v<version>` at `HEAD` and pushes it to
+   `origin` (only with `--publish`; a dry-run just prints the tag it would cut).
 
-3. The `.github/workflows/release.yml` workflow triggers on any `v*` tag.
-   **It does not publish automatically** — the `publish` job runs in the
-   protected `release` GitHub Environment and **pauses for a required-reviewer
-   approval** before any step executes. After approval it:
-   - installs deps (`bun install --frozen-lockfile`),
-   - validates that every publishable package version matches the tag,
-   - validates that `NPM_TOKEN` is present for the public-npm CLI publish,
-   - runs the release gates (`typecheck`, `test`, `registry:check`, `tokens:check`),
-   - builds in dependency order via turbo (`bun run build`),
-   - runs full package smoke (`SMOKE_FULL=1 bun run package:smoke`), which packs
-     local tarballs, installs them into the Next/Vite fixtures, builds the fixtures,
-     and verifies styled CSS was emitted,
-   - **packs** each package to a tarball with `bun pm pack` (so `workspace:*`
-     ranges are rewritten and everything below operates on the exact bytes that
-     get published),
-   - generates a **CycloneDX SBOM** for the workspace (archived as a build artifact),
-   - emits a **build-provenance attestation** (`actions/attest-build-provenance`,
-     SLSA-style) over every packed tarball, signed via OIDC,
-   - uploads the tarballs + SBOM as a workflow artifact,
-   - runs `npm publish <tarball>` in dependency order:
-     **tokens → theme → ui → CLI**.
+> **Why `bun pm pack` and not a plain `npm publish` from each package dir?** In
+> this Bun workspace `npm pack`/`npm publish` ship `workspace:*` dependency
+> ranges **literally**, which is unresolvable for consumers. `bun pm pack`
+> rewrites them to the concrete version. `npm publish <tarball>` is then used so
+> the exact, correct bytes are what gets published — while still honoring each
+> package's `publishConfig` (the `access: public` on the scoped libs).
 
-   The scoped packages use the workflow's built-in `GITHUB_TOKEN`
-   (`packages: write`), wired into `NODE_AUTH_TOKEN`; no extra secret is needed
-   for GitHub Packages. The CLI publish uses the release-environment `NPM_TOKEN`
-   against `https://registry.npmjs.org` and publishes with npm provenance. The
-   job also holds `id-token: write` + `attestations: write` so it can sign and
-   store the provenance attestation.
+### Authentication
 
-> Tarball naming footgun: `@cooud/ui` and `cooud-ui` both pack to
-> `cooud-ui-<version>.tgz`. The workflow writes scoped-library tarballs under
-> `dist-artifacts/github/` and the public CLI tarball under `dist-artifacts/npm/`
-> so publish steps cannot select the wrong artifact.
+All four packages publish to **public npm**, so one credential covers the whole
+release. Be logged in to npmjs as a member of the `@cooud` org with publish
+rights (`npm login`), or have an `NPM_TOKEN` with publish rights in your user
+`~/.npmrc`. No repo-level `.npmrc` and no GitHub Packages token are needed —
+publishing the scoped `@cooud/*` libs requires only that you belong to the
+`@cooud` org on npmjs.
 
-Each package also runs `prepublishOnly` (`tsc -p tsconfig.json`) as a safety net so `dist` is always rebuilt before a publish, even for manual publishes.
+`--publish` fails loudly at the first package the registry rejects; earlier
+packages in the order may already be published, so fix the auth and re-run (a
+re-publish of an already-published version will error — bump the version if
+needed).
 
-## `@cooud` scope vs. repo owner — how to make publishing reproducible & approved
+## Exact release procedure
 
-GitHub Packages requires the **npm scope to match the hosting org/user**. The
-packages are scoped `@cooud`, so the publish target must be a GitHub **org named
-`cooud`** that owns the `@cooud` scope. This is a one-time **operational
-prerequisite**, not a code change — once it is satisfied, every tagged release
-publishes reproducibly through the approval-gated workflow.
+1. **Bump the version** in all four publishable `package.json` files to the new
+   `0.x` (they must match). Also bump `CLI_VERSION` in
+   [`packages/cli/src/config.ts`](packages/cli/src/config.ts) to the same value —
+   the CLI's default registry is pinned to its own tag
+   (`https://raw.githubusercontent.com/pedrogbraz/cooud-ui/vX.Y.Z/registry`) and
+   the CLI unit tests fail if `CLI_VERSION` drifts from `package.json`.
+2. **Build:** `bun run build`.
+3. **Gate + smoke (dry-run preflight):** `bun run release` — this runs the full
+   gate, `package:smoke`, and a publish/tag dry-run. Confirm the printed plan
+   lists `vX.Y.Z` and the four packages in the order tokens → theme → ui → cli
+   with the expected registries.
+4. **Publish + tag:** `bun run release --publish`. This publishes
+   tokens → theme → ui → cli and tags + pushes `vX.Y.Z`.
 
-### Prerequisite A — Host the repo under a `cooud` GitHub org (recommended)
-Create a GitHub org named `cooud` and host/transfer this repo there. Then
-`@cooud/*` publishes cleanly to `https://npm.pkg.github.com` under that org using
-the workflow's `GITHUB_TOKEN`. No package renames, no extra secret. This is the
-path the current `release.yml` is wired for.
+   > For the very first release this tags `v0.1.0` and publishes
+   > `@cooud/tokens@0.1.0`, `@cooud/theme@0.1.0`, `@cooud/ui@0.1.0`, and
+   > `cooud-ui@0.1.0`.
 
-### Prerequisite B — (alternative) Publish `@cooud/*` to public npm
-If you prefer public npm instead of GitHub Packages for the scoped libs, create
-an `@cooud` org on [npmjs.com](https://www.npmjs.com), then:
-- set each `publishConfig.registry` to `https://registry.npmjs.org` (or drop it),
-- add an `NPM_TOKEN` repo secret (scoped to the `release` environment) and pass
-  it as `NODE_AUTH_TOKEN` in the publish steps,
-- point `actions/setup-node` `registry-url` at `https://registry.npmjs.org`.
+5. **Make the GitHub repo public.** After publishing, make
+   `pedrogbraz/cooud-ui` **public** so the CLI's pinned registry
+   (`raw.githubusercontent.com/pedrogbraz/cooud-ui/vX.Y.Z/registry`) is reachable
+   and `npx cooud-ui add <component>` resolves component sources from the tagged
+   `vX.Y.Z` registry (not mutable `main`). The release script prints this as a
+   post-publish reminder — it does **not** do it for you.
 
-Either way the `@cooud` package names stay the same.
+> The `release` script prints a final summary plus the post-publish steps it did
+> **not** do (make the repo public, cut a GitHub Release, generate SBOM /
+> provenance). Keep this doc in sync with what `scripts/release.mjs` actually
+> does.
 
-### Publishing the CLI to npm (`cooud-ui`, unscoped)
-The CLI ships to **public npm** independently of the scoped libs:
-- own the unscoped name `cooud-ui` on npmjs (it must be free or owned by you),
-- add an `NPM_TOKEN` repo secret (scoped to the `release` environment),
-- the release workflow packs + publishes the CLI tarball against
-  `https://registry.npmjs.org` with that token. Because the name is unscoped and
-  on the public registry, no `@cooud` org membership is required to publish or
-  to `npx cooud-ui`.
+## Publishing a single package by hand (fallback)
 
-The published CLI's default registry is pinned to its own release tag
-(`https://raw.githubusercontent.com/pedrogbraz/cooud-ui/vX.Y.Z/registry`), not
-mutable `main`. When cutting a release, bump `packages/cli/package.json` and the
-CLI version constant together; the CLI unit tests fail if they drift.
-
-## Publishing manually
-
-Build first, then publish the **scoped libraries** to GitHub Packages with an
-auth token in `NODE_AUTH_TOKEN`:
+If you need to (re)publish one package outside the script, pack it with Bun first
+so `workspace:*` is rewritten, then publish the tarball (it carries its own
+`publishConfig`):
 
 ```sh
 bun run build
 
-export NODE_AUTH_TOKEN=<github-packages-token>
+# all four go to public npm — be logged in to the @cooud org on npmjs:
+npm login
 
-cd packages/tokens && npm publish && cd -
-cd packages/theme  && npm publish && cd -
-cd packages/ui     && npm publish && cd -
+cd packages/tokens && bun pm pack && npm publish ./*.tgz && rm ./*.tgz && cd -
+cd packages/theme  && bun pm pack && npm publish ./*.tgz && rm ./*.tgz && cd -
+cd packages/ui     && bun pm pack && npm publish ./*.tgz && rm ./*.tgz && cd -
+cd packages/cli    && bun pm pack && npm publish ./*.tgz && rm ./*.tgz && cd -
 ```
 
-The repo-root `.npmrc` routes `@cooud` to GitHub Packages and reads the token
-from `${NODE_AUTH_TOKEN}`.
+Each package also runs `prepublishOnly` (`tsc -p tsconfig.json`) as a safety net,
+so `dist` is rebuilt before any manual publish.
 
-Publish the **CLI** to public npm separately (different registry + token):
+## Future / not active (CI was removed)
 
-```sh
-cd packages/cli
-npm publish --registry https://registry.npmjs.org \
-  --provenance \
-  # --otp=<code> if 2FA is enabled on the npm account
-cd -
-```
+GitHub Actions was removed from this repo (account billing), so there is **no**
+`.github/workflows/release.yml` anymore and **none** of the following runs today.
+This section is retained as design intent for if/when hosted CI is restored.
 
-> The CLI is unscoped (`cooud-ui`) and has no `publishConfig.registry`, so it
-> defaults to public npm. Make sure you are authenticated to npmjs (e.g.
-> `npm login` or an `NPM_TOKEN` in `~/.npmrc`) and **not** to GitHub Packages
-> when publishing it.
+When CI existed, a tagged `v*` push triggered an approval-gated `release.yml`
+workflow that, after a required-reviewer approval in a protected `release`
+environment, would: install with `bun install --frozen-lockfile`; validate every
+publishable version against the tag; validate `NPM_TOKEN` for the CLI; run the
+release gates; build in dependency order; run the **full** package smoke
+(`SMOKE_FULL=1`, which installs the packed tarballs into the Next/Vite fixtures,
+builds them, and asserts styled CSS was emitted); pack each package with
+`bun pm pack`; generate a **CycloneDX SBOM**; emit a **build-provenance
+attestation** (`actions/attest-build-provenance`, SLSA-style, OIDC-signed) over
+every tarball; and `npm publish` in the order tokens → theme → ui → cli.
 
-## Token scopes
+> Tarball naming footgun (still relevant to manual packs): `@cooud/ui` and
+> `cooud-ui` both pack to `cooud-ui-<version>.tgz`. The local pipeline packs into
+> a temporary `.release-tarballs/` one package at a time, so a stale tarball
+> can't be selected by mistake.
 
-- **GitHub Packages** (scoped libs): a Personal Access Token (classic) with the
-  **`write:packages`** scope (and `read:packages`). It must belong to an
-  account/org that owns the `@cooud` scope (see the prerequisites above). In CI
-  the workflow's built-in `GITHUB_TOKEN` covers this.
-- **public npm** (CLI, and `@cooud/*` under Prerequisite B): an
-  automation/publish token (`NPM_TOKEN`) with publish rights for the target
-  name/org, stored as a repo secret scoped to the `release` environment.
-
-## Branch & tag protection / governance
-
-Release and supply-chain governance — branch protection, tag protection, the
-`release` environment with required reviewers, CODEOWNERS, and the SHA-pinned,
-attested CI/CD — is documented in **[`docs/RELEASE_GOVERNANCE.md`](docs/RELEASE_GOVERNANCE.md)**.
-That doc is the source of truth for the repo-settings that the workflows assume.
+The token scopes, branch/tag protection, the `release` environment with required
+reviewers, CODEOWNERS, and the SHA-pinned, attested CI/CD are documented in
+**[`docs/RELEASE_GOVERNANCE.md`](docs/RELEASE_GOVERNANCE.md)**. That doc reflects
+the (now inactive) hosted-CI model; the **active** path is `bun run release`
+above.

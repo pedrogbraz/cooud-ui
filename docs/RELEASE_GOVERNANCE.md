@@ -54,15 +54,16 @@ Current action pins:
 
 The release job **packs first, then attests, then publishes the same bytes**:
 
-1. `bun pm pack` each scoped package into `dist-artifacts/github/*.tgz` and the
-   public CLI into `dist-artifacts/npm/*.tgz`.
+1. `bun pm pack` each scoped package into `dist-artifacts/scoped/*.tgz` and the
+   CLI into `dist-artifacts/cli/*.tgz` (kept apart only to avoid a tarball-name
+   collision — see below).
 2. `anchore/sbom-action` writes a CycloneDX SBOM (`sbom.cyclonedx.json`).
 3. `actions/attest-build-provenance` signs a SLSA-style provenance attestation
    over each tarball via OIDC (no long-lived signing key).
-4. `npm publish <tarball>` ships the attested bytes: `@cooud/tokens`,
-   `@cooud/theme`, and `@cooud/ui` to GitHub Packages; `cooud-ui` to public npm.
+4. `npm publish <tarball>` ships the attested bytes: all four packages
+   (`@cooud/tokens`, `@cooud/theme`, `@cooud/ui`, and `cooud-ui`) to public npm.
 
-The separate `github/` and `npm/` artifact directories are intentional:
+The separate `scoped/` and `cli/` artifact directories are intentional:
 `@cooud/ui` and `cooud-ui` both pack to `cooud-ui-<version>.tgz`.
 
 Consumers can verify provenance with:
@@ -162,10 +163,9 @@ The `publish` job runs in `environment: name: release`. Configure in
   run from an arbitrary branch.
 - **Environment secrets:** store publish secrets here so they are only exposed
   to the approved `release` deployment, never to PR/CI runs:
-  - `NPM_TOKEN` — for the public-npm CLI (`cooud-ui`) and, under
-    `RELEASE.md` "Prerequisite B", the scoped libs on npmjs. The release
-    workflow validates this secret before any package publish step runs.
-  - (GitHub Packages uses the built-in `GITHUB_TOKEN`; no secret needed.)
+  - `NPM_TOKEN` — for all four packages on public npm (the scoped `@cooud/*`
+    libs and the unscoped CLI `cooud-ui`). The release workflow validates this
+    secret before any package publish step runs.
 - **Wait timer (optional):** a short delay gives a window to cancel a bad release.
 
 ---
@@ -175,9 +175,9 @@ The `publish` job runs in `environment: name: release`. Configure in
 These are **not** code changes — they are account/settings actions that must
 exist for releases to be reproducible **and** approved:
 
-1. **Create a GitHub org `cooud`** and host/transfer this repo there so the
-   `@cooud` scope matches the owner; otherwise GitHub Packages publishes are
-   rejected. (See `RELEASE.md` → "Prerequisite A".)
+1. **Create the `@cooud` org on npmjs** (and be a member with publish rights) so
+   the scoped `@cooud/*` libs can publish with `access: public`; otherwise the
+   scoped publishes are rejected.
 2. **Own the unscoped npm name `cooud-ui`** on npmjs for the CLI, and add an
    `NPM_TOKEN` as a `release`-environment secret.
 3. **Enable** the branch protection (§3), tag protection (§4), and `release`
