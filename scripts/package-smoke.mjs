@@ -15,6 +15,11 @@
  *         and each `exports` target,
  *       - it ships the expected top-level dirs (dist, styles, preset, …),
  *       - it does NOT leak junk (node_modules, src maps where unwanted, tsbuildinfo).
+ *     Then, for every package, it dynamically `import()`s the built main entry
+ *     (the `exports["."]` / `main` JS file) in a short, offline Node subprocess
+ *     and fails if the module THROWS on load — catching a `dist/index.js` whose
+ *     internal import is unresolvable (which the tarball-structure checks above,
+ *     asserting only that the export *targets* exist on disk, would miss).
  *     No install, no network, fast — safe for CI gates.
  *
  *   FULL  (`SMOKE_FULL=1 node scripts/package-smoke.mjs`)
@@ -40,7 +45,7 @@ import {
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, "..");
@@ -244,6 +249,98 @@ function lightCheckPackage(pkg) {
       const rel = b.replace(/^\.\//, "");
       check(filesInTarball.has(rel), `bin target ships: ${rel}`);
     }
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * LIGHT path: dynamically import() each built main entry (offline)
+ * ------------------------------------------------------------------ *
+ * The tarball-structure checks above only assert that the `exports` *targets*
+ * exist on disk — they would NOT notice that a built `dist/index.js` references
+ * an internal/transitive module that can't actually be resolved at runtime.
+ * Here we resolve each package's main JS entry and import() it inside a short
+ * Node subprocess. A non-zero exit (the module threw on load) is a hard failure.
+ *
+ * Why a subprocess (and not an in-process import()):
+ *   - it isolates module side effects from this runner — notably the CLI's
+ *     `dist/index.js`, which calls `program.parseAsync(process.argv)` at the
+ *     top level (we set a benign argv and discard its stdout so it can't print
+ *     help into the smoke output or read OUR args),
+ *   - a faulty module that crashes the interpreter can't take the runner down,
+ *   - it keeps each import's module registry clean (no cross-package bleed).
+ * It stays fully offline: the subprocess only imports a local file URL; no
+ * `--registry`/network access is involved.
+ */
+function resolveMainEntry(pkgJson) {
+  // Prefer the `import` condition of the "." export, then top-level `main`.
+  const dot = pkgJson.exports?.["."];
+  let target;
+  if (typeof dot === "string") {
+    target = dot;
+  } else if (dot && typeof dot === "object") {
+    target = dot.import ?? dot.default ?? dot.node;
+  }
+  target = target ?? pkgJson.main;
+  if (typeof target !== "string") return undefined;
+  return target.replace(/^\.\//, "");
+}
+
+function importCheckPackage(pkg) {
+  const absDir = join(ROOT, pkg.dir);
+  group(`import() built entry · ${pkg.name}`);
+
+  const pkgJson = JSON.parse(readFileSync(join(absDir, "package.json"), "utf8"));
+  const rel = resolveMainEntry(pkgJson);
+  if (!rel) {
+    info("no main JS entry declared — nothing to import");
+    return;
+  }
+
+  const entryAbs = join(absDir, rel);
+  if (!existsSync(entryAbs)) {
+    // The structural pass already reports the missing target; don't double-fail.
+    info(`main entry not on disk yet (${rel}) — skipping import (see structural check)`);
+    return;
+  }
+
+  const entryUrl = pathToFileURL(entryAbs).href;
+  // Run in a child Node process: import the built entry, exit 0 once it resolves
+  // and non-zero (printing the error) if it throws/rejects while loading.
+  //
+  // `process.argv` is reset to a benign `[node, entry, --help]` so a CLI bin that
+  // parses argv at the top of its module (cooud-ui calls `program.parseAsync`)
+  // never reads the smoke runner's own args. `--help` is deliberate: with no args
+  // commander treats "no command" as an error and `process.exit(1)`s (a false
+  // import failure), whereas `--help` makes it print usage and exit 0 — which also
+  // proves the command tree builds. Non-CLI entries ignore argv, so this is inert
+  // for them; the signal there is simply that `import()` resolved without throwing.
+  const loader = [
+    "--input-type=module",
+    "-e",
+    `process.argv = [process.argv[0], ${JSON.stringify(entryAbs)}, "--help"];` +
+      `import(${JSON.stringify(entryUrl)}).then(` +
+      `() => process.exit(0),` +
+      `(err) => { console.error(err?.stack || String(err)); process.exit(1); },` +
+      `);`,
+  ];
+
+  try {
+    // Capture (not inherit) stdout/stderr so a CLI's top-level help print stays
+    // out of the smoke log; we only surface output if the import actually fails.
+    run(process.execPath, loader, { cwd: absDir });
+    check(true, `built main entry import()s cleanly: ${rel}`);
+  } catch (err) {
+    check(false, `built main entry import()s cleanly: ${rel}`);
+    const detail = String(err.stderr || err.stdout || err.message || err).trim();
+    if (detail)
+      log(
+        c.red(
+          detail
+            .split("\n")
+            .map((l) => `      ${l}`)
+            .join("\n"),
+        ),
+      );
   }
 }
 
@@ -469,6 +566,9 @@ function main() {
 
   // --- LIGHT (always) ---
   for (const pkg of PACKAGES) lightCheckPackage(pkg);
+  // Prove every built main entry actually loads (offline) — catches dist files
+  // whose internal imports are unresolvable, which the structural pass misses.
+  for (const pkg of PACKAGES) importCheckPackage(pkg);
 
   // --- FULL (opt-in) ---
   if (FULL) {
