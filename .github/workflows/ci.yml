@@ -39,6 +39,14 @@ jobs:
       - name: Test
         run: bun run test
 
+      # Coverage gate. Runs the same vitest suite with V8 coverage on the
+      # component-library surface (packages/ui/src/components/**). Thresholds in
+      # vitest.config.ts are currently a ratchet floor of 0 — this step is the
+      # hook that fails CI once the floor is raised and a future change drops
+      # coverage below it (or deletes the tests that hold it up).
+      - name: Coverage (component library, ratchet floor)
+        run: bun run test:coverage
+
       - name: Registry check (CLI registry is in sync)
         run: bun run registry:check
 
@@ -58,7 +66,11 @@ jobs:
         env:
           SMOKE_FULL: "1"
 
-      - name: Bundle budget check (first-load JS stays within budget)
+      # Covers BOTH gates in scripts/bundle-check.mjs: @cooud/www first-load JS
+      # per route AND the @cooud/ui published-package entries (gzipped per-entry
+      # budgets on packages/ui/dist). Strict so a missing route or package entry
+      # also fails (e.g. a build that silently stopped emitting an entry).
+      - name: Bundle budget check (www first-load JS + @cooud/ui package entries)
         run: bun run bundle:check
         env:
           BUNDLE_CHECK_STRICT: "1"

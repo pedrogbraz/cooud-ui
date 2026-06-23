@@ -4,6 +4,7 @@
   "globalPassThroughEnv": [
     "BUNDLE_BUDGET_SLACK",
     "BUNDLE_STATS_FILE",
+    "BUNDLE_UI_DIST_DIR",
     "BUNDLE_CHECK_STRICT",
     "PLAYWRIGHT_PORT"
   ],

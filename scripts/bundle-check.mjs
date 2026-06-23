@@ -2,26 +2,37 @@
 
 // @ts-check
 /**
- * bundle-check.mjs — first-load JS budget gate for the @cooud/www site.
+ * bundle-check.mjs — JS size budget gate for the Cooud UI build output.
  *
- * Reads the Next.js build diagnostics emitted by `next build`
- * (apps/www/.next/diagnostics/route-bundle-stats.json) and fails if the
- * first-load JS of any tracked key route exceeds its budget.
+ * Two gates run from one invocation:
  *
- * Run AFTER building www, e.g.:
- *   bun run build            # turbo build, produces apps/www/.next
+ *  1. @cooud/www first-load JS — reads the Next.js build diagnostics emitted by
+ *     `next build` (apps/www/.next/diagnostics/route-bundle-stats.json) and
+ *     fails if the first-load JS of any tracked key route exceeds its budget.
+ *
+ *  2. @cooud/ui published-package entries — gzip-compresses each tracked entry
+ *     in the built `packages/ui/dist` (the barrel `index.js` plus a set of
+ *     heavy subpath entries) and fails if any exceeds its per-entry GZIPPED
+ *     budget. This is what adopters actually download, so a transitive-dep or
+ *     code-bloat regression in the library surfaces here even when the www
+ *     route budgets still pass.
+ *
+ * Run AFTER building, e.g.:
+ *   bun run build            # turbo build, produces apps/www/.next + ui/dist
  *   node scripts/bundle-check.mjs
  *
  * The script does NOT build on its own (build is owned by turbo); it only
- * inspects the already-produced .next output so it can run standalone in CI
- * right after the build step.
+ * inspects the already-produced output so it can run standalone in CI right
+ * after the build step.
  *
  * Tuning knobs (env):
- *   BUNDLE_BUDGET_SLACK   multiplier applied to every budget (default "1").
- *                         e.g. "1.1" gives a temporary +10% across the board.
+ *   BUNDLE_BUDGET_SLACK   multiplier applied to EVERY budget (www + package),
+ *                         default "1". e.g. "1.1" gives a temporary +10%.
  *   BUNDLE_STATS_FILE     override path to route-bundle-stats.json.
- *   BUNDLE_CHECK_STRICT   "1" => fail if a tracked route is missing from stats
- *                         (default: warn only, so partial builds don't break).
+ *   BUNDLE_UI_DIST_DIR    override path to the built packages/ui/dist dir.
+ *   BUNDLE_CHECK_STRICT   "1" => fail if a tracked route OR a tracked package
+ *                         entry is missing from the build output (default:
+ *                         warn only, so partial builds don't break).
  */
 
 import { readFileSync } from "node:fs";
@@ -36,6 +47,11 @@ const DEFAULT_STATS_FILE = resolve(repoRoot, "apps/www/.next/diagnostics/route-b
 const statsFile = process.env.BUNDLE_STATS_FILE
   ? resolve(process.env.BUNDLE_STATS_FILE)
   : DEFAULT_STATS_FILE;
+
+const DEFAULT_UI_DIST_DIR = resolve(repoRoot, "packages/ui/dist");
+const uiDistDir = process.env.BUNDLE_UI_DIST_DIR
+  ? resolve(process.env.BUNDLE_UI_DIST_DIR)
+  : DEFAULT_UI_DIST_DIR;
 
 const slackRaw = process.env.BUNDLE_BUDGET_SLACK;
 const slack = slackRaw ? Number.parseFloat(slackRaw) : 1;
@@ -100,6 +116,49 @@ const SHARED_CHUNK_BUDGETS = /** @type {SharedChunkBudgets} */ ({
   commonGzipJsBytes: 190_000,
   sharedUncompressedJsBytes: 950_000,
   sharedGzipJsBytes: 290_000,
+});
+
+/**
+ * Per-entry GZIPPED size budgets (bytes) for the BUILT @cooud/ui package, keyed
+ * by the file's path relative to packages/ui/dist. We track the barrel
+ * (`index.js`) plus the heaviest subpath entries — the ones most likely to grow
+ * unnoticed.
+ *
+ * Note: these are the package's own transpiled module files (tsc output, not a
+ * bundle), so each number is the module's emitted code, not its full dependency
+ * closure. That's still the right regression signal: a module that doubles in
+ * size, or sprouts a heavy new import surface, trips its budget here.
+ *
+ * Baseline measured 2026-06-23 from `packages/ui/dist` (tsc build). Budgets are
+ * set ~25-30% above the current gzipped size so today passes with headroom but
+ * a real bloat regression fails. Re-measure and bump deliberately if an entry
+ * legitimately grows.
+ *
+ *   entry                     current gz   budget gz
+ *   index.js (barrel)              1,970      2,530
+ *   data-table.js                  7,359      9,400
+ *   chart.js                       3,340      4,300
+ *   calendar.js                      977      1,260
+ *   command.js                     1,294      1,660
+ *   carousel.js                    5,021      6,450
+ *   sidebar.js                     4,992      6,400
+ *   autocomplete.js                4,719      6,050
+ *   morphing-popover.js            3,839      4,920
+ *   segmented-control.js           3,725      4,780
+ *   text-effect.js                 3,739      4,800
+ */
+const PACKAGE_ENTRY_GZIP_BUDGETS = /** @type {Record<string, number>} */ ({
+  "index.js": 2_530,
+  "components/data-table.js": 9_400,
+  "components/chart.js": 4_300,
+  "components/calendar.js": 1_260,
+  "components/command.js": 1_660,
+  "components/carousel.js": 6_450,
+  "components/sidebar.js": 6_400,
+  "components/autocomplete.js": 6_050,
+  "components/morphing-popover.js": 4_920,
+  "components/segmented-control.js": 4_780,
+  "components/text-effect.js": 4_800,
 });
 
 /**
@@ -256,6 +315,67 @@ function compareBudget(label, actual, budget) {
   };
 }
 
+/** A KiB string that keeps one decimal — package entries are small (~1-10 KiB). */
+function fmtKiB1(bytes) {
+  return `${(bytes / 1024).toFixed(1)} KiB`;
+}
+
+/**
+ * Compare against a small gzipped budget. Uses one-decimal KiB so a few-hundred
+ * -byte regression on a ~2 KiB entry is legible in the output.
+ *
+ * @param {string} label
+ * @param {number} actual
+ * @param {number} budget
+ * @returns {{ ok: boolean, message: string }}
+ */
+function compareGzipBudget(label, actual, budget) {
+  if (actual > budget) {
+    return {
+      ok: false,
+      message: `  ✗ ${label}  gz ${fmtKiB1(actual)} > budget ${fmtKiB1(budget)}  (+${fmtKiB1(
+        actual - budget,
+      )})`,
+    };
+  }
+  return {
+    ok: true,
+    message: `  ✓ ${label}  gz ${fmtKiB1(actual)} <= ${fmtKiB1(budget)}  (${fmtKiB1(
+      budget - actual,
+    )} headroom)`,
+  };
+}
+
+/**
+ * Measure the BUILT @cooud/ui package entries against their gzipped budgets.
+ *
+ * @returns {{ ok: string[], failures: string[], missing: string[] }}
+ */
+function measurePackageEntries() {
+  /** @type {string[]} */
+  const ok = [];
+  /** @type {string[]} */
+  const failures = [];
+  /** @type {string[]} */
+  const missing = [];
+
+  for (const [entry, budget] of Object.entries(PACKAGE_ENTRY_GZIP_BUDGETS)) {
+    const filePath = resolve(uiDistDir, entry);
+    let bytes;
+    try {
+      bytes = readFileSync(filePath);
+    } catch {
+      missing.push(entry);
+      continue;
+    }
+    const gzipBytes = gzipSync(bytes).byteLength;
+    const result = compareGzipBudget(`@cooud/ui ${entry}`, gzipBytes, withSlack(budget));
+    (result.ok ? ok : failures).push(result.message);
+  }
+
+  return { ok, failures, missing };
+}
+
 function main() {
   const stats = readStats();
   /** @type {Map<string, RouteStat>} */
@@ -314,17 +434,33 @@ function main() {
     }
   }
 
+  // ── @cooud/ui published-package entry budgets (gzipped) ──────────────
+  const pkg = measurePackageEntries();
+  console.log(`\nbundle-check: @cooud/ui package entry budgets (gzipped)`);
+  console.log(`  dist: ${uiDistDir}`);
+  for (const line of pkg.ok) console.log(line);
+  for (const line of pkg.failures) failures.push(line);
+
+  if (pkg.missing.length > 0) {
+    const msg = `  ? not found in packages/ui/dist: ${pkg.missing.join(", ")}`;
+    if (strict) {
+      failures.push(msg);
+    } else {
+      console.warn(`${msg} (non-strict: ignored — did you build @cooud/ui?)`);
+    }
+  }
+
   if (failures.length > 0) {
-    console.error("\nbundle-check: FAILED — first-load JS over budget:");
+    console.error("\nbundle-check: FAILED — JS over budget:");
     for (const line of failures) console.error(line);
     console.error(
-      "\nEither trim the route bundle or, if intentional, raise the budget in" +
-        " scripts/bundle-check.mjs.",
+      "\nEither trim the route/package output or, if intentional, raise the" +
+        " budget in scripts/bundle-check.mjs.",
     );
     process.exit(1);
   }
 
-  console.log("bundle-check: OK — all tracked routes within budget.");
+  console.log("\nbundle-check: OK — all tracked routes and @cooud/ui entries within budget.");
 }
 
 main();
