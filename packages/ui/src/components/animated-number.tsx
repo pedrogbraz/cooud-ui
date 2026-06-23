@@ -115,6 +115,9 @@ export const AnimatedNumber = forwardRef<HTMLSpanElement, AnimatedNumberProps>(
       reducedMotion === "never" ? false : reducedMotion === "always" ? true : systemReducedMotion;
     const motionValue = useMotionValue(safe);
     const spanRef = useRef<HTMLSpanElement | null>(null);
+    // The animated digits live in their own node so the per-frame textContent
+    // writes never wipe the sibling `announce` region.
+    const valueRef = useRef<HTMLSpanElement | null>(null);
     const announceRef = useRef<HTMLSpanElement | null>(null);
 
     // Format helper. The default Intl formatter is created lazily per call so
@@ -151,8 +154,8 @@ export const AnimatedNumber = forwardRef<HTMLSpanElement, AnimatedNumberProps>(
     // frame and flash the final value. Overwrite it with the in-flight value.
     // No dependency array on purpose: it must run after every commit.
     useLayoutEffect(() => {
-      if (spanRef.current) {
-        spanRef.current.textContent = formatRef.current(motionValue.get());
+      if (valueRef.current) {
+        valueRef.current.textContent = formatRef.current(motionValue.get());
       }
     });
 
@@ -160,8 +163,8 @@ export const AnimatedNumber = forwardRef<HTMLSpanElement, AnimatedNumberProps>(
     // no React re-render per tick.
     useEffect(() => {
       const write = (n: number): void => {
-        if (spanRef.current) {
-          spanRef.current.textContent = formatRef.current(n);
+        if (valueRef.current) {
+          valueRef.current.textContent = formatRef.current(n);
         }
       };
       write(motionValue.get());
@@ -203,9 +206,10 @@ export const AnimatedNumber = forwardRef<HTMLSpanElement, AnimatedNumberProps>(
         style={style}
         {...props}
       >
-        {/* SSR + first paint: render the initial formatted value so there is no
-            flash of an empty/zeroed node before the effect runs. */}
-        {formatRef.current(safe)}
+        {/* SSR + first paint: the initial formatted value lives in its OWN span
+            so the per-frame writer overwrites only its textContent, never the
+            sibling announce node. */}
+        <span ref={valueRef}>{formatRef.current(safe)}</span>
         {/* Opt-in screen-reader channel. The per-frame writer NEVER touches this
             node — only the settled value is written to it, exactly once. */}
         {announce ? (
