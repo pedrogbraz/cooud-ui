@@ -19,6 +19,18 @@ apps/
   www/      @cooud/www      — HeroUI-style showcase + ThemeBuilder (Next.js 16)
 ```
 
+### Which package do I need?
+
+| You want…                                          | Install                                | Docs                                    |
+| -------------------------------------------------- | -------------------------------------- | --------------------------------------- |
+| Ready-made Cooud components                        | `@cooud/ui` (+ `tokens` + `theme`)     | [packages/ui](packages/ui/README.md)    |
+| Runtime theming — switch theme/mode, override tokens | `@cooud/theme` (+ `tokens`)          | [packages/theme](packages/theme/README.md) |
+| Just the design tokens / Tailwind preset           | `@cooud/tokens`                        | [packages/tokens](packages/tokens/README.md) |
+| To own the component source (copy-in, shadcn-style) | `npx cooud-ui add <component>`        | [packages/cli](packages/cli/README.md)  |
+
+Most apps install all three library packages — `@cooud/ui` renders against the
+`@cooud/tokens` bridge and the `@cooud/theme` provider.
+
 ## Quickstart
 
 ```sh
