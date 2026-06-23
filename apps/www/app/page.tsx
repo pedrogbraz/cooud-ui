@@ -1,10 +1,10 @@
-import { Badge } from "@cooud/ui/badge";
-import { Button } from "@cooud/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@cooud/ui/card";
-import { Input } from "@cooud/ui/input";
-import { Label } from "@cooud/ui/label";
-import { Slider } from "@cooud/ui/slider";
-import { Switch } from "@cooud/ui/switch";
+import { Badge } from "@cooud-ui/ui/badge";
+import { Button } from "@cooud-ui/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@cooud-ui/ui/card";
+import { Input } from "@cooud-ui/ui/input";
+import { Label } from "@cooud-ui/ui/label";
+import { Slider } from "@cooud-ui/ui/slider";
+import { Switch } from "@cooud-ui/ui/switch";
 import { ArrowRight, ArrowUpRight, Github } from "lucide-react";
 import Link from "next/link";
 import { CooudMark } from "../components/brand/cooud-mark";

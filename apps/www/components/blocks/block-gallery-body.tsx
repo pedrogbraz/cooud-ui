@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@cooud/ui";
+import { cn } from "@cooud-ui/ui";
 import { ArrowRight, Grid2X2, Search, SlidersHorizontal } from "lucide-react";
 import Link from "next/link";
 import { type ReactNode, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";

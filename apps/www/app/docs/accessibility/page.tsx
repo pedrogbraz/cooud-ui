@@ -17,7 +17,7 @@ const releaseChecklist = [
   "Framework docs mention navigation focus handoff when routing can change focus.",
 ] as const;
 
-const dialogExample = `import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@cooud/ui";
+const dialogExample = `import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@cooud-ui/ui";
 
 <Dialog>
   <DialogContent>

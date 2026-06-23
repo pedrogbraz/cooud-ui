@@ -13,7 +13,7 @@ import {
   CardTitle,
   Input,
   Label,
-} from "@cooud/ui";
+} from "@cooud-ui/ui";
 import {
   ArrowRight,
   BarChart3,
@@ -93,7 +93,7 @@ const heroCode = `import {
   AvatarFallback,
   Badge,
   Button,
-} from "@cooud/ui";
+} from "@cooud-ui/ui";
 import { ArrowRight, Sparkles } from "lucide-react";
 
 export function HeroBlock() {
@@ -201,7 +201,7 @@ function SplitHeroBlock() {
   );
 }
 
-const splitHeroCode = `import { Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from "@cooud/ui";
+const splitHeroCode = `import { Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from "@cooud-ui/ui";
 import { ArrowRight, Sparkles } from "lucide-react";
 
 export function SplitHeroBlock() {
@@ -284,7 +284,7 @@ function CompactHeroBlock() {
   );
 }
 
-const compactHeroCode = `import { Badge, Button } from "@cooud/ui";
+const compactHeroCode = `import { Badge, Button } from "@cooud-ui/ui";
 import { ArrowRight, Check } from "lucide-react";
 
 export function CompactHeroBlock() {
@@ -432,7 +432,7 @@ const pricingCode = `import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@cooud/ui";
+} from "@cooud-ui/ui";
 import { Check, Sparkles } from "lucide-react";
 
 const PRICING_TIERS = [
@@ -605,7 +605,7 @@ function PricingToggleBlock() {
   );
 }
 
-const pricingToggleCode = `import { Badge, Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@cooud/ui";
+const pricingToggleCode = `import { Badge, Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@cooud-ui/ui";
 import { Check } from "lucide-react";
 
 export function PricingToggleBlock() {
@@ -683,7 +683,7 @@ function UsagePricingBlock() {
   );
 }
 
-const usagePricingCode = `import { Badge, Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@cooud/ui";
+const usagePricingCode = `import { Badge, Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@cooud-ui/ui";
 import { Check } from "lucide-react";
 
 export function UsagePricingBlock() {
@@ -782,7 +782,7 @@ const featureGridCode = `import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@cooud/ui";
+} from "@cooud-ui/ui";
 import {
   BarChart3,
   Layers,
@@ -897,7 +897,7 @@ function BentoFeatureBlock() {
   );
 }
 
-const bentoFeatureCode = `import { Badge, Card, CardDescription, CardHeader, CardTitle } from "@cooud/ui";
+const bentoFeatureCode = `import { Badge, Card, CardDescription, CardHeader, CardTitle } from "@cooud-ui/ui";
 import { BarChart3, Layers, Lock, Palette, Zap } from "lucide-react";
 
 export function BentoFeatureBlock() {
@@ -973,7 +973,7 @@ function CtaBlock() {
   );
 }
 
-const ctaCode = `import { Button, Input, Label } from "@cooud/ui";
+const ctaCode = `import { Button, Input, Label } from "@cooud-ui/ui";
 import { Send } from "lucide-react";
 
 export function CtaBlock() {

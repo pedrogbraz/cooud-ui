@@ -3,7 +3,7 @@
  *
  * These TS objects mirror the CSS variables defined in `styles/tokens.css`.
  * They are consumed by the ThemeBuilder (to generate override snippets) and by
- * `@cooud/theme` (to apply runtime overrides). Components NEVER read these
+ * `@cooud-ui/theme` (to apply runtime overrides). Components NEVER read these
  * directly — they use semantic Tailwind utilities that resolve to the CSS vars.
  *
  * Values are cherry-picked from the premium Aurora language (cooud-workforce /

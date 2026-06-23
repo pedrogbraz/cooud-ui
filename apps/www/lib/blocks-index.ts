@@ -1,6 +1,6 @@
 /**
  * Server-safe metadata for "Blocks" — larger, copy-paste UI sections composed
- * from @cooud/ui primitives. The live preview + source live in `lib/blocks/*`.
+ * from @cooud-ui/ui primitives. The live preview + source live in `lib/blocks/*`.
  */
 
 export interface BlockMeta {

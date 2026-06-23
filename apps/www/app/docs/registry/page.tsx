@@ -11,7 +11,7 @@ const registryFlow = [
   {
     title: "Generate",
     description:
-      "The registry is generated from real @cooud/ui component sources, keeping docs, packages, and copy-paste output aligned.",
+      "The registry is generated from real @cooud-ui/ui component sources, keeping docs, packages, and copy-paste output aligned.",
   },
   {
     title: "Resolve",

@@ -1,6 +1,6 @@
 "use client";
 
-import { Badge, cn, Tooltip, TooltipContent, TooltipTrigger } from "@cooud/ui";
+import { Badge, cn, Tooltip, TooltipContent, TooltipTrigger } from "@cooud-ui/ui";
 import { Check } from "lucide-react";
 import { type KeyboardEvent, useId } from "react";
 import type { Badge as BadgeKind, ResolvedOption } from "@/lib/stack/types";

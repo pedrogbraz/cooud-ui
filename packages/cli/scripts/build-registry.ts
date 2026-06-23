@@ -1,6 +1,6 @@
 /**
  * Generates the copy-paste registry consumed by the `cooud-ui add` CLI.
- * Reads the real @cooud/ui component sources, derives npm + cross-component
+ * Reads the real @cooud-ui/ui component sources, derives npm + cross-component
  * dependencies by parsing imports, and writes registry/*.json at the repo root.
  *
  * Run from anywhere:  bun run packages/cli/scripts/build-registry.ts
@@ -172,7 +172,7 @@ function extractBlockSource(
   return source;
 }
 
-/** Read the @cooud/ui sources and derive the full, validated set of registry items. */
+/** Read the @cooud-ui/ui sources and derive the full, validated set of registry items. */
 export async function buildItems(): Promise<RegistryItem[]> {
   const pkg = JSON.parse(await readFile(join(uiRoot, "package.json"), "utf8")) as PkgJson;
   const versions = { ...pkg.dependencies, ...pkg.peerDependencies };
@@ -226,10 +226,10 @@ export async function buildItems(): Promise<RegistryItem[]> {
   }
 
   // Installable blocks: copy-paste product sections that depend on the published
-  // @cooud/ui PACKAGE (not on copied component files), so they carry npm
+  // @cooud-ui/ui PACKAGE (not on copied component files), so they carry npm
   // `dependencies` only and an empty `registryDependencies`. Their source is
   // TS-parsed out of the app's block family files — never imported/executed.
-  const uiPackage = `@cooud/ui@${pkg.version ?? "latest"}`;
+  const uiPackage = `@cooud-ui/ui@${pkg.version ?? "latest"}`;
   const blockSources = new Map<string, string>();
   for (const block of BLOCK_MANIFEST) {
     const filePath = join(blocksDir, block.file);
@@ -240,13 +240,13 @@ export async function buildItems(): Promise<RegistryItem[]> {
     }
     const source = extractBlockSource(filePath, fileText, block.constName, block.slug);
 
-    // @cooud/ui is a bare import in every block but is not in the ui package's
+    // @cooud-ui/ui is a bare import in every block but is not in the ui package's
     // own dependency map, so pin it explicitly to the ui package version.
     const npm = new Set<string>([uiPackage]);
     for (const spec of parseImports(source)) {
       if (spec.startsWith(".")) continue;
       const pkgName = packageNameOf(spec);
-      if (pkgName === "@cooud/ui" || IGNORED_NPM.has(pkgName)) continue;
+      if (pkgName === "@cooud-ui/ui" || IGNORED_NPM.has(pkgName)) continue;
       npm.add(resolveDep(pkgName));
     }
 

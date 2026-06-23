@@ -39,7 +39,7 @@ import {
   Slider,
   Switch,
   Textarea,
-} from "@cooud/ui";
+} from "@cooud-ui/ui";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Check, FileText } from "lucide-react";
 import { useState } from "react";

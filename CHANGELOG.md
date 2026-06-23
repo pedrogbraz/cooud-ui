@@ -18,7 +18,7 @@ as installable packages and as copy-paste registry items you own.
 
 ### Added
 
-- **`@cooud/ui` component library** — a catalog of themeable, accessible React
+- **`@cooud-ui/ui` component library** — a catalog of themeable, accessible React
   components built on Radix primitives, `class-variance-authority` variants, and
   Tailwind utility classes, each exposed as its own subpath export for granular
   imports. Covers the full surface a product app needs, grouped into:
@@ -41,13 +41,13 @@ as installable packages and as copy-paste registry items you own.
   - **Premium & brand** — GlassCard, GradientBorder, GradientText, SpotlightCard,
     AuroraBackground, LogoCarousel, Reveal, TextEffect, and motion presets — the
     Aurora layer of glass, gradients, springs, and scroll reveals.
-- **`@cooud/tokens` design tokens** — the source-of-truth design tokens in
+- **`@cooud-ui/tokens` design tokens** — the source-of-truth design tokens in
   TypeScript, an OKLCH-based color system with light/dark modes, and a CSS
   variable bridge that exposes every token as a runtime `--cooud-*` variable.
   Ships a Tailwind v4 `@theme` stylesheet plus a Tailwind v3 preset, so utilities
   like `bg-primary`, `rounded-lg`, `text-fg-secondary`, and `shadow-glow` resolve
   to the live tokens on either Tailwind version.
-- **`@cooud/theme` runtime theming** — `<CooudUIProvider>` and the `useTheme`
+- **`@cooud-ui/theme` runtime theming** — `<CooudUIProvider>` and the `useTheme`
   hook for runtime theming. Switch themes and light/dark modes, or override
   individual tokens (radius, primary, border, …) and re-theme an entire subtree
   by writing CSS variables — no React re-render.
@@ -107,7 +107,7 @@ as installable packages and as copy-paste registry items you own.
   open-state overlay behavior (focus, escape) — plus automated accessibility
   assertions (axe), an SSR smoke test across components, and a coverage gate.
 - Added an end-to-end check that fails on console errors and hydration warnings.
-- Added per-entry gzipped bundle budgets for the published `@cooud/ui` so a
+- Added per-entry gzipped bundle budgets for the published `@cooud-ui/ui` so a
   dependency or code-size regression is caught at build time.
 
 [Unreleased]: https://github.com/pedrogbraz/cooud-ui/compare/main...HEAD

@@ -12,24 +12,24 @@ sky/cyan), with **Neutral** as a first-class preset and arbitrary brand override
 
 ```
 packages/
-  tokens/   @cooud/tokens   — source-of-truth tokens (TS) + CSS-var bridge + Tailwind v4 @theme
-  theme/    @cooud/theme    — <CooudUIProvider> + useTheme (runtime theming, CSS-var only, no re-render)
-  ui/       @cooud/ui       — components (Radix + CVA + cn)
+  tokens/   @cooud-ui/tokens   — source-of-truth tokens (TS) + CSS-var bridge + Tailwind v4 @theme
+  theme/    @cooud-ui/theme    — <CooudUIProvider> + useTheme (runtime theming, CSS-var only, no re-render)
+  ui/       @cooud-ui/ui       — components (Radix + CVA + cn)
 apps/
-  www/      @cooud/www      — HeroUI-style showcase + ThemeBuilder (Next.js 16)
+  www/      @cooud-ui/www      — HeroUI-style showcase + ThemeBuilder (Next.js 16)
 ```
 
 ### Which package do I need?
 
 | You want…                                          | Install                                | Docs                                    |
 | -------------------------------------------------- | -------------------------------------- | --------------------------------------- |
-| Ready-made Cooud components                        | `@cooud/ui` (+ `tokens` + `theme`)     | [packages/ui](packages/ui/README.md)    |
-| Runtime theming — switch theme/mode, override tokens | `@cooud/theme` (+ `tokens`)          | [packages/theme](packages/theme/README.md) |
-| Just the design tokens / Tailwind preset           | `@cooud/tokens`                        | [packages/tokens](packages/tokens/README.md) |
+| Ready-made Cooud components                        | `@cooud-ui/ui` (+ `tokens` + `theme`)     | [packages/ui](packages/ui/README.md)    |
+| Runtime theming — switch theme/mode, override tokens | `@cooud-ui/theme` (+ `tokens`)          | [packages/theme](packages/theme/README.md) |
+| Just the design tokens / Tailwind preset           | `@cooud-ui/tokens`                        | [packages/tokens](packages/tokens/README.md) |
 | To own the component source (copy-in, shadcn-style) | `npx cooud-ui add <component>`        | [packages/cli](packages/cli/README.md)  |
 
-Most apps install all three library packages — `@cooud/ui` renders against the
-`@cooud/tokens` bridge and the `@cooud/theme` provider.
+Most apps install all three library packages — `@cooud-ui/ui` renders against the
+`@cooud-ui/tokens` bridge and the `@cooud-ui/theme` provider.
 
 ## Quickstart
 
@@ -42,11 +42,11 @@ bun run lint        # biome
 
 ## Install (external consumer)
 
-Install the three library packages from your registry (GitHub Packages — see
-[RELEASE.md](RELEASE.md)):
+Install the three library packages from public npm (published under the `@cooud`
+scope once `v0.1.0` is released — see [RELEASE.md](RELEASE.md)):
 
 ```sh
-npm i @cooud/ui @cooud/tokens @cooud/theme
+npm i @cooud-ui/ui @cooud-ui/tokens @cooud-ui/theme
 # peers (provide what you don't already have):
 npm i react react-dom
 ```
@@ -60,30 +60,30 @@ In your global stylesheet (e.g. `app/globals.css` / `src/index.css`):
 
 ```css
 @import "tailwindcss";
-@import "@cooud/tokens/styles.css";
+@import "@cooud-ui/tokens/styles.css";
 
 /* REQUIRED. Tailwind v4 does not scan node_modules by default, so the utility
    classes baked into the shipped components (dist/**/*.js) would never be
    emitted and your components would render unstyled. This @source opts the
    published package back into content detection. Adjust the relative path so it
    resolves to your node_modules from this CSS file. */
-@source "../node_modules/@cooud/ui/dist/**/*.js";
+@source "../node_modules/@cooud-ui/ui/dist/**/*.js";
 ```
 
 That's it — no PostCSS config beyond the standard `@tailwindcss/postcss` (or the
-Vite plugin). The `@import "@cooud/tokens/styles.css"` line brings in the Aurora
+Vite plugin). The `@import "@cooud-ui/tokens/styles.css"` line brings in the Aurora
 theme tokens and the `@theme inline` bridge that maps `bg-primary`, `rounded-lg`,
 `text-fg-secondary`, `shadow-glow`, etc. onto the runtime `--cooud-*` variables.
 
 ### Tailwind v3 (config JS)
 
-Consume the `@cooud/tokens/preset` (it maps `bg-primary`, `rounded-lg`, `shadow-glow`,
+Consume the `@cooud-ui/tokens/preset` (it maps `bg-primary`, `rounded-lg`, `shadow-glow`,
 … onto the `--cooud-*` variables) and add the package `dist` to `content[]` so the
 component classes survive purging:
 
 ```js
 // tailwind.config.js
-import cooudPreset from "@cooud/tokens/preset";
+import cooudPreset from "@cooud-ui/tokens/preset";
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -91,7 +91,7 @@ export default {
   content: [
     "./src/**/*.{ts,tsx}",
     // REQUIRED: keep the utilities used inside the shipped components.
-    "./node_modules/@cooud/ui/dist/**/*.js",
+    "./node_modules/@cooud-ui/ui/dist/**/*.js",
   ],
 };
 ```
@@ -103,10 +103,10 @@ export default {
 @tailwind utilities;
 ```
 
-> **v3 does not import `@cooud/tokens/styles.css`.** That file is Tailwind v4-only
+> **v3 does not import `@cooud-ui/tokens/styles.css`.** That file is Tailwind v4-only
 > (it uses `@theme inline` / `@utility`, which the v3 PostCSS engine can't parse).
 > On v3 the `--cooud-*` runtime variables are injected for you by
-> `<CooudUIProvider>` from `@cooud/theme` (see below) — the preset is what connects
+> `<CooudUIProvider>` from `@cooud-ui/theme` (see below) — the preset is what connects
 > the utility classes to those variables.
 
 > Why the extra `@source` (v4) / `content` (v3) entry on both paths? The components
@@ -119,11 +119,11 @@ export default {
 
 ```tsx
 // layout.tsx (or your root)
-import { CooudUIProvider } from "@cooud/theme";
+import { CooudUIProvider } from "@cooud-ui/theme";
 <CooudUIProvider asRoot defaultThemeName="aurora" defaultModeName="dark">{children}</CooudUIProvider>
 
 // anywhere
-import { Button, Card, Badge } from "@cooud/ui";
+import { Button, Card, Badge } from "@cooud-ui/ui";
 <Button variant="gradient">Ship it</Button>
 ```
 
@@ -154,10 +154,11 @@ distribution modes (npm package + CLI registry) share one source of truth.
 
 ## Publishing
 
-The three library packages (`@cooud/tokens`, `@cooud/theme`, `@cooud/ui`) are
-publish-ready for GitHub Packages — see [RELEASE.md](RELEASE.md). Tag `vX.Y.Z` to
-trigger `.github/workflows/release.yml`. (Note: a real publish needs the `@cooud`
-scope hosted under a matching GitHub org or an npmjs `@cooud` org + token.)
+The three library packages (`@cooud-ui/tokens`, `@cooud-ui/theme`, `@cooud-ui/ui`) are
+publish-ready for public npm under the `@cooud` scope (with `access: public`) — see
+[RELEASE.md](RELEASE.md). Nothing is published yet; tag `vX.Y.Z` to cut the release
+via `bun run release --publish`. (Note: a real publish needs the `@cooud` org on
+npmjs and the publisher logged in to it with `npm login`.)
 
 ## Components
 
@@ -187,5 +188,5 @@ See `CONTRACT.md` — semantic tokens only, CVA variants, `forwardRef`, `data-sl
 
 ## Roadmap
 ~~Wave 1 (forms)~~ ✅ → ~~Wave 2 (overlays/nav)~~ ✅ → ~~Wave 3 (data)~~ ✅ → ~~Wave 4 (premium/brand)~~ ✅ →
-`cooud-ui` CLI registry (`npx cooud-ui add`) → publish to GitHub Packages → migrate
-`dashboard` first. Full plan in the SDD.
+`cooud-ui` CLI registry (`npx cooud-ui add`) → publish to public npm under `@cooud`
+→ migrate `dashboard` first. Full plan in the SDD.

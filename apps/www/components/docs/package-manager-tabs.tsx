@@ -1,6 +1,6 @@
 "use client";
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@cooud/ui";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@cooud-ui/ui";
 import { PACKAGE_MANAGERS, type PackageManagerCommand } from "../../lib/docs";
 import { CodeBlock } from "./code-block";
 

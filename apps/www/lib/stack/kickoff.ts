@@ -286,12 +286,12 @@ export function generateKickoff(
     lines.push("This project uses **Cooud UI**. Treat these as hard rules:");
     lines.push("");
     lines.push(
-      "- Use **only** components from `@cooud/ui` — never hand-roll a primitive that already exists.",
+      "- Use **only** components from `@cooud-ui/ui` — never hand-roll a primitive that already exists.",
     );
     lines.push(
       "- Use **only** semantic design-system tokens (e.g. `bg-surface-raised`, `text-fg`, `border-border`). Never hardcode hex/rgb colors or raw Tailwind palette classes.",
     );
-    lines.push("- Compose class names with `cn` from `@cooud/ui`.");
+    lines.push("- Compose class names with `cn` from `@cooud-ui/ui`.");
     lines.push('- Add `"use client"` to any component that holds state or effects.');
     lines.push(
       "- Every interactive element must have a visible `focus-visible` ring and pass the axe a11y gate.",
@@ -334,7 +334,7 @@ export function generateKickoff(
   lines.push("- [ ] Lint/format pass.");
   lines.push("- [ ] Tests pass (and new behavior is covered).");
   if (isCooudUi)
-    lines.push("- [ ] UI uses only `@cooud/ui` + semantic tokens; axe a11y gate is green.");
+    lines.push("- [ ] UI uses only `@cooud-ui/ui` + semantic tokens; axe a11y gate is green.");
   lines.push("- [ ] App runs locally end-to-end against the configured stack.");
   if (deploy) lines.push(`- [ ] Deploy config for **${deploy}** is present and documented.`);
   lines.push("");

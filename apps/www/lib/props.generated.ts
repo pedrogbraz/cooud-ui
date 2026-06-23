@@ -1,7 +1,7 @@
 // GENERATED FILE — do not edit; run `bun run props` to regenerate.
 //
 // Props/API tables extracted from the exported `*Props` interfaces of every
-// @cooud/ui component via the TypeScript compiler API (no module execution),
+// @cooud-ui/ui component via the TypeScript compiler API (no module execution),
 // so the documented API can never drift from the source.
 
 export interface PropDef {

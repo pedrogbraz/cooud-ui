@@ -1,8 +1,8 @@
 "use client";
 
-import { useTheme } from "@cooud/theme";
-import { modes, serializeOverrides, type ThemeOverrides, themeNames } from "@cooud/tokens";
-import { Button, cn, Label, Separator } from "@cooud/ui";
+import { useTheme } from "@cooud-ui/theme";
+import { modes, serializeOverrides, type ThemeOverrides, themeNames } from "@cooud-ui/tokens";
+import { Button, cn, Label, Separator } from "@cooud-ui/ui";
 import { Check, Copy, Moon, RotateCcw, Sun } from "lucide-react";
 import { type ReactNode, useState } from "react";
 

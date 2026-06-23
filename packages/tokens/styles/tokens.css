@@ -1,5 +1,5 @@
 /**
- * @cooud/tokens — CSS variable bridge for Tailwind v4.
+ * @cooud-ui/tokens — CSS variable bridge for Tailwind v4.
  *
  * Layering:
  *  1. Runtime layer  (--cooud-*)      → set per theme/mode block + overridable
@@ -11,7 +11,7 @@
  *
  * Import order in a consumer app:
  *    @import "tailwindcss";
- *    @import "@cooud/tokens/styles.css";
+ *    @import "@cooud-ui/tokens/styles.css";
  */
 
 /* ------------------------------------------------------------------ *
@@ -22,7 +22,7 @@
  * Register the animatable brand color vars as typed custom properties so a
  * theme/preset switch CROSS-FADES instead of hard-snapping (e.g. the Blocks
  * preset switcher interpolating primary/accent/ring). These ship WITH the
- * package so every @cooud/tokens adopter gets smooth token transitions — not
+ * package so every @cooud-ui/tokens adopter gets smooth token transitions — not
  * just this docs app. `inherits: true` lets a scoped <CooudUIProvider> override
  * cascade into descendants.
  */

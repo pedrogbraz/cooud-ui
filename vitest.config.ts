@@ -39,6 +39,15 @@ export default defineConfig({
       },
       {
         test: {
+          name: "theme-dom",
+          root: "./packages/theme",
+          environment: "jsdom",
+          include: ["src/**/*.test.tsx"],
+          setupFiles: ["./vitest.setup.ts"],
+        },
+      },
+      {
+        test: {
           name: "www",
           root: "./apps/www",
           environment: "node",

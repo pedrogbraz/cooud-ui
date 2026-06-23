@@ -1,30 +1,28 @@
-# @cooud/tokens
+# @cooud-ui/tokens
 
 The Cooud design tokens — the single source of truth for color, typography,
 elevation, and shape across the Cooud UI system.
 
 Tokens are authored once in TypeScript and compiled to two consumable artifacts:
 a **CSS variable bridge** for Tailwind v4 and a **preset** for Tailwind v3. Every
-`@cooud/ui` component renders against these tokens through semantic utilities
+`@cooud-ui/ui` component renders against these tokens through semantic utilities
 (`bg-primary`, `text-fg-secondary`, `rounded-lg`, `shadow-glow`), so a single
 token change re-themes the whole library — at build time or at runtime.
 
-You need this package if you use `@cooud/ui` or `@cooud/theme`, or if you want the
+You need this package if you use `@cooud-ui/ui` or `@cooud-ui/theme`, or if you want the
 Cooud color/typography/elevation scale in your own components.
 
 ## Install
 
-> Cooud UI is distributed today through a private registry (GitHub Packages) and
-> the `cooud-ui` CLI; it is not yet on the public npm registry. Configure your
-> `@cooud` scope to point at the registry, then:
+> Published on npm under the `@cooud` scope (available once `v0.1.0` is released).
 
 ```sh
 # npm
-npm install @cooud/tokens
+npm i @cooud-ui/tokens
 # pnpm
-pnpm add @cooud/tokens
+pnpm add @cooud-ui/tokens
 # bun
-bun add @cooud/tokens
+bun add @cooud-ui/tokens
 ```
 
 No peer dependencies — the package is framework-agnostic.
@@ -42,7 +40,7 @@ default **Aurora** theme tokens and the `@theme inline` bridge.
 
 ```css
 @import "tailwindcss";
-@import "@cooud/tokens/styles.css";
+@import "@cooud-ui/tokens/styles.css";
 ```
 
 ### Tailwind v3 (config preset)
@@ -52,7 +50,7 @@ Import the preset in your config. It maps the same semantic utilities onto the
 
 ```js
 // tailwind.config.js
-import cooudPreset from "@cooud/tokens/preset";
+import cooudPreset from "@cooud-ui/tokens/preset";
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -61,19 +59,19 @@ export default {
 };
 ```
 
-> On v3, do **not** import `@cooud/tokens/styles.css` — it uses Tailwind v4-only
+> On v3, do **not** import `@cooud-ui/tokens/styles.css` — it uses Tailwind v4-only
 > syntax. The `--cooud-*` variables are instead injected at runtime by
-> `<CooudUIProvider>` from `@cooud/theme`; the preset connects the utilities to
+> `<CooudUIProvider>` from `@cooud-ui/theme`; the preset connects the utilities to
 > those variables.
 
 ### Programmatic access (TypeScript)
 
-The TS export is the canonical token data, used by tooling and by `@cooud/theme`
+The TS export is the canonical token data, used by tooling and by `@cooud-ui/theme`
 to apply runtime overrides. Components never read these objects directly.
 
 ```ts
-import { themes, tokensToCssVars, serializeOverrides } from "@cooud/tokens";
-import type { ThemeName, Mode, ThemeTokens, ThemeOverrides } from "@cooud/tokens";
+import { themes, tokensToCssVars, serializeOverrides } from "@cooud-ui/tokens";
+import type { ThemeName, Mode, ThemeTokens, ThemeOverrides } from "@cooud-ui/tokens";
 
 themes.aurora.dark.primary; // "oklch(0.685 0.169 237.3)"
 
@@ -87,7 +85,7 @@ serializeOverrides({ radius: "20px" }, ":root");
 Exports: `themes`, `themeNames`, `modes`, `defaultTheme`, `defaultMode`,
 `cssVarMap`, `tokensToCssVars`, `serializeOverrides`, and the types `ThemeName`,
 `Mode`, `ThemeTokens`, `ThemeOverrides`. The raw token map is also published as
-`@cooud/tokens/tokens.json`.
+`@cooud-ui/tokens/tokens.json`.
 
 ## The token system
 
@@ -107,9 +105,9 @@ sync with `tokens:check`.
 
 ## Related packages
 
-- [`@cooud/theme`](../theme) — `<CooudUIProvider>` + `useTheme`; applies these
+- [`@cooud-ui/theme`](../theme) — `<CooudUIProvider>` + `useTheme`; applies these
   tokens at runtime and powers per-scope overrides.
-- [`@cooud/ui`](../ui) — the component library that renders against these tokens.
+- [`@cooud-ui/ui`](../ui) — the component library that renders against these tokens.
 - See the [docs site](../../apps/www) for the live theme builder and previews.
 
 ## License

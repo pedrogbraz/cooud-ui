@@ -43,7 +43,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@cooud/ui";
+} from "@cooud-ui/ui";
 import type { ColumnDef } from "@tanstack/react-table";
 import {
   ArrowUpDown,
@@ -655,7 +655,7 @@ const data: Payment[] = [
       title: "Sortable",
       description:
         "Use the exported `DataTableColumnHeader` in a column header to get an accessible, three-state sort toggle (asc → desc → none) with the right icon and aria-label. Click any header to sort.",
-      code: `import { DataTable, DataTableColumnHeader } from "@cooud/ui";
+      code: `import { DataTable, DataTableColumnHeader } from "@cooud-ui/ui";
 
 const columns: ColumnDef<Member>[] = [
   {
@@ -1112,7 +1112,7 @@ const statusFilter: DataTableFacetedFilter = {
       code: `<CodeBlock
   language="tsx"
   showLineNumbers
-  code={\`import { Button } from "@cooud/ui";
+  code={\`import { Button } from "@cooud-ui/ui";
 
 export function Save() {
   return <Button>Save</Button>;
@@ -1123,7 +1123,7 @@ export function Save() {
           language="tsx"
           showLineNumbers
           className="max-w-xl"
-          code={`import { Button } from "@cooud/ui";
+          code={`import { Button } from "@cooud-ui/ui";
 
 export function Save() {
   return <Button>Save</Button>;

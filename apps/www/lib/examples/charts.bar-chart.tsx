@@ -1,6 +1,6 @@
 "use client";
 
-import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@cooud/ui";
+import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@cooud-ui/ui";
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
 
 /**

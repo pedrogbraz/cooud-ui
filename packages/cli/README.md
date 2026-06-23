@@ -21,7 +21,7 @@ npx cooud-ui diff                 # show which installed components drifted
 
 ## How it works
 
-- The registry (`registry/*.json`) is generated from the real `@cooud/ui` sources by
+- The registry (`registry/*.json`) is generated from the real `@cooud-ui/ui` sources by
   `packages/cli/scripts/build-registry.ts` — each item carries its source, its npm
   `dependencies`, and its `registryDependencies` (other components it imports),
   derived by parsing imports.

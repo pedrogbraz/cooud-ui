@@ -3,8 +3,8 @@
 ## Supported versions
 
 Cooud UI is pre-1.0 and follows a rolling release model. Only the latest
-published `0.x` release of each package (`@cooud/ui`, `@cooud/tokens`,
-`@cooud/theme`, and the `cooud-ui` CLI) receives security fixes. Please
+published `0.x` release of each package (`@cooud-ui/ui`, `@cooud-ui/tokens`,
+`@cooud-ui/theme`, and the `cooud-ui` CLI) receives security fixes. Please
 upgrade to the latest version before reporting an issue.
 
 | Version | Supported |

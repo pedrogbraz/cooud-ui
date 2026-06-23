@@ -18,7 +18,7 @@ import {
   Spinner,
   Toaster,
   toast,
-} from "@cooud/ui";
+} from "@cooud-ui/ui";
 import { CircleAlert, CircleCheck, Info, Terminal, Trash2, TriangleAlert } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ExampleList } from "../../components/docs/example-list";

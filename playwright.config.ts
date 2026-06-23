@@ -1,7 +1,7 @@
 import { defineConfig, devices } from "@playwright/test";
 
 /**
- * Playwright configuration for the Cooud UI showcase app (`@cooud/www`).
+ * Playwright configuration for the Cooud UI showcase app (`@cooud-ui/www`).
  *
  * Two projects, both Chromium-headless, separated by spec directory so each
  * `test:*` script can target one suite:
@@ -57,7 +57,7 @@ export default defineConfig({
   webServer: {
     // Serve the already-built app. Build is the CI step BEFORE these tests
     // (and you must `bun run build` locally before running the suite).
-    command: "bun run --filter @cooud/www start",
+    command: "bun run --filter @cooud-ui/www start",
     url: BASE_URL,
     reuseExistingServer: !isCI,
     timeout: 120_000,

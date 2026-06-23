@@ -1,4 +1,4 @@
-import { Badge, cn } from "@cooud/ui";
+import { Badge, cn } from "@cooud-ui/ui";
 import { CalendarDays, CircleDot, GitBranch, Sparkles } from "lucide-react";
 import { DocsHeader, DocsSection } from "../../components/docs/documentation";
 import { CHANGELOG_ENTRIES } from "../../lib/docs";

@@ -64,7 +64,7 @@ import { Textarea } from "./components/textarea.js";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./components/tooltip.js";
 
 /**
- * Server-rendering smoke gate for the @cooud/ui public surface.
+ * Server-rendering smoke gate for the @cooud-ui/ui public surface.
  *
  * This runs in the Node ("ui") vitest project — a real server-side environment
  * (no DOM) — so `renderToString` here mirrors what Next.js / RSC consumers do

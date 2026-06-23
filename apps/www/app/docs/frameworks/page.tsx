@@ -9,7 +9,7 @@ import { FrameworkGrid } from "../../../components/docs/framework-grid";
 
 const adapterContract = `// 1. Import tokens in the framework global CSS entry.
 @import "tailwindcss";
-@import "@cooud/tokens/styles.css";
+@import "@cooud-ui/tokens/styles.css";
 
 // 2. Wrap the root UI tree in CooudUIProvider.
 <CooudUIProvider asRoot defaultThemeName="aurora" defaultModeName="dark">

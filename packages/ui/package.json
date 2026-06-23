@@ -1,5 +1,5 @@
 {
-  "name": "@cooud/ui",
+  "name": "@cooud-ui/ui",
   "version": "0.1.0",
   "description": "Cooud UI \u2014 themeable, accessible React components (Radix + CVA + Tailwind v4).",
   "type": "module",
@@ -329,16 +329,13 @@
     "components"
   ],
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com",
-    "access": "restricted"
+    "access": "public"
   },
   "files": [
     "dist",
-    "src",
-    "!src/**/*.test.ts",
-    "!src/**/*.test.tsx",
-    "!src/**/*.spec.ts",
-    "!src/**/*.spec.tsx"
+    "LICENSE",
+    "README.md",
+    "!dist/**/*.map"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",

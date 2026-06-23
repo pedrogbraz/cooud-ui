@@ -1,7 +1,7 @@
 "use client";
 
-import { tokensToCssVars } from "@cooud/tokens";
-import { cn } from "@cooud/ui";
+import { tokensToCssVars } from "@cooud-ui/tokens";
+import { cn } from "@cooud-ui/ui";
 import { Maximize2, Moon, RotateCcw, Sun } from "lucide-react";
 import { type ReactNode, useRef, useState } from "react";
 

@@ -1,4 +1,4 @@
-import { Badge } from "@cooud/ui";
+import { Badge } from "@cooud-ui/ui";
 import {
   DocCallout,
   DocsCard,
@@ -13,17 +13,17 @@ const foundations = [
   {
     title: "Tokens",
     description:
-      "@cooud/tokens owns semantic colors, radius, fonts, chart colors, CSS variables, and Tailwind v4 mappings.",
+      "@cooud-ui/tokens owns semantic colors, radius, fonts, chart colors, CSS variables, and Tailwind v4 mappings.",
   },
   {
     title: "Theme provider",
     description:
-      "@cooud/theme applies presets and runtime overrides with CSS variables, so theme changes do not require component rewrites.",
+      "@cooud-ui/theme applies presets and runtime overrides with CSS variables, so theme changes do not require component rewrites.",
   },
   {
     title: "Component catalog",
     description:
-      "@cooud/ui ships accessible primitives and composed patterns built with variants, focus states, and data-slot markers.",
+      "@cooud-ui/ui ships accessible primitives and composed patterns built with variants, focus states, and data-slot markers.",
   },
   {
     title: "Registry",

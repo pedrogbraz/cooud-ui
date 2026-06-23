@@ -1,6 +1,6 @@
 "use client";
 
-import { cn, Label, Switch } from "@cooud/ui";
+import { cn, Label, Switch } from "@cooud-ui/ui";
 import { type KeyboardEvent, useId, useRef } from "react";
 import type { ResolvedCategory } from "@/lib/stack/types";
 import { OptionCard } from "./option-card";
