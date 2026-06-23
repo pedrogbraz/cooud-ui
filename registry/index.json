@@ -769,5 +769,122 @@
     "registryDependencies": [
       "cn"
     ]
+  },
+  {
+    "name": "hero",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud/ui@0.1.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "pricing",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud/ui@0.1.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "feature-grid",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud/ui@0.1.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "cta",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud/ui@0.1.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "stats",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud/ui@0.1.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "login",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud/ui@0.1.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "settings",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud/ui@0.1.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "team",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud/ui@0.1.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "dashboard",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud/ui@0.1.0",
+      "lucide-react@^0.577.0",
+      "recharts@^2.15.4"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "billing",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud/ui@0.1.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "page-header",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud/ui@0.1.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "filter-bar",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud/ui@0.1.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "empty-state",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud/ui@0.1.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
   }
 ]
