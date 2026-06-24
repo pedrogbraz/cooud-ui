@@ -256,6 +256,27 @@ export const BLOCK_CATEGORIES: BlockCategory[] = [
     ],
   },
   {
+    slug: "social",
+    name: "Social",
+    items: [
+      {
+        slug: "post-card",
+        name: "Post Card",
+        description: "A social post with author, content, and engagement actions.",
+      },
+      {
+        slug: "comment-thread",
+        name: "Comment Thread",
+        description: "A threaded comment list with a composer and a nested reply.",
+      },
+      {
+        slug: "profile-card",
+        name: "Profile Card",
+        description: "A user profile card with a cover, stats, and a follow action.",
+      },
+    ],
+  },
+  {
     slug: "dashboard",
     name: "Dashboard",
     items: [

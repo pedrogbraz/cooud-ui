@@ -21,7 +21,8 @@ export type BlockFamily =
   | "states"
   | "email"
   | "notifications"
-  | "survey";
+  | "survey"
+  | "social";
 
 /** slug → the family module that owns its content. */
 export const BLOCK_FAMILY_BY_SLUG: Record<string, BlockFamily> = {
@@ -86,6 +87,10 @@ export const BLOCK_FAMILY_BY_SLUG: Record<string, BlockFamily> = {
   "nps-survey": "survey",
   "feedback-form": "survey",
   "contact-form": "survey",
+  // social
+  "post-card": "social",
+  "comment-thread": "social",
+  "profile-card": "social",
 };
 
 export function getBlockFamily(slug: string): BlockFamily | undefined {
