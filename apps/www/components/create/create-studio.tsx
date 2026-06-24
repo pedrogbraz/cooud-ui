@@ -65,17 +65,20 @@ import {
   Maximize2,
   Minimize2,
   Moon,
-  Palette,
-  Radius,
   RotateCcw,
   Save,
   Share2,
   SlidersHorizontal,
-  Sparkles,
+  type Sparkles,
   Sun,
-  Type,
 } from "lucide-react";
 import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
+import {
+  ICON_LIBRARIES,
+  ICON_SHOWCASE,
+  type IconLibraryId,
+  LibraryIcon,
+} from "../../lib/create/icon-libraries";
 import {
   BASE_COLORS,
   BRAND_COLORS,
@@ -88,6 +91,7 @@ import {
   decodeConfigParam,
   encodeConfigParam,
   FONT_CHOICES,
+  findBaseColor,
   findBrandColor,
   findChartPalette,
   findFontChoice,
@@ -107,12 +111,13 @@ import type {
   Mode,
   StylePreset,
 } from "../../lib/create/types";
+import { LiftTile } from "./lift-card";
 import { PreviewDashboard } from "./preview-dashboard";
 
 const STORAGE_KEY = "cooud-ui-create-presets-v1";
 type CodeTab = "install" | "provider" | "css" | "json";
 type PackageManager = "bun" | "pnpm" | "npm" | "yarn";
-type LockKey = "mode" | "base" | "brand" | "chart" | "heading" | "body" | "radius";
+type LockKey = "mode" | "base" | "brand" | "chart" | "heading" | "body" | "icon" | "radius";
 
 const codeTabs: { id: CodeTab; label: string }[] = [
   { id: "install", label: "Install" },
@@ -135,6 +140,7 @@ const defaultLocks: Record<LockKey, boolean> = {
   chart: false,
   heading: false,
   body: false,
+  icon: false,
   radius: false,
 };
 
@@ -268,6 +274,7 @@ export function CreateStudio() {
       chart: locks.chart ? current.chart : shuffled.chart,
       headingFont: locks.heading ? current.headingFont : shuffled.headingFont,
       bodyFont: locks.body ? current.bodyFont : shuffled.bodyFont,
+      iconLibrary: locks.icon ? current.iconLibrary : shuffled.iconLibrary,
       radius: locks.radius ? current.radius : shuffled.radius,
     }));
   }
@@ -335,7 +342,7 @@ export function CreateStudio() {
         {liveMessage}
       </span>
       <div className="grid min-h-[calc(100vh-4rem)] xl:grid-cols-[20rem_minmax(0,1fr)]">
-        <aside className="hidden border-border/70 bg-surface-inset/80 p-4 backdrop-blur-xl xl:sticky xl:top-16 xl:block xl:h-[calc(100vh-4rem)] xl:overflow-y-auto xl:border-r">
+        <aside className="hidden border-border/70 bg-surface-inset/80 p-5 backdrop-blur-xl xl:sticky xl:top-16 xl:block xl:h-[calc(100vh-4rem)] xl:overflow-y-auto xl:border-r">
           <CreateControls
             idPrefix="create-desktop"
             config={config}
@@ -354,29 +361,36 @@ export function CreateStudio() {
         </aside>
 
         <section className="min-w-0">
-          <div className="sticky top-16 z-30 border-border/70 border-b bg-surface-base/82 px-4 py-3 backdrop-blur-xl sm:px-6">
+          <div className="sticky top-16 z-30 border-border/70 border-b bg-surface-base/82 px-4 py-3.5 backdrop-blur-xl sm:px-6">
             <div className="mx-auto flex max-w-[100rem] flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-              <div className="min-w-0">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span
-                    className="size-2.5 shrink-0 rounded-full ring-2 ring-primary/25"
-                    style={{ backgroundColor: selectedBrand.swatch }}
-                    aria-hidden="true"
-                  />
-                  <h1 className="font-display text-xl font-semibold tracking-tight text-fg sm:text-2xl">
-                    {config.style}
-                  </h1>
-                  <Badge variant="secondary">{selectedBrand.name}</Badge>
-                  <Badge variant="outline">{selectedChart.name} charts</Badge>
+              <div className="flex min-w-0 items-center gap-3">
+                <span
+                  className="grid size-9 shrink-0 place-items-center rounded-xl ring-1 ring-inset ring-border-soft transition-[background-color,box-shadow] duration-300 ease-[var(--ease-out-quart)]"
+                  style={{
+                    backgroundColor: selectedBrand.swatch,
+                    boxShadow: `0 0 0 4px color-mix(in oklch, ${selectedBrand.swatch} 16%, transparent)`,
+                  }}
+                  aria-hidden="true"
+                />
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h1 className="truncate font-display text-xl font-semibold tracking-tight text-fg sm:text-2xl">
+                      {config.style}
+                    </h1>
+                    <Badge variant="secondary">{selectedBrand.name}</Badge>
+                    <Badge variant="outline" className="hidden sm:inline-flex">
+                      {selectedChart.name} charts
+                    </Badge>
+                  </div>
+                  <p className="mt-0.5 truncate text-sm text-fg-tertiary">
+                    {findFontChoice(config.headingFont).name} headings ·{" "}
+                    {findFontChoice(config.bodyFont).name} body · {config.radius}px radius
+                  </p>
                 </div>
-                <p className="mt-1 text-sm text-fg-secondary">
-                  {findFontChoice(config.headingFont).name} headings ·{" "}
-                  {findFontChoice(config.bodyFont).name} body · {config.radius}px radius
-                </p>
               </div>
               <TooltipProvider delayDuration={250}>
                 <div className="flex flex-wrap items-center gap-2">
-                  <div className="flex items-center gap-1 rounded-xl border border-border bg-surface-raised/70 p-1">
+                  <div className="flex items-center gap-0.5 rounded-xl border border-border-soft bg-surface-raised p-1 shadow-sm">
                     <IconAction
                       icon={RotateCcw}
                       label="Reset to default"
@@ -394,8 +408,10 @@ export function CreateStudio() {
                     <IconAction
                       icon={focusMode ? Minimize2 : Maximize2}
                       label={focusMode ? "Exit focus preview" : "Focus the preview"}
+                      active={focusMode}
                       onClick={() => setFocusMode((open) => !open)}
                     />
+                    <span className="mx-0.5 h-5 w-px bg-border-soft" aria-hidden="true" />
                     <IconAction
                       icon={shareCopied ? Check : Share2}
                       label={shareCopied ? "Link copied" : "Copy a shareable link"}
@@ -423,15 +439,16 @@ export function CreateStudio() {
             )}
           >
             <div className="min-w-0">
-              <div className="overflow-hidden rounded-2xl border border-border bg-surface-inset p-4 shadow-lg sm:p-6">
+              <div className="overflow-hidden rounded-3xl border border-border-soft bg-surface-inset p-4 shadow-lg sm:p-6">
                 <PreviewDashboard />
                 <ComponentSampler config={config} />
               </div>
             </div>
 
             {focusMode ? null : (
-              <div className="grid gap-4 2xl:sticky 2xl:top-36 2xl:self-start">
+              <div className="grid gap-5 2xl:sticky 2xl:top-36 2xl:self-start">
                 <TokenSummary config={config} />
+                <IconLibraryShowcase iconLibrary={config.iconLibrary} />
                 <PresetExchange
                   presetCode={presetCode}
                   error={importError}
@@ -543,29 +560,50 @@ function CreateControls({
   onShuffle: () => void;
   onGetCode: () => void;
 }) {
+  const baseName = findBaseColor(config.baseColor).name;
   return (
     <>
-      <div className="flex items-center justify-between gap-3 rounded-xl border border-border bg-surface-raised px-3 py-2.5">
-        <div className="flex min-w-0 items-center gap-3">
-          <span
-            className="size-9 shrink-0 rounded-lg border border-border-soft shadow-xs"
-            style={{ backgroundColor: selectedBrand.swatch }}
-            aria-hidden="true"
-          />
-          <div className="min-w-0">
-            <p className="truncate font-display text-sm font-semibold text-fg">{config.style}</p>
-            <p className="truncate text-xs text-fg-tertiary">
-              {selectedBrand.name} · design system
-            </p>
+      <div
+        className={cn(
+          "relative isolate overflow-hidden rounded-2xl border border-border-soft bg-surface-raised px-3.5 py-3 shadow-sm",
+          "transition-[border-color,box-shadow] duration-300 ease-[var(--ease-out-quart)]",
+        )}
+      >
+        <span
+          className="pointer-events-none absolute -right-10 -top-12 -z-10 size-32 rounded-full opacity-25 blur-2xl transition-opacity duration-500 ease-[var(--ease-out-quart)]"
+          style={{ backgroundColor: selectedBrand.swatch }}
+          aria-hidden="true"
+        />
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex min-w-0 items-center gap-3">
+            <span
+              className="grid size-10 shrink-0 place-items-center rounded-xl ring-1 ring-inset ring-border-soft transition-[box-shadow,background-color] duration-300 ease-[var(--ease-out-quart)]"
+              style={{
+                backgroundColor: selectedBrand.swatch,
+                boxShadow: `0 0 0 4px color-mix(in oklch, ${selectedBrand.swatch} 18%, transparent)`,
+              }}
+              aria-hidden="true"
+            />
+            <div className="min-w-0">
+              <p className="truncate font-display text-sm font-semibold tracking-tight text-fg">
+                {config.style}
+              </p>
+              <p className="truncate text-xs text-fg-tertiary">
+                <span className="capitalize">{baseName}</span> · design system
+              </p>
+            </div>
           </div>
+          <Badge
+            variant={config.style === CUSTOM_STYLE_NAME ? "warning" : "primary"}
+            className="capitalize"
+          >
+            {config.mode}
+          </Badge>
         </div>
-        <Badge variant={config.style === CUSTOM_STYLE_NAME ? "warning" : "primary"}>
-          {config.mode}
-        </Badge>
       </div>
 
-      <div className="mt-5 flex flex-col gap-5">
-        <ControlGroup icon={Sparkles} title="Style" hint="Start from a curated look">
+      <div className="mt-6 flex flex-col gap-6">
+        <ControlRow title="Style" hint="Start from a curated look" htmlFor={`${idPrefix}-style`}>
           <Select
             value={config.style}
             onValueChange={(name) => {
@@ -594,132 +632,134 @@ function CreateControls({
               ))}
             </SelectContent>
           </Select>
-        </ControlGroup>
+        </ControlRow>
 
-        <ControlGroup
-          icon={Moon}
-          title="Mode"
-          hint="Light or dark surfaces"
-          action={
-            <LockToggle
-              active={locks.mode}
-              label="Lock mode during shuffle"
-              onClick={() => onToggleLock("mode")}
-            />
-          }
-        >
-          <Select
-            value={config.mode}
-            onValueChange={(mode) => onPatchConfig({ mode: mode as Mode })}
-          >
-            <SelectTrigger id={`${idPrefix}-mode`} aria-label="Mode" className="capitalize">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="dark" className="capitalize">
-                Dark
-              </SelectItem>
-              <SelectItem value="light" className="capitalize">
-                Light
-              </SelectItem>
-            </SelectContent>
-          </Select>
-        </ControlGroup>
-
-        <ControlGroup
-          icon={Palette}
-          title="Base color"
-          hint="Neutral surfaces, text, and borders"
-          action={
-            <LockToggle
-              active={locks.base}
-              label="Lock base color during shuffle"
-              onClick={() => onToggleLock("base")}
-            />
-          }
-        >
-          <SwatchSelect
-            id={`${idPrefix}-base`}
-            label="Base color"
-            items={BASE_COLORS}
-            value={config.baseColor}
-            onValueChange={(baseColor) => onPatchConfig({ baseColor })}
-          />
-        </ControlGroup>
-
-        <ControlGroup
-          icon={Palette}
-          title="Brand"
-          hint="Primary, accent, and focus ring"
-          action={
-            <LockToggle
-              active={locks.brand}
-              label="Lock brand during shuffle"
-              onClick={() => onToggleLock("brand")}
-            />
-          }
-        >
-          <SwatchSelect
-            id={`${idPrefix}-brand`}
-            label="Brand color"
-            items={BRAND_COLORS}
-            value={config.brand}
-            onValueChange={(brand) =>
-              onPatchConfig({ brand, primaryColor: undefined, accentColor: undefined })
+        <ControlSection label="Color">
+          <ControlRow
+            title="Mode"
+            hint="Light or dark surfaces"
+            htmlFor={`${idPrefix}-mode`}
+            action={
+              <LockToggle
+                active={locks.mode}
+                label="Lock mode during shuffle"
+                onClick={() => onToggleLock("mode")}
+              />
             }
-          />
-          <Accordion type="single" collapsible className="rounded-xl border border-border">
-            <AccordionItem value="advanced" className="border-b-0">
-              <AccordionTrigger className="px-3 py-2.5 text-xs text-fg-tertiary">
-                Advanced color
-              </AccordionTrigger>
-              <AccordionContent className="grid gap-2 px-3 pb-3">
-                <CssValueInput
-                  id={`${idPrefix}-primary`}
-                  label="Primary"
-                  value={config.primaryColor ?? selectedBrand.swatch}
-                  onChange={(primaryColor) => onPatchConfig({ primaryColor })}
-                />
-                <CssValueInput
-                  id={`${idPrefix}-accent`}
-                  label="Accent"
-                  value={config.accentColor ?? selectedBrand.accent}
-                  onChange={(accentColor) => onPatchConfig({ accentColor })}
-                />
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
-        </ControlGroup>
-
-        <ControlGroup
-          icon={Palette}
-          title="Chart color"
-          hint="Data-visualization series"
-          action={
-            <LockToggle
-              active={locks.chart}
-              label="Lock chart palette during shuffle"
-              onClick={() => onToggleLock("chart")}
-            />
-          }
-        >
-          <Select value={config.chart} onValueChange={(chart) => onPatchConfig({ chart })}>
-            <SelectTrigger id={`${idPrefix}-chart`} aria-label="Chart palette">
-              <SelectValue placeholder="Pick a palette">
-                <PaletteOption palette={findChartPalette(config.chart)} />
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent>
-              {CHART_PALETTES.map((palette) => (
-                <SelectItem key={palette.id} value={palette.id}>
-                  <PaletteOption palette={palette} />
+          >
+            <Select
+              value={config.mode}
+              onValueChange={(mode) => onPatchConfig({ mode: mode as Mode })}
+            >
+              <SelectTrigger id={`${idPrefix}-mode`} aria-label="Mode" className="capitalize">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="dark" className="capitalize">
+                  Dark
                 </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </ControlGroup>
+                <SelectItem value="light" className="capitalize">
+                  Light
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </ControlRow>
 
-        <ControlGroup icon={Type} title="Typography" hint="Heading and body type">
+          <ControlRow
+            title="Base"
+            hint="Neutral surfaces, text, and borders"
+            htmlFor={`${idPrefix}-base`}
+            action={
+              <LockToggle
+                active={locks.base}
+                label="Lock base color during shuffle"
+                onClick={() => onToggleLock("base")}
+              />
+            }
+          >
+            <SwatchSelect
+              id={`${idPrefix}-base`}
+              label="Base color"
+              items={BASE_COLORS}
+              value={config.baseColor}
+              onValueChange={(baseColor) => onPatchConfig({ baseColor })}
+            />
+          </ControlRow>
+
+          <ControlRow
+            title="Brand"
+            hint="Primary, accent, and focus ring"
+            htmlFor={`${idPrefix}-brand`}
+            action={
+              <LockToggle
+                active={locks.brand}
+                label="Lock brand during shuffle"
+                onClick={() => onToggleLock("brand")}
+              />
+            }
+          >
+            <SwatchSelect
+              id={`${idPrefix}-brand`}
+              label="Brand color"
+              items={BRAND_COLORS}
+              value={config.brand}
+              onValueChange={(brand) =>
+                onPatchConfig({ brand, primaryColor: undefined, accentColor: undefined })
+              }
+            />
+            <Accordion type="single" collapsible>
+              <AccordionItem value="advanced" className="border-b-0">
+                <AccordionTrigger className="rounded-md px-1 py-2 text-xs text-fg-tertiary hover:text-fg-secondary hover:no-underline data-[state=open]:text-fg-secondary">
+                  Advanced color
+                </AccordionTrigger>
+                <AccordionContent className="grid gap-2 px-0.5 pb-1">
+                  <CssValueInput
+                    id={`${idPrefix}-primary`}
+                    label="Primary"
+                    value={config.primaryColor ?? selectedBrand.swatch}
+                    onChange={(primaryColor) => onPatchConfig({ primaryColor })}
+                  />
+                  <CssValueInput
+                    id={`${idPrefix}-accent`}
+                    label="Accent"
+                    value={config.accentColor ?? selectedBrand.accent}
+                    onChange={(accentColor) => onPatchConfig({ accentColor })}
+                  />
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </ControlRow>
+
+          <ControlRow
+            title="Chart"
+            hint="Data-visualization series"
+            htmlFor={`${idPrefix}-chart`}
+            action={
+              <LockToggle
+                active={locks.chart}
+                label="Lock chart palette during shuffle"
+                onClick={() => onToggleLock("chart")}
+              />
+            }
+          >
+            <Select value={config.chart} onValueChange={(chart) => onPatchConfig({ chart })}>
+              <SelectTrigger id={`${idPrefix}-chart`} aria-label="Chart palette">
+                <SelectValue placeholder="Pick a palette">
+                  <PaletteOption palette={findChartPalette(config.chart)} />
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                {CHART_PALETTES.map((palette) => (
+                  <SelectItem key={palette.id} value={palette.id}>
+                    <PaletteOption palette={palette} />
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </ControlRow>
+        </ControlSection>
+
+        <ControlSection label="Typography">
           <FontSelect
             id={`${idPrefix}-heading`}
             label="Heading"
@@ -736,76 +776,113 @@ function CreateControls({
             locked={locks.body}
             onToggleLock={() => onToggleLock("body")}
           />
-        </ControlGroup>
+        </ControlSection>
 
-        <ControlGroup
-          icon={Radius}
-          title="Radius"
-          hint="Corner roundness, in pixels"
-          action={
-            <LockToggle
-              active={locks.radius}
-              label="Lock radius during shuffle"
-              onClick={() => onToggleLock("radius")}
-            />
-          }
-        >
-          <Select
-            value={String(config.radius)}
-            onValueChange={(value) => {
-              const parsed = Number.parseInt(value, 10);
-              onPatchConfig({ radius: Number.isNaN(parsed) ? DEFAULT_CONFIG.radius : parsed });
-            }}
+        <ControlSection label="Icons">
+          <ControlRow
+            title="Library"
+            hint="The icon set used across the UI"
+            htmlFor={`${idPrefix}-icon-library`}
+            action={
+              <LockToggle
+                active={locks.icon}
+                label="Lock icon library during shuffle"
+                onClick={() => onToggleLock("icon")}
+              />
+            }
           >
-            <SelectTrigger id={`${idPrefix}-radius`} aria-label="Corner radius">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {radiusOptions(config.radius).map((value) => (
-                <SelectItem key={value} value={String(value)}>
-                  {radiusLabel(value)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </ControlGroup>
-
-        <Separator />
-
-        <div className="grid gap-2">
-          <Label htmlFor={`${idPrefix}-preset-name`}>Save as preset</Label>
-          <div className="flex gap-2">
-            <Input
-              id={`${idPrefix}-preset-name`}
-              value={presetName}
-              onChange={(event) => onPresetNameChange(event.target.value)}
-              placeholder="My design system"
-            />
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={onSavePreset}
-              disabled={!presetName.trim()}
-              aria-label="Save preset"
+            <Select
+              value={config.iconLibrary}
+              onValueChange={(value) => onPatchConfig({ iconLibrary: value as IconLibraryId })}
             >
-              <Save aria-hidden="true" />
+              <SelectTrigger id={`${idPrefix}-icon-library`} aria-label="Icon library">
+                <SelectValue>
+                  <IconLibraryOption library={config.iconLibrary} />
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                {ICON_LIBRARIES.map((library) => (
+                  <SelectItem key={library.id} value={library.id}>
+                    <IconLibraryOption library={library.id} name={library.name} />
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </ControlRow>
+        </ControlSection>
+
+        <ControlSection label="Shape">
+          <ControlRow
+            title="Radius"
+            hint="Corner roundness, in pixels"
+            htmlFor={`${idPrefix}-radius`}
+            action={
+              <LockToggle
+                active={locks.radius}
+                label="Lock radius during shuffle"
+                onClick={() => onToggleLock("radius")}
+              />
+            }
+          >
+            <Select
+              value={String(config.radius)}
+              onValueChange={(value) => {
+                const parsed = Number.parseInt(value, 10);
+                onPatchConfig({ radius: Number.isNaN(parsed) ? DEFAULT_CONFIG.radius : parsed });
+              }}
+            >
+              <SelectTrigger id={`${idPrefix}-radius`} aria-label="Corner radius">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {radiusOptions(config.radius).map((value) => (
+                  <SelectItem key={value} value={String(value)}>
+                    {radiusLabel(value)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </ControlRow>
+        </ControlSection>
+
+        <Separator className="bg-border-soft" />
+
+        <ControlSection label="Save">
+          <div className="grid gap-2">
+            <div className="flex gap-2">
+              <Input
+                id={`${idPrefix}-preset-name`}
+                value={presetName}
+                onChange={(event) => onPresetNameChange(event.target.value)}
+                placeholder="My design system"
+                aria-label="Preset name"
+              />
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={onSavePreset}
+                disabled={!presetName.trim()}
+                aria-label="Save preset"
+              >
+                <Save aria-hidden="true" />
+              </Button>
+            </div>
+            <p className="px-0.5 text-xs text-fg-muted">
+              Stored in this browser. Share the link to send it.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2">
+            <Button variant="outline" onClick={onShuffle}>
+              <Dices aria-hidden="true" />
+              Shuffle
+            </Button>
+            <Button variant="gradient" onClick={onGetCode}>
+              <Code2 aria-hidden="true" />
+              Get code
             </Button>
           </div>
-          <p className="text-xs text-fg-tertiary">
-            Stored in this browser. Share the link to send it.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-2 gap-2">
-          <Button variant="outline" onClick={onShuffle}>
-            <Dices aria-hidden="true" />
-            Shuffle
-          </Button>
-          <Button variant="gradient" onClick={onGetCode}>
-            <Code2 aria-hidden="true" />
-            Get code
-          </Button>
-        </div>
+        </ControlSection>
       </div>
     </>
   );
@@ -830,7 +907,8 @@ function IconAction({
           size="icon-sm"
           onClick={onClick}
           aria-label={label}
-          className={active ? "text-primary" : undefined}
+          aria-pressed={active}
+          className={active ? "bg-primary/12 text-primary hover:bg-primary/15" : undefined}
         >
           <Icon aria-hidden="true" />
         </Button>
@@ -840,30 +918,55 @@ function IconAction({
   );
 }
 
-function ControlGroup({
-  icon: Icon,
+/** A thin section caption — `font-display`, hushed and uppercase — used to give
+ *  the control stack rhythm (Color / Typography / Icons / Shape) without cards. */
+function SectionLabel({ children }: { children: ReactNode }) {
+  return (
+    <p className="px-0.5 font-display text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-fg-muted">
+      {children}
+    </p>
+  );
+}
+
+/** Groups related control rows under a hushed caption with an even rhythm, so
+ *  the panel reads as a handful of calm sections instead of identical blocks. */
+function ControlSection({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <section className="grid gap-4">
+      <SectionLabel>{label}</SectionLabel>
+      {children}
+    </section>
+  );
+}
+
+/** A single, lightweight control row: a tight, scannable label (with an
+ *  optional muted hint that surfaces on hover) and an integrated lock action,
+ *  with the control rendered directly below for an even vertical rhythm. */
+function ControlRow({
   title,
   hint,
+  htmlFor,
   action,
   children,
 }: {
-  icon: typeof Sparkles;
   title: string;
   hint?: string;
+  htmlFor?: string;
   action?: ReactNode;
   children: ReactNode;
 }) {
   return (
-    <section className="grid gap-3">
-      <div className="flex items-center justify-between gap-2">
-        <div className="flex min-w-0 items-center gap-2">
-          <span className="grid size-7 shrink-0 place-items-center rounded-lg bg-surface-overlay text-fg-tertiary">
-            <Icon className="size-4" aria-hidden="true" />
-          </span>
-          <div className="min-w-0">
-            <p className="text-sm font-semibold text-fg">{title}</p>
-            {hint ? <p className="truncate text-xs text-fg-tertiary">{hint}</p> : null}
-          </div>
+    <section className="group/row grid gap-2">
+      <div className="flex min-h-7 items-center justify-between gap-2">
+        <div className="flex min-w-0 items-baseline gap-2">
+          <Label htmlFor={htmlFor} className="shrink-0 text-[0.8125rem] font-medium text-fg">
+            {title}
+          </Label>
+          {hint ? (
+            <span className="hidden min-w-0 truncate text-xs text-fg-muted opacity-0 transition-opacity duration-200 ease-[var(--ease-out-quart)] group-focus-within/row:opacity-100 group-hover/row:opacity-100 sm:block">
+              {hint}
+            </span>
+          ) : null}
         </div>
         {action ? <div className="shrink-0">{action}</div> : null}
       </div>
@@ -889,14 +992,18 @@ function LockToggle({
       aria-pressed={active}
       onClick={onClick}
       className={cn(
-        "grid size-8 place-items-center rounded-lg border outline-none transition",
+        "grid size-7 place-items-center rounded-md outline-none",
+        "transition-[color,background-color,opacity,transform] duration-200 ease-[var(--ease-out-quart)]",
         "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface-inset",
         active
-          ? "border-primary bg-primary/10 text-primary"
-          : "border-border bg-surface-raised text-fg-tertiary hover:border-border-strong hover:text-fg",
+          ? "bg-primary/12 text-primary"
+          : "text-fg-muted opacity-60 hover:bg-surface-overlay hover:text-fg-secondary hover:opacity-100",
       )}
     >
-      <Icon className="size-3.5" aria-hidden="true" />
+      <Icon
+        className="size-3.5 transition-transform duration-200 ease-[var(--ease-out-quart)]"
+        aria-hidden="true"
+      />
     </button>
   );
 }
@@ -927,6 +1034,23 @@ function SwatchOption({ swatch, label }: { swatch: string; label: string }) {
         aria-hidden="true"
       />
       <span className="truncate">{label}</span>
+    </span>
+  );
+}
+
+/** Sample glyphs in a given library + its name, for the icon-library select. */
+const ICON_OPTION_SAMPLES = ["search", "heart", "settings", "bell"] as const;
+
+function IconLibraryOption({ library, name }: { library: IconLibraryId; name?: string }) {
+  const label = name ?? ICON_LIBRARIES.find((item) => item.id === library)?.name ?? library;
+  return (
+    <span className="flex min-w-0 flex-1 items-center justify-between gap-3">
+      <span className="truncate">{label}</span>
+      <span className="flex shrink-0 items-center gap-1.5 text-fg-tertiary">
+        {ICON_OPTION_SAMPLES.map((iconName) => (
+          <LibraryIcon key={iconName} library={library} name={iconName} className="size-4" />
+        ))}
+      </span>
     </span>
   );
 }
@@ -1025,9 +1149,9 @@ function FontSelect({
 }) {
   const active = findFontChoice(value);
   return (
-    <div className="grid gap-1.5">
-      <div className="flex items-center justify-between gap-2">
-        <Label htmlFor={id} className="text-xs text-fg-tertiary">
+    <div className="grid gap-2">
+      <div className="flex min-h-7 items-center justify-between gap-2">
+        <Label htmlFor={id} className="text-[0.8125rem] font-medium text-fg">
           {label}
         </Label>
         <LockToggle
@@ -1196,43 +1320,120 @@ function ComponentSampler({ config }: { config: DesignConfig }) {
   );
 }
 
+/** Shared rail-card shell — mirrors the redesigned controls: a soft hairline
+ *  border, raised surface, and a calm title row with optional trailing slot. */
+function RailCard({ className, children }: { className?: string; children: ReactNode }) {
+  return (
+    <section
+      className={cn(
+        "rounded-2xl border border-border-soft bg-surface-raised p-4 shadow-sm",
+        "transition-[border-color,box-shadow] duration-300 ease-[var(--ease-out-quart)]",
+        className,
+      )}
+    >
+      {children}
+    </section>
+  );
+}
+
+function RailCardHeader({
+  title,
+  description,
+  action,
+}: {
+  title: string;
+  description: string;
+  action?: ReactNode;
+}) {
+  return (
+    <div className="flex items-start justify-between gap-3">
+      <div className="min-w-0">
+        <h2 className="font-display text-sm font-semibold tracking-tight text-fg">{title}</h2>
+        <p className="mt-0.5 truncate text-xs text-fg-tertiary">{description}</p>
+      </div>
+      {action ? <div className="shrink-0">{action}</div> : null}
+    </div>
+  );
+}
+
+function IconLibraryShowcase({ iconLibrary }: { iconLibrary: IconLibraryId }) {
+  const libraryName = ICON_LIBRARIES.find((item) => item.id === iconLibrary)?.name ?? iconLibrary;
+  return (
+    <RailCard>
+      <RailCardHeader
+        title="Icons"
+        description="Common glyphs in the chosen library."
+        action={<Badge variant="secondary">{libraryName}</Badge>}
+      />
+      <div className="mt-4 grid grid-cols-5 gap-1.5 sm:grid-cols-7 2xl:grid-cols-5">
+        {ICON_SHOWCASE.map((name) => (
+          <LiftTile
+            key={name}
+            title={name}
+            className={cn(
+              "grid aspect-square place-items-center rounded-xl border border-border-soft bg-surface-inset text-fg-secondary",
+              "transition-[color,border-color,background-color,box-shadow] duration-[250ms] ease-[var(--ease-out-quart)]",
+              "hover:border-border hover:bg-surface-overlay hover:text-primary hover:shadow-sm",
+            )}
+          >
+            <LibraryIcon library={iconLibrary} name={name} className="size-5" />
+          </LiftTile>
+        ))}
+      </div>
+    </RailCard>
+  );
+}
+
 function TokenSummary({ config }: { config: DesignConfig }) {
   const colors = findChartPalette(config.chart).colors;
+  const summaryRows: { label: string; value: string }[] = [
+    { label: "Base", value: findBaseColor(config.baseColor).name },
+    { label: "Brand", value: findBrandColor(config.brand).name },
+    { label: "Heading", value: findFontChoice(config.headingFont).name },
+    { label: "Body", value: findFontChoice(config.bodyFont).name },
+    {
+      label: "Icons",
+      value: ICON_LIBRARIES.find((item) => item.id === config.iconLibrary)?.name ?? "Lucide",
+    },
+    { label: "Radius", value: `${config.radius}px` },
+  ];
   return (
-    <section className="rounded-2xl border border-border bg-surface-raised p-4 shadow-sm">
-      <div className="flex items-center justify-between gap-3">
-        <div>
-          <h2 className="font-display text-sm font-semibold text-fg">System bundle</h2>
-          <p className="text-xs text-fg-tertiary">Saved as one reusable preset.</p>
-        </div>
-        <Badge variant="primary">{config.mode}</Badge>
-      </div>
-      <dl className="mt-4 grid gap-3 text-sm">
-        <SummaryRow label="Base" value={config.baseColor} />
-        <SummaryRow label="Brand" value={config.brand} />
-        <SummaryRow label="Heading" value={findFontChoice(config.headingFont).name} />
-        <SummaryRow label="Body" value={findFontChoice(config.bodyFont).name} />
-        <SummaryRow label="Radius" value={`${config.radius}px`} />
+    <RailCard>
+      <RailCardHeader
+        title="System bundle"
+        description="Saved as one reusable preset."
+        action={<Badge variant="primary">{config.mode}</Badge>}
+      />
+      <dl className="mt-4 divide-y divide-border-soft overflow-hidden rounded-xl border border-border-soft">
+        {summaryRows.map((row) => (
+          <SummaryRow key={row.label} label={row.label} value={row.value} />
+        ))}
       </dl>
-      <div className="mt-4 flex gap-2">
+      <div className="mt-3 flex items-center justify-between gap-2">
+        <p className="font-display text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-fg-muted">
+          Chart ramp
+        </p>
+        <Badge variant="outline">{findChartPalette(config.chart).name}</Badge>
+      </div>
+      <div className="mt-2 flex gap-1.5">
         {colors.map((color) => (
           <span
             key={color}
-            className="h-9 flex-1 rounded-lg border border-border-soft"
+            className="h-9 flex-1 rounded-lg ring-1 ring-inset ring-border-soft transition-colors duration-300 ease-[var(--ease-out-quart)]"
             style={{ backgroundColor: color }}
             aria-hidden="true"
           />
         ))}
       </div>
-    </section>
+    </RailCard>
   );
 }
 
 function SummaryRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center justify-between gap-3">
+    <div className="flex items-center justify-between gap-3 bg-surface-inset/40 px-3 py-2.5 text-sm">
       <dt className="text-fg-tertiary">{label}</dt>
-      <dd className="truncate font-medium text-fg capitalize">{value}</dd>
+      <dd className="truncate font-medium capitalize text-fg">{value}</dd>
     </div>
   );
 }
@@ -1251,23 +1452,23 @@ function PresetExchange({
   onCopyPreset: () => void;
 }) {
   return (
-    <section className="rounded-2xl border border-border bg-surface-raised p-4 shadow-sm">
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <h2 className="font-display text-sm font-semibold text-fg">Preset exchange</h2>
-          <p className="text-xs text-fg-tertiary">Copy this system or open one from a code.</p>
-        </div>
-        <Button variant="outline" size="icon-sm" onClick={onCopyPreset} aria-label="Copy preset">
-          <Copy aria-hidden="true" />
-        </Button>
-      </div>
+    <RailCard>
+      <RailCardHeader
+        title="Preset exchange"
+        description="Copy this system or open one from a code."
+        action={
+          <Button variant="outline" size="icon-sm" onClick={onCopyPreset} aria-label="Copy preset">
+            <Copy aria-hidden="true" />
+          </Button>
+        }
+      />
       <div className="mt-4 grid gap-3">
         <Textarea
           value={presetCode}
           onChange={(event) => onPresetCodeChange(event.target.value)}
           placeholder="Paste cooud: preset code or JSON"
           rows={4}
-          className="font-mono text-xs"
+          className="resize-none font-mono text-xs"
           aria-label="Preset import code"
         />
         {error ? <p className="text-xs text-error">{error}</p> : null}
@@ -1276,7 +1477,7 @@ function PresetExchange({
           Open preset
         </Button>
       </div>
-    </section>
+    </RailCard>
   );
 }
 
