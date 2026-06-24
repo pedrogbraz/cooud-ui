@@ -8,7 +8,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@cooud-ui/ui";
-import { Cell, Pie, PieChart } from "recharts";
+import { Cell, Label, Pie, PieChart } from "recharts";
 
 /**
  * The only recharts-touching render in this family, isolated so it can be pulled
@@ -19,11 +19,11 @@ import { Cell, Pie, PieChart } from "recharts";
 
 const chartConfig = {
   visitors: { label: "Visitors" },
-  direct: { label: "Direct", color: "var(--cooud-primary)" },
-  organic: { label: "Organic", color: "var(--cooud-info)" },
-  referral: { label: "Referral", color: "var(--cooud-success)" },
-  social: { label: "Social", color: "var(--cooud-warning)" },
-  email: { label: "Email", color: "var(--cooud-danger)" },
+  direct: { label: "Direct", color: "var(--cooud-chart-1)" },
+  organic: { label: "Organic", color: "var(--cooud-chart-2)" },
+  referral: { label: "Referral", color: "var(--cooud-chart-3)" },
+  social: { label: "Social", color: "var(--cooud-chart-4)" },
+  email: { label: "Email", color: "var(--cooud-chart-5)" },
 } satisfies ChartConfig;
 
 const chartData = [
@@ -52,13 +52,36 @@ export default function PieChartDemo() {
               data={chartData}
               dataKey="visitors"
               nameKey="source"
-              innerRadius={56}
-              strokeWidth={4}
+              innerRadius={64}
+              outerRadius={98}
+              paddingAngle={3}
+              cornerRadius={6}
+              strokeWidth={0}
               rootTabIndex={-1}
             >
               {chartData.map((entry) => (
                 <Cell key={entry.source} fill={entry.fill} />
               ))}
+              <Label
+                content={({ viewBox }) => {
+                  if (!viewBox || !("cx" in viewBox) || !("cy" in viewBox)) return null;
+                  const { cx, cy } = viewBox;
+                  return (
+                    <text x={cx} y={cy} textAnchor="middle" dominantBaseline="middle">
+                      <tspan x={cx} y={cy} className="fill-fg font-semibold text-2xl">
+                        11.4K
+                      </tspan>
+                      <tspan
+                        x={cx}
+                        y={(cy ?? 0) + 22}
+                        className="fill-fg-tertiary text-xs tracking-wide"
+                      >
+                        Visitors
+                      </tspan>
+                    </text>
+                  );
+                }}
+              />
             </Pie>
             <ChartLegend content={<ChartLegendContent nameKey="source" />} />
           </PieChart>

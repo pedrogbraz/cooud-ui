@@ -30,7 +30,10 @@ export default function BarChartDemo() {
       <BarChart accessibilityLayer data={chartData}>
         <CartesianGrid vertical={false} />
         <XAxis dataKey="month" tickLine={false} tickMargin={10} axisLine={false} />
-        <ChartTooltip content={<ChartTooltipContent />} />
+        <ChartTooltip
+          cursor={{ fill: "var(--cooud-fg)", fillOpacity: 0.05, radius: 8 }}
+          content={<ChartTooltipContent />}
+        />
         <Bar dataKey="revenue" fill="var(--color-revenue)" radius={4} />
         <Bar dataKey="profit" fill="var(--color-profit)" radius={4} />
       </BarChart>
