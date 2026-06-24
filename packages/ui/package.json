@@ -116,6 +116,10 @@
       "types": "./dist/components/command.d.ts",
       "import": "./dist/components/command.js"
     },
+    "./comparison-slider": {
+      "types": "./dist/components/comparison-slider.d.ts",
+      "import": "./dist/components/comparison-slider.js"
+    },
     "./context-menu": {
       "types": "./dist/components/context-menu.d.ts",
       "import": "./dist/components/context-menu.js"
@@ -140,6 +144,10 @@
       "types": "./dist/components/dialog.d.ts",
       "import": "./dist/components/dialog.js"
     },
+    "./dock": {
+      "types": "./dist/components/dock.d.ts",
+      "import": "./dist/components/dock.js"
+    },
     "./drawer": {
       "types": "./dist/components/drawer.d.ts",
       "import": "./dist/components/drawer.js"
@@ -152,6 +160,10 @@
       "types": "./dist/components/empty.d.ts",
       "import": "./dist/components/empty.js"
     },
+    "./fab": {
+      "types": "./dist/components/fab.d.ts",
+      "import": "./dist/components/fab.js"
+    },
     "./field": {
       "types": "./dist/components/field.d.ts",
       "import": "./dist/components/field.js"
@@ -163,6 +175,10 @@
     "./form": {
       "types": "./dist/components/form.d.ts",
       "import": "./dist/components/form.js"
+    },
+    "./frame": {
+      "types": "./dist/components/frame.d.ts",
+      "import": "./dist/components/frame.js"
     },
     "./glass-card": {
       "types": "./dist/components/glass-card.d.ts",
