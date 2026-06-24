@@ -131,6 +131,11 @@ export const CATEGORIES: ComponentCategory[] = [
         name: "AspectRatio",
         description: "Constrain content to a fixed width-to-height ratio.",
       },
+      {
+        slug: "tree-view",
+        name: "TreeView",
+        description: "Data-driven, accessible hierarchy with keyboard navigation.",
+      },
     ],
   },
   {
@@ -162,6 +167,12 @@ export const CATEGORIES: ComponentCategory[] = [
       { slug: "sheet", name: "Sheet", description: "Side-anchored panel." },
       { slug: "drawer", name: "Drawer", description: "Bottom drawer (vaul)." },
       { slug: "popover", name: "Popover", description: "Floating content anchored to a trigger." },
+      {
+        slug: "notification-center",
+        name: "NotificationCenter",
+        description: "Bell-trigger inbox with unread badge and a scrollable list.",
+        importName: "NotificationCenter, NotificationList, NotificationRow",
+      },
       { slug: "hover-card", name: "HoverCard", description: "Preview content on hover." },
       { slug: "tooltip", name: "Tooltip", description: "Short hint on hover or focus." },
       { slug: "dropdown-menu", name: "DropdownMenu", description: "Actions menu with submenus." },
@@ -228,6 +239,11 @@ export const CATEGORIES: ComponentCategory[] = [
         slug: "date-range-picker",
         name: "DateRangePicker",
         description: "Start/end date selection with presets.",
+      },
+      {
+        slug: "scheduler",
+        name: "Scheduler",
+        description: "Month-view event calendar that lays events onto day cells.",
       },
     ],
   },

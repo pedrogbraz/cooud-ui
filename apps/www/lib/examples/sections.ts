@@ -113,6 +113,7 @@ export const EXAMPLE_SECTIONS: Record<string, ExampleSectionMeta[]> = {
     { id: "default", title: "Default" },
     { id: "square", title: "Square" },
   ],
+  "tree-view": [{ id: "file-tree", title: "File tree" }],
   alert: [
     { id: "default", title: "Default" },
     { id: "variants", title: "Variants" },
@@ -126,6 +127,7 @@ export const EXAMPLE_SECTIONS: Record<string, ExampleSectionMeta[]> = {
   sheet: [{ id: "sides", title: "Sides" }],
   drawer: [{ id: "bottom-drawer", title: "Bottom drawer" }],
   popover: [{ id: "with-content", title: "With content" }],
+  "notification-center": [{ id: "inbox", title: "Inbox" }],
   "hover-card": [{ id: "profile-preview", title: "Profile preview" }],
   tooltip: [{ id: "on-a-button", title: "On a button" }],
   "dropdown-menu": [{ id: "actions", title: "Actions" }],
@@ -146,6 +148,7 @@ export const EXAMPLE_SECTIONS: Record<string, ExampleSectionMeta[]> = {
     { id: "range", title: "Date range" },
     { id: "presets", title: "With presets" },
   ],
+  scheduler: [{ id: "month-view", title: "Month view" }],
   chart: [{ id: "bar-chart", title: "Bar chart" }],
   "glass-card": [{ id: "frosted-surface", title: "Frosted surface" }],
   "gradient-border": [

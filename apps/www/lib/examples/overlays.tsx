@@ -57,6 +57,8 @@ import {
   HoverCardTrigger,
   Input,
   Label,
+  NotificationCenter,
+  type NotificationItem,
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -78,9 +80,11 @@ import {
   ClipboardPaste,
   Copy,
   CreditCard,
+  Heart,
   HelpCircle,
   Keyboard,
   LifeBuoy,
+  MessageSquare,
   Plus,
   Scissors,
   Settings,
@@ -268,6 +272,50 @@ function ContextMenuDemo() {
         </ContextMenuRadioGroup>
       </ContextMenuContent>
     </ContextMenu>
+  );
+}
+
+const INITIAL_NOTIFICATIONS: NotificationItem[] = [
+  {
+    id: "mention",
+    title: "Ada mentioned you",
+    description: "“@you can you review the payout rail PR?”",
+    timestamp: "2m ago",
+    icon: <MessageSquare aria-hidden="true" />,
+  },
+  {
+    id: "star",
+    title: "Your release hit 1,000 stars",
+    description: "cooud-ui reached a new milestone.",
+    timestamp: "1h ago",
+    icon: <Heart aria-hidden="true" />,
+  },
+  {
+    id: "invite",
+    title: "New teammate joined",
+    description: "Grace accepted your invite to Acme.",
+    timestamp: "Yesterday",
+    avatar: { fallback: "GR" },
+    read: true,
+  },
+];
+
+function NotificationCenterDemo() {
+  const [items, setItems] = useState<NotificationItem[]>(INITIAL_NOTIFICATIONS);
+
+  return (
+    <NotificationCenter
+      notifications={items}
+      onMarkAllRead={() => setItems((prev) => prev.map((item) => ({ ...item, read: true })))}
+      onNotificationClick={(id) =>
+        setItems((prev) => prev.map((item) => (item.id === id ? { ...item, read: true } : item)))
+      }
+      footer={
+        <Button variant="link" size="sm" className="h-auto px-0">
+          View all notifications
+        </Button>
+      }
+    />
   );
 }
 
@@ -529,6 +577,59 @@ export const overlaysExamples: ExampleMap = {
           </PopoverContent>
         </Popover>
       ),
+    },
+  ],
+
+  "notification-center": [
+    {
+      id: "inbox",
+      title: "Inbox",
+      description:
+        "A bell-trigger inbox built on Popover. The badge counts unread items; clicking a row marks it read, and “Mark all read” clears them all. Pass an optional `footer` for a “View all” link.",
+      code: `const INITIAL: NotificationItem[] = [
+  {
+    id: "mention",
+    title: "Ada mentioned you",
+    description: "“@you can you review the payout rail PR?”",
+    timestamp: "2m ago",
+    icon: <MessageSquare aria-hidden="true" />,
+  },
+  {
+    id: "star",
+    title: "Your release hit 1,000 stars",
+    description: "cooud-ui reached a new milestone.",
+    timestamp: "1h ago",
+    icon: <Heart aria-hidden="true" />,
+  },
+  {
+    id: "invite",
+    title: "New teammate joined",
+    description: "Grace accepted your invite to Acme.",
+    timestamp: "Yesterday",
+    avatar: { fallback: "GR" },
+    read: true,
+  },
+];
+
+function NotificationCenterDemo() {
+  const [items, setItems] = useState<NotificationItem[]>(INITIAL);
+
+  return (
+    <NotificationCenter
+      notifications={items}
+      onMarkAllRead={() => setItems((prev) => prev.map((i) => ({ ...i, read: true })))}
+      onNotificationClick={(id) =>
+        setItems((prev) => prev.map((i) => (i.id === id ? { ...i, read: true } : i)))
+      }
+      footer={
+        <Button variant="link" size="sm" className="h-auto px-0">
+          View all notifications
+        </Button>
+      }
+    />
+  );
+}`,
+      preview: <NotificationCenterDemo />,
     },
   ],
 
