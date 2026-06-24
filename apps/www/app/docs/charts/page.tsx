@@ -47,7 +47,10 @@ return (
     <BarChart accessibilityLayer data={chartData}>
       <CartesianGrid vertical={false} />
       <XAxis dataKey="month" tickLine={false} tickMargin={10} axisLine={false} />
-      <ChartTooltip content={<ChartTooltipContent />} />
+      <ChartTooltip
+        cursor={{ fill: "var(--cooud-fg)", fillOpacity: 0.05, radius: 8 }}
+        content={<ChartTooltipContent />}
+      />
       <Bar dataKey="revenue" fill="var(--color-revenue)" radius={4} />
       <Bar dataKey="profit" fill="var(--color-profit)" radius={4} />
     </BarChart>
@@ -56,11 +59,11 @@ return (
 
 const donutChartCode = `const chartConfig = {
   visitors: { label: "Visitors" },
-  direct: { label: "Direct", color: "var(--cooud-primary)" },
-  organic: { label: "Organic", color: "var(--cooud-info)" },
-  referral: { label: "Referral", color: "var(--cooud-success)" },
-  social: { label: "Social", color: "var(--cooud-warning)" },
-  email: { label: "Email", color: "var(--cooud-danger)" },
+  direct: { label: "Direct", color: "var(--cooud-chart-1)" },
+  organic: { label: "Organic", color: "var(--cooud-chart-2)" },
+  referral: { label: "Referral", color: "var(--cooud-chart-3)" },
+  social: { label: "Social", color: "var(--cooud-chart-4)" },
+  email: { label: "Email", color: "var(--cooud-chart-5)" },
 } satisfies ChartConfig;
 
 const chartData = [
@@ -83,10 +86,36 @@ return (
       <ChartContainer config={chartConfig} className="h-full w-full">
         <PieChart>
           <ChartTooltip content={<ChartTooltipContent hideLabel />} />
-          <Pie data={chartData} dataKey="visitors" nameKey="source" innerRadius={56} strokeWidth={4} rootTabIndex={-1}>
+          <Pie
+            data={chartData}
+            dataKey="visitors"
+            nameKey="source"
+            innerRadius={64}
+            outerRadius={98}
+            paddingAngle={3}
+            cornerRadius={6}
+            strokeWidth={0}
+            rootTabIndex={-1}
+          >
             {chartData.map((entry) => (
               <Cell key={entry.source} fill={entry.fill} />
             ))}
+            <Label
+              content={({ viewBox }) => {
+                if (!viewBox || !("cx" in viewBox) || !("cy" in viewBox)) return null;
+                const { cx, cy } = viewBox;
+                return (
+                  <text x={cx} y={cy} textAnchor="middle" dominantBaseline="middle">
+                    <tspan x={cx} y={cy} className="fill-fg font-semibold text-2xl">
+                      11.4K
+                    </tspan>
+                    <tspan x={cx} y={(cy ?? 0) + 22} className="fill-fg-tertiary text-xs">
+                      Visitors
+                    </tspan>
+                  </text>
+                );
+              }}
+            />
           </Pie>
           <ChartLegend content={<ChartLegendContent nameKey="source" />} />
         </PieChart>
@@ -132,10 +161,10 @@ return (
 
 const radialChartCode = `const chartConfig = {
   visitors: { label: "Visitors" },
-  desktop: { label: "Desktop", color: "var(--cooud-primary)" },
-  mobile: { label: "Mobile", color: "var(--cooud-info)" },
-  tablet: { label: "Tablet", color: "var(--cooud-success)" },
-  other: { label: "Other", color: "var(--cooud-warning)" },
+  desktop: { label: "Desktop", color: "var(--cooud-chart-1)" },
+  mobile: { label: "Mobile", color: "var(--cooud-chart-2)" },
+  tablet: { label: "Tablet", color: "var(--cooud-chart-3)" },
+  other: { label: "Other", color: "var(--cooud-chart-4)" },
 } satisfies ChartConfig;
 
 const chartData = [

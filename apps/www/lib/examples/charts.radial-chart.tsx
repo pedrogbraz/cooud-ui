@@ -19,10 +19,10 @@ import { PolarGrid, RadialBar, RadialBarChart } from "recharts";
 
 const chartConfig = {
   visitors: { label: "Visitors" },
-  desktop: { label: "Desktop", color: "var(--cooud-primary)" },
-  mobile: { label: "Mobile", color: "var(--cooud-info)" },
-  tablet: { label: "Tablet", color: "var(--cooud-success)" },
-  other: { label: "Other", color: "var(--cooud-warning)" },
+  desktop: { label: "Desktop", color: "var(--cooud-chart-1)" },
+  mobile: { label: "Mobile", color: "var(--cooud-chart-2)" },
+  tablet: { label: "Tablet", color: "var(--cooud-chart-3)" },
+  other: { label: "Other", color: "var(--cooud-chart-4)" },
 } satisfies ChartConfig;
 
 const chartData = [
