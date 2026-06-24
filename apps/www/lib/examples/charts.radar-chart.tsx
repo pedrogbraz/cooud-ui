@@ -33,25 +33,35 @@ const chartData = [
 
 export default function RadarChartDemo() {
   return (
-    <ChartContainer config={chartConfig} className="h-64 w-full">
-      <RadarChart accessibilityLayer data={chartData}>
-        <ChartTooltip content={<ChartTooltipContent />} />
-        <PolarGrid />
-        <PolarAngleAxis dataKey="metric" />
-        <Radar
-          dataKey="current"
-          fill="var(--color-current)"
-          fillOpacity={0.6}
-          stroke="var(--color-current)"
-        />
-        <Radar
-          dataKey="target"
-          fill="var(--color-target)"
-          fillOpacity={0.15}
-          stroke="var(--color-target)"
-        />
-        <ChartLegend content={<ChartLegendContent />} />
-      </RadarChart>
-    </ChartContainer>
+    // Data is exposed to assistive tech via this label; the SVG internals are
+    // hidden so recharts' nameless role="img" nodes aren't announced.
+    <div
+      role="img"
+      aria-label="Radar chart comparing Current vs Target across six metrics — Speed 86/95, Reliability 72/90, Coverage 91/88, Security 78/96, Usability 84/80, Support 69/85."
+      className="h-64 w-full"
+    >
+      <div aria-hidden="true" className="h-full w-full">
+        <ChartContainer config={chartConfig} className="h-full w-full">
+          <RadarChart data={chartData}>
+            <ChartTooltip content={<ChartTooltipContent />} />
+            <PolarGrid />
+            <PolarAngleAxis dataKey="metric" />
+            <Radar
+              dataKey="current"
+              fill="var(--color-current)"
+              fillOpacity={0.6}
+              stroke="var(--color-current)"
+            />
+            <Radar
+              dataKey="target"
+              fill="var(--color-target)"
+              fillOpacity={0.15}
+              stroke="var(--color-target)"
+            />
+            <ChartLegend content={<ChartLegendContent />} />
+          </RadarChart>
+        </ChartContainer>
+      </div>
+    </div>
   );
 }

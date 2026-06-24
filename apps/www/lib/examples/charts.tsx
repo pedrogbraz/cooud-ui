@@ -105,17 +105,27 @@ const chartData = [
 ];
 
 return (
-  <ChartContainer config={chartConfig} className="h-64 w-full">
-    <PieChart accessibilityLayer>
-      <ChartTooltip content={<ChartTooltipContent hideLabel />} />
-      <Pie data={chartData} dataKey="visitors" nameKey="source" innerRadius={56} strokeWidth={4}>
-        {chartData.map((entry) => (
-          <Cell key={entry.source} fill={entry.fill} />
-        ))}
-      </Pie>
-      <ChartLegend content={<ChartLegendContent nameKey="source" />} />
-    </PieChart>
-  </ChartContainer>
+  // Data is exposed to assistive tech via the label; the SVG internals (recharts
+  // tags each sector role="img" with no name) are hidden so they're not announced.
+  <div
+    role="img"
+    aria-label="Donut chart of traffic sources by visitors: Direct 4,200, Organic 3,100, Referral 1,900, Social 1,400, Email 800."
+    className="h-64 w-full"
+  >
+    <div aria-hidden="true" className="h-full w-full">
+      <ChartContainer config={chartConfig} className="h-full w-full">
+        <PieChart>
+          <ChartTooltip content={<ChartTooltipContent hideLabel />} />
+          <Pie data={chartData} dataKey="visitors" nameKey="source" innerRadius={56} strokeWidth={4} rootTabIndex={-1}>
+            {chartData.map((entry) => (
+              <Cell key={entry.source} fill={entry.fill} />
+            ))}
+          </Pie>
+          <ChartLegend content={<ChartLegendContent nameKey="source" />} />
+        </PieChart>
+      </ChartContainer>
+    </div>
+  </div>
 );`,
       preview: <PieChartDemo />,
     },
@@ -139,16 +149,24 @@ const chartData = [
 ];
 
 return (
-  <ChartContainer config={chartConfig} className="h-64 w-full">
-    <RadarChart accessibilityLayer data={chartData}>
-      <ChartTooltip content={<ChartTooltipContent />} />
-      <PolarGrid />
-      <PolarAngleAxis dataKey="metric" />
-      <Radar dataKey="current" fill="var(--color-current)" fillOpacity={0.6} stroke="var(--color-current)" />
-      <Radar dataKey="target" fill="var(--color-target)" fillOpacity={0.15} stroke="var(--color-target)" />
-      <ChartLegend content={<ChartLegendContent />} />
-    </RadarChart>
-  </ChartContainer>
+  <div
+    role="img"
+    aria-label="Radar chart comparing Current vs Target across six metrics — Speed 86/95, Reliability 72/90, Coverage 91/88, Security 78/96, Usability 84/80, Support 69/85."
+    className="h-64 w-full"
+  >
+    <div aria-hidden="true" className="h-full w-full">
+      <ChartContainer config={chartConfig} className="h-full w-full">
+        <RadarChart data={chartData}>
+          <ChartTooltip content={<ChartTooltipContent />} />
+          <PolarGrid />
+          <PolarAngleAxis dataKey="metric" />
+          <Radar dataKey="current" fill="var(--color-current)" fillOpacity={0.6} stroke="var(--color-current)" />
+          <Radar dataKey="target" fill="var(--color-target)" fillOpacity={0.15} stroke="var(--color-target)" />
+          <ChartLegend content={<ChartLegendContent />} />
+        </RadarChart>
+      </ChartContainer>
+    </div>
+  </div>
 );`,
       preview: <RadarChartDemo />,
     },
@@ -173,14 +191,22 @@ const chartData = [
 ];
 
 return (
-  <ChartContainer config={chartConfig} className="h-64 w-full">
-    <RadialBarChart accessibilityLayer data={chartData} innerRadius={32} outerRadius={110}>
-      <ChartTooltip content={<ChartTooltipContent hideLabel nameKey="device" />} />
-      <PolarGrid gridType="circle" radialLines={false} stroke="none" />
-      <RadialBar dataKey="visitors" background cornerRadius={8} />
-      <ChartLegend content={<ChartLegendContent nameKey="device" />} />
-    </RadialBarChart>
-  </ChartContainer>
+  <div
+    role="img"
+    aria-label="Radial bar chart of visitors by device: Desktop 5,200, Mobile 4,100, Tablet 1,800, Other 900."
+    className="h-64 w-full"
+  >
+    <div aria-hidden="true" className="h-full w-full">
+      <ChartContainer config={chartConfig} className="h-full w-full">
+        <RadialBarChart data={chartData} innerRadius={32} outerRadius={110}>
+          <ChartTooltip content={<ChartTooltipContent hideLabel nameKey="device" />} />
+          <PolarGrid gridType="circle" radialLines={false} stroke="none" />
+          <RadialBar dataKey="visitors" background cornerRadius={8} />
+          <ChartLegend content={<ChartLegendContent nameKey="device" />} />
+        </RadialBarChart>
+      </ChartContainer>
+    </div>
+  </div>
 );`,
       preview: <RadialChartDemo />,
     },
