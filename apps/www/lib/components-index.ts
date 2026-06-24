@@ -99,6 +99,17 @@ export const CATEGORIES: ComponentCategory[] = [
         description: "Tiptap WYSIWYG editor with a formatting toolbar and HTML output.",
         importName: "RichTextEditor",
       },
+      {
+        slug: "rating",
+        name: "Rating",
+        description: "Star rating input — interactive or read-only, with optional half stars.",
+      },
+      {
+        slug: "color-picker",
+        name: "ColorPicker",
+        description:
+          "OKLCH-native color input on a popover, with an area, hue slider and swatches.",
+      },
     ],
   },
   {
@@ -143,6 +154,13 @@ export const CATEGORIES: ComponentCategory[] = [
         description: "Data-driven, accessible hierarchy with keyboard navigation.",
       },
       {
+        slug: "timeline",
+        name: "Timeline",
+        description: "Vertical activity feed with dots, connectors, timestamps and descriptions.",
+        importName:
+          "Timeline, TimelineItem, TimelineDot, TimelineContent, TimelineTitle, TimelineTime, TimelineDescription",
+      },
+      {
         slug: "kanban",
         name: "Kanban",
         description: "Drag-and-drop board with cards that reorder and move across columns.",
@@ -161,6 +179,12 @@ export const CATEGORIES: ComponentCategory[] = [
       },
       { slug: "spinner", name: "Spinner", description: "Indeterminate loading indicator." },
       { slug: "progress", name: "Progress", description: "Determinate progress bar." },
+      {
+        slug: "usage-meter",
+        name: "UsageMeter",
+        description: "Linear or circular quota / billing usage indicator with severity tones.",
+        importName: "UsageMeter, UsageMeterLinear, UsageMeterCircular",
+      },
       {
         slug: "sonner",
         name: "Toast",

@@ -18,6 +18,8 @@ import {
   Spinner,
   Toaster,
   toast,
+  UsageMeter,
+  UsageMeterCircular,
 } from "@cooud-ui/ui";
 import { CircleAlert, CircleCheck, Info, Terminal, Trash2, TriangleAlert } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -194,6 +196,44 @@ export const feedbackExamples: ExampleMap = {
   );
 }`,
       preview: <ProgressDemo />,
+    },
+  ],
+
+  "usage-meter": [
+    {
+      id: "linear",
+      title: "Linear",
+      description:
+        "A horizontal quota bar with a label and a value / max readout. The `auto` tone shades the fill from primary to warning to error as usage climbs.",
+      code: `<div className="flex w-full max-w-sm flex-col gap-6">
+  <UsageMeter label="Tokens" value={186_400} max={250_000} unit="tokens" />
+  <UsageMeter label="Seats" value={18} max={20} />
+  <UsageMeter label="Storage" value={48} max={50} unit="GB" />
+</div>`,
+      preview: (
+        <div className="flex w-full max-w-sm flex-col gap-6">
+          <UsageMeter label="Tokens" value={186_400} max={250_000} unit="tokens" />
+          <UsageMeter label="Seats" value={18} max={20} />
+          <UsageMeter label="Storage" value={48} max={50} unit="GB" />
+        </div>
+      ),
+    },
+    {
+      id: "circular",
+      title: "Circular",
+      description: "An SVG ring for compact, at-a-glance quota — here three API-request budgets.",
+      code: `<div className="flex flex-wrap items-center gap-8">
+  <UsageMeterCircular label="API requests" value={6_200} max={10_000} />
+  <UsageMeterCircular label="Bandwidth" value={172} max={200} unit="GB" tone="warning" />
+  <UsageMeterCircular label="Builds" value={95} max={100} />
+</div>`,
+      preview: (
+        <div className="flex flex-wrap items-center gap-8">
+          <UsageMeterCircular label="API requests" value={6_200} max={10_000} />
+          <UsageMeterCircular label="Bandwidth" value={172} max={200} unit="GB" tone="warning" />
+          <UsageMeterCircular label="Builds" value={95} max={100} />
+        </div>
+      ),
     },
   ],
 

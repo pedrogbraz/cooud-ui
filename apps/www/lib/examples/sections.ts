@@ -77,6 +77,11 @@ export const EXAMPLE_SECTIONS: Record<string, ExampleSectionMeta[]> = {
   ],
   stepper: [{ id: "wizard", title: "Wizard" }],
   "rich-text-editor": [{ id: "default", title: "Default" }],
+  rating: [
+    { id: "interactive", title: "Interactive" },
+    { id: "read-only", title: "Read-only with a count" },
+  ],
+  "color-picker": [{ id: "swatches", title: "With swatches" }],
   avatar: [
     { id: "image-fallback", title: "Image & fallback" },
     { id: "group", title: "Group" },
@@ -115,6 +120,7 @@ export const EXAMPLE_SECTIONS: Record<string, ExampleSectionMeta[]> = {
     { id: "square", title: "Square" },
   ],
   "tree-view": [{ id: "file-tree", title: "File tree" }],
+  timeline: [{ id: "activity", title: "Activity" }],
   kanban: [{ id: "board", title: "Board" }],
   alert: [
     { id: "default", title: "Default" },
@@ -123,6 +129,10 @@ export const EXAMPLE_SECTIONS: Record<string, ExampleSectionMeta[]> = {
   ],
   spinner: [{ id: "sizes", title: "Sizes" }],
   progress: [{ id: "determinate", title: "Determinate" }],
+  "usage-meter": [
+    { id: "linear", title: "Linear" },
+    { id: "circular", title: "Circular" },
+  ],
   sonner: [{ id: "toasts", title: "Toasts" }],
   "alert-dialog": [{ id: "confirm", title: "Confirm" }],
   dialog: [{ id: "basic", title: "Basic" }],
