@@ -98,8 +98,12 @@ const ROUTE_BUDGETS = /** @type {Record<string, RouteBudget>} */ ({
   },
   "/components": { firstLoadUncompressedJsBytes: 680_000, firstLoadGzipJsBytes: 205_000 },
   // Headroom covers the /create icon-library preview (5 tree-shaken icon sets,
-  // ~20 glyphs each — verified named imports, gzip stays within budget below).
-  "/create": { firstLoadUncompressedJsBytes: 935_000, firstLoadGzipJsBytes: 275_000 },
+  // ~20 glyphs each — verified named imports) plus the preview's `motion/react`
+  // spring hover-lift. motion is the only animation dep on this route, so it
+  // ships via the slim `LazyMotion` + `m` path with its feature bundle
+  // code-split (loaded async after hydration); only the `m` runtime lands in
+  // first-load JS (~13 KiB gz). Bumped from 275/935 KiB to keep ~6% headroom.
+  "/create": { firstLoadUncompressedJsBytes: 1_040_000, firstLoadGzipJsBytes: 305_000 },
   "/blocks": { firstLoadUncompressedJsBytes: 680_000, firstLoadGzipJsBytes: 205_000 },
   "/blocks/[slug]": { firstLoadUncompressedJsBytes: 690_000, firstLoadGzipJsBytes: 205_000 },
   "/blocks/[slug]/[variant]": {
