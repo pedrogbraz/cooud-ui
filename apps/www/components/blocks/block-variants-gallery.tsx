@@ -42,6 +42,10 @@ const GALLERY_VIEWS: Record<BlockFamily, GalleryView> = {
     () => import("../../lib/blocks/application").then((m) => m.ApplicationGallery),
     { loading: GallerySkeleton },
   ),
+  onboarding: dynamic(
+    () => import("../../lib/blocks/onboarding").then((m) => m.OnboardingGallery),
+    { loading: GallerySkeleton },
+  ),
   dashboard: dynamic(() => import("../../lib/blocks/dashboard").then((m) => m.DashboardGallery), {
     loading: GallerySkeleton,
   }),

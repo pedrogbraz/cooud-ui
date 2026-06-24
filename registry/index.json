@@ -1116,6 +1116,32 @@
     "registryDependencies": []
   },
   {
+    "name": "welcome",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.1.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "setup-wizard",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.1.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "setup-checklist",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.1.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
     "name": "dashboard",
     "type": "registry:block",
     "dependencies": [

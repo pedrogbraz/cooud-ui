@@ -235,6 +235,27 @@ export const BLOCK_CATEGORIES: BlockCategory[] = [
     ],
   },
   {
+    slug: "onboarding",
+    name: "Onboarding",
+    items: [
+      {
+        slug: "welcome",
+        name: "Welcome",
+        description: "A get-started welcome panel with quick-start actions.",
+      },
+      {
+        slug: "setup-wizard",
+        name: "Setup Wizard",
+        description: "A multi-step setup flow with a stepper and a form panel.",
+      },
+      {
+        slug: "setup-checklist",
+        name: "Setup Checklist",
+        description: "A setup-progress checklist with a progress bar and per-item actions.",
+      },
+    ],
+  },
+  {
     slug: "dashboard",
     name: "Dashboard",
     items: [

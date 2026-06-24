@@ -36,6 +36,9 @@ const VIEW_VIEWS: Record<BlockFamily, BlockDetailView> = {
     () => import("../../lib/blocks/application").then((m) => m.ApplicationView),
     { loading: BlockViewSkeleton },
   ),
+  onboarding: dynamic(() => import("../../lib/blocks/onboarding").then((m) => m.OnboardingView), {
+    loading: BlockViewSkeleton,
+  }),
   dashboard: dynamic(() => import("../../lib/blocks/dashboard").then((m) => m.DashboardView), {
     loading: BlockViewSkeleton,
   }),
