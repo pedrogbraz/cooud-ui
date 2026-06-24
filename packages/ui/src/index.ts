@@ -228,6 +228,8 @@ export {
   InputOTPSeparator,
   InputOTPSlot,
 } from "./components/input-otp.js";
+export type { KanbanColumn, KanbanItem, KanbanProps } from "./components/kanban.js";
+export { Kanban } from "./components/kanban.js";
 export { Kbd } from "./components/kbd.js";
 export { Label } from "./components/label.js";
 export type {
@@ -333,6 +335,8 @@ export {
 } from "./components/resizable.js";
 export type { RevealProps } from "./components/reveal.js";
 export { Reveal } from "./components/reveal.js";
+export type { RichTextEditorProps } from "./components/rich-text-editor.js";
+export { RichTextEditor } from "./components/rich-text-editor.js";
 export type {
   SchedulerEvent,
   SchedulerEventColor,
