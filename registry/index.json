@@ -1471,5 +1471,31 @@
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
+  },
+  {
+    "name": "post-card",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.1.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "comment-thread",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.1.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "profile-card",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.1.0"
+    ],
+    "registryDependencies": []
   }
 ]

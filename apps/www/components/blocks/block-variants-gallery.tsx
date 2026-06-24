@@ -74,6 +74,9 @@ const GALLERY_VIEWS: Record<BlockFamily, GalleryView> = {
   survey: dynamic(() => import("../../lib/blocks/survey").then((m) => m.SurveyGallery), {
     loading: GallerySkeleton,
   }),
+  social: dynamic(() => import("../../lib/blocks/social").then((m) => m.SocialGallery), {
+    loading: GallerySkeleton,
+  }),
 };
 
 export function BlockVariantsGallery({ slug }: { slug: string }) {

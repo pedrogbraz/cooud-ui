@@ -67,6 +67,9 @@ const VIEW_VIEWS: Record<BlockFamily, BlockDetailView> = {
   survey: dynamic(() => import("../../lib/blocks/survey").then((m) => m.SurveyView), {
     loading: BlockViewSkeleton,
   }),
+  social: dynamic(() => import("../../lib/blocks/social").then((m) => m.SocialView), {
+    loading: BlockViewSkeleton,
+  }),
 };
 
 export function BlockView({ slug, variant }: { slug: string; variant: string }) {
