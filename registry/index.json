@@ -1257,5 +1257,143 @@
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
+  },
+  {
+    "name": "chat-thread",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.1.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "prompt-box",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.1.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "ai-response",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.1.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "not-found",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.1.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "error-state",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.1.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "success-state",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.1.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "maintenance",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.1.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "email-welcome",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.1.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "email-receipt",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.1.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "email-verify",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.1.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "notification-panel",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.1.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "activity-feed",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.1.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "toast-stack",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.1.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "nps-survey",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.1.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "feedback-form",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.1.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "contact-form",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.1.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
   }
 ]
