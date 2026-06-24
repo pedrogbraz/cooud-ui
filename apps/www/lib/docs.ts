@@ -67,6 +67,11 @@ export const DOC_NAV_SECTIONS: { heading: string; items: DocNavItem[] }[] = [
         description: "React Hook Form, Zod, accessible fields, and validation states.",
       },
       {
+        label: "Recipes",
+        href: "/docs/recipes",
+        description: "Copy-paste patterns: validated forms, theme toggle, toasts, and more.",
+      },
+      {
         label: "Accessibility",
         href: "/docs/accessibility",
         description: "Keyboard, focus, screen reader, contrast, and framework notes.",
