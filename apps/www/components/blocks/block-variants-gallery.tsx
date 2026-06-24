@@ -45,6 +45,9 @@ const GALLERY_VIEWS: Record<BlockFamily, GalleryView> = {
   billing: dynamic(() => import("../../lib/blocks/billing").then((m) => m.BillingGallery), {
     loading: GallerySkeleton,
   }),
+  commerce: dynamic(() => import("../../lib/blocks/commerce").then((m) => m.CommerceGallery), {
+    loading: GallerySkeleton,
+  }),
   page: dynamic(() => import("../../lib/blocks/page-sections").then((m) => m.PageGallery), {
     loading: GallerySkeleton,
   }),
