@@ -42,6 +42,10 @@ export const BLOCK_FAMILY_BY_SLUG: Record<string, BlockFamily> = {
   dashboard: "dashboard",
   // billing
   billing: "billing",
+  "manage-subscription": "billing",
+  "payment-method": "billing",
+  "usage-dashboard": "billing",
+  "cancel-flow": "billing",
   // commerce
   checkout: "commerce",
   payouts: "commerce",
