@@ -97,6 +97,8 @@ export {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "./components/collapsible.js";
+export type { ColorPickerProps, OklchColor } from "./components/color-picker.js";
+export { ColorPicker } from "./components/color-picker.js";
 export type { ComboboxOption, ComboboxProps } from "./components/combobox.js";
 export { Combobox } from "./components/combobox.js";
 export type { CommandDialogProps } from "./components/command.js";
@@ -327,6 +329,8 @@ export {
 export { Popover, PopoverAnchor, PopoverContent, PopoverTrigger } from "./components/popover.js";
 export { Progress } from "./components/progress.js";
 export { RadioGroup, RadioGroupItem } from "./components/radio-group.js";
+export type { RatingProps } from "./components/rating.js";
+export { Rating } from "./components/rating.js";
 export type { ResizableHandleProps } from "./components/resizable.js";
 export {
   ResizableHandle,
@@ -451,6 +455,18 @@ export type {
 export { TextEffect } from "./components/text-effect.js";
 export type { TextareaProps } from "./components/textarea.js";
 export { Textarea } from "./components/textarea.js";
+export type { TimelineDotProps, TimelineItemProps } from "./components/timeline.js";
+export {
+  Timeline,
+  TimelineConnector,
+  TimelineContent,
+  TimelineDescription,
+  TimelineDot,
+  TimelineItem,
+  TimelineTime,
+  TimelineTitle,
+  timelineDotVariants,
+} from "./components/timeline.js";
 export type { ToggleProps } from "./components/toggle.js";
 export { Toggle, toggleVariants } from "./components/toggle.js";
 export { ToggleGroup, ToggleGroupItem } from "./components/toggle-group.js";
@@ -462,4 +478,6 @@ export {
 } from "./components/tooltip.js";
 export type { TreeNode, TreeViewProps } from "./components/tree-view.js";
 export { TreeView } from "./components/tree-view.js";
+export type { UsageMeterProps } from "./components/usage-meter.js";
+export { UsageMeter, UsageMeterCircular, UsageMeterLinear } from "./components/usage-meter.js";
 export { cn } from "./lib/cn.js";

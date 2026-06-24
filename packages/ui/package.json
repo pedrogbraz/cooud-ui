@@ -92,6 +92,10 @@
       "types": "./dist/components/collapsible.d.ts",
       "import": "./dist/components/collapsible.js"
     },
+    "./color-picker": {
+      "types": "./dist/components/color-picker.d.ts",
+      "import": "./dist/components/color-picker.js"
+    },
     "./combobox": {
       "types": "./dist/components/combobox.d.ts",
       "import": "./dist/components/combobox.js"
@@ -236,6 +240,10 @@
       "types": "./dist/components/radio-group.d.ts",
       "import": "./dist/components/radio-group.js"
     },
+    "./rating": {
+      "types": "./dist/components/rating.d.ts",
+      "import": "./dist/components/rating.js"
+    },
     "./resizable": {
       "types": "./dist/components/resizable.d.ts",
       "import": "./dist/components/resizable.js"
@@ -324,6 +332,10 @@
       "types": "./dist/components/text-effect.d.ts",
       "import": "./dist/components/text-effect.js"
     },
+    "./timeline": {
+      "types": "./dist/components/timeline.d.ts",
+      "import": "./dist/components/timeline.js"
+    },
     "./toggle": {
       "types": "./dist/components/toggle.d.ts",
       "import": "./dist/components/toggle.js"
@@ -339,6 +351,10 @@
     "./tree-view": {
       "types": "./dist/components/tree-view.d.ts",
       "import": "./dist/components/tree-view.js"
+    },
+    "./usage-meter": {
+      "types": "./dist/components/usage-meter.d.ts",
+      "import": "./dist/components/usage-meter.js"
     },
     "./package.json": "./package.json"
   },
