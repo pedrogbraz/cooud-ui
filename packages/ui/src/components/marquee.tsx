@@ -15,12 +15,13 @@ import {
 import { cn } from "../lib/cn.js";
 
 /**
- * How `prefers-reduced-motion` is honoured. `"user"` (default) renders the
- * content statically for visitors who opt out; `"never"` always scrolls (e.g. a
- * showcase that must demonstrate the marquee); `"always"` forces the static
- * render.
+ * Whether the marquee scrolls. `"respect"` (default) honours the visitor's
+ * `prefers-reduced-motion` setting — it scrolls for everyone except those who
+ * opt out, who get a static, fully-legible row. `"always"` always scrolls,
+ * ignoring the OS setting (e.g. a showcase that must demonstrate the motion);
+ * `"never"` is always static.
  */
-export type MarqueeMotionPreference = "user" | "always" | "never";
+export type MarqueeMotionPreference = "respect" | "always" | "never";
 
 interface MarqueeStyle extends CSSProperties {
   "--marquee-duration"?: string;
@@ -63,7 +64,11 @@ export interface MarqueeProps extends HTMLAttributes<HTMLDivElement> {
    * viewports (leaving a visible gap before the loop point).
    */
   repeat?: number;
-  /** Controls how `prefers-reduced-motion` is honoured. Defaults to `"user"`. */
+  /**
+   * Whether the marquee scrolls vs. honours `prefers-reduced-motion`:
+   * `"respect"` (default), `"always"` (force motion), or `"never"` (force
+   * static). Defaults to `"respect"`.
+   */
   motionPreference?: MarqueeMotionPreference;
   /** Class applied to each repeated copy (the flex row/column of items). */
   groupClassName?: string;
@@ -109,7 +114,7 @@ export const Marquee = forwardRef<HTMLDivElement, MarqueeProps>(
       fade = true,
       gap = DEFAULT_GAP,
       repeat = DEFAULT_REPEAT,
-      motionPreference = "user",
+      motionPreference = "respect",
       style,
       ...props
     },
@@ -117,9 +122,9 @@ export const Marquee = forwardRef<HTMLDivElement, MarqueeProps>(
   ) => {
     const systemReducedMotion = useReducedMotion();
     const prefersReducedMotion =
-      motionPreference === "never"
+      motionPreference === "always"
         ? false
-        : motionPreference === "always"
+        : motionPreference === "never"
           ? true
           : systemReducedMotion;
 
@@ -165,11 +170,22 @@ export const Marquee = forwardRef<HTMLDivElement, MarqueeProps>(
     // For "forward" (left / up) the row slides toward its start; "right"/"down"
     // reverse it by swapping the from/to endpoints, so velocity stays linear and
     // the seam is identical in both directions.
-    const onePart = `${(100 / copies).toFixed(4)}%`;
     const axisSign = vertical ? "Y" : "X";
     const forward = direction === "left";
-    const fromTransform = forward ? "translate3d(0,0,0)" : `translate${axisSign}(-${onePart})`;
-    const toTransform = forward ? `translate${axisSign}(-${onePart})` : "translate3d(0,0,0)";
+    // Each copy is one full repeat of the children; sliding it by exactly its
+    // own length PLUS the inter-copy gap lands the *next* copy precisely where
+    // this one began, so the reset is pixel-identical — a seamless loop. The
+    // travel is one copy + gap regardless of `copies` (which only needs to be
+    // ≥ 2 to keep the viewport filled), and it matches the `distance` the
+    // duration is derived from, so the apparent px/sec speed is exact. Both
+    // endpoints use the SAME translate function on the scroll axis so the
+    // browser interpolates them linearly (mismatched function lists fall back
+    // to matrix decomposition, which can stutter); `[will-change:transform]`
+    // already composites the track, so the 3d hint is unnecessary.
+    const zero = `translate${axisSign}(0)`;
+    const shifted = `translate${axisSign}(calc(-100% - var(--marquee-gap)))`;
+    const fromTransform = forward ? zero : shifted;
+    const toTransform = forward ? shifted : zero;
 
     const fadeMask = vertical
       ? "linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent)"
@@ -233,6 +249,10 @@ export const Marquee = forwardRef<HTMLDivElement, MarqueeProps>(
           {
             ...style,
             ...trackStyle,
+            // Space the back-to-back copies by the SAME gap used between items,
+            // so the gap straddling the loop seam matches every other gap (the
+            // `<style>` child is display:none, so it never gets a flex gap).
+            gap,
             ...(fade ? { "--marquee-mask": fadeMask } : {}),
           } as MarqueeStyle
         }
@@ -254,7 +274,11 @@ export const Marquee = forwardRef<HTMLDivElement, MarqueeProps>(
             aria-hidden={copyIndex === 0 ? undefined : "true"}
             data-slot="marquee-group"
             className={cn(
-              "flex w-max shrink-0 items-center [animation:var(--marquee-animation)] [will-change:transform] motion-reduce:[animation:none]",
+              "flex w-max shrink-0 items-center [animation:var(--marquee-animation)] [will-change:transform]",
+              // SSR backstop: until hydration swaps in the static fallback, this
+              // stops motion for reduced-motion visitors. `"always"` opts out —
+              // it must scroll regardless of the OS setting.
+              motionPreference !== "always" && "motion-reduce:[animation:none]",
               vertical ? "min-h-max flex-col" : "min-w-max flex-row",
               pauseOnHover && "group-hover:[animation-play-state:paused]",
               groupClassName,

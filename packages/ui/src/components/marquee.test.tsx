@@ -130,9 +130,51 @@ describe("Marquee", () => {
     );
   });
 
-  it("renders a single static copy with no animation under forced reduced motion", () => {
+  it("travels exactly one copy + gap so the loop seam is seamless", () => {
     const { container } = render(
-      <Marquee motionPreference="always">
+      <Marquee>
+        <Items />
+      </Marquee>,
+    );
+    const root = container.querySelector('[data-slot="marquee"]') as HTMLElement;
+    // Forward (default "left"): 0 → -(one full copy + the inter-copy gap). A
+    // half-copy translate (e.g. -50%) would leave a visible jump at the reset.
+    expect(root.style.getPropertyValue("--marquee-from")).toBe("translateX(0)");
+    expect(root.style.getPropertyValue("--marquee-to")).toBe(
+      "translateX(calc(-100% - var(--marquee-gap)))",
+    );
+    // The container spaces the copies by the same gap, so the seam gap matches.
+    expect(root.style.gap).not.toBe("");
+  });
+
+  it("reverses the travel endpoints for direction='right'", () => {
+    const { container } = render(
+      <Marquee direction="right">
+        <Items />
+      </Marquee>,
+    );
+    const root = container.querySelector('[data-slot="marquee"]') as HTMLElement;
+    expect(root.style.getPropertyValue("--marquee-from")).toBe(
+      "translateX(calc(-100% - var(--marquee-gap)))",
+    );
+    expect(root.style.getPropertyValue("--marquee-to")).toBe("translateX(0)");
+  });
+
+  it("travels on the Y axis when vertical", () => {
+    const { container } = render(
+      <Marquee vertical>
+        <Items />
+      </Marquee>,
+    );
+    const root = container.querySelector('[data-slot="marquee"]') as HTMLElement;
+    expect(root.style.getPropertyValue("--marquee-to")).toBe(
+      "translateY(calc(-100% - var(--marquee-gap)))",
+    );
+  });
+
+  it("renders a single static copy with no animation when motionPreference is 'never'", () => {
+    const { container } = render(
+      <Marquee motionPreference="never">
         <Items />
       </Marquee>,
     );
@@ -144,9 +186,9 @@ describe("Marquee", () => {
     expect(root.querySelector("style")).toBeNull();
   });
 
-  it("still scrolls when motionPreference is 'never' (forces the animated path)", () => {
+  it("still scrolls when motionPreference is 'always' (forces the animated path)", () => {
     const { container } = render(
-      <Marquee motionPreference="never">
+      <Marquee motionPreference="always">
         <Items />
       </Marquee>,
     );
@@ -164,9 +206,9 @@ describe("Marquee", () => {
     expect(await axe(container)).toHaveNoViolations();
   });
 
-  it("has no axe violations in the reduced-motion fallback", async () => {
+  it("has no axe violations in the static fallback", async () => {
     const { container } = render(
-      <Marquee motionPreference="always" aria-label="Trusted by">
+      <Marquee motionPreference="never" aria-label="Trusted by">
         <Items />
       </Marquee>,
     );
