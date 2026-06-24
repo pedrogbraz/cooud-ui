@@ -102,6 +102,17 @@
     ]
   },
   {
+    "name": "avatar-group",
+    "type": "registry:ui",
+    "dependencies": [
+      "class-variance-authority@^0.7.1"
+    ],
+    "registryDependencies": [
+      "avatar",
+      "cn"
+    ]
+  },
+  {
     "name": "avatar",
     "type": "registry:ui",
     "dependencies": [
@@ -118,6 +129,19 @@
       "class-variance-authority@^0.7.1"
     ],
     "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "banner",
+    "type": "registry:ui",
+    "dependencies": [
+      "class-variance-authority@^0.7.1",
+      "lucide-react@^0.577.0",
+      "motion@^12.23.0"
+    ],
+    "registryDependencies": [
+      "button",
       "cn"
     ]
   },
@@ -490,6 +514,16 @@
     ]
   },
   {
+    "name": "marquee",
+    "type": "registry:ui",
+    "dependencies": [
+      "motion@^12.23.0"
+    ],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
     "name": "menubar",
     "type": "registry:ui",
     "dependencies": [
@@ -785,6 +819,14 @@
     "registryDependencies": []
   },
   {
+    "name": "sparkline",
+    "type": "registry:ui",
+    "dependencies": [],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
     "name": "spinner",
     "type": "registry:ui",
     "dependencies": [
@@ -838,6 +880,17 @@
       "@radix-ui/react-tabs@^1.1.12"
     ],
     "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "tags-input",
+    "type": "registry:ui",
+    "dependencies": [
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": [
+      "badge",
       "cn"
     ]
   },
