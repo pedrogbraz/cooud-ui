@@ -39,6 +39,9 @@ const VIEW_VIEWS: Record<BlockFamily, BlockDetailView> = {
   billing: dynamic(() => import("../../lib/blocks/billing").then((m) => m.BillingView), {
     loading: BlockViewSkeleton,
   }),
+  commerce: dynamic(() => import("../../lib/blocks/commerce").then((m) => m.CommerceView), {
+    loading: BlockViewSkeleton,
+  }),
   page: dynamic(() => import("../../lib/blocks/page-sections").then((m) => m.PageView), {
     loading: BlockViewSkeleton,
   }),

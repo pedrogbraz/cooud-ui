@@ -189,6 +189,34 @@ export const BLOCK_CATEGORIES: BlockCategory[] = [
     ],
   },
   {
+    slug: "commerce",
+    name: "Commerce",
+    items: [
+      {
+        slug: "checkout",
+        name: "Checkout",
+        description: "A product checkout with an order summary and a card payment form.",
+      },
+      {
+        slug: "payouts",
+        name: "Payouts",
+        description:
+          "A creator payout dashboard with balance cards and a settlement history table.",
+      },
+      {
+        slug: "product-grid",
+        name: "Product Grid",
+        description:
+          "A digital-products storefront grid of product cards with prices and buy buttons.",
+      },
+      {
+        slug: "invoice",
+        name: "Invoice",
+        description: "An invoice receipt with line items, totals, status, and a download action.",
+      },
+    ],
+  },
+  {
     slug: "page",
     name: "Page sections",
     items: [
