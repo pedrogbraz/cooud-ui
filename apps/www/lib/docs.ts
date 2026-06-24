@@ -25,6 +25,11 @@ export const DOC_NAV_SECTIONS: { heading: string; items: DocNavItem[] }[] = [
         description: "Project shape, distribution modes, and design-system contract.",
       },
       {
+        label: "Getting started",
+        href: "/docs/getting-started",
+        description: "Zero to a themed UI: install, provider, first component, theme, and a block.",
+      },
+      {
         label: "Components",
         href: "/components",
         description: "Browse the production component catalog.",
