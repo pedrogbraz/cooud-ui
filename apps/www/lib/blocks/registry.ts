@@ -30,6 +30,10 @@ export const BLOCK_FAMILY_BY_SLUG: Record<string, BlockFamily> = {
   pricing: "marketing",
   "feature-grid": "marketing",
   cta: "marketing",
+  testimonials: "marketing",
+  faq: "marketing",
+  footer: "marketing",
+  navbar: "marketing",
   // application
   stats: "application",
   settings: "application",

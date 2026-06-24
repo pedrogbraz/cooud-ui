@@ -149,6 +149,51 @@ export const BLOCK_CATEGORIES: BlockCategory[] = [
         name: "Call to Action",
         description: "A bold gradient call-to-action banner.",
       },
+      {
+        slug: "testimonials",
+        name: "Testimonials",
+        description: "Social proof with avatar trust line and a wall of customer testimonials.",
+        variants: [
+          {
+            id: "marquee",
+            name: "Marquee wall",
+            description:
+              "A scrolling, pause-on-hover wall of testimonials with avatar social proof.",
+          },
+          {
+            id: "grid",
+            name: "Card grid",
+            description: "A static responsive grid of testimonial cards for dense social proof.",
+          },
+        ],
+      },
+      {
+        slug: "faq",
+        name: "FAQ",
+        description: "An accessible accordion of frequently asked questions.",
+        variants: [
+          {
+            id: "accordion",
+            name: "Centered accordion",
+            description: "A centered, width-constrained accordion of common questions and answers.",
+          },
+          {
+            id: "split",
+            name: "Split with support",
+            description: "A two-column layout pairing the questions with a contact-support panel.",
+          },
+        ],
+      },
+      {
+        slug: "footer",
+        name: "Footer",
+        description: "A full site footer with brand block, link columns, and a newsletter sign-up.",
+      },
+      {
+        slug: "navbar",
+        name: "Navbar",
+        description: "A contained, rounded marketing navigation bar with brand mark and CTAs.",
+      },
     ],
   },
   {
