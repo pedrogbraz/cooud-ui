@@ -58,6 +58,8 @@ export {
 } from "./components/breadcrumb.js";
 export type { ButtonProps } from "./components/button.js";
 export { Button, buttonVariants } from "./components/button.js";
+export type { ButtonGroupProps } from "./components/button-group.js";
+export { ButtonGroup } from "./components/button-group.js";
 export type { CalendarProps } from "./components/calendar.js";
 export { Calendar } from "./components/calendar.js";
 export {
@@ -232,6 +234,8 @@ export { GradientText } from "./components/gradient-text.js";
 export { HoverCard, HoverCardContent, HoverCardTrigger } from "./components/hover-card.js";
 export type { InputProps } from "./components/input.js";
 export { Input } from "./components/input.js";
+export type { InputGroupAddonProps, InputGroupProps } from "./components/input-group.js";
+export { InputGroup, InputGroupAddon } from "./components/input-group.js";
 export {
   InputOTP,
   InputOTPGroup,
@@ -252,6 +256,8 @@ export type {
 export { LogoCarousel } from "./components/logo-carousel.js";
 export type { MarqueeMotionPreference, MarqueeProps } from "./components/marquee.js";
 export { Marquee } from "./components/marquee.js";
+export type { MasonryColumns, MasonryProps } from "./components/masonry.js";
+export { Masonry } from "./components/masonry.js";
 export {
   Menubar,
   MenubarCheckboxItem,
@@ -336,6 +342,8 @@ export {
   PaginationNext,
   PaginationPrevious,
 } from "./components/pagination.js";
+export type { PasswordInputProps } from "./components/password-input.js";
+export { getPasswordStrength, PasswordInput } from "./components/password-input.js";
 export { Popover, PopoverAnchor, PopoverContent, PopoverTrigger } from "./components/popover.js";
 export { Progress } from "./components/progress.js";
 export { RadioGroup, RadioGroupItem } from "./components/radio-group.js";
