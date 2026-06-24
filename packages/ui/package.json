@@ -52,9 +52,17 @@
       "types": "./dist/components/avatar.d.ts",
       "import": "./dist/components/avatar.js"
     },
+    "./avatar-group": {
+      "types": "./dist/components/avatar-group.d.ts",
+      "import": "./dist/components/avatar-group.js"
+    },
     "./badge": {
       "types": "./dist/components/badge.d.ts",
       "import": "./dist/components/badge.js"
+    },
+    "./banner": {
+      "types": "./dist/components/banner.d.ts",
+      "import": "./dist/components/banner.js"
     },
     "./breadcrumb": {
       "types": "./dist/components/breadcrumb.d.ts",
@@ -192,6 +200,10 @@
       "types": "./dist/components/logo-carousel.d.ts",
       "import": "./dist/components/logo-carousel.js"
     },
+    "./marquee": {
+      "types": "./dist/components/marquee.d.ts",
+      "import": "./dist/components/marquee.js"
+    },
     "./menubar": {
       "types": "./dist/components/menubar.d.ts",
       "import": "./dist/components/menubar.js"
@@ -300,6 +312,10 @@
       "types": "./dist/components/sonner.d.ts",
       "import": "./dist/components/sonner.js"
     },
+    "./sparkline": {
+      "types": "./dist/components/sparkline.d.ts",
+      "import": "./dist/components/sparkline.js"
+    },
     "./spinner": {
       "types": "./dist/components/spinner.d.ts",
       "import": "./dist/components/spinner.js"
@@ -323,6 +339,10 @@
     "./tabs": {
       "types": "./dist/components/tabs.d.ts",
       "import": "./dist/components/tabs.js"
+    },
+    "./tags-input": {
+      "types": "./dist/components/tags-input.d.ts",
+      "import": "./dist/components/tags-input.js"
     },
     "./textarea": {
       "types": "./dist/components/textarea.d.ts",

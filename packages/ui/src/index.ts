@@ -35,9 +35,17 @@ export type { AutocompleteOption, AutocompleteProps } from "./components/autocom
 export { Autocomplete } from "./components/autocomplete.js";
 // ── Wave 3 — data & display ────────────────────────────────────────
 export { Avatar, AvatarFallback, AvatarImage } from "./components/avatar.js";
+export type { AvatarGroupAvatar, AvatarGroupProps } from "./components/avatar-group.js";
+export {
+  AvatarGroup,
+  avatarGroupItemVariants,
+  avatarGroupOverflowVariants,
+} from "./components/avatar-group.js";
 export type { BadgeProps } from "./components/badge.js";
 // ── Wave 0 — foundation ────────────────────────────────────────────
 export { Badge, badgeVariants } from "./components/badge.js";
+export type { BannerProps } from "./components/banner.js";
+export { Banner, bannerVariants } from "./components/banner.js";
 export type { BreadcrumbLinkProps } from "./components/breadcrumb.js";
 export {
   Breadcrumb,
@@ -242,6 +250,8 @@ export type {
   LogoCarouselVariant,
 } from "./components/logo-carousel.js";
 export { LogoCarousel } from "./components/logo-carousel.js";
+export type { MarqueeMotionPreference, MarqueeProps } from "./components/marquee.js";
+export { Marquee } from "./components/marquee.js";
 export {
   Menubar,
   MenubarCheckboxItem,
@@ -414,6 +424,8 @@ export { Skeleton } from "./components/skeleton.js";
 export { Slider } from "./components/slider.js";
 export type { ToasterProps } from "./components/sonner.js";
 export { Toaster, toast } from "./components/sonner.js";
+export type { SparklineProps } from "./components/sparkline.js";
+export { Sparkline } from "./components/sparkline.js";
 export type { SpinnerProps } from "./components/spinner.js";
 export { Spinner } from "./components/spinner.js";
 export { SpotlightCard } from "./components/spotlight-card.js";
@@ -446,6 +458,8 @@ export {
   TableRow,
 } from "./components/table.js";
 export { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/tabs.js";
+export type { TagsInputProps } from "./components/tags-input.js";
+export { TagsInput } from "./components/tags-input.js";
 export type {
   TextEffectPer,
   TextEffectPreset,
