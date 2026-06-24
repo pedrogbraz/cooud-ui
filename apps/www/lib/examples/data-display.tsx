@@ -26,6 +26,8 @@ import {
   EmptyDescription,
   EmptyIcon,
   EmptyTitle,
+  Kanban,
+  type KanbanColumn,
   Kbd,
   Metric,
   MetricDelta,
@@ -409,6 +411,83 @@ function FileTreeDemo() {
     />
   );
 }
+
+// ── Kanban ─────────────────────────────────────────────────────────
+const INITIAL_BOARD: KanbanColumn[] = [
+  {
+    id: "todo",
+    title: "To do",
+    items: [
+      { id: "t-1", title: "Draft the launch post", description: "Outline the key talking points." },
+      { id: "t-2", title: "Audit onboarding copy" },
+      {
+        id: "t-3",
+        title: "Collect customer quotes",
+        description: "Reach out to 3 design partners.",
+      },
+    ],
+  },
+  {
+    id: "in-progress",
+    title: "In progress",
+    items: [
+      {
+        id: "p-1",
+        title: "Wire up the billing page",
+        description: "Hook the plan picker to checkout.",
+      },
+      { id: "p-2", title: "Polish empty states" },
+    ],
+  },
+  {
+    id: "done",
+    title: "Done",
+    items: [{ id: "d-1", title: "Ship the new docs theme", description: "Dark mode shipped." }],
+  },
+];
+
+function KanbanDemo() {
+  const [columns, setColumns] = useState<KanbanColumn[]>(INITIAL_BOARD);
+  return <Kanban columns={columns} onColumnsChange={setColumns} aria-label="Project board" />;
+}
+
+const kanbanDemoCode = `const INITIAL_BOARD: KanbanColumn[] = [
+  {
+    id: "todo",
+    title: "To do",
+    items: [
+      { id: "t-1", title: "Draft the launch post", description: "Outline the key talking points." },
+      { id: "t-2", title: "Audit onboarding copy" },
+      {
+        id: "t-3",
+        title: "Collect customer quotes",
+        description: "Reach out to 3 design partners.",
+      },
+    ],
+  },
+  {
+    id: "in-progress",
+    title: "In progress",
+    items: [
+      {
+        id: "p-1",
+        title: "Wire up the billing page",
+        description: "Hook the plan picker to checkout.",
+      },
+      { id: "p-2", title: "Polish empty states" },
+    ],
+  },
+  {
+    id: "done",
+    title: "Done",
+    items: [{ id: "d-1", title: "Ship the new docs theme", description: "Dark mode shipped." }],
+  },
+];
+
+function KanbanDemo() {
+  const [columns, setColumns] = useState<KanbanColumn[]>(INITIAL_BOARD);
+  return <Kanban columns={columns} onColumnsChange={setColumns} aria-label="Project board" />;
+}`;
 
 export const dataDisplayExamples: ExampleMap = {
   avatar: [
@@ -1273,6 +1352,17 @@ return (
   />
 );`,
       preview: <FileTreeDemo />,
+    },
+  ],
+
+  kanban: [
+    {
+      id: "board",
+      title: "Board",
+      description:
+        "A controlled drag-and-drop board. Cards reorder within a column and move across columns; `onColumnsChange` hands you the next state to store. Drag with the pointer or focus a card's handle and use the arrow keys.",
+      code: kanbanDemoCode,
+      preview: <KanbanDemo />,
     },
   ],
 };

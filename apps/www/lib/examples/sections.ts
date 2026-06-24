@@ -76,6 +76,7 @@ export const EXAMPLE_SECTIONS: Record<string, ExampleSectionMeta[]> = {
     { id: "async", title: "Async suggestions" },
   ],
   stepper: [{ id: "wizard", title: "Wizard" }],
+  "rich-text-editor": [{ id: "default", title: "Default" }],
   avatar: [
     { id: "image-fallback", title: "Image & fallback" },
     { id: "group", title: "Group" },
@@ -114,6 +115,7 @@ export const EXAMPLE_SECTIONS: Record<string, ExampleSectionMeta[]> = {
     { id: "square", title: "Square" },
   ],
   "tree-view": [{ id: "file-tree", title: "File tree" }],
+  kanban: [{ id: "board", title: "Board" }],
   alert: [
     { id: "default", title: "Default" },
     { id: "variants", title: "Variants" },
