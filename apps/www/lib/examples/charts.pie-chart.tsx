@@ -36,16 +36,34 @@ const chartData = [
 
 export default function PieChartDemo() {
   return (
-    <ChartContainer config={chartConfig} className="h-64 w-full">
-      <PieChart accessibilityLayer>
-        <ChartTooltip content={<ChartTooltipContent hideLabel />} />
-        <Pie data={chartData} dataKey="visitors" nameKey="source" innerRadius={56} strokeWidth={4}>
-          {chartData.map((entry) => (
-            <Cell key={entry.source} fill={entry.fill} />
-          ))}
-        </Pie>
-        <ChartLegend content={<ChartLegendContent nameKey="source" />} />
-      </PieChart>
-    </ChartContainer>
+    // The data is conveyed to assistive tech via this label; the SVG internals
+    // (recharts tags each sector role="img" with no name) are hidden so they're
+    // not announced as 13 nameless images.
+    <div
+      role="img"
+      aria-label="Donut chart of traffic sources by visitors: Direct 4,200, Organic 3,100, Referral 1,900, Social 1,400, Email 800."
+      className="h-64 w-full"
+    >
+      <div aria-hidden="true" className="h-full w-full">
+        <ChartContainer config={chartConfig} className="h-full w-full">
+          <PieChart>
+            <ChartTooltip content={<ChartTooltipContent hideLabel />} />
+            <Pie
+              data={chartData}
+              dataKey="visitors"
+              nameKey="source"
+              innerRadius={56}
+              strokeWidth={4}
+              rootTabIndex={-1}
+            >
+              {chartData.map((entry) => (
+                <Cell key={entry.source} fill={entry.fill} />
+              ))}
+            </Pie>
+            <ChartLegend content={<ChartLegendContent nameKey="source" />} />
+          </PieChart>
+        </ChartContainer>
+      </div>
+    </div>
   );
 }

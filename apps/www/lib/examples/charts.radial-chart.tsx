@@ -34,13 +34,23 @@ const chartData = [
 
 export default function RadialChartDemo() {
   return (
-    <ChartContainer config={chartConfig} className="h-64 w-full">
-      <RadialBarChart accessibilityLayer data={chartData} innerRadius={32} outerRadius={110}>
-        <ChartTooltip content={<ChartTooltipContent hideLabel nameKey="device" />} />
-        <PolarGrid gridType="circle" radialLines={false} stroke="none" />
-        <RadialBar dataKey="visitors" background cornerRadius={8} />
-        <ChartLegend content={<ChartLegendContent nameKey="device" />} />
-      </RadialBarChart>
-    </ChartContainer>
+    // Data is exposed to assistive tech via this label; the SVG internals are
+    // hidden so recharts' nameless role="img" nodes aren't announced.
+    <div
+      role="img"
+      aria-label="Radial bar chart of visitors by device: Desktop 5,200, Mobile 4,100, Tablet 1,800, Other 900."
+      className="h-64 w-full"
+    >
+      <div aria-hidden="true" className="h-full w-full">
+        <ChartContainer config={chartConfig} className="h-full w-full">
+          <RadialBarChart data={chartData} innerRadius={32} outerRadius={110}>
+            <ChartTooltip content={<ChartTooltipContent hideLabel nameKey="device" />} />
+            <PolarGrid gridType="circle" radialLines={false} stroke="none" />
+            <RadialBar dataKey="visitors" background cornerRadius={8} />
+            <ChartLegend content={<ChartLegendContent nameKey="device" />} />
+          </RadialBarChart>
+        </ChartContainer>
+      </div>
+    </div>
   );
 }
