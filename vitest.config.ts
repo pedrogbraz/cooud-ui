@@ -22,6 +22,22 @@ export default defineConfig({
       },
       {
         test: {
+          name: "create-cooud-app",
+          root: "./packages/create-cooud-app",
+          environment: "node",
+          include: ["src/**/*.test.ts"],
+        },
+      },
+      {
+        test: {
+          name: "mcp",
+          root: "./packages/mcp",
+          environment: "node",
+          include: ["src/**/*.test.ts"],
+        },
+      },
+      {
+        test: {
           name: "ui",
           root: "./packages/ui",
           environment: "node",
