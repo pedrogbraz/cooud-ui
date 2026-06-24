@@ -12,6 +12,7 @@ export type BlockFamily =
   | "auth"
   | "marketing"
   | "application"
+  | "onboarding"
   | "dashboard"
   | "billing"
   | "commerce"
@@ -38,6 +39,10 @@ export const BLOCK_FAMILY_BY_SLUG: Record<string, BlockFamily> = {
   stats: "application",
   settings: "application",
   team: "application",
+  // onboarding
+  welcome: "onboarding",
+  "setup-wizard": "onboarding",
+  "setup-checklist": "onboarding",
   // dashboard
   dashboard: "dashboard",
   // billing
