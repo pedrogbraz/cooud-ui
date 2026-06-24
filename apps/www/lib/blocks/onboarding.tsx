@@ -391,7 +391,7 @@ export function SetupChecklistBlock() {
               <span className="font-medium text-fg">40% complete</span>
               <span className="text-fg-tertiary">2 of 5 complete</span>
             </div>
-            <Progress value={40} />
+            <Progress value={40} aria-label="Setup progress: 2 of 5 complete" />
           </div>
 
           <ul className="flex flex-col gap-1">
@@ -496,7 +496,7 @@ export function SetupChecklistBlock() {
               <span className="font-medium text-fg">40% complete</span>
               <span className="text-fg-tertiary">2 of 5 complete</span>
             </div>
-            <Progress value={40} />
+            <Progress value={40} aria-label="Setup progress: 2 of 5 complete" />
           </div>
 
           <ul className="flex flex-col gap-1">

@@ -428,7 +428,12 @@ export function ToastStackBlock() {
               <p className="font-medium text-fg text-sm">Payment received</p>
               <p className="text-fg-secondary text-sm">Your invoice was settled successfully.</p>
             </div>
-            <Button variant="ghost" size="icon" className="-mr-1 -mt-1 size-7 text-fg-tertiary">
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label="Dismiss"
+              className="-mr-1 -mt-1 size-7 text-fg-tertiary"
+            >
               <X className="size-4" aria-hidden="true" />
             </Button>
           </div>
@@ -441,7 +446,12 @@ export function ToastStackBlock() {
               <p className="font-medium text-fg text-sm">Upload failed</p>
               <p className="text-fg-secondary text-sm">The file exceeds the 25 MB limit.</p>
             </div>
-            <Button variant="ghost" size="icon" className="-mr-1 -mt-1 size-7 text-fg-tertiary">
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label="Dismiss"
+              className="-mr-1 -mt-1 size-7 text-fg-tertiary"
+            >
               <X className="size-4" aria-hidden="true" />
             </Button>
           </div>
@@ -454,7 +464,12 @@ export function ToastStackBlock() {
               <p className="font-medium text-fg text-sm">Storage almost full</p>
               <p className="text-fg-secondary text-sm">You are using 92% of your quota.</p>
             </div>
-            <Button variant="ghost" size="icon" className="-mr-1 -mt-1 size-7 text-fg-tertiary">
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label="Dismiss"
+              className="-mr-1 -mt-1 size-7 text-fg-tertiary"
+            >
               <X className="size-4" aria-hidden="true" />
             </Button>
           </div>
@@ -467,7 +482,12 @@ export function ToastStackBlock() {
               <p className="font-medium text-fg text-sm">New version available</p>
               <p className="text-fg-secondary text-sm">Refresh to update to the latest build.</p>
             </div>
-            <Button variant="ghost" size="icon" className="-mr-1 -mt-1 size-7 text-fg-tertiary">
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label="Dismiss"
+              className="-mr-1 -mt-1 size-7 text-fg-tertiary"
+            >
               <X className="size-4" aria-hidden="true" />
             </Button>
           </div>
@@ -491,7 +511,7 @@ export function ToastStackBlock() {
               <p className="font-medium text-fg text-sm">Payment received</p>
               <p className="text-fg-secondary text-sm">Your invoice was settled successfully.</p>
             </div>
-            <Button variant="ghost" size="icon" className="-mr-1 -mt-1 size-7 text-fg-tertiary">
+            <Button variant="ghost" size="icon" aria-label="Dismiss" className="-mr-1 -mt-1 size-7 text-fg-tertiary">
               <X className="size-4" aria-hidden="true" />
             </Button>
           </div>
@@ -504,7 +524,7 @@ export function ToastStackBlock() {
               <p className="font-medium text-fg text-sm">Upload failed</p>
               <p className="text-fg-secondary text-sm">The file exceeds the 25 MB limit.</p>
             </div>
-            <Button variant="ghost" size="icon" className="-mr-1 -mt-1 size-7 text-fg-tertiary">
+            <Button variant="ghost" size="icon" aria-label="Dismiss" className="-mr-1 -mt-1 size-7 text-fg-tertiary">
               <X className="size-4" aria-hidden="true" />
             </Button>
           </div>
@@ -517,7 +537,7 @@ export function ToastStackBlock() {
               <p className="font-medium text-fg text-sm">Storage almost full</p>
               <p className="text-fg-secondary text-sm">You are using 92% of your quota.</p>
             </div>
-            <Button variant="ghost" size="icon" className="-mr-1 -mt-1 size-7 text-fg-tertiary">
+            <Button variant="ghost" size="icon" aria-label="Dismiss" className="-mr-1 -mt-1 size-7 text-fg-tertiary">
               <X className="size-4" aria-hidden="true" />
             </Button>
           </div>
@@ -530,7 +550,7 @@ export function ToastStackBlock() {
               <p className="font-medium text-fg text-sm">New version available</p>
               <p className="text-fg-secondary text-sm">Refresh to update to the latest build.</p>
             </div>
-            <Button variant="ghost" size="icon" className="-mr-1 -mt-1 size-7 text-fg-tertiary">
+            <Button variant="ghost" size="icon" aria-label="Dismiss" className="-mr-1 -mt-1 size-7 text-fg-tertiary">
               <X className="size-4" aria-hidden="true" />
             </Button>
           </div>
