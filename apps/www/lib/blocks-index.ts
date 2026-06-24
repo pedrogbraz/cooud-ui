@@ -24,6 +24,62 @@ export interface BlockCategory {
 
 export const BLOCK_CATEGORIES: BlockCategory[] = [
   {
+    slug: "auth",
+    name: "Auth",
+    items: [
+      {
+        slug: "login",
+        name: "Login",
+        description: "A centered authentication card with email + social login.",
+      },
+      {
+        slug: "signup",
+        name: "Sign Up",
+        description: "A create-account card with email, password, terms, and social sign-up.",
+      },
+      {
+        slug: "forgot-password",
+        name: "Forgot Password",
+        description: "A password reset flow with an email request and a sent confirmation.",
+        variants: [
+          {
+            id: "request",
+            name: "Request link",
+            description: "Email entry that sends a one-time password reset link.",
+          },
+          {
+            id: "sent",
+            name: "Link sent",
+            description: "Confirmation that a reset link was emailed, with a resend action.",
+          },
+        ],
+      },
+      {
+        slug: "otp",
+        name: "Two-Factor Code",
+        description: "A two-factor authentication card with a six-digit one-time code entry.",
+      },
+      {
+        slug: "magic-link",
+        name: "Magic Link",
+        description: "A passwordless email link flow with a request and a sent confirmation.",
+        variants: [
+          {
+            id: "request",
+            name: "Request link",
+            description: "Passwordless email entry that sends a single-use sign-in link.",
+          },
+          {
+            id: "sent",
+            name: "Link sent",
+            description:
+              "Confirmation that a magic sign-in link was emailed, with a resend action.",
+          },
+        ],
+      },
+    ],
+  },
+  {
     slug: "marketing",
     name: "Marketing",
     items: [
@@ -120,11 +176,6 @@ export const BLOCK_CATEGORIES: BlockCategory[] = [
             description: "A segmented stats card for activation, pipeline, or conversion steps.",
           },
         ],
-      },
-      {
-        slug: "login",
-        name: "Login",
-        description: "A centered authentication card with email + social login.",
       },
       {
         slug: "settings",

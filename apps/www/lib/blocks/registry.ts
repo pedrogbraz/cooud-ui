@@ -9,6 +9,7 @@
  */
 
 export type BlockFamily =
+  | "auth"
   | "marketing"
   | "application"
   | "dashboard"
@@ -18,6 +19,12 @@ export type BlockFamily =
 
 /** slug → the family module that owns its content. */
 export const BLOCK_FAMILY_BY_SLUG: Record<string, BlockFamily> = {
+  // auth
+  login: "auth",
+  signup: "auth",
+  "forgot-password": "auth",
+  otp: "auth",
+  "magic-link": "auth",
   // marketing
   hero: "marketing",
   pricing: "marketing",
@@ -25,7 +32,6 @@ export const BLOCK_FAMILY_BY_SLUG: Record<string, BlockFamily> = {
   cta: "marketing",
   // application
   stats: "application",
-  login: "application",
   settings: "application",
   team: "application",
   // dashboard

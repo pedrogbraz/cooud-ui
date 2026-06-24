@@ -32,6 +32,10 @@ const BLOCK_ALIASES: Record<string, string> = {
   cta: "call to action banner conversion signup convert promo",
   stats: "dashboard kpi metrics analytics numbers overview reporting cards",
   login: "auth authentication sign in signin log in account credentials social oauth",
+  signup: "auth authentication sign up signup register create account onboarding social oauth",
+  "forgot-password": "auth password reset recover forgot link email credentials",
+  otp: "auth two factor 2fa mfa one time code verification authenticator security otp",
+  "magic-link": "auth passwordless magic link email sign in signin one time login",
   settings: "preferences account profile configuration form options",
   team: "members people roster users collaborators roles avatars",
 };

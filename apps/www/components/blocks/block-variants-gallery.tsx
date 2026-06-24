@@ -32,6 +32,9 @@ type GalleryView = ComponentType<{ slug: string }>;
 // One next/dynamic per family; only the family a slug belongs to is imported,
 // so the gallery route never loads the *other* family's preview JSX.
 const GALLERY_VIEWS: Record<BlockFamily, GalleryView> = {
+  auth: dynamic(() => import("../../lib/blocks/auth").then((m) => m.AuthGallery), {
+    loading: GallerySkeleton,
+  }),
   marketing: dynamic(() => import("../../lib/blocks/marketing").then((m) => m.MarketingGallery), {
     loading: GallerySkeleton,
   }),
