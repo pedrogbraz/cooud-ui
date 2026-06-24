@@ -69,6 +69,20 @@ const CORE_ROUTES: ReadonlyArray<{ path: string; label: string }> = [
   { path: "/components/carousel", label: "components · carousel" },
   { path: "/components/segmented-control", label: "components · segmented-control" },
   { path: "/components/text-effect", label: "components · text-effect" },
+  // batch-5 components + the chart page (donut/radar/radial demos).
+  { path: "/components/input-group", label: "components · input-group" },
+  { path: "/components/password-input", label: "components · password-input" },
+  { path: "/components/button-group", label: "components · button-group" },
+  { path: "/components/masonry", label: "components · masonry" },
+  { path: "/components/chart", label: "components · chart" },
+  // New block families — scan a representative block from each.
+  { path: "/blocks/login", label: "blocks · login (auth)" },
+  { path: "/blocks/setup-checklist", label: "blocks · setup-checklist (onboarding)" },
+  { path: "/blocks/chat-thread", label: "blocks · chat-thread (ai)" },
+  { path: "/blocks/toast-stack", label: "blocks · toast-stack (notifications)" },
+  { path: "/blocks/email-receipt", label: "blocks · email-receipt (email)" },
+  { path: "/blocks/not-found", label: "blocks · not-found (states)" },
+  { path: "/blocks/nps-survey", label: "blocks · nps-survey (survey)" },
 ];
 
 async function runAxe(page: Page) {
