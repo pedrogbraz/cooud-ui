@@ -48,6 +48,8 @@ export const EXAMPLE_FAMILY_BY_SLUG: Record<string, ExampleFamily> = {
   autocomplete: "forms",
   stepper: "forms",
   "rich-text-editor": "forms",
+  "color-picker": "forms",
+  rating: "forms",
   // data-display
   avatar: "data-display",
   badge: "data-display",
@@ -64,12 +66,15 @@ export const EXAMPLE_FAMILY_BY_SLUG: Record<string, ExampleFamily> = {
   collapsible: "data-display",
   "aspect-ratio": "data-display",
   kanban: "data-display",
+  timeline: "data-display",
+  "tree-view": "data-display",
   // feedback
   spinner: "feedback",
   progress: "feedback",
   sonner: "feedback",
   alert: "feedback",
   "alert-dialog": "feedback",
+  "usage-meter": "feedback",
   // overlays
   dialog: "overlays",
   sheet: "overlays",
@@ -80,6 +85,7 @@ export const EXAMPLE_FAMILY_BY_SLUG: Record<string, ExampleFamily> = {
   "dropdown-menu": "overlays",
   "context-menu": "overlays",
   command: "overlays",
+  "notification-center": "overlays",
   // navigation
   tabs: "navigation",
   accordion: "navigation",
@@ -94,6 +100,7 @@ export const EXAMPLE_FAMILY_BY_SLUG: Record<string, ExampleFamily> = {
   calendar: "date-time",
   "date-picker": "date-time",
   "date-range-picker": "date-time",
+  scheduler: "date-time",
   // charts
   chart: "charts",
   // premium
