@@ -31,6 +31,7 @@ import {
   Kanban,
   type KanbanColumn,
   Kbd,
+  Masonry,
   Metric,
   MetricDelta,
   MetricLabel,
@@ -511,6 +512,80 @@ function KanbanDemo() {
   const [columns, setColumns] = useState<KanbanColumn[]>(INITIAL_BOARD);
   return <Kanban columns={columns} onColumnsChange={setColumns} aria-label="Project board" />;
 }`;
+
+// ── Masonry ────────────────────────────────────────────────────────
+const MASONRY_CARDS: { id: string; title: string; body: string; lines: number }[] = [
+  { id: "m-1", title: "Onboarding", body: "Passwordless email code, ready in seconds.", lines: 2 },
+  {
+    id: "m-2",
+    title: "Checkout",
+    body: "Card and boleto with a builder-driven layout, custom tracking scripts, and upsells that convert.",
+    lines: 4,
+  },
+  { id: "m-3", title: "Payouts", body: "Settled on a fixed schedule.", lines: 1 },
+  {
+    id: "m-4",
+    title: "Analytics",
+    body: "Live revenue, conversion and refund metrics rolled up per product and per day.",
+    lines: 3,
+  },
+  { id: "m-5", title: "Members", body: "Grant and revoke course access automatically.", lines: 2 },
+  {
+    id: "m-6",
+    title: "Notifications",
+    body: "Push and email on every sale.",
+    lines: 1,
+  },
+];
+
+function MasonryDemo() {
+  return (
+    <Masonry columns={{ base: 1, sm: 2, lg: 3 }} gap="1rem" className="w-full">
+      {MASONRY_CARDS.map((card) => (
+        <Card key={card.id}>
+          <CardHeader>
+            <CardTitle>{card.title}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {Array.from({ length: card.lines }).map((_, line) => (
+              <p
+                // biome-ignore lint/suspicious/noArrayIndexKey: static, never-reordered filler lines
+                key={line}
+                className="text-sm text-fg-secondary"
+              >
+                {card.body}
+              </p>
+            ))}
+          </CardContent>
+        </Card>
+      ))}
+    </Masonry>
+  );
+}
+
+const masonryDemoCode = `const cards = [
+  { id: "m-1", title: "Onboarding", body: "Passwordless email code." },
+  { id: "m-2", title: "Checkout", body: "Card and boleto with upsells that convert." },
+  { id: "m-3", title: "Payouts", body: "Settled on a fixed schedule." },
+  { id: "m-4", title: "Analytics", body: "Live revenue and conversion metrics." },
+  { id: "m-5", title: "Members", body: "Grant and revoke access automatically." },
+  { id: "m-6", title: "Notifications", body: "Push and email on every sale." },
+];
+
+return (
+  <Masonry columns={{ base: 1, sm: 2, lg: 3 }} gap="1rem">
+    {cards.map((card) => (
+      <Card key={card.id}>
+        <CardHeader>
+          <CardTitle>{card.title}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-fg-secondary">{card.body}</p>
+        </CardContent>
+      </Card>
+    ))}
+  </Masonry>
+);`;
 
 export const dataDisplayExamples: ExampleMap = {
   avatar: [
@@ -1651,6 +1726,16 @@ return (
         "A controlled drag-and-drop board. Cards reorder within a column and move across columns; `onColumnsChange` hands you the next state to store. Drag with the pointer or focus a card's handle and use the arrow keys.",
       code: kanbanDemoCode,
       preview: <KanbanDemo />,
+    },
+  ],
+  masonry: [
+    {
+      id: "responsive-cards",
+      title: "Responsive cards",
+      description:
+        "A pure CSS multi-column layout that flows items top-to-bottom, balancing columns regardless of card height. `columns` takes a responsive map and `gap` controls both axes — no JS measurement, no layout shift.",
+      code: masonryDemoCode,
+      preview: <MasonryDemo />,
     },
   ],
 };

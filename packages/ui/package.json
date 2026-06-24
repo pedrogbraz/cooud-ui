@@ -72,6 +72,10 @@
       "types": "./dist/components/button.d.ts",
       "import": "./dist/components/button.js"
     },
+    "./button-group": {
+      "types": "./dist/components/button-group.d.ts",
+      "import": "./dist/components/button-group.js"
+    },
     "./calendar": {
       "types": "./dist/components/calendar.d.ts",
       "import": "./dist/components/calendar.js"
@@ -180,6 +184,10 @@
       "types": "./dist/components/input.d.ts",
       "import": "./dist/components/input.js"
     },
+    "./input-group": {
+      "types": "./dist/components/input-group.d.ts",
+      "import": "./dist/components/input-group.js"
+    },
     "./input-otp": {
       "types": "./dist/components/input-otp.d.ts",
       "import": "./dist/components/input-otp.js"
@@ -203,6 +211,10 @@
     "./marquee": {
       "types": "./dist/components/marquee.d.ts",
       "import": "./dist/components/marquee.js"
+    },
+    "./masonry": {
+      "types": "./dist/components/masonry.d.ts",
+      "import": "./dist/components/masonry.js"
     },
     "./menubar": {
       "types": "./dist/components/menubar.d.ts",
@@ -235,6 +247,10 @@
     "./pagination": {
       "types": "./dist/components/pagination.d.ts",
       "import": "./dist/components/pagination.js"
+    },
+    "./password-input": {
+      "types": "./dist/components/password-input.d.ts",
+      "import": "./dist/components/password-input.js"
     },
     "./popover": {
       "types": "./dist/components/popover.d.ts",

@@ -3,6 +3,7 @@
 import {
   AnimatedButton,
   Button,
+  ButtonGroup,
   CopyButton,
   Spinner,
   Toggle,
@@ -15,6 +16,8 @@ import {
   AlignRight,
   ArrowRight,
   Bold,
+  ChevronLeft,
+  ChevronRight,
   Download,
   Heart,
   Italic,
@@ -419,6 +422,75 @@ return (
             copiedLabel="API key copied"
           />
         </div>
+      ),
+    },
+  ],
+
+  "button-group": [
+    {
+      id: "horizontal",
+      title: "Horizontal",
+      description:
+        "Wrap a row of buttons in `ButtonGroup` and they fuse into one segmented control — shared edges collapse and inner radii flatten.",
+      code: `<ButtonGroup>
+  <Button variant="outline">
+    <ChevronLeft />
+    Prev
+  </Button>
+  <Button variant="outline">Page 1</Button>
+  <Button variant="outline">
+    Next
+    <ChevronRight />
+  </Button>
+</ButtonGroup>`,
+      preview: (
+        <ButtonGroup>
+          <Button variant="outline">
+            <ChevronLeft />
+            Prev
+          </Button>
+          <Button variant="outline">Page 1</Button>
+          <Button variant="outline">
+            Next
+            <ChevronRight />
+          </Button>
+        </ButtonGroup>
+      ),
+    },
+    {
+      id: "vertical",
+      title: "Vertical",
+      description:
+        'Set `orientation="vertical"` to stack the buttons into a single column segmented unit.',
+      code: `<ButtonGroup orientation="vertical">
+  <Button variant="outline">
+    <AlignLeft />
+    Left
+  </Button>
+  <Button variant="outline">
+    <AlignCenter />
+    Center
+  </Button>
+  <Button variant="outline">
+    <AlignRight />
+    Right
+  </Button>
+</ButtonGroup>`,
+      preview: (
+        <ButtonGroup orientation="vertical">
+          <Button variant="outline">
+            <AlignLeft />
+            Left
+          </Button>
+          <Button variant="outline">
+            <AlignCenter />
+            Center
+          </Button>
+          <Button variant="outline">
+            <AlignRight />
+            Right
+          </Button>
+        </ButtonGroup>
       ),
     },
   ],

@@ -157,6 +157,14 @@
     ]
   },
   {
+    "name": "button-group",
+    "type": "registry:ui",
+    "dependencies": [],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
     "name": "button",
     "type": "registry:ui",
     "dependencies": [
@@ -452,6 +460,14 @@
     ]
   },
   {
+    "name": "input-group",
+    "type": "registry:ui",
+    "dependencies": [],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
     "name": "input-otp",
     "type": "registry:ui",
     "dependencies": [
@@ -519,6 +535,14 @@
     "dependencies": [
       "motion@^12.23.0"
     ],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "masonry",
+    "type": "registry:ui",
+    "dependencies": [],
     "registryDependencies": [
       "cn"
     ]
@@ -624,6 +648,17 @@
     "registryDependencies": [
       "button",
       "cn"
+    ]
+  },
+  {
+    "name": "password-input",
+    "type": "registry:ui",
+    "dependencies": [
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": [
+      "cn",
+      "input"
     ]
   },
   {

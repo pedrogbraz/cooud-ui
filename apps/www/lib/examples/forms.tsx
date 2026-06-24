@@ -20,6 +20,8 @@ import {
   FormLabel,
   FormMessage,
   Input,
+  InputGroup,
+  InputGroupAddon,
   InputOTP,
   InputOTPGroup,
   InputOTPSeparator,
@@ -27,6 +29,7 @@ import {
   Label,
   MultiSelect,
   NumberInput,
+  PasswordInput,
   RadioGroup,
   RadioGroupItem,
   Rating,
@@ -53,7 +56,7 @@ import {
   Textarea,
 } from "@cooud-ui/ui";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Check, FileText } from "lucide-react";
+import { AtSign, Check, FileText, Link2 } from "lucide-react";
 import { useId, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -160,6 +163,62 @@ const tagsInputDemoCode = `function TagsInputDemo() {
     </div>
   );
 }`;
+
+// ── InputGroup ─────────────────────────────────────────────────────
+const inputGroupUrlCode = `<InputGroup>
+  <InputGroupAddon>
+    <Link2 />
+    https://
+  </InputGroupAddon>
+  <Input placeholder="acme.cooud.app" />
+  <InputGroupAddon align="end">.cooud.app</InputGroupAddon>
+</InputGroup>`;
+
+const inputGroupEmailCode = `<InputGroup>
+  <InputGroupAddon>
+    <AtSign />
+  </InputGroupAddon>
+  <Input type="email" placeholder="you@company.com" />
+</InputGroup>`;
+
+// ── PasswordInput ──────────────────────────────────────────────────
+function PasswordInputStrengthDemo() {
+  const [value, setValue] = useState("");
+
+  return (
+    <div className="w-full max-w-sm">
+      <PasswordInput
+        value={value}
+        onChange={(event) => setValue(event.target.value)}
+        showStrength
+        placeholder="Create a password"
+        autoComplete="new-password"
+      />
+    </div>
+  );
+}
+
+const passwordInputStrengthDemoCode = `function PasswordInputStrengthDemo() {
+  const [value, setValue] = useState("");
+
+  return (
+    <div className="w-full max-w-sm">
+      <PasswordInput
+        value={value}
+        onChange={(event) => setValue(event.target.value)}
+        showStrength
+        placeholder="Create a password"
+        autoComplete="new-password"
+      />
+    </div>
+  );
+}`;
+
+const passwordInputBasicCode = `<PasswordInput
+  className="max-w-sm"
+  placeholder="Enter your password"
+  autoComplete="current-password"
+/>`;
 
 // ── ColorPicker ────────────────────────────────────────────────────
 const brandSwatches = [
@@ -1305,6 +1364,63 @@ export const formsExamples: ExampleMap = {
         "Type free-form tags and commit each with Enter or comma; they render as removable chips. Backspace on an empty field deletes the last tag, and `max` caps the total.",
       code: tagsInputDemoCode,
       preview: <TagsInputDemo />,
+    },
+  ],
+  "input-group": [
+    {
+      id: "prefix-suffix",
+      title: "Prefix & suffix",
+      description:
+        "Flank an `Input` with `InputGroupAddon`s on either side. The group owns the border and focus ring, so a protocol prefix and a domain suffix read as one seamless field.",
+      code: inputGroupUrlCode,
+      preview: (
+        <InputGroup className="max-w-sm">
+          <InputGroupAddon>
+            <Link2 />
+            https://
+          </InputGroupAddon>
+          <Input placeholder="acme.cooud.app" />
+          <InputGroupAddon align="end">.cooud.app</InputGroupAddon>
+        </InputGroup>
+      ),
+    },
+    {
+      id: "icon-addon",
+      title: "Leading icon",
+      description: "A single leading addon is perfect for an icon that frames the field's purpose.",
+      code: inputGroupEmailCode,
+      preview: (
+        <InputGroup className="max-w-sm">
+          <InputGroupAddon>
+            <AtSign />
+          </InputGroupAddon>
+          <Input type="email" placeholder="you@company.com" />
+        </InputGroup>
+      ),
+    },
+  ],
+  "password-input": [
+    {
+      id: "default",
+      title: "Default",
+      description:
+        "A password field with a built-in show/hide toggle. The toggle flips the input type and stays keyboard-accessible with a clear pressed state.",
+      code: passwordInputBasicCode,
+      preview: (
+        <PasswordInput
+          className="max-w-sm"
+          placeholder="Enter your password"
+          autoComplete="current-password"
+        />
+      ),
+    },
+    {
+      id: "strength-meter",
+      title: "Strength meter",
+      description:
+        "Pass `showStrength` to render a 4-segment meter and label that update live from the value's length and character variety.",
+      code: passwordInputStrengthDemoCode,
+      preview: <PasswordInputStrengthDemo />,
     },
   ],
   slider: [

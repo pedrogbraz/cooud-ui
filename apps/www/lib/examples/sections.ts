@@ -34,6 +34,10 @@ export const EXAMPLE_SECTIONS: Record<string, ExampleSectionMeta[]> = {
     { id: "default", title: "Default" },
     { id: "inline", title: "Inline with a value" },
   ],
+  "button-group": [
+    { id: "horizontal", title: "Horizontal" },
+    { id: "vertical", title: "Vertical" },
+  ],
   input: [
     { id: "default", title: "Default" },
     { id: "invalid-state", title: "Invalid state" },
@@ -57,6 +61,14 @@ export const EXAMPLE_SECTIONS: Record<string, ExampleSectionMeta[]> = {
     { id: "max-display", title: "Max display" },
   ],
   "tags-input": [{ id: "default", title: "Default" }],
+  "input-group": [
+    { id: "prefix-suffix", title: "Prefix & suffix" },
+    { id: "icon-addon", title: "Leading icon" },
+  ],
+  "password-input": [
+    { id: "default", title: "Default" },
+    { id: "strength-meter", title: "Strength meter" },
+  ],
   slider: [
     { id: "single-thumb", title: "Single thumb" },
     { id: "range", title: "Range" },
@@ -131,6 +143,7 @@ export const EXAMPLE_SECTIONS: Record<string, ExampleSectionMeta[]> = {
   "tree-view": [{ id: "file-tree", title: "File tree" }],
   timeline: [{ id: "activity", title: "Activity" }],
   kanban: [{ id: "board", title: "Board" }],
+  masonry: [{ id: "responsive-cards", title: "Responsive cards" }],
   alert: [
     { id: "default", title: "Default" },
     { id: "variants", title: "Variants" },
@@ -174,7 +187,12 @@ export const EXAMPLE_SECTIONS: Record<string, ExampleSectionMeta[]> = {
     { id: "presets", title: "With presets" },
   ],
   scheduler: [{ id: "month-view", title: "Month view" }],
-  chart: [{ id: "bar-chart", title: "Bar chart" }],
+  chart: [
+    { id: "bar-chart", title: "Bar chart" },
+    { id: "pie-chart", title: "Donut chart" },
+    { id: "radar-chart", title: "Radar chart" },
+    { id: "radial-chart", title: "Radial bar gauge" },
+  ],
   "glass-card": [{ id: "frosted-surface", title: "Frosted surface" }],
   "gradient-border": [
     { id: "with-glow", title: "With glow" },
