@@ -135,7 +135,7 @@ const SHARED_CHUNK_BUDGETS = /** @type {SharedChunkBudgets} */ ({
  * legitimately grows.
  *
  *   entry                     current gz   budget gz
- *   index.js (barrel)              1,970      2,530
+ *   index.js (barrel)              2,222      2,820
  *   data-table.js                  7,359      9,400
  *   chart.js                       3,340      4,300
  *   calendar.js                      977      1,260
@@ -146,9 +146,11 @@ const SHARED_CHUNK_BUDGETS = /** @type {SharedChunkBudgets} */ ({
  *   morphing-popover.js            3,839      4,920
  *   segmented-control.js           3,725      4,780
  *   text-effect.js                 3,739      4,800
+ *   kanban.js                      3,043      3,900
+ *   rich-text-editor.js            2,646      3,400
  */
 const PACKAGE_ENTRY_GZIP_BUDGETS = /** @type {Record<string, number>} */ ({
-  "index.js": 2_530,
+  "index.js": 2_820,
   "components/data-table.js": 9_400,
   "components/chart.js": 4_300,
   "components/calendar.js": 1_260,
@@ -159,6 +161,8 @@ const PACKAGE_ENTRY_GZIP_BUDGETS = /** @type {Record<string, number>} */ ({
   "components/morphing-popover.js": 4_920,
   "components/segmented-control.js": 4_780,
   "components/text-effect.js": 4_800,
+  "components/kanban.js": 3_900,
+  "components/rich-text-editor.js": 3_400,
 });
 
 /**
