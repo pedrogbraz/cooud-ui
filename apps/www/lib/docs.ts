@@ -30,6 +30,11 @@ export const DOC_NAV_SECTIONS: { heading: string; items: DocNavItem[] }[] = [
         description: "Browse the production component catalog.",
       },
       {
+        label: "Blocks",
+        href: "/docs/blocks",
+        description: "Copy-paste composed sections, the families, and the add flow.",
+      },
+      {
         label: "Installation",
         href: "/docs/installation",
         description: "Start from Create, the CLI, or an existing app.",
@@ -38,6 +43,11 @@ export const DOC_NAV_SECTIONS: { heading: string; items: DocNavItem[] }[] = [
         label: "Theming",
         href: "/docs/theming",
         description: "Tokens, presets, runtime overrides, and dark mode.",
+      },
+      {
+        label: "Styling",
+        href: "/docs/styling",
+        description: "Override, extend, and re-skin components with className, CVA, and data-slot.",
       },
       {
         label: "CLI",
@@ -65,6 +75,11 @@ export const DOC_NAV_SECTIONS: { heading: string; items: DocNavItem[] }[] = [
         label: "Forms",
         href: "/docs/forms",
         description: "React Hook Form, Zod, accessible fields, and validation states.",
+      },
+      {
+        label: "Charts",
+        href: "/docs/charts",
+        description: "ChartContainer, the config token mapping, and bar/donut/radar/radial.",
       },
       {
         label: "Recipes",
