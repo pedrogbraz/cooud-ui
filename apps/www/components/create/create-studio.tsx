@@ -31,8 +31,12 @@ import {
   Progress,
   RadioGroup,
   RadioGroupItem,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
   Separator,
-  Slider,
   Switch,
   Table,
   TableBody,
@@ -96,7 +100,13 @@ import {
   serializeCreateProvider,
   serializePresetCode,
 } from "../../lib/create/presets";
-import type { BrandColor, DesignConfig, Mode, StylePreset } from "../../lib/create/types";
+import type {
+  BrandColor,
+  ChartPalette,
+  DesignConfig,
+  Mode,
+  StylePreset,
+} from "../../lib/create/types";
 import { PreviewDashboard } from "./preview-dashboard";
 
 const STORAGE_KEY = "cooud-ui-create-presets-v1";
@@ -554,41 +564,36 @@ function CreateControls({
         </Badge>
       </div>
 
-      <div className="mt-5 flex flex-col gap-6">
+      <div className="mt-5 flex flex-col gap-5">
         <ControlGroup icon={Sparkles} title="Style" hint="Start from a curated look">
-          <div className="grid gap-2">
-            {allPresets.map((preset) => {
-              const active = config.style === preset.name;
-              const brand = findBrandColor(preset.config.brand);
-              return (
-                <button
-                  key={preset.id}
-                  type="button"
-                  aria-pressed={active}
-                  onClick={() => onApplyPreset(preset)}
-                  className={cn(
-                    "flex items-center gap-3 rounded-xl border p-3 text-left outline-none transition",
-                    "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface-inset",
-                    active
-                      ? "border-primary bg-primary/10 text-fg shadow-glow"
-                      : "border-border bg-surface-raised text-fg-secondary hover:border-border-strong hover:text-fg",
-                  )}
-                >
-                  <span
-                    className="size-8 shrink-0 rounded-lg border border-border-soft shadow-xs"
-                    style={{ backgroundColor: brand.swatch }}
-                    aria-hidden="true"
+          <Select
+            value={config.style}
+            onValueChange={(name) => {
+              const preset = allPresets.find((item) => item.name === name);
+              if (preset) onApplyPreset(preset);
+            }}
+          >
+            <SelectTrigger id={`${idPrefix}-style`} aria-label="Style preset">
+              <SelectValue placeholder="Pick a style">
+                <SwatchOption swatch={selectedBrand.swatch} label={config.style} />
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              {config.style === CUSTOM_STYLE_NAME ? (
+                <SelectItem value={CUSTOM_STYLE_NAME}>
+                  <SwatchOption swatch={selectedBrand.swatch} label={CUSTOM_STYLE_NAME} />
+                </SelectItem>
+              ) : null}
+              {allPresets.map((preset) => (
+                <SelectItem key={preset.id} value={preset.name}>
+                  <SwatchOption
+                    swatch={findBrandColor(preset.config.brand).swatch}
+                    label={preset.name}
                   />
-                  <span className="min-w-0 flex-1">
-                    <span className="block text-sm font-medium">{preset.name}</span>
-                    <span className="line-clamp-1 block text-xs text-fg-tertiary">
-                      {preset.description}
-                    </span>
-                  </span>
-                </button>
-              );
-            })}
-          </div>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </ControlGroup>
 
         <ControlGroup
@@ -603,18 +608,22 @@ function CreateControls({
             />
           }
         >
-          <div className="grid grid-cols-2 gap-2">
-            <ModeButton
-              mode="dark"
-              active={config.mode === "dark"}
-              onClick={() => onPatchConfig({ mode: "dark" })}
-            />
-            <ModeButton
-              mode="light"
-              active={config.mode === "light"}
-              onClick={() => onPatchConfig({ mode: "light" })}
-            />
-          </div>
+          <Select
+            value={config.mode}
+            onValueChange={(mode) => onPatchConfig({ mode: mode as Mode })}
+          >
+            <SelectTrigger id={`${idPrefix}-mode`} aria-label="Mode" className="capitalize">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="dark" className="capitalize">
+                Dark
+              </SelectItem>
+              <SelectItem value="light" className="capitalize">
+                Light
+              </SelectItem>
+            </SelectContent>
+          </Select>
         </ControlGroup>
 
         <ControlGroup
@@ -629,10 +638,12 @@ function CreateControls({
             />
           }
         >
-          <SwatchGrid
+          <SwatchSelect
+            id={`${idPrefix}-base`}
+            label="Base color"
             items={BASE_COLORS}
-            activeId={config.baseColor}
-            onSelect={(baseColor) => onPatchConfig({ baseColor })}
+            value={config.baseColor}
+            onValueChange={(baseColor) => onPatchConfig({ baseColor })}
           />
         </ControlGroup>
 
@@ -648,27 +659,36 @@ function CreateControls({
             />
           }
         >
-          <SwatchGrid
+          <SwatchSelect
+            id={`${idPrefix}-brand`}
+            label="Brand color"
             items={BRAND_COLORS}
-            activeId={config.brand}
-            onSelect={(brand) =>
+            value={config.brand}
+            onValueChange={(brand) =>
               onPatchConfig({ brand, primaryColor: undefined, accentColor: undefined })
             }
           />
-          <div className="mt-3 grid gap-2">
-            <CssValueInput
-              id={`${idPrefix}-primary`}
-              label="Primary"
-              value={config.primaryColor ?? selectedBrand.swatch}
-              onChange={(primaryColor) => onPatchConfig({ primaryColor })}
-            />
-            <CssValueInput
-              id={`${idPrefix}-accent`}
-              label="Accent"
-              value={config.accentColor ?? selectedBrand.accent}
-              onChange={(accentColor) => onPatchConfig({ accentColor })}
-            />
-          </div>
+          <Accordion type="single" collapsible className="rounded-xl border border-border">
+            <AccordionItem value="advanced" className="border-b-0">
+              <AccordionTrigger className="px-3 py-2.5 text-xs text-fg-tertiary">
+                Advanced color
+              </AccordionTrigger>
+              <AccordionContent className="grid gap-2 px-3 pb-3">
+                <CssValueInput
+                  id={`${idPrefix}-primary`}
+                  label="Primary"
+                  value={config.primaryColor ?? selectedBrand.swatch}
+                  onChange={(primaryColor) => onPatchConfig({ primaryColor })}
+                />
+                <CssValueInput
+                  id={`${idPrefix}-accent`}
+                  label="Accent"
+                  value={config.accentColor ?? selectedBrand.accent}
+                  onChange={(accentColor) => onPatchConfig({ accentColor })}
+                />
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
         </ControlGroup>
 
         <ControlGroup
@@ -683,49 +703,36 @@ function CreateControls({
             />
           }
         >
-          <div className="grid gap-2">
-            {CHART_PALETTES.map((palette) => (
-              <button
-                key={palette.id}
-                type="button"
-                aria-pressed={config.chart === palette.id}
-                onClick={() => onPatchConfig({ chart: palette.id })}
-                className={cn(
-                  "flex items-center justify-between gap-3 rounded-xl border px-3 py-2.5 text-sm outline-none transition",
-                  "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface-inset",
-                  config.chart === palette.id
-                    ? "border-primary bg-primary/10 text-fg"
-                    : "border-border bg-surface-raised text-fg-secondary hover:border-border-strong hover:text-fg",
-                )}
-              >
-                <span>{palette.name}</span>
-                <span className="flex -space-x-1.5">
-                  {palette.colors.map((color) => (
-                    <span
-                      key={color}
-                      className="size-5 rounded-full border border-surface-raised"
-                      style={{ backgroundColor: color }}
-                      aria-hidden="true"
-                    />
-                  ))}
-                </span>
-              </button>
-            ))}
-          </div>
+          <Select value={config.chart} onValueChange={(chart) => onPatchConfig({ chart })}>
+            <SelectTrigger id={`${idPrefix}-chart`} aria-label="Chart palette">
+              <SelectValue placeholder="Pick a palette">
+                <PaletteOption palette={findChartPalette(config.chart)} />
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              {CHART_PALETTES.map((palette) => (
+                <SelectItem key={palette.id} value={palette.id}>
+                  <PaletteOption palette={palette} />
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </ControlGroup>
 
         <ControlGroup icon={Type} title="Typography" hint="Heading and body type">
-          <FontPicker
+          <FontSelect
+            id={`${idPrefix}-heading`}
             label="Heading"
             value={config.headingFont}
-            onChange={(headingFont) => onPatchConfig({ headingFont })}
+            onValueChange={(headingFont) => onPatchConfig({ headingFont })}
             locked={locks.heading}
             onToggleLock={() => onToggleLock("heading")}
           />
-          <FontPicker
+          <FontSelect
+            id={`${idPrefix}-body`}
             label="Body"
             value={config.bodyFont}
-            onChange={(bodyFont) => onPatchConfig({ bodyFont })}
+            onValueChange={(bodyFont) => onPatchConfig({ bodyFont })}
             locked={locks.body}
             onToggleLock={() => onToggleLock("body")}
           />
@@ -743,28 +750,23 @@ function CreateControls({
             />
           }
         >
-          <div className="grid gap-2.5 rounded-xl border border-border bg-surface-raised px-3 py-3">
-            <div className="flex items-center justify-between text-sm">
-              <Label htmlFor={`${idPrefix}-radius`}>Corners</Label>
-              <span className="font-mono text-fg-secondary tabular-nums">{config.radius}px</span>
-            </div>
-            <Slider
-              id={`${idPrefix}-radius`}
-              min={0}
-              max={28}
-              step={1}
-              value={[config.radius]}
-              onValueChange={(value) =>
-                onPatchConfig({ radius: value[0] ?? DEFAULT_CONFIG.radius })
-              }
-              aria-label="Corner radius"
-            />
-            <div className="flex justify-between text-xs text-fg-tertiary">
-              <span>Sharp</span>
-              <span>Soft</span>
-              <span>Round</span>
-            </div>
-          </div>
+          <Select
+            value={String(config.radius)}
+            onValueChange={(value) =>
+              onPatchConfig({ radius: Number.parseInt(value, 10) || DEFAULT_CONFIG.radius })
+            }
+          >
+            <SelectTrigger id={`${idPrefix}-radius`} aria-label="Corner radius">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {radiusOptions(config.radius).map((value) => (
+                <SelectItem key={value} value={String(value)}>
+                  {radiusLabel(value)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </ControlGroup>
 
         <Separator />
@@ -898,69 +900,84 @@ function LockToggle({
   );
 }
 
-function ModeButton({
-  mode,
-  active,
-  onClick,
-}: {
-  mode: Mode;
-  active: boolean;
-  onClick: () => void;
-}) {
-  const Icon = mode === "dark" ? Moon : Sun;
+const RADIUS_OPTIONS = [0, 4, 8, 12, 14, 16, 20, 24] as const;
+
+/** Discrete radius choices for the select, always including the current value. */
+function radiusOptions(current: number): number[] {
+  const values = new Set<number>(RADIUS_OPTIONS);
+  values.add(current);
+  return [...values].sort((a, b) => a - b);
+}
+
+function radiusLabel(value: number): string {
+  if (value === 0) return "0px · Sharp";
+  if (value <= 8) return `${value}px · Tight`;
+  if (value <= 16) return `${value}px · Soft`;
+  return `${value}px · Round`;
+}
+
+/** A swatch dot + label, shared by the trigger value and the list items. */
+function SwatchOption({ swatch, label }: { swatch: string; label: string }) {
   return (
-    <button
-      type="button"
-      aria-pressed={active}
-      onClick={onClick}
-      className={cn(
-        "inline-flex items-center justify-center gap-2 rounded-xl border px-3 py-2 text-sm font-medium capitalize outline-none transition",
-        "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface-inset",
-        active
-          ? "border-primary bg-primary text-primary-foreground shadow-xs"
-          : "border-border bg-surface-raised text-fg-secondary hover:border-border-strong hover:text-fg",
-      )}
-    >
-      <Icon className="size-4" aria-hidden="true" />
-      {mode}
-    </button>
+    <span className="flex min-w-0 items-center gap-2">
+      <span
+        className="size-4 shrink-0 rounded-full border border-border-soft"
+        style={{ backgroundColor: swatch }}
+        aria-hidden="true"
+      />
+      <span className="truncate">{label}</span>
+    </span>
   );
 }
 
-function SwatchGrid({
-  items,
-  activeId,
-  onSelect,
-}: {
-  items: { id: string; name: string; swatch: string }[];
-  activeId: string;
-  onSelect: (id: string) => void;
-}) {
+/** The chart palette's five-dot ramp + name. */
+function PaletteOption({ palette }: { palette: ChartPalette }) {
   return (
-    <div className="grid grid-cols-2 gap-2">
-      {items.map((item) => (
-        <button
-          key={item.id}
-          type="button"
-          aria-pressed={activeId === item.id}
-          onClick={() => onSelect(item.id)}
-          className={cn(
-            "flex items-center gap-2 rounded-xl border px-3 py-2 text-left text-sm outline-none transition",
-            "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface-inset",
-            activeId === item.id
-              ? "border-primary bg-primary/10 text-fg"
-              : "border-border bg-surface-raised text-fg-secondary hover:border-border-strong hover:text-fg",
-          )}
-        >
+    <span className="flex min-w-0 flex-1 items-center justify-between gap-3">
+      <span className="truncate">{palette.name}</span>
+      <span className="flex shrink-0 -space-x-1">
+        {palette.colors.map((color) => (
           <span
-            className="size-4 shrink-0 rounded-full border border-border-soft"
-            style={{ backgroundColor: item.swatch }}
+            key={color}
+            className="size-3.5 rounded-full border border-surface-floating"
+            style={{ backgroundColor: color }}
             aria-hidden="true"
           />
-          <span className="truncate">{item.name}</span>
-        </button>
-      ))}
-    </div>
+        ))}
+      </span>
+    </span>
+  );
+}
+
+function SwatchSelect({
+  id,
+  label,
+  items,
+  value,
+  onValueChange,
+}: {
+  id: string;
+  label: string;
+  items: { id: string; name: string; swatch: string }[];
+  value: string;
+  onValueChange: (id: string) => void;
+}) {
+  const active = items.find((item) => item.id === value) ?? items[0];
+  return (
+    <Select value={value} onValueChange={onValueChange}>
+      <SelectTrigger id={id} aria-label={label}>
+        <SelectValue placeholder={label}>
+          {active ? <SwatchOption swatch={active.swatch} label={active.name} /> : null}
+        </SelectValue>
+      </SelectTrigger>
+      <SelectContent>
+        {items.map((item) => (
+          <SelectItem key={item.id} value={item.id}>
+            <SwatchOption swatch={item.swatch} label={item.name} />
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   );
 }
 
@@ -990,54 +1007,50 @@ function CssValueInput({
   );
 }
 
-function FontPicker({
+function FontSelect({
+  id,
   label,
   value,
-  onChange,
+  onValueChange,
   locked,
   onToggleLock,
 }: {
+  id: string;
   label: string;
   value: string;
-  onChange: (id: string) => void;
+  onValueChange: (id: string) => void;
   locked: boolean;
   onToggleLock: () => void;
 }) {
+  const active = findFontChoice(value);
   return (
-    <div className="grid gap-2">
+    <div className="grid gap-1.5">
       <div className="flex items-center justify-between gap-2">
-        <Label className="text-xs text-fg-tertiary">{label}</Label>
+        <Label htmlFor={id} className="text-xs text-fg-tertiary">
+          {label}
+        </Label>
         <LockToggle
           active={locked}
           label={`Lock ${label.toLowerCase()} font during shuffle`}
           onClick={onToggleLock}
         />
       </div>
-      <div className="grid grid-cols-2 gap-2">
-        {FONT_CHOICES.map((font) => (
-          <button
-            key={font.id}
-            type="button"
-            aria-pressed={value === font.id}
-            onClick={() => onChange(font.id)}
-            className={cn(
-              "flex min-w-0 items-center justify-between gap-2 rounded-xl border px-3 py-2 outline-none transition",
-              "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface-inset",
-              value === font.id
-                ? "border-primary bg-primary/10 text-fg"
-                : "border-border bg-surface-raised text-fg-secondary hover:border-border-strong hover:text-fg",
-            )}
-          >
-            <span className="truncate text-sm">{font.name}</span>
-            <span
-              className="font-display text-sm text-fg-tertiary"
-              style={{ fontFamily: font.stack }}
-            >
-              Aa
+      <Select value={value} onValueChange={onValueChange}>
+        <SelectTrigger id={id} aria-label={`${label} font`}>
+          <SelectValue placeholder={`${label} font`}>
+            <span className="truncate" style={{ fontFamily: active.stack }}>
+              {active.name}
             </span>
-          </button>
-        ))}
-      </div>
+          </SelectValue>
+        </SelectTrigger>
+        <SelectContent>
+          {FONT_CHOICES.map((font) => (
+            <SelectItem key={font.id} value={font.id}>
+              <span style={{ fontFamily: font.stack }}>{font.name}</span>
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
     </div>
   );
 }
