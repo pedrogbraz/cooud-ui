@@ -93,6 +93,12 @@ export const CATEGORIES: ComponentCategory[] = [
         importName:
           "Stepper, StepperList, StepperItem, StepperIndicator, StepperSeparator, StepperTitle, StepperDescription",
       },
+      {
+        slug: "rich-text-editor",
+        name: "RichTextEditor",
+        description: "Tiptap WYSIWYG editor with a formatting toolbar and HTML output.",
+        importName: "RichTextEditor",
+      },
     ],
   },
   {
@@ -135,6 +141,11 @@ export const CATEGORIES: ComponentCategory[] = [
         slug: "tree-view",
         name: "TreeView",
         description: "Data-driven, accessible hierarchy with keyboard navigation.",
+      },
+      {
+        slug: "kanban",
+        name: "Kanban",
+        description: "Drag-and-drop board with cards that reorder and move across columns.",
       },
     ],
   },

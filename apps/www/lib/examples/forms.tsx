@@ -28,6 +28,7 @@ import {
   NumberInput,
   RadioGroup,
   RadioGroupItem,
+  RichTextEditor,
   Select,
   SelectContent,
   SelectGroup,
@@ -955,6 +956,39 @@ function StepperDemo() {
   );
 }
 
+// ── RichTextEditor ─────────────────────────────────────────────────
+function RichTextEditorDemo() {
+  const [html, setHtml] = useState(
+    "<h2>Release notes</h2><p>We shipped a <strong>themeable</strong> editor with a full toolbar — try <em>bold</em>, lists, and headings.</p><ul><li>Keyboard shortcuts</li><li>Undo &amp; redo</li></ul>",
+  );
+
+  return (
+    <RichTextEditor
+      value={html}
+      onChange={setHtml}
+      placeholder="Write something…"
+      aria-label="Post body"
+      className="max-w-xl"
+    />
+  );
+}
+
+const richTextEditorDemoCode = `function RichTextEditorDemo() {
+  const [html, setHtml] = useState(
+    "<h2>Release notes</h2><p>We shipped a <strong>themeable</strong> editor with a full toolbar — try <em>bold</em>, lists, and headings.</p><ul><li>Keyboard shortcuts</li><li>Undo &amp; redo</li></ul>",
+  );
+
+  return (
+    <RichTextEditor
+      value={html}
+      onChange={setHtml}
+      placeholder="Write something…"
+      aria-label="Post body"
+      className="max-w-xl"
+    />
+  );
+}`;
+
 export const formsExamples: ExampleMap = {
   input: [
     {
@@ -1296,6 +1330,17 @@ function StepperDemo() {
   );
 }`,
       preview: <StepperDemo />,
+    },
+  ],
+
+  "rich-text-editor": [
+    {
+      id: "default",
+      title: "Default",
+      description:
+        "A Tiptap WYSIWYG editor with a Cooud-styled toolbar. Controlled via `value` / `onChange` (serialized HTML); `immediatelyRender: false` keeps it SSR-safe. Formats text, headings, lists, quotes, and code.",
+      code: richTextEditorDemoCode,
+      preview: <RichTextEditorDemo />,
     },
   ],
 };

@@ -697,6 +697,57 @@ export const COMPONENT_PROPS: Record<string, PropsDoc[]> = {
       props: [],
     },
   ],
+  "rich-text-editor": [
+    {
+      interfaceName: "RichTextEditorProps",
+      props: [
+        {
+          name: "value",
+          type: "string",
+          required: false,
+          description:
+            "Controlled HTML value. When provided, external changes are synced into the editor.",
+        },
+        {
+          name: "defaultValue",
+          type: "string",
+          required: false,
+          description: "Uncontrolled initial HTML content. Ignored once the editor has mounted.",
+        },
+        {
+          name: "onChange",
+          type: "(html: string) => void",
+          required: false,
+          description: "Called with the serialized HTML whenever the document changes.",
+        },
+        {
+          name: "placeholder",
+          type: "string",
+          required: false,
+          description: "Placeholder shown while the document is empty.",
+        },
+        {
+          name: "editable",
+          type: "boolean",
+          required: false,
+          description: "Whether the content is editable. Defaults to `true`.",
+          default: "true",
+        },
+        {
+          name: "className",
+          type: "string",
+          required: false,
+          description: "Extra classes for the editor shell (toolbar + content wrapper).",
+        },
+        {
+          name: "aria-label",
+          type: "string",
+          required: false,
+          description: "Accessible label for the editable region.",
+        },
+      ],
+    },
+  ],
   badge: [
     {
       interfaceName: "BadgeProps",
@@ -1113,6 +1164,34 @@ export const COMPONENT_PROPS: Record<string, PropsDoc[]> = {
           type: "string",
           required: false,
           description: "Accessible label for the tree landmark.",
+        },
+      ],
+    },
+  ],
+  kanban: [
+    {
+      interfaceName: "KanbanProps",
+      extends: 'Extends Omit<HTMLAttributes<HTMLDivElement>, "onChange">',
+      props: [
+        {
+          name: "columns",
+          type: "KanbanColumn[]",
+          required: true,
+          description: "The board's columns and their cards (controlled).",
+        },
+        {
+          name: "onColumnsChange",
+          type: "(next: KanbanColumn[]) => void",
+          required: true,
+          description:
+            "Called with the next columns after a reorder/move. The consumer owns state.",
+        },
+        {
+          name: "renderItem",
+          type: "(item: KanbanItem) => ReactNode",
+          required: false,
+          description:
+            "Render a card's body. Defaults to the item's title + description in a Card-like tile. The drag handle and tile chrome are always provided.",
         },
       ],
     },

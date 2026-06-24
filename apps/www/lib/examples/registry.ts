@@ -47,6 +47,7 @@ export const EXAMPLE_FAMILY_BY_SLUG: Record<string, ExampleFamily> = {
   "number-input": "forms",
   autocomplete: "forms",
   stepper: "forms",
+  "rich-text-editor": "forms",
   // data-display
   avatar: "data-display",
   badge: "data-display",
@@ -62,6 +63,7 @@ export const EXAMPLE_FAMILY_BY_SLUG: Record<string, ExampleFamily> = {
   "code-block": "data-display",
   collapsible: "data-display",
   "aspect-ratio": "data-display",
+  kanban: "data-display",
   // feedback
   spinner: "feedback",
   progress: "feedback",
