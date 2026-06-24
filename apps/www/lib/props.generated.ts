@@ -345,6 +345,113 @@ export const COMPONENT_PROPS: Record<string, PropsDoc[]> = {
       ],
     },
   ],
+  "tags-input": [
+    {
+      interfaceName: "TagsInputProps",
+      props: [
+        {
+          name: "value",
+          type: "string[]",
+          required: false,
+          description: "Controlled list of committed tags. Pair with `onValueChange`.",
+        },
+        {
+          name: "defaultValue",
+          type: "string[]",
+          required: false,
+          description: "Initial tags for uncontrolled usage.",
+        },
+        {
+          name: "onValueChange",
+          type: "(tags: string[]) => void",
+          required: false,
+          description: "Called with the next list of tags whenever a tag is added or removed.",
+        },
+        {
+          name: "placeholder",
+          type: "string",
+          required: false,
+          description: "Placeholder shown in the text field when it is empty.",
+        },
+        {
+          name: "max",
+          type: "number",
+          required: false,
+          description: "Maximum number of tags. Once reached, further additions are ignored.",
+        },
+        {
+          name: "disabled",
+          type: "boolean",
+          required: false,
+          description: "Disables typing and tag removal.",
+          default: "false",
+        },
+        {
+          name: "allowDuplicates",
+          type: "boolean",
+          required: false,
+          description: "When true, the same tag may be added more than once. Defaults to false.",
+          default: "false",
+        },
+        {
+          name: "delimiter",
+          type: "string | string[]",
+          required: false,
+          description:
+            'Characters that commit the current input as a tag, in addition to Enter. Defaults to a comma, so both Enter and "," commit.',
+          default: "DEFAULT_DELIMITERS",
+        },
+        {
+          name: "validate",
+          type: "(tag: string) => boolean",
+          required: false,
+          description: "Reject a tag when this returns false. Receives the trimmed candidate.",
+        },
+        {
+          name: "aria-invalid",
+          type: 'boolean | "true" | "false"',
+          required: false,
+          description: "Marks the field as invalid, applying error styling.",
+        },
+        {
+          name: "id",
+          type: "string",
+          required: false,
+          description: "Native id for the text input (for an external `<label htmlFor>`).",
+        },
+        {
+          name: "aria-label",
+          type: "string",
+          required: false,
+          description: "Accessible name for the text input when there is no visible label.",
+        },
+        {
+          name: "aria-labelledby",
+          type: "string",
+          required: false,
+          description: "id of an element that labels the text input.",
+        },
+        {
+          name: "name",
+          type: "string",
+          required: false,
+          description: "Native name for the text input.",
+        },
+        {
+          name: "className",
+          type: "string",
+          required: false,
+          description: "Extra classes for the field wrapper.",
+        },
+        {
+          name: "inputClassName",
+          type: "string",
+          required: false,
+          description: "Extra classes for the inner text input.",
+        },
+      ],
+    },
+  ],
   "file-dropzone": [
     {
       interfaceName: "FileDropzoneProps",
@@ -885,6 +992,42 @@ export const COMPONENT_PROPS: Record<string, PropsDoc[]> = {
       ],
     },
   ],
+  "avatar-group": [
+    {
+      interfaceName: "AvatarGroupProps",
+      extends:
+        "Extends HTMLAttributes<HTMLDivElement>, VariantProps<typeof avatarGroupItemVariants>",
+      props: [
+        {
+          name: "avatars",
+          type: "AvatarGroupAvatar[]",
+          required: false,
+          description:
+            "Avatars to stack. Compose `<Avatar>` children, or pass `avatars` for the data-driven shorthand. `avatars` takes precedence when both are provided.",
+        },
+        {
+          name: "max",
+          type: "number",
+          required: false,
+          description: 'Show the first `max` avatars, then a "+N" overflow chip for the rest.',
+        },
+        {
+          name: "spacing",
+          type: "string",
+          required: false,
+          description:
+            "Horizontal overlap between avatars as a Tailwind negative-margin class (e.g. `-space-x-2`). Defaults to a tasteful offset.",
+          default: '"-space-x-2"',
+        },
+        {
+          name: "size",
+          type: '"sm" | "md" | "lg"',
+          required: false,
+          default: '"md"',
+        },
+      ],
+    },
+  ],
   badge: [
     {
       interfaceName: "BadgeProps",
@@ -1200,6 +1343,62 @@ export const COMPONENT_PROPS: Record<string, PropsDoc[]> = {
       ],
     },
   ],
+  sparkline: [
+    {
+      interfaceName: "SparklineProps",
+      extends: 'Extends Omit<SVGAttributes<SVGSVGElement>, "type">',
+      props: [
+        {
+          name: "data",
+          type: "number[]",
+          required: true,
+          description: "The series to plot. Order is preserved; values map left→right.",
+        },
+        {
+          name: "width",
+          type: "number",
+          required: false,
+          description: "Intrinsic width of the SVG in px.",
+          default: "96",
+        },
+        {
+          name: "height",
+          type: "number",
+          required: false,
+          description: "Intrinsic height of the SVG in px.",
+          default: "28",
+        },
+        {
+          name: "type",
+          type: "SparklineType",
+          required: false,
+          description: "Render a connected line or evenly spaced bars.",
+          default: '"line"',
+        },
+        {
+          name: "tone",
+          type: "SparklineTone",
+          required: false,
+          description: "Color, mapped to a token via `currentColor`.",
+          default: '"primary"',
+        },
+        {
+          name: "area",
+          type: "boolean",
+          required: false,
+          description: 'For `type="line"`, fill a soft token-tinted gradient under the line.',
+          default: "false",
+        },
+        {
+          name: "strokeWidth",
+          type: "number",
+          required: false,
+          description: "Stroke width of the line (line type only).",
+          default: "1.5",
+        },
+      ],
+    },
+  ],
   "code-block": [
     {
       interfaceName: "CodeBlockProps",
@@ -1373,6 +1572,90 @@ export const COMPONENT_PROPS: Record<string, PropsDoc[]> = {
           type: '"default" | "info" | "success" | "warning" | "destructive"',
           required: false,
           default: '"default"',
+        },
+      ],
+    },
+  ],
+  banner: [
+    {
+      interfaceName: "BannerProps",
+      extends:
+        'Extends Omit<HTMLAttributes<HTMLElement>, "title">, VariantProps<typeof bannerVariants>',
+      props: [
+        {
+          name: "title",
+          type: "ReactNode",
+          required: false,
+          description: "Headline text. Pair with `description`, or omit and pass `children`.",
+        },
+        {
+          name: "description",
+          type: "ReactNode",
+          required: false,
+          description: "Optional secondary line shown after the title.",
+        },
+        {
+          name: "icon",
+          type: "ReactNode",
+          required: false,
+          description: "Leading glyph rendered before the message (e.g. a lucide icon).",
+        },
+        {
+          name: "action",
+          type: "ReactNode",
+          required: false,
+          description: "Right-aligned call to action (a , link, etc.).",
+        },
+        {
+          name: "dismissible",
+          type: "boolean",
+          required: false,
+          description: "Render a trailing close button. Defaults to `true`.",
+          default: "true",
+        },
+        {
+          name: "onDismiss",
+          type: "() => void",
+          required: false,
+          description: "Fired after the banner is dismissed (controlled or not).",
+        },
+        {
+          name: "open",
+          type: "boolean",
+          required: false,
+          description: "Controlled visibility. When provided, the component is fully controlled.",
+        },
+        {
+          name: "defaultOpen",
+          type: "boolean",
+          required: false,
+          description: "Initial visibility for the uncontrolled case. Defaults to `true`.",
+          default: "true",
+        },
+        {
+          name: "label",
+          type: "string",
+          required: false,
+          description: 'Accessible label for the announcement region. Defaults to "Announcement".',
+          default: '"Announcement"',
+        },
+        {
+          name: "children",
+          type: "ReactNode",
+          required: false,
+          description: "Free-form message body, used when `title`/`description` are not supplied.",
+        },
+        {
+          name: "variant",
+          type: '"default" | "brand" | "info" | "success" | "warning" | "error"',
+          required: false,
+          default: '"default"',
+        },
+        {
+          name: "align",
+          type: '"start" | "center"',
+          required: false,
+          default: '"center"',
         },
       ],
     },
@@ -2138,6 +2421,89 @@ export const COMPONENT_PROPS: Record<string, PropsDoc[]> = {
           name: "logoClassName",
           type: "string",
           required: false,
+        },
+      ],
+    },
+  ],
+  marquee: [
+    {
+      interfaceName: "MarqueeProps",
+      extends: "Extends HTMLAttributes<HTMLDivElement>",
+      props: [
+        {
+          name: "children",
+          type: "ReactNode",
+          required: true,
+          description: "The items to scroll — logos, cards, testimonials, or a text ticker.",
+        },
+        {
+          name: "direction",
+          type: '"left" | "right"',
+          required: false,
+          description:
+            'Scroll direction. Horizontal: `"left"` (default) | `"right"`. When is set, the same prop reads as `"up"` (default) | `"down"` — i.e. `"left"`/`"up"` share the forward sense and `"right"`/`"down"` the reverse, so one prop covers both axes.',
+          default: '"left"',
+        },
+        {
+          name: "vertical",
+          type: "boolean",
+          required: false,
+          description: "Scroll the marquee on the vertical axis instead of the horizontal one.",
+          default: "false",
+        },
+        {
+          name: "speed",
+          type: "number",
+          required: false,
+          description:
+            "Travel speed in **pixels per second** — resolution-independent and stable across content widths (the loop duration is derived from the measured track size). Defaults to `40` (a tasteful, slow drift).",
+          default: "DEFAULT_SPEED",
+        },
+        {
+          name: "pauseOnHover",
+          type: "boolean",
+          required: false,
+          description:
+            "Pause the scroll while the pointer is over the marquee. Defaults to `true`.",
+          default: "true",
+        },
+        {
+          name: "fade",
+          type: "boolean",
+          required: false,
+          description:
+            "Fade the leading and trailing edges into the background with a gradient `mask-image`, so items dissolve rather than clip. Defaults to `true`.",
+          default: "true",
+        },
+        {
+          name: "gap",
+          type: "string",
+          required: false,
+          description:
+            'Spacing between repeated items. Accepts any CSS length. Defaults to `"1rem"`.',
+          default: "DEFAULT_GAP",
+        },
+        {
+          name: "repeat",
+          type: "number",
+          required: false,
+          description:
+            "How many copies of are rendered back-to-back. The track translates by exactly one copy, so any count ≥ 2 loops seamlessly. Defaults to `2`; raise it when a single copy cannot fill wide viewports (leaving a visible gap before the loop point).",
+          default: "DEFAULT_REPEAT",
+        },
+        {
+          name: "motionPreference",
+          type: "MarqueeMotionPreference",
+          required: false,
+          description:
+            'Whether the marquee scrolls vs. honours `prefers-reduced-motion`: `"respect"` (default), `"always"` (force motion), or `"never"` (force static). Defaults to `"respect"`.',
+          default: '"respect"',
+        },
+        {
+          name: "groupClassName",
+          type: "string",
+          required: false,
+          description: "Class applied to each repeated copy (the flex row/column of items).",
         },
       ],
     },
