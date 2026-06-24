@@ -83,6 +83,22 @@ const BLOCK_MANIFEST: ReadonlyArray<{ slug: string; file: string; constName: str
   { slug: "page-header", file: "page-sections.tsx", constName: "pageHeaderCode" },
   { slug: "filter-bar", file: "page-sections.tsx", constName: "filterBarCode" },
   { slug: "empty-state", file: "page-sections.tsx", constName: "emptyStateCode" },
+  { slug: "chat-thread", file: "ai.tsx", constName: "chatThreadCode" },
+  { slug: "prompt-box", file: "ai.tsx", constName: "promptBoxCode" },
+  { slug: "ai-response", file: "ai.tsx", constName: "aiResponseCode" },
+  { slug: "not-found", file: "states.tsx", constName: "notFoundCode" },
+  { slug: "error-state", file: "states.tsx", constName: "errorStateCode" },
+  { slug: "success-state", file: "states.tsx", constName: "successStateCode" },
+  { slug: "maintenance", file: "states.tsx", constName: "maintenanceCode" },
+  { slug: "email-welcome", file: "email.tsx", constName: "emailWelcomeCode" },
+  { slug: "email-receipt", file: "email.tsx", constName: "emailReceiptCode" },
+  { slug: "email-verify", file: "email.tsx", constName: "emailVerifyCode" },
+  { slug: "notification-panel", file: "notifications.tsx", constName: "notificationPanelCode" },
+  { slug: "activity-feed", file: "notifications.tsx", constName: "activityFeedCode" },
+  { slug: "toast-stack", file: "notifications.tsx", constName: "toastStackCode" },
+  { slug: "nps-survey", file: "survey.tsx", constName: "npsSurveyCode" },
+  { slug: "feedback-form", file: "survey.tsx", constName: "feedbackFormCode" },
+  { slug: "contact-form", file: "survey.tsx", constName: "contactFormCode" },
 ];
 
 /**
