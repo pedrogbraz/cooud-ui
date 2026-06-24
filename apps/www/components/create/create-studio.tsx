@@ -65,16 +65,12 @@ import {
   Maximize2,
   Minimize2,
   Moon,
-  Palette,
-  Radius,
   RotateCcw,
   Save,
-  Shapes,
   Share2,
   SlidersHorizontal,
-  Sparkles,
+  type Sparkles,
   Sun,
-  Type,
 } from "lucide-react";
 import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -95,6 +91,7 @@ import {
   decodeConfigParam,
   encodeConfigParam,
   FONT_CHOICES,
+  findBaseColor,
   findBrandColor,
   findChartPalette,
   findFontChoice,
@@ -344,7 +341,7 @@ export function CreateStudio() {
         {liveMessage}
       </span>
       <div className="grid min-h-[calc(100vh-4rem)] xl:grid-cols-[20rem_minmax(0,1fr)]">
-        <aside className="hidden border-border/70 bg-surface-inset/80 p-4 backdrop-blur-xl xl:sticky xl:top-16 xl:block xl:h-[calc(100vh-4rem)] xl:overflow-y-auto xl:border-r">
+        <aside className="hidden border-border/70 bg-surface-inset/80 p-5 backdrop-blur-xl xl:sticky xl:top-16 xl:block xl:h-[calc(100vh-4rem)] xl:overflow-y-auto xl:border-r">
           <CreateControls
             idPrefix="create-desktop"
             config={config}
@@ -553,29 +550,50 @@ function CreateControls({
   onShuffle: () => void;
   onGetCode: () => void;
 }) {
+  const baseName = findBaseColor(config.baseColor).name;
   return (
     <>
-      <div className="flex items-center justify-between gap-3 rounded-xl border border-border bg-surface-raised px-3 py-2.5">
-        <div className="flex min-w-0 items-center gap-3">
-          <span
-            className="size-9 shrink-0 rounded-lg border border-border-soft shadow-xs"
-            style={{ backgroundColor: selectedBrand.swatch }}
-            aria-hidden="true"
-          />
-          <div className="min-w-0">
-            <p className="truncate font-display text-sm font-semibold text-fg">{config.style}</p>
-            <p className="truncate text-xs text-fg-tertiary">
-              {selectedBrand.name} · design system
-            </p>
+      <div
+        className={cn(
+          "relative isolate overflow-hidden rounded-2xl border border-border-soft bg-surface-raised px-3.5 py-3 shadow-sm",
+          "transition-[border-color,box-shadow] duration-300 ease-[var(--ease-out-quart)]",
+        )}
+      >
+        <span
+          className="pointer-events-none absolute -right-10 -top-12 -z-10 size-32 rounded-full opacity-25 blur-2xl transition-opacity duration-500 ease-[var(--ease-out-quart)]"
+          style={{ backgroundColor: selectedBrand.swatch }}
+          aria-hidden="true"
+        />
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex min-w-0 items-center gap-3">
+            <span
+              className="grid size-10 shrink-0 place-items-center rounded-xl ring-1 ring-inset ring-border-soft transition-[box-shadow,background-color] duration-300 ease-[var(--ease-out-quart)]"
+              style={{
+                backgroundColor: selectedBrand.swatch,
+                boxShadow: `0 0 0 4px color-mix(in oklch, ${selectedBrand.swatch} 18%, transparent)`,
+              }}
+              aria-hidden="true"
+            />
+            <div className="min-w-0">
+              <p className="truncate font-display text-sm font-semibold tracking-tight text-fg">
+                {config.style}
+              </p>
+              <p className="truncate text-xs text-fg-tertiary">
+                <span className="capitalize">{baseName}</span> · design system
+              </p>
+            </div>
           </div>
+          <Badge
+            variant={config.style === CUSTOM_STYLE_NAME ? "warning" : "primary"}
+            className="capitalize"
+          >
+            {config.mode}
+          </Badge>
         </div>
-        <Badge variant={config.style === CUSTOM_STYLE_NAME ? "warning" : "primary"}>
-          {config.mode}
-        </Badge>
       </div>
 
-      <div className="mt-5 flex flex-col gap-5">
-        <ControlGroup icon={Sparkles} title="Style" hint="Start from a curated look">
+      <div className="mt-6 flex flex-col gap-6">
+        <ControlRow title="Style" hint="Start from a curated look" htmlFor={`${idPrefix}-style`}>
           <Select
             value={config.style}
             onValueChange={(name) => {
@@ -604,132 +622,134 @@ function CreateControls({
               ))}
             </SelectContent>
           </Select>
-        </ControlGroup>
+        </ControlRow>
 
-        <ControlGroup
-          icon={Moon}
-          title="Mode"
-          hint="Light or dark surfaces"
-          action={
-            <LockToggle
-              active={locks.mode}
-              label="Lock mode during shuffle"
-              onClick={() => onToggleLock("mode")}
-            />
-          }
-        >
-          <Select
-            value={config.mode}
-            onValueChange={(mode) => onPatchConfig({ mode: mode as Mode })}
-          >
-            <SelectTrigger id={`${idPrefix}-mode`} aria-label="Mode" className="capitalize">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="dark" className="capitalize">
-                Dark
-              </SelectItem>
-              <SelectItem value="light" className="capitalize">
-                Light
-              </SelectItem>
-            </SelectContent>
-          </Select>
-        </ControlGroup>
-
-        <ControlGroup
-          icon={Palette}
-          title="Base color"
-          hint="Neutral surfaces, text, and borders"
-          action={
-            <LockToggle
-              active={locks.base}
-              label="Lock base color during shuffle"
-              onClick={() => onToggleLock("base")}
-            />
-          }
-        >
-          <SwatchSelect
-            id={`${idPrefix}-base`}
-            label="Base color"
-            items={BASE_COLORS}
-            value={config.baseColor}
-            onValueChange={(baseColor) => onPatchConfig({ baseColor })}
-          />
-        </ControlGroup>
-
-        <ControlGroup
-          icon={Palette}
-          title="Brand"
-          hint="Primary, accent, and focus ring"
-          action={
-            <LockToggle
-              active={locks.brand}
-              label="Lock brand during shuffle"
-              onClick={() => onToggleLock("brand")}
-            />
-          }
-        >
-          <SwatchSelect
-            id={`${idPrefix}-brand`}
-            label="Brand color"
-            items={BRAND_COLORS}
-            value={config.brand}
-            onValueChange={(brand) =>
-              onPatchConfig({ brand, primaryColor: undefined, accentColor: undefined })
+        <ControlSection label="Color">
+          <ControlRow
+            title="Mode"
+            hint="Light or dark surfaces"
+            htmlFor={`${idPrefix}-mode`}
+            action={
+              <LockToggle
+                active={locks.mode}
+                label="Lock mode during shuffle"
+                onClick={() => onToggleLock("mode")}
+              />
             }
-          />
-          <Accordion type="single" collapsible className="rounded-xl border border-border">
-            <AccordionItem value="advanced" className="border-b-0">
-              <AccordionTrigger className="px-3 py-2.5 text-xs text-fg-tertiary">
-                Advanced color
-              </AccordionTrigger>
-              <AccordionContent className="grid gap-2 px-3 pb-3">
-                <CssValueInput
-                  id={`${idPrefix}-primary`}
-                  label="Primary"
-                  value={config.primaryColor ?? selectedBrand.swatch}
-                  onChange={(primaryColor) => onPatchConfig({ primaryColor })}
-                />
-                <CssValueInput
-                  id={`${idPrefix}-accent`}
-                  label="Accent"
-                  value={config.accentColor ?? selectedBrand.accent}
-                  onChange={(accentColor) => onPatchConfig({ accentColor })}
-                />
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
-        </ControlGroup>
-
-        <ControlGroup
-          icon={Palette}
-          title="Chart color"
-          hint="Data-visualization series"
-          action={
-            <LockToggle
-              active={locks.chart}
-              label="Lock chart palette during shuffle"
-              onClick={() => onToggleLock("chart")}
-            />
-          }
-        >
-          <Select value={config.chart} onValueChange={(chart) => onPatchConfig({ chart })}>
-            <SelectTrigger id={`${idPrefix}-chart`} aria-label="Chart palette">
-              <SelectValue placeholder="Pick a palette">
-                <PaletteOption palette={findChartPalette(config.chart)} />
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent>
-              {CHART_PALETTES.map((palette) => (
-                <SelectItem key={palette.id} value={palette.id}>
-                  <PaletteOption palette={palette} />
+          >
+            <Select
+              value={config.mode}
+              onValueChange={(mode) => onPatchConfig({ mode: mode as Mode })}
+            >
+              <SelectTrigger id={`${idPrefix}-mode`} aria-label="Mode" className="capitalize">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="dark" className="capitalize">
+                  Dark
                 </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </ControlGroup>
+                <SelectItem value="light" className="capitalize">
+                  Light
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </ControlRow>
 
-        <ControlGroup icon={Type} title="Typography" hint="Heading and body type">
+          <ControlRow
+            title="Base"
+            hint="Neutral surfaces, text, and borders"
+            htmlFor={`${idPrefix}-base`}
+            action={
+              <LockToggle
+                active={locks.base}
+                label="Lock base color during shuffle"
+                onClick={() => onToggleLock("base")}
+              />
+            }
+          >
+            <SwatchSelect
+              id={`${idPrefix}-base`}
+              label="Base color"
+              items={BASE_COLORS}
+              value={config.baseColor}
+              onValueChange={(baseColor) => onPatchConfig({ baseColor })}
+            />
+          </ControlRow>
+
+          <ControlRow
+            title="Brand"
+            hint="Primary, accent, and focus ring"
+            htmlFor={`${idPrefix}-brand`}
+            action={
+              <LockToggle
+                active={locks.brand}
+                label="Lock brand during shuffle"
+                onClick={() => onToggleLock("brand")}
+              />
+            }
+          >
+            <SwatchSelect
+              id={`${idPrefix}-brand`}
+              label="Brand color"
+              items={BRAND_COLORS}
+              value={config.brand}
+              onValueChange={(brand) =>
+                onPatchConfig({ brand, primaryColor: undefined, accentColor: undefined })
+              }
+            />
+            <Accordion type="single" collapsible>
+              <AccordionItem value="advanced" className="border-b-0">
+                <AccordionTrigger className="rounded-md px-1 py-2 text-xs text-fg-tertiary hover:text-fg-secondary hover:no-underline data-[state=open]:text-fg-secondary">
+                  Advanced color
+                </AccordionTrigger>
+                <AccordionContent className="grid gap-2 px-0.5 pb-1">
+                  <CssValueInput
+                    id={`${idPrefix}-primary`}
+                    label="Primary"
+                    value={config.primaryColor ?? selectedBrand.swatch}
+                    onChange={(primaryColor) => onPatchConfig({ primaryColor })}
+                  />
+                  <CssValueInput
+                    id={`${idPrefix}-accent`}
+                    label="Accent"
+                    value={config.accentColor ?? selectedBrand.accent}
+                    onChange={(accentColor) => onPatchConfig({ accentColor })}
+                  />
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </ControlRow>
+
+          <ControlRow
+            title="Chart"
+            hint="Data-visualization series"
+            htmlFor={`${idPrefix}-chart`}
+            action={
+              <LockToggle
+                active={locks.chart}
+                label="Lock chart palette during shuffle"
+                onClick={() => onToggleLock("chart")}
+              />
+            }
+          >
+            <Select value={config.chart} onValueChange={(chart) => onPatchConfig({ chart })}>
+              <SelectTrigger id={`${idPrefix}-chart`} aria-label="Chart palette">
+                <SelectValue placeholder="Pick a palette">
+                  <PaletteOption palette={findChartPalette(config.chart)} />
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                {CHART_PALETTES.map((palette) => (
+                  <SelectItem key={palette.id} value={palette.id}>
+                    <PaletteOption palette={palette} />
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </ControlRow>
+        </ControlSection>
+
+        <ControlSection label="Typography">
           <FontSelect
             id={`${idPrefix}-heading`}
             label="Heading"
@@ -746,107 +766,113 @@ function CreateControls({
             locked={locks.body}
             onToggleLock={() => onToggleLock("body")}
           />
-        </ControlGroup>
+        </ControlSection>
 
-        <ControlGroup
-          icon={Shapes}
-          title="Icon Library"
-          hint="The icon set used across the UI"
-          action={
-            <LockToggle
-              active={locks.icon}
-              label="Lock icon library during shuffle"
-              onClick={() => onToggleLock("icon")}
-            />
-          }
-        >
-          <Select
-            value={config.iconLibrary}
-            onValueChange={(value) => onPatchConfig({ iconLibrary: value as IconLibraryId })}
+        <ControlSection label="Icons">
+          <ControlRow
+            title="Library"
+            hint="The icon set used across the UI"
+            htmlFor={`${idPrefix}-icon-library`}
+            action={
+              <LockToggle
+                active={locks.icon}
+                label="Lock icon library during shuffle"
+                onClick={() => onToggleLock("icon")}
+              />
+            }
           >
-            <SelectTrigger id={`${idPrefix}-icon-library`} aria-label="Icon library">
-              <SelectValue>
-                <IconLibraryOption library={config.iconLibrary} />
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent>
-              {ICON_LIBRARIES.map((library) => (
-                <SelectItem key={library.id} value={library.id}>
-                  <IconLibraryOption library={library.id} name={library.name} />
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </ControlGroup>
-
-        <ControlGroup
-          icon={Radius}
-          title="Radius"
-          hint="Corner roundness, in pixels"
-          action={
-            <LockToggle
-              active={locks.radius}
-              label="Lock radius during shuffle"
-              onClick={() => onToggleLock("radius")}
-            />
-          }
-        >
-          <Select
-            value={String(config.radius)}
-            onValueChange={(value) => {
-              const parsed = Number.parseInt(value, 10);
-              onPatchConfig({ radius: Number.isNaN(parsed) ? DEFAULT_CONFIG.radius : parsed });
-            }}
-          >
-            <SelectTrigger id={`${idPrefix}-radius`} aria-label="Corner radius">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {radiusOptions(config.radius).map((value) => (
-                <SelectItem key={value} value={String(value)}>
-                  {radiusLabel(value)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </ControlGroup>
-
-        <Separator />
-
-        <div className="grid gap-2">
-          <Label htmlFor={`${idPrefix}-preset-name`}>Save as preset</Label>
-          <div className="flex gap-2">
-            <Input
-              id={`${idPrefix}-preset-name`}
-              value={presetName}
-              onChange={(event) => onPresetNameChange(event.target.value)}
-              placeholder="My design system"
-            />
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={onSavePreset}
-              disabled={!presetName.trim()}
-              aria-label="Save preset"
+            <Select
+              value={config.iconLibrary}
+              onValueChange={(value) => onPatchConfig({ iconLibrary: value as IconLibraryId })}
             >
-              <Save aria-hidden="true" />
+              <SelectTrigger id={`${idPrefix}-icon-library`} aria-label="Icon library">
+                <SelectValue>
+                  <IconLibraryOption library={config.iconLibrary} />
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                {ICON_LIBRARIES.map((library) => (
+                  <SelectItem key={library.id} value={library.id}>
+                    <IconLibraryOption library={library.id} name={library.name} />
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </ControlRow>
+        </ControlSection>
+
+        <ControlSection label="Shape">
+          <ControlRow
+            title="Radius"
+            hint="Corner roundness, in pixels"
+            htmlFor={`${idPrefix}-radius`}
+            action={
+              <LockToggle
+                active={locks.radius}
+                label="Lock radius during shuffle"
+                onClick={() => onToggleLock("radius")}
+              />
+            }
+          >
+            <Select
+              value={String(config.radius)}
+              onValueChange={(value) => {
+                const parsed = Number.parseInt(value, 10);
+                onPatchConfig({ radius: Number.isNaN(parsed) ? DEFAULT_CONFIG.radius : parsed });
+              }}
+            >
+              <SelectTrigger id={`${idPrefix}-radius`} aria-label="Corner radius">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {radiusOptions(config.radius).map((value) => (
+                  <SelectItem key={value} value={String(value)}>
+                    {radiusLabel(value)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </ControlRow>
+        </ControlSection>
+
+        <Separator className="bg-border-soft" />
+
+        <ControlSection label="Save">
+          <div className="grid gap-2">
+            <div className="flex gap-2">
+              <Input
+                id={`${idPrefix}-preset-name`}
+                value={presetName}
+                onChange={(event) => onPresetNameChange(event.target.value)}
+                placeholder="My design system"
+                aria-label="Preset name"
+              />
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={onSavePreset}
+                disabled={!presetName.trim()}
+                aria-label="Save preset"
+              >
+                <Save aria-hidden="true" />
+              </Button>
+            </div>
+            <p className="px-0.5 text-xs text-fg-muted">
+              Stored in this browser. Share the link to send it.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2">
+            <Button variant="outline" onClick={onShuffle}>
+              <Dices aria-hidden="true" />
+              Shuffle
+            </Button>
+            <Button variant="gradient" onClick={onGetCode}>
+              <Code2 aria-hidden="true" />
+              Get code
             </Button>
           </div>
-          <p className="text-xs text-fg-tertiary">
-            Stored in this browser. Share the link to send it.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-2 gap-2">
-          <Button variant="outline" onClick={onShuffle}>
-            <Dices aria-hidden="true" />
-            Shuffle
-          </Button>
-          <Button variant="gradient" onClick={onGetCode}>
-            <Code2 aria-hidden="true" />
-            Get code
-          </Button>
-        </div>
+        </ControlSection>
       </div>
     </>
   );
@@ -881,30 +907,55 @@ function IconAction({
   );
 }
 
-function ControlGroup({
-  icon: Icon,
+/** A thin section caption — `font-display`, hushed and uppercase — used to give
+ *  the control stack rhythm (Color / Typography / Icons / Shape) without cards. */
+function SectionLabel({ children }: { children: ReactNode }) {
+  return (
+    <p className="px-0.5 font-display text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-fg-muted">
+      {children}
+    </p>
+  );
+}
+
+/** Groups related control rows under a hushed caption with an even rhythm, so
+ *  the panel reads as a handful of calm sections instead of identical blocks. */
+function ControlSection({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <section className="grid gap-4">
+      <SectionLabel>{label}</SectionLabel>
+      {children}
+    </section>
+  );
+}
+
+/** A single, lightweight control row: a tight, scannable label (with an
+ *  optional muted hint that surfaces on hover) and an integrated lock action,
+ *  with the control rendered directly below for an even vertical rhythm. */
+function ControlRow({
   title,
   hint,
+  htmlFor,
   action,
   children,
 }: {
-  icon: typeof Sparkles;
   title: string;
   hint?: string;
+  htmlFor?: string;
   action?: ReactNode;
   children: ReactNode;
 }) {
   return (
-    <section className="grid gap-3">
-      <div className="flex items-center justify-between gap-2">
-        <div className="flex min-w-0 items-center gap-2">
-          <span className="grid size-7 shrink-0 place-items-center rounded-lg bg-surface-overlay text-fg-tertiary">
-            <Icon className="size-4" aria-hidden="true" />
-          </span>
-          <div className="min-w-0">
-            <p className="text-sm font-semibold text-fg">{title}</p>
-            {hint ? <p className="truncate text-xs text-fg-tertiary">{hint}</p> : null}
-          </div>
+    <section className="group/row grid gap-2">
+      <div className="flex min-h-7 items-center justify-between gap-2">
+        <div className="flex min-w-0 items-baseline gap-2">
+          <Label htmlFor={htmlFor} className="shrink-0 text-[0.8125rem] font-medium text-fg">
+            {title}
+          </Label>
+          {hint ? (
+            <span className="hidden min-w-0 truncate text-xs text-fg-muted opacity-0 transition-opacity duration-200 ease-[var(--ease-out-quart)] group-focus-within/row:opacity-100 group-hover/row:opacity-100 sm:block">
+              {hint}
+            </span>
+          ) : null}
         </div>
         {action ? <div className="shrink-0">{action}</div> : null}
       </div>
@@ -930,14 +981,18 @@ function LockToggle({
       aria-pressed={active}
       onClick={onClick}
       className={cn(
-        "grid size-8 place-items-center rounded-lg border outline-none transition",
+        "grid size-7 place-items-center rounded-md outline-none",
+        "transition-[color,background-color,opacity,transform] duration-200 ease-[var(--ease-out-quart)]",
         "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface-inset",
         active
-          ? "border-primary bg-primary/10 text-primary"
-          : "border-border bg-surface-raised text-fg-tertiary hover:border-border-strong hover:text-fg",
+          ? "bg-primary/12 text-primary"
+          : "text-fg-muted opacity-60 hover:bg-surface-overlay hover:text-fg-secondary hover:opacity-100",
       )}
     >
-      <Icon className="size-3.5" aria-hidden="true" />
+      <Icon
+        className="size-3.5 transition-transform duration-200 ease-[var(--ease-out-quart)]"
+        aria-hidden="true"
+      />
     </button>
   );
 }
@@ -1083,9 +1138,9 @@ function FontSelect({
 }) {
   const active = findFontChoice(value);
   return (
-    <div className="grid gap-1.5">
-      <div className="flex items-center justify-between gap-2">
-        <Label htmlFor={id} className="text-xs text-fg-tertiary">
+    <div className="grid gap-2">
+      <div className="flex min-h-7 items-center justify-between gap-2">
+        <Label htmlFor={id} className="text-[0.8125rem] font-medium text-fg">
           {label}
         </Label>
         <LockToggle
