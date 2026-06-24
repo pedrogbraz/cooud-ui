@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "types": ["node"],
+    "typeRoots": ["./node_modules/@types", "../../node_modules/@types"],
+    "lib": ["ES2022"]
+  },
+  "include": ["src"],
+  "exclude": ["src/**/*.test.ts", "templates"]
+}

@@ -905,6 +905,42 @@
     "registryDependencies": []
   },
   {
+    "name": "checkout",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.1.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "payouts",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.1.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "product-grid",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.1.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "invoice",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.1.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
     "name": "page-header",
     "type": "registry:block",
     "dependencies": [
