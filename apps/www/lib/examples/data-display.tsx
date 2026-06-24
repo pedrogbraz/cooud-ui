@@ -45,6 +45,13 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  Timeline,
+  TimelineContent,
+  TimelineDescription,
+  TimelineDot,
+  TimelineItem,
+  TimelineTime,
+  TimelineTitle,
   type TreeNode,
   TreeView,
 } from "@cooud-ui/ui";
@@ -52,13 +59,17 @@ import type { ColumnDef } from "@tanstack/react-table";
 import {
   ArrowUpDown,
   Check,
+  CheckCircle2,
   ChevronsUpDown,
   CircleDashed,
   CircleSlash,
+  CreditCard,
   FileText,
   Folder,
   Inbox,
   Mail,
+  Package,
+  Truck,
 } from "lucide-react";
 import { useState } from "react";
 import { ExampleList } from "../../components/docs/example-list";
@@ -1352,6 +1363,85 @@ return (
   />
 );`,
       preview: <FileTreeDemo />,
+    },
+  ],
+
+  timeline: [
+    {
+      id: "activity",
+      title: "Activity",
+      description:
+        "A vertical history feed. Each item pairs a tone- or icon-bearing dot on the rail with a title, timestamp and description; the connecting line is drawn automatically and stops at the last event.",
+      code: `<Timeline className="max-w-md">
+  <TimelineItem>
+    <TimelineDot tone="primary" icon={<CreditCard aria-hidden="true" />} />
+    <TimelineContent>
+      <TimelineTitle>Order placed</TimelineTitle>
+      <TimelineTime dateTime="2026-06-21T09:24">Jun 21 · 09:24</TimelineTime>
+      <TimelineDescription>Order #4827 created for 3 items.</TimelineDescription>
+    </TimelineContent>
+  </TimelineItem>
+  <TimelineItem>
+    <TimelineDot tone="success" icon={<CheckCircle2 aria-hidden="true" />} />
+    <TimelineContent>
+      <TimelineTitle>Payment confirmed</TimelineTitle>
+      <TimelineTime dateTime="2026-06-21T09:25">Jun 21 · 09:25</TimelineTime>
+      <TimelineDescription>R$ 248,90 captured on the card ending 4242.</TimelineDescription>
+    </TimelineContent>
+  </TimelineItem>
+  <TimelineItem>
+    <TimelineDot icon={<Package aria-hidden="true" />} />
+    <TimelineContent>
+      <TimelineTitle>Packed</TimelineTitle>
+      <TimelineTime dateTime="2026-06-22T14:02">Jun 22 · 14:02</TimelineTime>
+      <TimelineDescription>Left the warehouse with the carrier.</TimelineDescription>
+    </TimelineContent>
+  </TimelineItem>
+  <TimelineItem>
+    <TimelineDot icon={<Truck aria-hidden="true" />} />
+    <TimelineContent>
+      <TimelineTitle>Out for delivery</TimelineTitle>
+      <TimelineTime dateTime="2026-06-23T08:10">Jun 23 · 08:10</TimelineTime>
+      <TimelineDescription>Arriving today between 9am and 1pm.</TimelineDescription>
+    </TimelineContent>
+  </TimelineItem>
+</Timeline>`,
+      preview: (
+        <Timeline className="max-w-md">
+          <TimelineItem>
+            <TimelineDot tone="primary" icon={<CreditCard aria-hidden="true" />} />
+            <TimelineContent>
+              <TimelineTitle>Order placed</TimelineTitle>
+              <TimelineTime dateTime="2026-06-21T09:24">Jun 21 · 09:24</TimelineTime>
+              <TimelineDescription>Order #4827 created for 3 items.</TimelineDescription>
+            </TimelineContent>
+          </TimelineItem>
+          <TimelineItem>
+            <TimelineDot tone="success" icon={<CheckCircle2 aria-hidden="true" />} />
+            <TimelineContent>
+              <TimelineTitle>Payment confirmed</TimelineTitle>
+              <TimelineTime dateTime="2026-06-21T09:25">Jun 21 · 09:25</TimelineTime>
+              <TimelineDescription>R$ 248,90 captured on the card ending 4242.</TimelineDescription>
+            </TimelineContent>
+          </TimelineItem>
+          <TimelineItem>
+            <TimelineDot icon={<Package aria-hidden="true" />} />
+            <TimelineContent>
+              <TimelineTitle>Packed</TimelineTitle>
+              <TimelineTime dateTime="2026-06-22T14:02">Jun 22 · 14:02</TimelineTime>
+              <TimelineDescription>Left the warehouse with the carrier.</TimelineDescription>
+            </TimelineContent>
+          </TimelineItem>
+          <TimelineItem>
+            <TimelineDot icon={<Truck aria-hidden="true" />} />
+            <TimelineContent>
+              <TimelineTitle>Out for delivery</TimelineTitle>
+              <TimelineTime dateTime="2026-06-23T08:10">Jun 23 · 08:10</TimelineTime>
+              <TimelineDescription>Arriving today between 9am and 1pm.</TimelineDescription>
+            </TimelineContent>
+          </TimelineItem>
+        </Timeline>
+      ),
     },
   ],
 

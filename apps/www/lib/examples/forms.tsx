@@ -6,6 +6,7 @@ import {
   Badge,
   Button,
   Checkbox,
+  ColorPicker,
   Combobox,
   Field,
   FieldDescription,
@@ -28,6 +29,7 @@ import {
   NumberInput,
   RadioGroup,
   RadioGroupItem,
+  Rating,
   RichTextEditor,
   Select,
   SelectContent,
@@ -84,6 +86,96 @@ const checkboxDemoCode = `function CheckboxDemo() {
         onCheckedChange={(value) => setChecked(value === true)}
       />
       <Label htmlFor="terms">Accept terms &amp; conditions</Label>
+    </div>
+  );
+}`;
+
+// ── Rating ─────────────────────────────────────────────────────────
+function RatingDemo() {
+  const [value, setValue] = useState(3);
+
+  return (
+    <div className="flex flex-col items-center gap-3">
+      <Rating value={value} onValueChange={setValue} aria-label="Rate your experience" />
+      <p className="text-sm text-fg-secondary tabular-nums">
+        {value} {value === 1 ? "star" : "stars"}
+      </p>
+    </div>
+  );
+}
+
+const ratingDemoCode = `function RatingDemo() {
+  const [value, setValue] = useState(3);
+
+  return (
+    <div className="flex flex-col items-center gap-3">
+      <Rating value={value} onValueChange={setValue} aria-label="Rate your experience" />
+      <p className="text-sm text-fg-secondary tabular-nums">
+        {value} {value === 1 ? "star" : "stars"}
+      </p>
+    </div>
+  );
+}`;
+
+// ── ColorPicker ────────────────────────────────────────────────────
+const brandSwatches = [
+  "oklch(0.62 0.21 256)",
+  "oklch(0.65 0.24 24)",
+  "oklch(0.72 0.19 145)",
+  "oklch(0.8 0.16 86)",
+  "oklch(0.62 0.25 304)",
+];
+
+function ColorPickerDemo() {
+  const [color, setColor] = useState("oklch(0.62 0.21 256)");
+
+  return (
+    <div className="flex w-full max-w-xs flex-col gap-3">
+      <ColorPicker
+        value={color}
+        onValueChange={setColor}
+        swatches={brandSwatches}
+        aria-label="Brand color"
+      />
+      <div className="flex items-center gap-2 text-sm text-fg-secondary">
+        <span
+          aria-hidden="true"
+          className="size-4 rounded-full border border-border"
+          style={{ background: color }}
+        />
+        <span className="font-mono text-xs tabular-nums">{color}</span>
+      </div>
+    </div>
+  );
+}
+
+const colorPickerDemoCode = `const brandSwatches = [
+  "oklch(0.62 0.21 256)",
+  "oklch(0.65 0.24 24)",
+  "oklch(0.72 0.19 145)",
+  "oklch(0.8 0.16 86)",
+  "oklch(0.62 0.25 304)",
+];
+
+function ColorPickerDemo() {
+  const [color, setColor] = useState("oklch(0.62 0.21 256)");
+
+  return (
+    <div className="flex w-full max-w-xs flex-col gap-3">
+      <ColorPicker
+        value={color}
+        onValueChange={setColor}
+        swatches={brandSwatches}
+        aria-label="Brand color"
+      />
+      <div className="flex items-center gap-2 text-sm text-fg-secondary">
+        <span
+          aria-hidden="true"
+          className="size-4 rounded-full border border-border"
+          style={{ background: color }}
+        />
+        <span className="font-mono text-xs tabular-nums">{color}</span>
+      </div>
     </div>
   );
 }`;
@@ -1341,6 +1433,44 @@ function StepperDemo() {
         "A Tiptap WYSIWYG editor with a Cooud-styled toolbar. Controlled via `value` / `onChange` (serialized HTML); `immediatelyRender: false` keeps it SSR-safe. Formats text, headings, lists, quotes, and code.",
       code: richTextEditorDemoCode,
       preview: <RichTextEditorDemo />,
+    },
+  ],
+
+  rating: [
+    {
+      id: "interactive",
+      title: "Interactive",
+      description:
+        "A controlled star rating. Click or use the arrow keys to set the value; the wrapper is a single focusable slider so it stays keyboard- and screen-reader-friendly.",
+      code: ratingDemoCode,
+      preview: <RatingDemo />,
+    },
+    {
+      id: "read-only",
+      title: "Read-only with a count",
+      description:
+        "Display an aggregate score with `readOnly` and `allowHalf`, paired with the review count.",
+      code: `<div className="flex items-center gap-2">
+  <Rating value={4.5} readOnly allowHalf size="sm" aria-label="Rated 4.5 out of 5" />
+  <span className="text-sm text-fg-secondary">4.5 · 1,284 reviews</span>
+</div>`,
+      preview: (
+        <div className="flex items-center gap-2">
+          <Rating value={4.5} readOnly allowHalf size="sm" aria-label="Rated 4.5 out of 5" />
+          <span className="text-sm text-fg-secondary">4.5 · 1,284 reviews</span>
+        </div>
+      ),
+    },
+  ],
+
+  "color-picker": [
+    {
+      id: "swatches",
+      title: "With swatches",
+      description:
+        "A controlled OKLCH color input on a popover — drag the area and hue slider, type any channel or the full oklch() string, or pick one of the preset swatches.",
+      code: colorPickerDemoCode,
+      preview: <ColorPickerDemo />,
     },
   ],
 };

@@ -748,6 +748,143 @@ export const COMPONENT_PROPS: Record<string, PropsDoc[]> = {
       ],
     },
   ],
+  rating: [
+    {
+      interfaceName: "RatingProps",
+      extends: "Extends VariantProps<typeof ratingVariants>",
+      props: [
+        {
+          name: "value",
+          type: "number",
+          required: false,
+          description: "Controlled value. Pair with `onValueChange`.",
+        },
+        {
+          name: "defaultValue",
+          type: "number",
+          required: false,
+          description: "Initial value for uncontrolled usage. Defaults to `0`.",
+          default: "0",
+        },
+        {
+          name: "onValueChange",
+          type: "(value: number) => void",
+          required: false,
+          description: "Called with the new value whenever the rating changes.",
+        },
+        {
+          name: "max",
+          type: "number",
+          required: false,
+          description: "Number of stars. Defaults to `5`.",
+          default: "5",
+        },
+        {
+          name: "readOnly",
+          type: "boolean",
+          required: false,
+          description: "Renders display-only with no interaction. Defaults to `false`.",
+          default: "false",
+        },
+        {
+          name: "allowHalf",
+          type: "boolean",
+          required: false,
+          description: "Allows half-star (0.5) granularity. Defaults to `false`.",
+          default: "false",
+        },
+        {
+          name: "size",
+          type: '"sm" | "md" | "lg"',
+          required: false,
+          description: 'Star size preset. Defaults to `"md"`.',
+          default: '"md"',
+        },
+        {
+          name: "aria-label",
+          type: "string",
+          required: false,
+          description: "Accessible name for the rating when there is no visible label.",
+        },
+        {
+          name: "aria-labelledby",
+          type: "string",
+          required: false,
+          description: "ID of an element labelling the rating.",
+        },
+        {
+          name: "className",
+          type: "string",
+          required: false,
+          description: "Extra classes for the wrapper element.",
+        },
+      ],
+    },
+  ],
+  "color-picker": [
+    {
+      interfaceName: "ColorPickerProps",
+      props: [
+        {
+          name: "value",
+          type: "string",
+          required: false,
+          description: "Controlled color as a CSS color string (ideally `oklch(l c h)`).",
+        },
+        {
+          name: "defaultValue",
+          type: "string",
+          required: false,
+          description: "Initial color for uncontrolled usage. Defaults to a brand-ish oklch.",
+          default: "DEFAULT_VALUE",
+        },
+        {
+          name: "onValueChange",
+          type: "(value: string) => void",
+          required: false,
+          description: "Called with the new color, serialized as `oklch(l c h)`, on every change.",
+        },
+        {
+          name: "swatches",
+          type: "string[]",
+          required: false,
+          description: "Preset swatches shown as a row; clicking one selects it.",
+          default: "DEFAULT_SWATCHES as unknown as string[]",
+        },
+        {
+          name: "disabled",
+          type: "boolean",
+          required: false,
+          description: "Disables the trigger and all panel controls.",
+          default: "false",
+        },
+        {
+          name: "aria-label",
+          type: "string",
+          required: false,
+          description: "Accessible name for the trigger when there is no visible label.",
+        },
+        {
+          name: "className",
+          type: "string",
+          required: false,
+          description: "Extra classes for the trigger button.",
+        },
+        {
+          name: "contentClassName",
+          type: "string",
+          required: false,
+          description: "Extra classes for the popover panel.",
+        },
+        {
+          name: "id",
+          type: "string",
+          required: false,
+          description: "Native id for the trigger.",
+        },
+      ],
+    },
+  ],
   badge: [
     {
       interfaceName: "BadgeProps",
@@ -1168,6 +1305,36 @@ export const COMPONENT_PROPS: Record<string, PropsDoc[]> = {
       ],
     },
   ],
+  timeline: [
+    {
+      interfaceName: "TimelineItemProps",
+      extends: "Extends LiHTMLAttributes<HTMLLIElement>",
+      props: [
+        {
+          name: "connector",
+          type: "boolean",
+          required: false,
+          description:
+            "Render the trailing connector line below this item's dot. Defaults to `true`; the rail draws a line down to the next event. Set `false` on the final item so the rail stops at its dot (auto-detected when the item is the last child of a , so this is rarely needed by hand).",
+          default: "true",
+        },
+      ],
+    },
+    {
+      interfaceName: "TimelineDotProps",
+      extends:
+        'Extends Omit<HTMLAttributes<HTMLSpanElement>, "color">, Omit<VariantProps<typeof timelineDotVariants>, "withIcon">',
+      props: [
+        {
+          name: "icon",
+          type: "ReactNode",
+          required: false,
+          description:
+            "Optional glyph (e.g. a `lucide-react` icon) rendered inside the dot. When present the dot becomes a ring-bordered chip sized to hold it; otherwise it is a small solid disc.",
+        },
+      ],
+    },
+  ],
   kanban: [
     {
       interfaceName: "KanbanProps",
@@ -1220,6 +1387,72 @@ export const COMPONENT_PROPS: Record<string, PropsDoc[]> = {
           type: '"sm" | "md" | "lg"',
           required: false,
           default: '"md"',
+        },
+      ],
+    },
+  ],
+  "usage-meter": [
+    {
+      interfaceName: "UsageMeterProps",
+      extends: 'Extends Omit<HTMLAttributes<HTMLDivElement>, "children">',
+      props: [
+        {
+          name: "value",
+          type: "number",
+          required: true,
+          description: "Current usage.",
+        },
+        {
+          name: "max",
+          type: "number",
+          required: true,
+          description: "The quota / limit the usage is measured against.",
+        },
+        {
+          name: "label",
+          type: "ReactNode",
+          required: false,
+          description: "Optional label shown beside (linear) or below (circular) the meter.",
+        },
+        {
+          name: "unit",
+          type: "string",
+          required: false,
+          description: 'Unit suffix appended to the value readout, e.g. "tokens".',
+        },
+        {
+          name: "variant",
+          type: "UsageMeterVariant",
+          required: false,
+          description: "Layout: a horizontal bar or an SVG ring.",
+          default: '"linear"',
+        },
+        {
+          name: "tone",
+          type: "UsageMeterTone",
+          required: false,
+          description: "Color. `auto` derives severity from the usage ratio; others are explicit.",
+          default: '"auto"',
+        },
+        {
+          name: "formatValue",
+          type: "(value: number, max: number) => string",
+          required: false,
+          description: "Override the `value / max` readout.",
+        },
+        {
+          name: "showValue",
+          type: "boolean",
+          required: false,
+          description: "Whether to render the textual value/percentage readout.",
+          default: "true",
+        },
+        {
+          name: "size",
+          type: "number",
+          required: false,
+          description: "Diameter of the ring in px (circular variant only).",
+          default: "96",
         },
       ],
     },

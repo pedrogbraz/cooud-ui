@@ -216,6 +216,18 @@
     ]
   },
   {
+    "name": "color-picker",
+    "type": "registry:ui",
+    "dependencies": [],
+    "registryDependencies": [
+      "button",
+      "cn",
+      "input",
+      "label",
+      "popover"
+    ]
+  },
+  {
     "name": "combobox",
     "type": "registry:ui",
     "dependencies": [
@@ -612,6 +624,17 @@
     ]
   },
   {
+    "name": "rating",
+    "type": "registry:ui",
+    "dependencies": [
+      "class-variance-authority@^0.7.1",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
     "name": "resizable",
     "type": "registry:ui",
     "dependencies": [
@@ -837,6 +860,16 @@
     ]
   },
   {
+    "name": "timeline",
+    "type": "registry:ui",
+    "dependencies": [
+      "class-variance-authority@^0.7.1"
+    ],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
     "name": "toggle-group",
     "type": "registry:ui",
     "dependencies": [
@@ -875,6 +908,14 @@
     "dependencies": [
       "lucide-react@^0.577.0"
     ],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "usage-meter",
+    "type": "registry:ui",
+    "dependencies": [],
     "registryDependencies": [
       "cn"
     ]
