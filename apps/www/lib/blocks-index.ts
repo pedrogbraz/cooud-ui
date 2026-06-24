@@ -426,6 +426,129 @@ export const BLOCK_CATEGORIES: BlockCategory[] = [
       },
     ],
   },
+  {
+    slug: "ai",
+    name: "AI & Chat",
+    items: [
+      {
+        slug: "chat-thread",
+        name: "Chat Thread",
+        description:
+          "An assistant conversation card with user and AI bubbles, a typing indicator, and a message composer.",
+      },
+      {
+        slug: "prompt-box",
+        name: "Prompt Box",
+        description:
+          "A standalone AI composer with suggestion chips, a model picker, and attach and send actions.",
+      },
+      {
+        slug: "ai-response",
+        name: "AI Response",
+        description:
+          "An assistant answer card with formatted content, cited sources, and feedback and regenerate actions.",
+      },
+    ],
+  },
+  {
+    slug: "notifications",
+    name: "Notifications",
+    items: [
+      {
+        slug: "notification-panel",
+        name: "Notification Panel",
+        description:
+          "A dropdown notifications list with avatars, unread markers, and a mark-all-read action.",
+      },
+      {
+        slug: "activity-feed",
+        name: "Activity Feed",
+        description:
+          "A vertical timeline of recent events with toned icons, timestamps, and detail.",
+      },
+      {
+        slug: "toast-stack",
+        name: "Toast Stack",
+        description:
+          "A stack of success, error, warning, and info toasts with icons and dismiss actions.",
+      },
+    ],
+  },
+  {
+    slug: "email",
+    name: "Email",
+    items: [
+      {
+        slug: "email-welcome",
+        name: "Welcome Email",
+        description: "A branded welcome email with a get-started CTA and onboarding quick links.",
+      },
+      {
+        slug: "email-receipt",
+        name: "Receipt Email",
+        description:
+          "A branded purchase receipt email with an itemized table, totals, and an invoice action.",
+      },
+      {
+        slug: "email-verify",
+        name: "Verify Email",
+        description:
+          "An email-confirmation message with a verify button and a fallback one-time code.",
+      },
+    ],
+  },
+  {
+    slug: "states",
+    name: "States",
+    items: [
+      {
+        slug: "not-found",
+        name: "Not Found",
+        description:
+          "A centered 404 page with a search field and back-to-home and support actions.",
+      },
+      {
+        slug: "error-state",
+        name: "Error State",
+        description:
+          "A full-page error state with an error code, a retry action, and a support link.",
+      },
+      {
+        slug: "success-state",
+        name: "Success State",
+        description: "A centered confirmation state with a success icon and follow-up actions.",
+      },
+      {
+        slug: "maintenance",
+        name: "Maintenance",
+        description:
+          "A scheduled-maintenance page with an estimated downtime and a notify-me email capture.",
+      },
+    ],
+  },
+  {
+    slug: "survey",
+    name: "Feedback",
+    items: [
+      {
+        slug: "nps-survey",
+        name: "NPS Survey",
+        description: "An NPS card with a 0–10 score scale and an open-ended reason field.",
+      },
+      {
+        slug: "feedback-form",
+        name: "Feedback Form",
+        description:
+          "A feedback card with a star rating, category chips, and an optional details field.",
+      },
+      {
+        slug: "contact-form",
+        name: "Contact Form",
+        description:
+          "A two-column contact section pairing contact methods with a name, email, and message form.",
+      },
+    ],
+  },
 ];
 
 export const ALL_BLOCKS: (BlockMeta & { category: string })[] = BLOCK_CATEGORIES.flatMap((c) =>
