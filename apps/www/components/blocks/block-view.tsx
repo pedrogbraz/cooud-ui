@@ -51,6 +51,22 @@ const VIEW_VIEWS: Record<BlockFamily, BlockDetailView> = {
   page: dynamic(() => import("../../lib/blocks/page-sections").then((m) => m.PageView), {
     loading: BlockViewSkeleton,
   }),
+  ai: dynamic(() => import("../../lib/blocks/ai").then((m) => m.AiView), {
+    loading: BlockViewSkeleton,
+  }),
+  states: dynamic(() => import("../../lib/blocks/states").then((m) => m.StatesView), {
+    loading: BlockViewSkeleton,
+  }),
+  email: dynamic(() => import("../../lib/blocks/email").then((m) => m.EmailView), {
+    loading: BlockViewSkeleton,
+  }),
+  notifications: dynamic(
+    () => import("../../lib/blocks/notifications").then((m) => m.NotificationsView),
+    { loading: BlockViewSkeleton },
+  ),
+  survey: dynamic(() => import("../../lib/blocks/survey").then((m) => m.SurveyView), {
+    loading: BlockViewSkeleton,
+  }),
 };
 
 export function BlockView({ slug, variant }: { slug: string; variant: string }) {

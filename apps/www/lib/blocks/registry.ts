@@ -16,7 +16,12 @@ export type BlockFamily =
   | "dashboard"
   | "billing"
   | "commerce"
-  | "page";
+  | "page"
+  | "ai"
+  | "states"
+  | "email"
+  | "notifications"
+  | "survey";
 
 /** slug → the family module that owns its content. */
 export const BLOCK_FAMILY_BY_SLUG: Record<string, BlockFamily> = {
@@ -60,6 +65,27 @@ export const BLOCK_FAMILY_BY_SLUG: Record<string, BlockFamily> = {
   "page-header": "page",
   "filter-bar": "page",
   "empty-state": "page",
+  // ai
+  "chat-thread": "ai",
+  "prompt-box": "ai",
+  "ai-response": "ai",
+  // states
+  "not-found": "states",
+  "error-state": "states",
+  "success-state": "states",
+  maintenance: "states",
+  // email
+  "email-welcome": "email",
+  "email-receipt": "email",
+  "email-verify": "email",
+  // notifications
+  "notification-panel": "notifications",
+  "activity-feed": "notifications",
+  "toast-stack": "notifications",
+  // survey
+  "nps-survey": "survey",
+  "feedback-form": "survey",
+  "contact-form": "survey",
 };
 
 export function getBlockFamily(slug: string): BlockFamily | undefined {

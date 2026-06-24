@@ -58,6 +58,22 @@ const GALLERY_VIEWS: Record<BlockFamily, GalleryView> = {
   page: dynamic(() => import("../../lib/blocks/page-sections").then((m) => m.PageGallery), {
     loading: GallerySkeleton,
   }),
+  ai: dynamic(() => import("../../lib/blocks/ai").then((m) => m.AiGallery), {
+    loading: GallerySkeleton,
+  }),
+  states: dynamic(() => import("../../lib/blocks/states").then((m) => m.StatesGallery), {
+    loading: GallerySkeleton,
+  }),
+  email: dynamic(() => import("../../lib/blocks/email").then((m) => m.EmailGallery), {
+    loading: GallerySkeleton,
+  }),
+  notifications: dynamic(
+    () => import("../../lib/blocks/notifications").then((m) => m.NotificationsGallery),
+    { loading: GallerySkeleton },
+  ),
+  survey: dynamic(() => import("../../lib/blocks/survey").then((m) => m.SurveyGallery), {
+    loading: GallerySkeleton,
+  }),
 };
 
 export function BlockVariantsGallery({ slug }: { slug: string }) {
