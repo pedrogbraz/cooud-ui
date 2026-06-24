@@ -69,6 +69,7 @@ import {
   Radius,
   RotateCcw,
   Save,
+  Shapes,
   Share2,
   SlidersHorizontal,
   Sparkles,
@@ -76,6 +77,12 @@ import {
   Type,
 } from "lucide-react";
 import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
+import {
+  ICON_LIBRARIES,
+  ICON_SHOWCASE,
+  type IconLibraryId,
+  LibraryIcon,
+} from "../../lib/create/icon-libraries";
 import {
   BASE_COLORS,
   BRAND_COLORS,
@@ -112,7 +119,7 @@ import { PreviewDashboard } from "./preview-dashboard";
 const STORAGE_KEY = "cooud-ui-create-presets-v1";
 type CodeTab = "install" | "provider" | "css" | "json";
 type PackageManager = "bun" | "pnpm" | "npm" | "yarn";
-type LockKey = "mode" | "base" | "brand" | "chart" | "heading" | "body" | "radius";
+type LockKey = "mode" | "base" | "brand" | "chart" | "heading" | "body" | "icon" | "radius";
 
 const codeTabs: { id: CodeTab; label: string }[] = [
   { id: "install", label: "Install" },
@@ -135,6 +142,7 @@ const defaultLocks: Record<LockKey, boolean> = {
   chart: false,
   heading: false,
   body: false,
+  icon: false,
   radius: false,
 };
 
@@ -268,6 +276,7 @@ export function CreateStudio() {
       chart: locks.chart ? current.chart : shuffled.chart,
       headingFont: locks.heading ? current.headingFont : shuffled.headingFont,
       bodyFont: locks.body ? current.bodyFont : shuffled.bodyFont,
+      iconLibrary: locks.icon ? current.iconLibrary : shuffled.iconLibrary,
       radius: locks.radius ? current.radius : shuffled.radius,
     }));
   }
@@ -432,6 +441,7 @@ export function CreateStudio() {
             {focusMode ? null : (
               <div className="grid gap-4 2xl:sticky 2xl:top-36 2xl:self-start">
                 <TokenSummary config={config} />
+                <IconLibraryShowcase iconLibrary={config.iconLibrary} />
                 <PresetExchange
                   presetCode={presetCode}
                   error={importError}
@@ -739,6 +749,37 @@ function CreateControls({
         </ControlGroup>
 
         <ControlGroup
+          icon={Shapes}
+          title="Icon Library"
+          hint="The icon set used across the UI"
+          action={
+            <LockToggle
+              active={locks.icon}
+              label="Lock icon library during shuffle"
+              onClick={() => onToggleLock("icon")}
+            />
+          }
+        >
+          <Select
+            value={config.iconLibrary}
+            onValueChange={(value) => onPatchConfig({ iconLibrary: value as IconLibraryId })}
+          >
+            <SelectTrigger id={`${idPrefix}-icon-library`} aria-label="Icon library">
+              <SelectValue>
+                <IconLibraryOption library={config.iconLibrary} />
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              {ICON_LIBRARIES.map((library) => (
+                <SelectItem key={library.id} value={library.id}>
+                  <IconLibraryOption library={library.id} name={library.name} />
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </ControlGroup>
+
+        <ControlGroup
           icon={Radius}
           title="Radius"
           hint="Corner roundness, in pixels"
@@ -927,6 +968,23 @@ function SwatchOption({ swatch, label }: { swatch: string; label: string }) {
         aria-hidden="true"
       />
       <span className="truncate">{label}</span>
+    </span>
+  );
+}
+
+/** Sample glyphs in a given library + its name, for the icon-library select. */
+const ICON_OPTION_SAMPLES = ["search", "heart", "settings", "bell"] as const;
+
+function IconLibraryOption({ library, name }: { library: IconLibraryId; name?: string }) {
+  const label = name ?? ICON_LIBRARIES.find((item) => item.id === library)?.name ?? library;
+  return (
+    <span className="flex min-w-0 flex-1 items-center justify-between gap-3">
+      <span className="truncate">{label}</span>
+      <span className="flex shrink-0 items-center gap-1.5 text-fg-tertiary">
+        {ICON_OPTION_SAMPLES.map((iconName) => (
+          <LibraryIcon key={iconName} library={library} name={iconName} className="size-4" />
+        ))}
+      </span>
     </span>
   );
 }
@@ -1196,6 +1254,32 @@ function ComponentSampler({ config }: { config: DesignConfig }) {
   );
 }
 
+function IconLibraryShowcase({ iconLibrary }: { iconLibrary: IconLibraryId }) {
+  const libraryName = ICON_LIBRARIES.find((item) => item.id === iconLibrary)?.name ?? iconLibrary;
+  return (
+    <section className="rounded-2xl border border-border bg-surface-raised p-4 shadow-sm">
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <h2 className="font-display text-sm font-semibold text-fg">Icons</h2>
+          <p className="text-xs text-fg-tertiary">Common glyphs in the chosen library.</p>
+        </div>
+        <Badge variant="secondary">{libraryName}</Badge>
+      </div>
+      <div className="mt-4 grid grid-cols-5 gap-2 sm:grid-cols-7 2xl:grid-cols-5">
+        {ICON_SHOWCASE.map((name) => (
+          <span
+            key={name}
+            title={name}
+            className="grid aspect-square place-items-center rounded-lg border border-border-soft bg-surface-inset text-fg transition-colors hover:border-border-strong hover:text-primary"
+          >
+            <LibraryIcon library={iconLibrary} name={name} className="size-5" />
+          </span>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function TokenSummary({ config }: { config: DesignConfig }) {
   const colors = findChartPalette(config.chart).colors;
   return (
@@ -1212,6 +1296,10 @@ function TokenSummary({ config }: { config: DesignConfig }) {
         <SummaryRow label="Brand" value={config.brand} />
         <SummaryRow label="Heading" value={findFontChoice(config.headingFont).name} />
         <SummaryRow label="Body" value={findFontChoice(config.bodyFont).name} />
+        <SummaryRow
+          label="Icons"
+          value={ICON_LIBRARIES.find((item) => item.id === config.iconLibrary)?.name ?? "Lucide"}
+        />
         <SummaryRow label="Radius" value={`${config.radius}px`} />
       </dl>
       <div className="mt-4 flex gap-2">
