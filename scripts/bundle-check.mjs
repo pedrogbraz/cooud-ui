@@ -97,7 +97,9 @@ const ROUTE_BUDGETS = /** @type {Record<string, RouteBudget>} */ ({
     firstLoadGzipJsBytes: 240_000,
   },
   "/components": { firstLoadUncompressedJsBytes: 680_000, firstLoadGzipJsBytes: 205_000 },
-  "/create": { firstLoadUncompressedJsBytes: 920_000, firstLoadGzipJsBytes: 275_000 },
+  // Headroom covers the /create icon-library preview (5 tree-shaken icon sets,
+  // ~20 glyphs each — verified named imports, gzip stays within budget below).
+  "/create": { firstLoadUncompressedJsBytes: 935_000, firstLoadGzipJsBytes: 275_000 },
   "/blocks": { firstLoadUncompressedJsBytes: 680_000, firstLoadGzipJsBytes: 205_000 },
   "/blocks/[slug]": { firstLoadUncompressedJsBytes: 690_000, firstLoadGzipJsBytes: 205_000 },
   "/blocks/[slug]/[variant]": {
