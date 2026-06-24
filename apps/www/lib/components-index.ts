@@ -67,6 +67,12 @@ export const CATEGORIES: ComponentCategory[] = [
         name: "MultiSelect",
         description: "Pick multiple values shown as removable chips.",
       },
+      {
+        slug: "tags-input",
+        name: "TagsInput",
+        description: "Type and commit free-form tags as removable chips.",
+        importName: "TagsInput",
+      },
       { slug: "slider", name: "Slider", description: "Pick a value or a range." },
       { slug: "field", name: "Field", description: "Label + description + error layout." },
       { slug: "form", name: "Form", description: "react-hook-form + zod integration." },
@@ -117,6 +123,12 @@ export const CATEGORIES: ComponentCategory[] = [
     name: "Data Display",
     items: [
       { slug: "avatar", name: "Avatar", description: "User image with a fallback." },
+      {
+        slug: "avatar-group",
+        name: "AvatarGroup",
+        description: 'Overlapping avatar stack with a "+N" overflow chip.',
+        importName: "AvatarGroup",
+      },
       { slug: "badge", name: "Badge", description: "Small status / category label." },
       { slug: "card", name: "Card", description: "Surface that groups related content." },
       { slug: "table", name: "Table", description: "Styled semantic table primitives." },
@@ -127,6 +139,11 @@ export const CATEGORIES: ComponentCategory[] = [
           "TanStack table with sorting, search & faceted filters, pagination, row selection with bulk actions, column visibility, density, and loading/empty/error states.",
       },
       { slug: "metric", name: "Metric", description: "KPI value with trend delta." },
+      {
+        slug: "sparkline",
+        name: "Sparkline",
+        description: "Tiny inline line, area, or bar trend chart for stat tiles.",
+      },
       { slug: "kbd", name: "Kbd", description: "Keyboard key hint." },
       { slug: "empty", name: "Empty", description: "Empty-state placeholder." },
       { slug: "separator", name: "Separator", description: "Visual divider between content." },
@@ -176,6 +193,12 @@ export const CATEGORIES: ComponentCategory[] = [
         name: "Alert",
         description: "Inline callout banner with semantic variants.",
         importName: "Alert, AlertTitle, AlertDescription",
+      },
+      {
+        slug: "banner",
+        name: "Banner",
+        description: "Dismissible full-width announcement / promo bar with a CTA.",
+        importName: "Banner",
       },
       { slug: "spinner", name: "Spinner", description: "Indeterminate loading indicator." },
       { slug: "progress", name: "Progress", description: "Determinate progress bar." },
@@ -311,6 +334,12 @@ export const CATEGORIES: ComponentCategory[] = [
         slug: "logo-carousel",
         name: "LogoCarousel",
         description: "Animated hero logo carousel with reduced-motion fallback.",
+      },
+      {
+        slug: "marquee",
+        name: "Marquee",
+        description: "Seamless infinite scroller for logos, testimonials, or a ticker.",
+        importName: "Marquee",
       },
       {
         slug: "morphing-popover",

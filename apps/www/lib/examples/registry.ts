@@ -31,6 +31,7 @@ export const EXAMPLE_FAMILY_BY_SLUG: Record<string, ExampleFamily> = {
   "copy-button": "buttons",
   // forms
   input: "forms",
+  "tags-input": "forms",
   textarea: "forms",
   label: "forms",
   checkbox: "forms",
@@ -52,6 +53,8 @@ export const EXAMPLE_FAMILY_BY_SLUG: Record<string, ExampleFamily> = {
   rating: "forms",
   // data-display
   avatar: "data-display",
+  "avatar-group": "data-display",
+  sparkline: "data-display",
   badge: "data-display",
   card: "data-display",
   table: "data-display",
@@ -69,6 +72,7 @@ export const EXAMPLE_FAMILY_BY_SLUG: Record<string, ExampleFamily> = {
   timeline: "data-display",
   "tree-view": "data-display",
   // feedback
+  banner: "feedback",
   spinner: "feedback",
   progress: "feedback",
   sonner: "feedback",
@@ -110,6 +114,7 @@ export const EXAMPLE_FAMILY_BY_SLUG: Record<string, ExampleFamily> = {
   "spotlight-card": "premium",
   "aurora-background": "premium",
   "logo-carousel": "premium",
+  marquee: "premium",
   "morphing-popover": "premium",
   shimmer: "premium",
   reveal: "premium",

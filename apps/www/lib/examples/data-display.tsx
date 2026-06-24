@@ -4,6 +4,8 @@ import {
   AspectRatio,
   Avatar,
   AvatarFallback,
+  AvatarGroup,
+  type AvatarGroupAvatar,
   AvatarImage,
   Badge,
   Button,
@@ -37,6 +39,7 @@ import {
   ScrollBar,
   Separator,
   Skeleton,
+  Sparkline,
   Table,
   TableBody,
   TableCaption,
@@ -74,6 +77,15 @@ import {
 import { useState } from "react";
 import { ExampleList } from "../../components/docs/example-list";
 import type { ExampleMap } from "./types";
+
+// ── AvatarGroup demo data ─────────────────────────────────────────────
+const reviewers: AvatarGroupAvatar[] = [
+  { src: "https://github.com/shadcn.png", alt: "@shadcn", fallback: "CN" },
+  { fallback: "AL" },
+  { fallback: "JL" },
+  { fallback: "MK" },
+  { fallback: "RW" },
+];
 
 // ── DataTable demo data ───────────────────────────────────────────────
 type Payment = {
@@ -557,6 +569,59 @@ export const dataDisplayExamples: ExampleMap = {
           <Avatar className="ring-2 ring-surface-raised">
             <AvatarFallback className="text-xs">+5</AvatarFallback>
           </Avatar>
+        </div>
+      ),
+    },
+  ],
+
+  "avatar-group": [
+    {
+      id: "overflow",
+      title: "With overflow",
+      description:
+        'Show the first few members, then a "+N" chip for the rest. Pass `avatars` for the data-driven shorthand and `max` to cap how many render.',
+      code: `<AvatarGroup
+  max={4}
+  aria-label="Project collaborators"
+  avatars={[
+    { src: "https://github.com/shadcn.png", alt: "@shadcn", fallback: "CN" },
+    { fallback: "AL" },
+    { fallback: "JL" },
+    { fallback: "MK" },
+    { fallback: "RW" },
+    { fallback: "TP" },
+  ]}
+/>`,
+      preview: (
+        <AvatarGroup
+          max={4}
+          aria-label="Project collaborators"
+          avatars={[
+            { src: "https://github.com/shadcn.png", alt: "@shadcn", fallback: "CN" },
+            { fallback: "AL" },
+            { fallback: "JL" },
+            { fallback: "MK" },
+            { fallback: "RW" },
+            { fallback: "TP" },
+          ]}
+        />
+      ),
+    },
+    {
+      id: "sizes",
+      title: "Sizes",
+      description:
+        "The `size` prop drives both the avatars and the overflow chip, so every row stays uniform regardless of the avatars' own sizes.",
+      code: `<div className="flex flex-col gap-4">
+  <AvatarGroup size="sm" max={3} aria-label="Reviewers" avatars={reviewers} />
+  <AvatarGroup size="md" max={3} aria-label="Reviewers" avatars={reviewers} />
+  <AvatarGroup size="lg" max={3} aria-label="Reviewers" avatars={reviewers} />
+</div>`,
+      preview: (
+        <div className="flex flex-col gap-4">
+          <AvatarGroup size="sm" max={3} aria-label="Reviewers" avatars={reviewers} />
+          <AvatarGroup size="md" max={3} aria-label="Reviewers" avatars={reviewers} />
+          <AvatarGroup size="lg" max={3} aria-label="Reviewers" avatars={reviewers} />
         </div>
       ),
     },
@@ -1059,6 +1124,139 @@ const statusFilter: DataTableFacetedFilter = {
             <MetricValue>9,830</MetricValue>
             <MetricDelta trend="neutral">0.0%</MetricDelta>
           </Metric>
+        </div>
+      ),
+    },
+  ],
+
+  sparkline: [
+    {
+      id: "types",
+      title: "Line, area & bar",
+      description:
+        "Three rendering modes from the same series. `area` fills a token-tinted gradient under the line; `bar` plots evenly spaced columns. Each is a tiny inline SVG that scales to its `width`/`height`.",
+      code: `<div className="flex items-center gap-8">
+  <Sparkline data={[4, 6, 5, 8, 7, 11, 9, 13]} tone="primary" />
+  <Sparkline data={[4, 6, 5, 8, 7, 11, 9, 13]} tone="success" area />
+  <Sparkline data={[4, 6, 5, 8, 7, 11, 9, 13]} type="bar" tone="info" />
+</div>`,
+      preview: (
+        <div className="flex items-center gap-8">
+          <Sparkline data={[4, 6, 5, 8, 7, 11, 9, 13]} tone="primary" />
+          <Sparkline data={[4, 6, 5, 8, 7, 11, 9, 13]} tone="success" area />
+          <Sparkline data={[4, 6, 5, 8, 7, 11, 9, 13]} type="bar" tone="info" />
+        </div>
+      ),
+    },
+    {
+      id: "stat-cards",
+      title: "In stat cards",
+      description:
+        "Pair a Sparkline with a Metric to give a KPI tile an at-a-glance trend. The sparkline's tone tracks the delta's direction.",
+      code: `<div className="grid gap-4 sm:grid-cols-3">
+  <Card>
+    <CardContent className="flex flex-col gap-3 pt-6">
+      <Metric>
+        <MetricLabel>Revenue</MetricLabel>
+        <MetricValue>$48,290</MetricValue>
+        <MetricDelta trend="up">+12.5%</MetricDelta>
+      </Metric>
+      <Sparkline
+        data={[18, 22, 19, 27, 24, 31, 29, 38]}
+        tone="success"
+        area
+        className="w-full"
+        height={36}
+        aria-label="Revenue, trending up"
+      />
+    </CardContent>
+  </Card>
+  <Card>
+    <CardContent className="flex flex-col gap-3 pt-6">
+      <Metric>
+        <MetricLabel>Active users</MetricLabel>
+        <MetricValue>9,830</MetricValue>
+        <MetricDelta trend="up">+4.1%</MetricDelta>
+      </Metric>
+      <Sparkline
+        data={[40, 38, 42, 41, 45, 44, 48, 52]}
+        tone="primary"
+        className="w-full"
+        height={36}
+        aria-label="Active users, trending up"
+      />
+    </CardContent>
+  </Card>
+  <Card>
+    <CardContent className="flex flex-col gap-3 pt-6">
+      <Metric>
+        <MetricLabel>Churn</MetricLabel>
+        <MetricValue>2.1%</MetricValue>
+        <MetricDelta trend="down">-0.4%</MetricDelta>
+      </Metric>
+      <Sparkline
+        data={[9, 8, 8, 7, 6, 6, 5, 4]}
+        type="bar"
+        tone="error"
+        className="w-full"
+        height={36}
+        aria-label="Churn, trending down"
+      />
+    </CardContent>
+  </Card>
+</div>`,
+      preview: (
+        <div className="grid gap-4 sm:grid-cols-3">
+          <Card>
+            <CardContent className="flex flex-col gap-3 pt-6">
+              <Metric>
+                <MetricLabel>Revenue</MetricLabel>
+                <MetricValue>$48,290</MetricValue>
+                <MetricDelta trend="up">+12.5%</MetricDelta>
+              </Metric>
+              <Sparkline
+                data={[18, 22, 19, 27, 24, 31, 29, 38]}
+                tone="success"
+                area
+                className="w-full"
+                height={36}
+                aria-label="Revenue, trending up"
+              />
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="flex flex-col gap-3 pt-6">
+              <Metric>
+                <MetricLabel>Active users</MetricLabel>
+                <MetricValue>9,830</MetricValue>
+                <MetricDelta trend="up">+4.1%</MetricDelta>
+              </Metric>
+              <Sparkline
+                data={[40, 38, 42, 41, 45, 44, 48, 52]}
+                tone="primary"
+                className="w-full"
+                height={36}
+                aria-label="Active users, trending up"
+              />
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="flex flex-col gap-3 pt-6">
+              <Metric>
+                <MetricLabel>Churn</MetricLabel>
+                <MetricValue>2.1%</MetricValue>
+                <MetricDelta trend="down">-0.4%</MetricDelta>
+              </Metric>
+              <Sparkline
+                data={[9, 8, 8, 7, 6, 6, 5, 4]}
+                type="bar"
+                tone="error"
+                className="w-full"
+                height={36}
+                aria-label="Churn, trending down"
+              />
+            </CardContent>
+          </Card>
         </div>
       ),
     },

@@ -49,11 +49,12 @@ import {
   StepperTitle,
   StepperTrigger,
   Switch,
+  TagsInput,
   Textarea,
 } from "@cooud-ui/ui";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Check, FileText } from "lucide-react";
-import { useState } from "react";
+import { useId, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { ExampleList } from "../../components/docs/example-list";
@@ -113,6 +114,49 @@ const ratingDemoCode = `function RatingDemo() {
       <p className="text-sm text-fg-secondary tabular-nums">
         {value} {value === 1 ? "star" : "stars"}
       </p>
+    </div>
+  );
+}`;
+
+// ── TagsInput ───────────────────────────────────────────────────────
+function TagsInputDemo() {
+  const [tags, setTags] = useState<string[]>(["design", "react"]);
+  const labelId = useId();
+
+  return (
+    <div className="flex w-full max-w-sm flex-col gap-2">
+      <FieldLabel id={labelId}>Topics</FieldLabel>
+      <TagsInput
+        value={tags}
+        onValueChange={setTags}
+        aria-labelledby={labelId}
+        max={6}
+        placeholder="Add a topic…"
+      />
+      <FieldDescription>
+        Press Enter or comma to add. Backspace removes the last tag.
+      </FieldDescription>
+    </div>
+  );
+}
+
+const tagsInputDemoCode = `function TagsInputDemo() {
+  const [tags, setTags] = useState<string[]>(["design", "react"]);
+  const labelId = useId();
+
+  return (
+    <div className="flex w-full max-w-sm flex-col gap-2">
+      <FieldLabel id={labelId}>Topics</FieldLabel>
+      <TagsInput
+        value={tags}
+        onValueChange={setTags}
+        aria-labelledby={labelId}
+        max={6}
+        placeholder="Add a topic…"
+      />
+      <FieldDescription>
+        Press Enter or comma to add. Backspace removes the last tag.
+      </FieldDescription>
     </div>
   );
 }`;
@@ -1251,6 +1295,16 @@ export const formsExamples: ExampleMap = {
       description: "Cap visible chips with `maxDisplay`; the rest collapse into a +N badge.",
       code: multiSelectMaxDisplayDemoCode,
       preview: <MultiSelectMaxDisplayDemo />,
+    },
+  ],
+  "tags-input": [
+    {
+      id: "default",
+      title: "Default",
+      description:
+        "Type free-form tags and commit each with Enter or comma; they render as removable chips. Backspace on an empty field deletes the last tag, and `max` caps the total.",
+      code: tagsInputDemoCode,
+      preview: <TagsInputDemo />,
     },
   ],
   slider: [

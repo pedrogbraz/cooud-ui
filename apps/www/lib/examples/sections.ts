@@ -56,6 +56,7 @@ export const EXAMPLE_SECTIONS: Record<string, ExampleSectionMeta[]> = {
     { id: "default", title: "Default" },
     { id: "max-display", title: "Max display" },
   ],
+  "tags-input": [{ id: "default", title: "Default" }],
   slider: [
     { id: "single-thumb", title: "Single thumb" },
     { id: "range", title: "Range" },
@@ -86,6 +87,10 @@ export const EXAMPLE_SECTIONS: Record<string, ExampleSectionMeta[]> = {
     { id: "image-fallback", title: "Image & fallback" },
     { id: "group", title: "Group" },
   ],
+  "avatar-group": [
+    { id: "overflow", title: "With overflow" },
+    { id: "sizes", title: "Sizes" },
+  ],
   badge: [
     { id: "variants", title: "Variants" },
     { id: "with-icon", title: "With icon" },
@@ -105,6 +110,10 @@ export const EXAMPLE_SECTIONS: Record<string, ExampleSectionMeta[]> = {
     { id: "error", title: "Error" },
   ],
   metric: [{ id: "stat-tiles", title: "Stat tiles" }],
+  sparkline: [
+    { id: "types", title: "Line, area & bar" },
+    { id: "stat-cards", title: "In stat cards" },
+  ],
   kbd: [{ id: "keys", title: "Keys" }],
   empty: [{ id: "empty-state", title: "Empty state" }],
   separator: [{ id: "horizontal-vertical", title: "Horizontal & vertical" }],
@@ -126,6 +135,10 @@ export const EXAMPLE_SECTIONS: Record<string, ExampleSectionMeta[]> = {
     { id: "default", title: "Default" },
     { id: "variants", title: "Variants" },
     { id: "title-only", title: "Title only" },
+  ],
+  banner: [
+    { id: "brand-promo", title: "Brand promo with a CTA" },
+    { id: "dismissible", title: "Dismissible" },
   ],
   spinner: [{ id: "sizes", title: "Sizes" }],
   progress: [{ id: "determinate", title: "Determinate" }],
@@ -171,6 +184,10 @@ export const EXAMPLE_SECTIONS: Record<string, ExampleSectionMeta[]> = {
   "spotlight-card": [{ id: "hover-spotlight", title: "Hover spotlight" }],
   "aurora-background": [{ id: "animated-backdrop", title: "Animated backdrop" }],
   "logo-carousel": [{ id: "hero-lockup", title: "Hero lockup" }],
+  marquee: [
+    { id: "logo-ticker", title: "Logo ticker" },
+    { id: "testimonials", title: "Testimonial wall" },
+  ],
   "morphing-popover": [
     { id: "feedback", title: "Feedback" },
     { id: "quick-actions", title: "Quick actions" },

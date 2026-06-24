@@ -13,6 +13,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
   AlertTitle,
+  Banner,
   Button,
   Progress,
   Spinner,
@@ -21,7 +22,16 @@ import {
   UsageMeter,
   UsageMeterCircular,
 } from "@cooud-ui/ui";
-import { CircleAlert, CircleCheck, Info, Terminal, Trash2, TriangleAlert } from "lucide-react";
+import {
+  ArrowRight,
+  CircleAlert,
+  CircleCheck,
+  Info,
+  Sparkles,
+  Terminal,
+  Trash2,
+  TriangleAlert,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { ExampleList } from "../../components/docs/example-list";
 import type { ExampleMap } from "./types";
@@ -64,6 +74,29 @@ function ToastDemo() {
         </Button>
       </div>
     </>
+  );
+}
+
+// ── Banner: a dismissible promo with a "show again" reset ─────────────
+function BannerDemo() {
+  const [open, setOpen] = useState(true);
+
+  return (
+    <div className="flex w-full max-w-2xl flex-col gap-3">
+      <Banner
+        variant="info"
+        open={open}
+        onDismiss={() => setOpen(false)}
+        icon={<Info aria-hidden="true" />}
+        title="Scheduled maintenance"
+        description="Dashboards may be briefly unavailable on Sunday at 02:00 UTC."
+      />
+      {open ? null : (
+        <Button variant="outline" size="sm" className="self-start" onClick={() => setOpen(true)}>
+          Show banner again
+        </Button>
+      )}
+    </div>
   );
 }
 
@@ -151,6 +184,70 @@ export const feedbackExamples: ExampleMap = {
           <AlertTitle>Your trial ends in 3 days.</AlertTitle>
         </Alert>
       ),
+    },
+  ],
+
+  banner: [
+    {
+      id: "brand-promo",
+      title: "Brand promo with a CTA",
+      description:
+        "A full-width announcement bar. The `brand` variant is a solid gradient promo fill carrying white text; the icon, action, and close button all inherit `currentColor`.",
+      code: `<Banner
+  variant="brand"
+  icon={<Sparkles aria-hidden="true" />}
+  title="Cooud UI 1.0 is here."
+  description="60+ themeable components, now stable."
+  action={
+    <Button size="sm" variant="secondary">
+      Read the announcement
+      <ArrowRight aria-hidden="true" />
+    </Button>
+  }
+/>`,
+      preview: (
+        <Banner
+          variant="brand"
+          className="rounded-lg border"
+          icon={<Sparkles aria-hidden="true" />}
+          title="Cooud UI 1.0 is here."
+          description="60+ themeable components, now stable."
+          action={
+            <Button size="sm" variant="secondary">
+              Read the announcement
+              <ArrowRight aria-hidden="true" />
+            </Button>
+          }
+        />
+      ),
+    },
+    {
+      id: "dismissible",
+      title: "Dismissible",
+      description:
+        "Banners collapse away when dismissed (honouring reduced-motion). Drive `open` + `onDismiss` to control visibility — here a button brings it back.",
+      code: `function BannerDemo() {
+  const [open, setOpen] = useState(true);
+
+  return (
+    <div className="flex w-full max-w-2xl flex-col gap-3">
+      <Banner
+        variant="info"
+        open={open}
+        onDismiss={() => setOpen(false)}
+        icon={<Info aria-hidden="true" />}
+        title="Scheduled maintenance"
+        description="Dashboards may be briefly unavailable on Sunday at 02:00 UTC."
+      />
+      {open ? null : (
+        <Button variant="outline" size="sm" className="self-start" onClick={() => setOpen(true)}>
+          Show banner again
+        </Button>
+      )}
+    </div>
+  );
+}`,
+      preview: <BannerDemo />,
     },
   ],
 
