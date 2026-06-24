@@ -1,0 +1,13 @@
+{
+  "aliases": {
+    "ui": "@/components/ui",
+    "lib": "@/lib",
+    "blocks": "@/components/blocks"
+  },
+  "paths": {
+    "ui": "components/ui",
+    "lib": "lib",
+    "blocks": "components/blocks"
+  },
+  "registry": "https://raw.githubusercontent.com/pedrogbraz/cooud-ui/v0.1.0/registry"
+}
