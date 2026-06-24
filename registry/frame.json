@@ -1,0 +1,17 @@
+{
+  "name": "frame",
+  "type": "registry:ui",
+  "dependencies": [
+    "class-variance-authority@^0.7.1"
+  ],
+  "registryDependencies": [
+    "cn"
+  ],
+  "files": [
+    {
+      "path": "frame.tsx",
+      "content": "import { cva, type VariantProps } from \"class-variance-authority\";\nimport { forwardRef, type HTMLAttributes } from \"react\";\nimport { cn } from \"../lib/cn.js\";\n\nconst frameVariants = cva(\n  \"overflow-hidden rounded-xl border border-border bg-surface-raised shadow-sm\",\n);\n\nexport interface FrameProps\n  extends HTMLAttributes<HTMLDivElement>,\n    VariantProps<typeof frameVariants> {\n  /** Chrome style. `browser` shows an address bar; `window` is a plain title bar. */\n  variant?: \"browser\" | \"window\";\n  /** URL shown in the address bar (browser variant only). */\n  url?: string;\n}\n\nexport const Frame = forwardRef<HTMLDivElement, FrameProps>(\n  ({ variant = \"browser\", url, className, children, ...props }, ref) => {\n    return (\n      <div\n        ref={ref}\n        data-slot=\"frame\"\n        data-variant={variant}\n        className={cn(frameVariants(), className)}\n        {...props}\n      >\n        <div\n          data-slot=\"frame-chrome\"\n          className=\"flex items-center gap-3 border-b border-border bg-surface-inset px-3 py-2\"\n        >\n          <div aria-hidden className=\"flex items-center gap-1.5\">\n            <span className=\"size-3 rounded-full bg-error\" />\n            <span className=\"size-3 rounded-full bg-warning\" />\n            <span className=\"size-3 rounded-full bg-success\" />\n          </div>\n          {variant === \"browser\" ? (\n            <div\n              data-slot=\"frame-address-bar\"\n              className=\"mx-auto max-w-full truncate rounded-md bg-surface-raised px-3 py-1 text-xs text-fg-tertiary\"\n            >\n              {url}\n            </div>\n          ) : null}\n        </div>\n        <div data-slot=\"frame-content\" className=\"text-fg\">\n          {children}\n        </div>\n      </div>\n    );\n  },\n);\nFrame.displayName = \"Frame\";\n",
+      "target": "ui"
+    }
+  ]
+}
