@@ -111,7 +111,7 @@ const usdCents = new Intl.NumberFormat("en-US", {
  * ────────────────────────────────────────────────────────────────────────── */
 
 const surfaceCard =
-  "rounded-2xl border-border-soft bg-surface-raised shadow-sm transition-[border-color,box-shadow,transform] duration-300 ease-[var(--ease-out-quart)] hover:-translate-y-0.5 hover:border-border hover:shadow-md";
+  "rounded-2xl border-border-soft bg-surface-raised shadow-sm transition-[border-color,box-shadow,transform] duration-[350ms] ease-[var(--ease-out-quart)] will-change-transform hover:-translate-y-1 hover:border-border hover:shadow-lg";
 
 /* ──────────────────────────────────────────────────────────────────────────
  * 0. Brand spotlight — a large, brand-filled hero so swapping the brand color
@@ -545,7 +545,7 @@ function StatRow() {
       {stats.map(({ label, value, delta, trend, icon: Icon }) => (
         <Card
           key={label}
-          className="group gap-0 border-border-soft py-0 shadow-sm transition-[border-color,box-shadow,transform] duration-300 ease-[var(--ease-out-quart)] hover:-translate-y-0.5 hover:border-border hover:shadow-md"
+          className="group gap-0 border-border-soft py-0 shadow-sm transition-[border-color,box-shadow,transform] duration-[350ms] ease-[var(--ease-out-quart)] will-change-transform hover:-translate-y-1 hover:border-border hover:shadow-lg"
         >
           <CardContent className="flex flex-col gap-4 p-5">
             <div className="flex items-center justify-between gap-2">

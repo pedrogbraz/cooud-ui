@@ -1371,8 +1371,8 @@ function IconLibraryShowcase({ iconLibrary }: { iconLibrary: IconLibraryId }) {
             title={name}
             className={cn(
               "grid aspect-square place-items-center rounded-xl border border-border-soft bg-surface-inset text-fg-secondary",
-              "transition-[color,border-color,background-color,transform] duration-200 ease-[var(--ease-out-quart)]",
-              "hover:-translate-y-0.5 hover:border-border hover:bg-surface-overlay hover:text-primary",
+              "transition-[color,border-color,background-color,transform,box-shadow] duration-[250ms] ease-[var(--ease-out-quart)] will-change-transform",
+              "hover:-translate-y-0.5 hover:scale-105 hover:border-border hover:bg-surface-overlay hover:text-primary hover:shadow-sm",
             )}
           >
             <LibraryIcon library={iconLibrary} name={name} className="size-5" />
