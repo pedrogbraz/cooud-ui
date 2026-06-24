@@ -45,6 +45,11 @@ const usd = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 0,
 });
 
+/* Shared surface — mirrors the dashboard cards (soft hairline border, raised
+ * background, subtle hover lift). Token-driven so it re-themes live. */
+const surfaceCard =
+  "rounded-2xl border-border-soft bg-surface-raised shadow-sm transition-[border-color,box-shadow,transform] duration-300 ease-[var(--ease-out-quart)] hover:-translate-y-0.5 hover:border-border hover:shadow-md";
+
 /* 1. Contribution / activity chart */
 
 const activityData = [
@@ -62,7 +67,7 @@ const activityConfig = {
 
 export function ActivityCard() {
   return (
-    <Card>
+    <Card className={surfaceCard}>
       <CardHeader>
         <CardTitle className="font-display text-base">Contribution activity</CardTitle>
         <CardDescription>Deposits across the last 6 months</CardDescription>
@@ -80,7 +85,7 @@ export function ActivityCard() {
           </BarChart>
         </ChartContainer>
       </CardContent>
-      <CardFooter className="border-t border-border pt-4">
+      <CardFooter className="border-t border-border-soft pt-5">
         <Button variant="outline" className="w-full">
           View full report
           <ArrowRight className="size-4" aria-hidden="true" />
@@ -108,7 +113,7 @@ const revenueConfig = {
 
 export function RevenueCard() {
   return (
-    <Card>
+    <Card className={surfaceCard}>
       <CardHeader>
         <CardTitle className="font-display text-base">Weekly revenue</CardTitle>
         <CardDescription>Last 7 days</CardDescription>
@@ -163,12 +168,12 @@ const spendConfig = {
 
 export function SpendingCard() {
   return (
-    <Card>
+    <Card className={surfaceCard}>
       <CardHeader>
         <CardTitle className="font-display text-base">Spending breakdown</CardTitle>
         <CardDescription>This month by category</CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-col items-center gap-5 sm:flex-row">
+      <CardContent className="flex flex-col items-center gap-6 sm:flex-row">
         <ChartContainer config={spendConfig} className="aspect-square h-40 w-40 shrink-0">
           <PieChart>
             <ChartTooltip
@@ -195,9 +200,12 @@ export function SpendingCard() {
             </Pie>
           </PieChart>
         </ChartContainer>
-        <ul className="flex w-full flex-col gap-2.5">
+        <ul className="flex w-full flex-col gap-1">
           {spendData.map((entry) => (
-            <li key={entry.category} className="flex items-center gap-2.5 text-sm">
+            <li
+              key={entry.category}
+              className="flex items-center gap-2.5 rounded-lg px-2 py-1.5 text-sm transition-colors duration-200 ease-[var(--ease-out-quart)] hover:bg-surface-inset/60"
+            >
               <span
                 className="size-2.5 shrink-0 rounded-[3px]"
                 style={{ backgroundColor: entry.fill }}

@@ -16,7 +16,6 @@ import {
   Input,
   Label,
   Metric,
-  MetricDelta,
   MetricLabel,
   MetricValue,
   Progress,
@@ -62,10 +61,13 @@ import { useMemo, useState } from "react";
 
 function ChartCardSkeleton({ aspect }: { aspect: string }) {
   return (
-    <div className="rounded-xl border border-border bg-surface-raised p-6" aria-hidden="true">
-      <div className="mb-1 h-5 w-40 animate-pulse rounded bg-surface-inset" />
+    <div
+      className="rounded-2xl border border-border-soft bg-surface-raised p-6 shadow-sm"
+      aria-hidden="true"
+    >
+      <div className="mb-1.5 h-5 w-40 animate-pulse rounded-md bg-surface-inset" />
       <div className="mb-5 h-3.5 w-52 max-w-full animate-pulse rounded bg-surface-inset/70" />
-      <div className={`${aspect} w-full animate-pulse rounded-lg bg-surface-inset/60`} />
+      <div className={`${aspect} w-full animate-pulse rounded-xl bg-surface-inset/60`} />
     </div>
   );
 }
@@ -103,6 +105,15 @@ const usdCents = new Intl.NumberFormat("en-US", {
 });
 
 /* ──────────────────────────────────────────────────────────────────────────
+ * Shared surface — every dashboard card sits on the same premium surface as the
+ * redesigned controls: a soft hairline border, raised background, and a subtle
+ * lift on hover. Token-driven so it re-themes (radius/border/shadow) live.
+ * ────────────────────────────────────────────────────────────────────────── */
+
+const surfaceCard =
+  "rounded-2xl border-border-soft bg-surface-raised shadow-sm transition-[border-color,box-shadow,transform] duration-300 ease-[var(--ease-out-quart)] hover:-translate-y-0.5 hover:border-border hover:shadow-md";
+
+/* ──────────────────────────────────────────────────────────────────────────
  * 0. Brand spotlight — a large, brand-filled hero so swapping the brand color
  *    reads instantly across the preview (primary gradient surface + accent
  *    chips + brand-tinted CTAs).
@@ -110,49 +121,53 @@ const usdCents = new Intl.NumberFormat("en-US", {
 
 function SpotlightCard() {
   return (
-    <div className="relative overflow-hidden rounded-xl bg-gradient-primary-strong text-white shadow-glow">
+    <div className="relative isolate overflow-hidden rounded-2xl bg-gradient-primary-strong text-white shadow-glow">
       <div
-        className="pointer-events-none absolute -top-16 -right-12 size-48 rounded-full bg-white/15 blur-2xl"
+        className="pointer-events-none absolute -top-20 -right-16 -z-10 size-56 rounded-full bg-white/20 blur-3xl"
         aria-hidden="true"
       />
       <div
-        className="pointer-events-none absolute -bottom-20 -left-10 size-44 rounded-full bg-black/15 blur-2xl"
+        className="pointer-events-none absolute -bottom-24 -left-12 -z-10 size-52 rounded-full bg-black/20 blur-3xl"
         aria-hidden="true"
       />
-      <div className="relative flex flex-col gap-6 p-6">
+      <div
+        className="pointer-events-none absolute inset-0 -z-10 opacity-60 [background:radial-gradient(120%_140%_at_85%_-10%,rgba(255,255,255,0.18),transparent_55%)]"
+        aria-hidden="true"
+      />
+      <div className="relative flex flex-col gap-7 p-6 sm:p-7">
         <div className="flex items-start justify-between gap-4">
-          <div className="flex flex-col gap-1">
-            <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-white/15 px-2.5 py-1 text-xs font-medium backdrop-blur-sm">
+          <div className="flex min-w-0 flex-col gap-2.5">
+            <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-white/15 px-2.5 py-1 text-xs font-medium ring-1 ring-inset ring-white/20 backdrop-blur-sm">
               <Sparkles className="size-3" aria-hidden="true" />
               Cooud balance
             </span>
-            <span className="mt-2 font-display text-3xl font-semibold tracking-tight tabular-nums sm:text-4xl">
+            <span className="font-display text-4xl font-semibold leading-none tracking-tight tabular-nums sm:text-5xl">
               {usd.format(128450)}
             </span>
-            <span className="text-sm text-white/75">Available across 3 accounts</span>
+            <span className="text-sm text-white/70">Available across 3 accounts</span>
           </div>
-          <span className="inline-flex size-11 shrink-0 items-center justify-center rounded-xl bg-white/15 backdrop-blur-sm">
+          <span className="inline-flex size-11 shrink-0 items-center justify-center rounded-2xl bg-white/15 ring-1 ring-inset ring-white/20 backdrop-blur-sm">
             <Wallet className="size-5" aria-hidden="true" />
           </span>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2.5">
           <button
             type="button"
-            className="inline-flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-semibold text-[color-mix(in_oklch,var(--cooud-primary),black_35%)] shadow-sm transition hover:opacity-90"
+            className="inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-[color-mix(in_oklch,var(--cooud-primary),black_35%)] shadow-sm transition-[transform,opacity] duration-200 ease-[var(--ease-out-quart)] hover:opacity-90 active:scale-[0.98]"
           >
             <Send className="size-4" aria-hidden="true" />
             Send payout
           </button>
           <button
             type="button"
-            className="inline-flex items-center gap-2 rounded-lg border border-white/35 bg-white/10 px-4 py-2 text-sm font-medium text-white backdrop-blur-sm transition hover:bg-white/20"
+            className="inline-flex items-center gap-2 rounded-xl border border-white/30 bg-white/10 px-4 py-2.5 text-sm font-medium text-white backdrop-blur-sm transition-[background-color,transform] duration-200 ease-[var(--ease-out-quart)] hover:bg-white/20 active:scale-[0.98]"
           >
             <Plus className="size-4" aria-hidden="true" />
             Add funds
           </button>
-          <span className="ml-auto inline-flex items-center gap-1 text-sm font-medium text-white/90">
+          <span className="ml-auto inline-flex items-center gap-1.5 rounded-full bg-white/10 px-2.5 py-1 text-sm font-medium text-white/90 ring-1 ring-inset ring-white/15">
             <TrendingUp className="size-4" aria-hidden="true" />
-            +12.4% this month
+            +12.4%
           </span>
         </div>
       </div>
@@ -173,7 +188,7 @@ function PayoutCard() {
   const [amount, setAmount] = useState<number>(1250);
 
   return (
-    <Card>
+    <Card className={surfaceCard}>
       <CardHeader>
         <CardTitle className="font-display text-base">Payout threshold</CardTitle>
         <CardDescription>Auto-withdraw once your balance clears this amount.</CardDescription>
@@ -226,7 +241,7 @@ function PayoutCard() {
           />
         </div>
       </CardContent>
-      <CardFooter className="border-t border-border pt-4">
+      <CardFooter className="border-t border-border-soft pt-5">
         <Button variant="gradient" className="w-full">
           Save threshold
         </Button>
@@ -254,7 +269,7 @@ const goals: Goal[] = [
 
 function SavingsCard() {
   return (
-    <Card>
+    <Card className={surfaceCard}>
       <CardHeader>
         <CardTitle className="font-display text-base">Savings targets</CardTitle>
         <CardDescription>Progress toward your quarterly goals</CardDescription>
@@ -265,18 +280,21 @@ function SavingsCard() {
           </Badge>
         </CardAction>
       </CardHeader>
-      <CardContent className="flex flex-col gap-6">
+      <CardContent className="flex flex-col gap-5">
         {goals.map((goal) => {
           const pct = Math.round((goal.saved / goal.target) * 100);
           const Icon = goal.icon;
           return (
-            <div key={goal.id} className="flex flex-col gap-2.5">
+            <div
+              key={goal.id}
+              className="flex flex-col gap-3 rounded-xl border border-border-soft bg-surface-inset/50 p-3.5"
+            >
               <div className="flex items-center gap-3">
-                <span className="inline-flex size-9 items-center justify-center rounded-lg bg-surface-overlay text-fg-secondary">
+                <span className="inline-flex size-9 items-center justify-center rounded-xl bg-surface-overlay text-fg-secondary ring-1 ring-inset ring-border-soft">
                   <Icon className="size-4" aria-hidden="true" />
                 </span>
                 <div className="flex min-w-0 flex-1 flex-col">
-                  <span className="text-sm font-medium text-fg">{goal.label}</span>
+                  <span className="truncate text-sm font-medium text-fg">{goal.label}</span>
                   <span className="text-xs text-fg-tertiary">of {usd.format(goal.target)}</span>
                 </div>
                 <Metric className="items-end gap-0">
@@ -317,7 +335,7 @@ function InvestCard() {
   }, [amount]);
 
   return (
-    <Card>
+    <Card className={surfaceCard}>
       <CardHeader>
         <CardTitle className="font-display text-base">Buy investment</CardTitle>
         <CardDescription>Cooud Growth Index — CGX</CardDescription>
@@ -364,14 +382,14 @@ function InvestCard() {
           Executes immediately at the best available price. Settlement in 2 business days.
         </p>
 
-        <div className="flex items-center justify-between rounded-lg bg-surface-overlay px-3.5 py-3">
+        <div className="flex items-center justify-between rounded-xl border border-border-soft bg-surface-inset/50 px-3.5 py-3">
           <span className="text-sm text-fg-secondary">Estimated shares</span>
           <span className="font-display text-sm font-semibold text-fg tabular-nums">
             {estimatedShares.toFixed(4)} @ {usdCents.format(SHARE_PRICE)}
           </span>
         </div>
       </CardContent>
-      <CardFooter className="border-t border-border pt-4">
+      <CardFooter className="border-t border-border-soft pt-5">
         <Button variant="gradient" className="w-full">
           Review order
         </Button>
@@ -438,7 +456,7 @@ const transactions: Transaction[] = [
 
 function TransactionsCard() {
   return (
-    <Card className="gap-0 py-0">
+    <Card className={`gap-0 py-0 ${surfaceCard}`}>
       <CardHeader className="px-6 py-5">
         <CardTitle className="font-display text-base">Recent transactions</CardTitle>
         <CardDescription>Across all connected accounts</CardDescription>
@@ -448,21 +466,21 @@ function TransactionsCard() {
           </Button>
         </CardAction>
       </CardHeader>
-      <Separator />
-      <ul className="flex flex-col">
-        {transactions.map((tx, i) => {
+      <Separator className="bg-border-soft" />
+      <ul className="flex flex-col p-1.5">
+        {transactions.map((tx) => {
           const income = tx.amount > 0;
           const Icon = tx.icon;
           return (
             <li
               key={tx.id}
-              className={`flex items-center gap-3.5 px-6 py-3.5 ${
-                i !== transactions.length - 1 ? "border-b border-border" : ""
-              }`}
+              className="flex items-center gap-3.5 rounded-xl px-4 py-3 transition-colors duration-200 ease-[var(--ease-out-quart)] hover:bg-surface-inset/60"
             >
               <span
                 className={`inline-flex size-9 shrink-0 items-center justify-center rounded-full ${
-                  income ? "bg-success/10 text-success" : "bg-surface-overlay text-fg-secondary"
+                  income
+                    ? "bg-success/10 text-success"
+                    : "bg-surface-overlay text-fg-secondary ring-1 ring-inset ring-border-soft"
                 }`}
               >
                 <Icon className="size-4" aria-hidden="true" />
@@ -523,19 +541,37 @@ const stats = [
 
 function StatRow() {
   return (
-    <div className="grid grid-cols-1 gap-5">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
       {stats.map(({ label, value, delta, trend, icon: Icon }) => (
-        <Card key={label} className="gap-3 py-5">
-          <CardContent className="flex flex-col gap-3">
-            <div className="flex items-center justify-between">
-              <span className="inline-flex size-9 items-center justify-center rounded-lg bg-surface-overlay text-fg-secondary">
+        <Card
+          key={label}
+          className="group gap-0 border-border-soft py-0 shadow-sm transition-[border-color,box-shadow,transform] duration-300 ease-[var(--ease-out-quart)] hover:-translate-y-0.5 hover:border-border hover:shadow-md"
+        >
+          <CardContent className="flex flex-col gap-4 p-5">
+            <div className="flex items-center justify-between gap-2">
+              <span className="inline-flex size-9 items-center justify-center rounded-xl bg-surface-overlay text-fg-secondary ring-1 ring-inset ring-border-soft transition-colors duration-300 ease-[var(--ease-out-quart)] group-hover:text-primary">
                 <Icon className="size-4" aria-hidden="true" />
               </span>
-              <MetricDelta trend={trend}>{delta}</MetricDelta>
+              <span
+                className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${
+                  trend === "down" ? "bg-error/10 text-error" : "bg-success/10 text-success"
+                }`}
+              >
+                {trend === "down" ? (
+                  <TrendingDown className="size-3.5" aria-hidden="true" />
+                ) : (
+                  <TrendingUp className="size-3.5" aria-hidden="true" />
+                )}
+                {delta}
+              </span>
             </div>
-            <Metric className="gap-1">
-              <MetricLabel>{label}</MetricLabel>
-              <MetricValue className="text-2xl">{value}</MetricValue>
+            <Metric className="gap-1.5">
+              <MetricLabel className="normal-case tracking-normal text-fg-tertiary">
+                {label}
+              </MetricLabel>
+              <MetricValue className="text-[1.75rem] leading-none tracking-tight">
+                {value}
+              </MetricValue>
             </Metric>
           </CardContent>
         </Card>
@@ -598,7 +634,7 @@ const members: Member[] = [
 
 function TeamCard() {
   return (
-    <Card className="gap-0 py-0">
+    <Card className={`gap-0 py-0 ${surfaceCard}`}>
       <CardHeader className="px-6 py-5">
         <CardTitle className="font-display text-base">Team</CardTitle>
         <CardDescription>4 people in this workspace</CardDescription>
@@ -609,16 +645,14 @@ function TeamCard() {
           </Button>
         </CardAction>
       </CardHeader>
-      <Separator />
-      <ul className="flex flex-col">
-        {members.map((member, i) => (
+      <Separator className="bg-border-soft" />
+      <ul className="flex flex-col p-1.5">
+        {members.map((member) => (
           <li
             key={member.id}
-            className={`flex items-center gap-3.5 px-6 py-3.5 ${
-              i !== members.length - 1 ? "border-b border-border" : ""
-            }`}
+            className="flex items-center gap-3.5 rounded-xl px-4 py-3 transition-colors duration-200 ease-[var(--ease-out-quart)] hover:bg-surface-inset/60"
           >
-            <Avatar className="size-9">
+            <Avatar className="size-9 ring-1 ring-inset ring-border-soft">
               {member.avatar ? <AvatarImage src={member.avatar} alt={member.name} /> : null}
               <AvatarFallback>{member.initials}</AvatarFallback>
             </Avatar>
@@ -647,8 +681,8 @@ export function PreviewDashboard() {
   return (
     <div className="flex w-full flex-col gap-5">
       <SpotlightCard />
+      <StatRow />
       <div className="w-full columns-1 gap-5 2xl:columns-2 [&>*]:mb-5 [&>*]:break-inside-avoid">
-        <StatRow />
         <ActivityCard />
         <PayoutCard />
         <RevenueCard />
