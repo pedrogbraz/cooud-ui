@@ -299,6 +299,17 @@ export {
   NavigationMenuViewport,
   navigationMenuTriggerStyle,
 } from "./components/navigation-menu.js";
+export type {
+  NotificationCenterProps,
+  NotificationItem,
+  NotificationListProps,
+  NotificationRowProps,
+} from "./components/notification-center.js";
+export {
+  NotificationCenter,
+  NotificationList,
+  NotificationRow,
+} from "./components/notification-center.js";
 export type { NumberInputProps } from "./components/number-input.js";
 export { NumberInput } from "./components/number-input.js";
 export type { PaginationLinkProps } from "./components/pagination.js";
@@ -322,6 +333,12 @@ export {
 } from "./components/resizable.js";
 export type { RevealProps } from "./components/reveal.js";
 export { Reveal } from "./components/reveal.js";
+export type {
+  SchedulerEvent,
+  SchedulerEventColor,
+  SchedulerProps,
+} from "./components/scheduler.js";
+export { Scheduler } from "./components/scheduler.js";
 export { ScrollArea, ScrollBar } from "./components/scroll-area.js";
 export type {
   SegmentedControlItemProps,
@@ -439,4 +456,6 @@ export {
   TooltipProvider,
   TooltipTrigger,
 } from "./components/tooltip.js";
+export type { TreeNode, TreeViewProps } from "./components/tree-view.js";
+export { TreeView } from "./components/tree-view.js";
 export { cn } from "./lib/cn.js";
