@@ -11,7 +11,6 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-  Checkbox,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -27,17 +26,7 @@ import {
   Separator,
   Switch,
 } from "@cooud-ui/ui";
-import {
-  Activity,
-  ChartColumnIncreasing,
-  Chrome,
-  DollarSign,
-  Github,
-  MoreHorizontal,
-  TrendingDown,
-  UserMinus,
-  Users,
-} from "lucide-react";
+import { Activity, DollarSign, MoreHorizontal, TrendingDown, UserMinus, Users } from "lucide-react";
 import { useState } from "react";
 import { BlockGalleryBody } from "../../components/blocks/block-gallery-body";
 import { BlockViewBody } from "../../components/blocks/block-view-body";
@@ -374,195 +363,7 @@ export function StatsPipelineBlock() {
 }`;
 
 /* ──────────────────────────────────────────────────────────────────────────
- * 2. Login — centered auth card
- * ────────────────────────────────────────────────────────────────────────── */
-
-export function LoginBlock() {
-  return (
-    <div className="flex w-full items-center justify-center py-4">
-      <Card className="w-full max-w-sm gap-6 shadow-lg">
-        <CardHeader className="flex flex-col items-center gap-3 text-center">
-          <span className="inline-flex size-11 items-center justify-center rounded-xl bg-gradient-primary text-primary-foreground shadow-glow">
-            <ChartColumnIncreasing className="size-5" aria-hidden="true" />
-          </span>
-          <div className="flex flex-col gap-1">
-            <CardTitle className="font-display text-xl">Welcome back</CardTitle>
-            <p className="text-sm text-fg-secondary">Sign in to your Cooud workspace</p>
-          </div>
-        </CardHeader>
-
-        <CardContent className="flex flex-col gap-4">
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="login-email">Email</Label>
-            <Input
-              id="login-email"
-              type="email"
-              placeholder="you@company.com"
-              autoComplete="email"
-            />
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="login-password">Password</Label>
-            <Input
-              id="login-password"
-              type="password"
-              placeholder="••••••••"
-              autoComplete="current-password"
-            />
-          </div>
-
-          <div className="flex items-center justify-between">
-            <Label
-              htmlFor="login-remember"
-              className="flex items-center gap-2 font-normal text-fg-secondary"
-            >
-              <Checkbox id="login-remember" defaultChecked />
-              Remember me
-            </Label>
-            <a
-              href="#forgot"
-              className="text-sm font-medium text-primary underline-offset-4 hover:underline"
-            >
-              Forgot password?
-            </a>
-          </div>
-
-          <Button variant="gradient" size="lg" className="w-full">
-            Sign in
-          </Button>
-
-          <div className="flex items-center gap-3">
-            <Separator className="flex-1" />
-            <span className="text-xs text-fg-tertiary">or continue with</span>
-            <Separator className="flex-1" />
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <Button variant="outline">
-              <Github className="size-4" aria-hidden="true" />
-              GitHub
-            </Button>
-            <Button variant="outline">
-              <Chrome className="size-4" aria-hidden="true" />
-              Google
-            </Button>
-          </div>
-        </CardContent>
-
-        <CardFooter className="justify-center">
-          <p className="text-sm text-fg-secondary">
-            Don&apos;t have an account?{" "}
-            <a
-              href="#signup"
-              className="font-medium text-primary underline-offset-4 hover:underline"
-            >
-              Sign up
-            </a>
-          </p>
-        </CardFooter>
-      </Card>
-    </div>
-  );
-}
-
-const loginCode = `import {
-  Button,
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-  Checkbox,
-  Input,
-  Label,
-  Separator,
-} from "@cooud-ui/ui";
-import { ChartColumnIncreasing, Chrome, Github } from "lucide-react";
-
-export function LoginBlock() {
-  return (
-    <div className="flex w-full items-center justify-center py-4">
-      <Card className="w-full max-w-sm gap-6 shadow-lg">
-        <CardHeader className="flex flex-col items-center gap-3 text-center">
-          <span className="inline-flex size-11 items-center justify-center rounded-xl bg-gradient-primary text-primary-foreground shadow-glow">
-            <ChartColumnIncreasing className="size-5" aria-hidden="true" />
-          </span>
-          <div className="flex flex-col gap-1">
-            <CardTitle className="font-display text-xl">Welcome back</CardTitle>
-            <p className="text-sm text-fg-secondary">Sign in to your Cooud workspace</p>
-          </div>
-        </CardHeader>
-
-        <CardContent className="flex flex-col gap-4">
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="login-email">Email</Label>
-            <Input id="login-email" type="email" placeholder="you@company.com" autoComplete="email" />
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="login-password">Password</Label>
-            <Input
-              id="login-password"
-              type="password"
-              placeholder="••••••••"
-              autoComplete="current-password"
-            />
-          </div>
-
-          <div className="flex items-center justify-between">
-            <Label htmlFor="login-remember" className="flex items-center gap-2 font-normal text-fg-secondary">
-              <Checkbox id="login-remember" defaultChecked />
-              Remember me
-            </Label>
-            <a
-              href="#forgot"
-              className="text-sm font-medium text-primary underline-offset-4 hover:underline"
-            >
-              Forgot password?
-            </a>
-          </div>
-
-          <Button variant="gradient" size="lg" className="w-full">
-            Sign in
-          </Button>
-
-          <div className="flex items-center gap-3">
-            <Separator className="flex-1" />
-            <span className="text-xs text-fg-tertiary">or continue with</span>
-            <Separator className="flex-1" />
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <Button variant="outline">
-              <Github className="size-4" aria-hidden="true" />
-              GitHub
-            </Button>
-            <Button variant="outline">
-              <Chrome className="size-4" aria-hidden="true" />
-              Google
-            </Button>
-          </div>
-        </CardContent>
-
-        <CardFooter className="justify-center">
-          <p className="text-sm text-fg-secondary">
-            Don&apos;t have an account?{" "}
-            <a
-              href="#signup"
-              className="font-medium text-primary underline-offset-4 hover:underline"
-            >
-              Sign up
-            </a>
-          </p>
-        </CardFooter>
-      </Card>
-    </div>
-  );
-}`;
-
-/* ──────────────────────────────────────────────────────────────────────────
- * 3. Settings — account settings panel
+ * 2. Settings — account settings panel
  * ────────────────────────────────────────────────────────────────────────── */
 
 interface Preference {
@@ -797,7 +598,7 @@ export function SettingsBlock() {
 }`;
 
 /* ──────────────────────────────────────────────────────────────────────────
- * 4. Team — team-members list
+ * 3. Team — team-members list
  * ────────────────────────────────────────────────────────────────────────── */
 
 interface Member {
@@ -1090,7 +891,6 @@ export const applicationBlocks: BlockContentMap = {
       },
     ],
   },
-  login: { preview: <LoginBlock />, code: loginCode },
   settings: { preview: <SettingsBlock />, code: settingsCode },
   team: { preview: <TeamBlock />, code: teamCode },
 };
