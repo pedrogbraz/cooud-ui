@@ -2495,8 +2495,9 @@ export const COMPONENT_PROPS: Record<string, PropsDoc[]> = {
           name: "motionPreference",
           type: "MarqueeMotionPreference",
           required: false,
-          description: 'Controls how `prefers-reduced-motion` is honoured. Defaults to `"user"`.',
-          default: '"user"',
+          description:
+            'Whether the marquee scrolls vs. honours `prefers-reduced-motion`: `"respect"` (default), `"always"` (force motion), or `"never"` (force static). Defaults to `"respect"`.',
+          default: '"respect"',
         },
         {
           name: "groupClassName",
