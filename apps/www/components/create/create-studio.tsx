@@ -45,6 +45,10 @@ import {
   TabsList,
   TabsTrigger,
   Textarea,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
 } from "@cooud-ui/ui";
 import {
   Check,
@@ -54,10 +58,14 @@ import {
   Download,
   Lock,
   LockOpen,
+  Maximize2,
+  Minimize2,
   Moon,
   Palette,
   Radius,
+  RotateCcw,
   Save,
+  Share2,
   SlidersHorizontal,
   Sparkles,
   Sun,
@@ -73,6 +81,8 @@ import {
   configToThemeOverrides,
   createSavedPreset,
   DEFAULT_CONFIG,
+  decodeConfigParam,
+  encodeConfigParam,
   FONT_CHOICES,
   findBrandColor,
   findChartPalette,
@@ -132,7 +142,11 @@ export function CreateStudio() {
   const [presetCode, setPresetCode] = useState("");
   const [importError, setImportError] = useState("");
   const [copied, setCopied] = useState(false);
+  const [shareCopied, setShareCopied] = useState(false);
+  const [focusMode, setFocusMode] = useState(false);
   const [liveMessage, setLiveMessage] = useState("");
+  const [hydrated, setHydrated] = useState(false);
+  const hydratedRef = useRef(false);
 
   if (initialThemeRef.current === null) {
     initialThemeRef.current = { mode: ambientMode as Mode, overrides: ambientOverrides };
@@ -169,6 +183,39 @@ export function CreateStudio() {
       // Ignore quota / privacy mode failures.
     }
   }, [savedPresets]);
+
+  // Hydrate from a shared `?c=` permalink exactly once on mount (guarded). The
+  // `hydrated` flag gates the URL mirror below so it never overwrites an
+  // incoming token before the decoded config has been committed.
+  useEffect(() => {
+    if (hydratedRef.current) return;
+    hydratedRef.current = true;
+    try {
+      const token = new URLSearchParams(window.location.search).get("c");
+      const shared = decodeConfigParam(token);
+      if (shared) setConfig(shared);
+    } catch {
+      // Malformed permalink — fall back to the default config.
+    }
+    setHydrated(true);
+  }, []);
+
+  // Mirror the live config into the URL (`?c=`) without spamming history.
+  useEffect(() => {
+    if (!hydrated) return;
+    try {
+      const token = encodeConfigParam(config);
+      const url = new URL(window.location.href);
+      if (token) {
+        url.searchParams.set("c", token);
+      } else {
+        url.searchParams.delete("c");
+      }
+      window.history.replaceState(window.history.state, "", `${url.pathname}${url.search}`);
+    } catch {
+      // history / URL APIs unavailable in restricted previews.
+    }
+  }, [config, hydrated]);
 
   useEffect(() => {
     setMode(config.mode);
@@ -254,6 +301,24 @@ export function CreateStudio() {
     }
   }
 
+  async function shareLink() {
+    try {
+      const token = encodeConfigParam(config);
+      const url = new URL(window.location.href);
+      if (token) {
+        url.searchParams.set("c", token);
+      } else {
+        url.searchParams.delete("c");
+      }
+      await navigator.clipboard.writeText(url.toString());
+      setShareCopied(true);
+      setLiveMessage("Share link copied");
+      window.setTimeout(() => setShareCopied(false), 1600);
+    } catch {
+      // Clipboard / URL may be unavailable in restricted previews.
+    }
+  }
+
   return (
     <main id="main-content" className="min-h-[calc(100vh-4rem)] bg-surface-base text-fg">
       <span className="sr-only" aria-live="polite">
@@ -283,6 +348,11 @@ export function CreateStudio() {
             <div className="mx-auto flex max-w-[100rem] flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
+                  <span
+                    className="size-2.5 shrink-0 rounded-full ring-2 ring-primary/25"
+                    style={{ backgroundColor: selectedBrand.swatch }}
+                    aria-hidden="true"
+                  />
                   <h1 className="font-display text-xl font-semibold tracking-tight text-fg sm:text-2xl">
                     {config.style}
                   </h1>
@@ -294,23 +364,54 @@ export function CreateStudio() {
                   {findFontChoice(config.bodyFont).name} body · {config.radius}px radius
                 </p>
               </div>
-              <div className="flex flex-wrap gap-2">
-                <Button variant="outline" onClick={() => setConfig(DEFAULT_CONFIG)}>
-                  Reset
-                </Button>
-                <Button variant="outline" onClick={shuffle}>
-                  <Dices aria-hidden="true" />
-                  Shuffle
-                </Button>
-                <Button variant="gradient" onClick={() => setCodeOpen(true)}>
-                  <Code2 aria-hidden="true" />
-                  Get code
-                </Button>
-              </div>
+              <TooltipProvider delayDuration={250}>
+                <div className="flex flex-wrap items-center gap-2">
+                  <div className="flex items-center gap-1 rounded-xl border border-border bg-surface-raised/70 p-1">
+                    <IconAction
+                      icon={RotateCcw}
+                      label="Reset to default"
+                      onClick={() => setConfig(DEFAULT_CONFIG)}
+                    />
+                    <IconAction
+                      icon={config.mode === "dark" ? Sun : Moon}
+                      label={
+                        config.mode === "dark" ? "Switch to light mode" : "Switch to dark mode"
+                      }
+                      onClick={() =>
+                        patchConfig({ mode: config.mode === "dark" ? "light" : "dark" })
+                      }
+                    />
+                    <IconAction
+                      icon={focusMode ? Minimize2 : Maximize2}
+                      label={focusMode ? "Exit focus preview" : "Focus the preview"}
+                      onClick={() => setFocusMode((open) => !open)}
+                    />
+                    <IconAction
+                      icon={shareCopied ? Check : Share2}
+                      label={shareCopied ? "Link copied" : "Copy a shareable link"}
+                      active={shareCopied}
+                      onClick={shareLink}
+                    />
+                  </div>
+                  <Button variant="outline" onClick={shuffle}>
+                    <Dices aria-hidden="true" />
+                    Shuffle
+                  </Button>
+                  <Button variant="gradient" onClick={() => setCodeOpen(true)}>
+                    <Code2 aria-hidden="true" />
+                    Get code
+                  </Button>
+                </div>
+              </TooltipProvider>
             </div>
           </div>
 
-          <div className="mx-auto grid max-w-[100rem] gap-6 px-4 py-6 pb-24 sm:px-6 2xl:grid-cols-[minmax(0,1fr)_22rem] xl:pb-6">
+          <div
+            className={cn(
+              "mx-auto grid max-w-[100rem] gap-6 px-4 py-6 pb-24 sm:px-6 xl:pb-6",
+              focusMode ? "2xl:grid-cols-1" : "2xl:grid-cols-[minmax(0,1fr)_22rem]",
+            )}
+          >
             <div className="min-w-0">
               <div className="overflow-hidden rounded-2xl border border-border bg-surface-inset p-4 shadow-lg sm:p-6">
                 <PreviewDashboard />
@@ -318,16 +419,18 @@ export function CreateStudio() {
               </div>
             </div>
 
-            <div className="grid gap-4 2xl:sticky 2xl:top-36 2xl:self-start">
-              <TokenSummary config={config} />
-              <PresetExchange
-                presetCode={presetCode}
-                error={importError}
-                onPresetCodeChange={setPresetCode}
-                onImport={importPreset}
-                onCopyPreset={copyPresetCode}
-              />
-            </div>
+            {focusMode ? null : (
+              <div className="grid gap-4 2xl:sticky 2xl:top-36 2xl:self-start">
+                <TokenSummary config={config} />
+                <PresetExchange
+                  presetCode={presetCode}
+                  error={importError}
+                  onPresetCodeChange={setPresetCode}
+                  onImport={importPreset}
+                  onCopyPreset={copyPresetCode}
+                />
+              </div>
+            )}
           </div>
         </section>
       </div>
@@ -433,17 +536,26 @@ function CreateControls({
   return (
     <>
       <div className="flex items-center justify-between gap-3 rounded-xl border border-border bg-surface-raised px-3 py-2.5">
-        <div className="min-w-0">
-          <p className="font-display text-sm font-semibold text-fg">Create</p>
-          <p className="truncate text-xs text-fg-tertiary">{config.style}</p>
+        <div className="flex min-w-0 items-center gap-3">
+          <span
+            className="size-9 shrink-0 rounded-lg border border-border-soft shadow-xs"
+            style={{ backgroundColor: selectedBrand.swatch }}
+            aria-hidden="true"
+          />
+          <div className="min-w-0">
+            <p className="truncate font-display text-sm font-semibold text-fg">{config.style}</p>
+            <p className="truncate text-xs text-fg-tertiary">
+              {selectedBrand.name} · design system
+            </p>
+          </div>
         </div>
         <Badge variant={config.style === CUSTOM_STYLE_NAME ? "warning" : "primary"}>
           {config.mode}
         </Badge>
       </div>
 
-      <div className="mt-5 flex flex-col gap-5">
-        <ControlGroup icon={Sparkles} title="Style">
+      <div className="mt-5 flex flex-col gap-6">
+        <ControlGroup icon={Sparkles} title="Style" hint="Start from a curated look">
           <div className="grid gap-2">
             {allPresets.map((preset) => {
               const active = config.style === preset.name;
@@ -482,6 +594,7 @@ function CreateControls({
         <ControlGroup
           icon={Moon}
           title="Mode"
+          hint="Light or dark surfaces"
           action={
             <LockToggle
               active={locks.mode}
@@ -507,6 +620,7 @@ function CreateControls({
         <ControlGroup
           icon={Palette}
           title="Base color"
+          hint="Neutral surfaces, text, and borders"
           action={
             <LockToggle
               active={locks.base}
@@ -525,6 +639,7 @@ function CreateControls({
         <ControlGroup
           icon={Palette}
           title="Brand"
+          hint="Primary, accent, and focus ring"
           action={
             <LockToggle
               active={locks.brand}
@@ -559,6 +674,7 @@ function CreateControls({
         <ControlGroup
           icon={Palette}
           title="Chart color"
+          hint="Data-visualization series"
           action={
             <LockToggle
               active={locks.chart}
@@ -598,7 +714,7 @@ function CreateControls({
           </div>
         </ControlGroup>
 
-        <ControlGroup icon={Type} title="Typography">
+        <ControlGroup icon={Type} title="Typography" hint="Heading and body type">
           <FontPicker
             label="Heading"
             value={config.headingFont}
@@ -618,6 +734,7 @@ function CreateControls({
         <ControlGroup
           icon={Radius}
           title="Radius"
+          hint="Corner roundness, in pixels"
           action={
             <LockToggle
               active={locks.radius}
@@ -626,30 +743,34 @@ function CreateControls({
             />
           }
         >
-          <div className="flex items-center justify-between text-sm">
-            <Label htmlFor={`${idPrefix}-radius`}>Corners</Label>
-            <span className="font-mono text-fg-secondary tabular-nums">{config.radius}px</span>
-          </div>
-          <Slider
-            id={`${idPrefix}-radius`}
-            min={0}
-            max={28}
-            step={1}
-            value={[config.radius]}
-            onValueChange={(value) => onPatchConfig({ radius: value[0] ?? DEFAULT_CONFIG.radius })}
-            aria-label="Corner radius"
-          />
-          <div className="flex justify-between text-xs text-fg-tertiary">
-            <span>Sharp</span>
-            <span>Soft</span>
-            <span>Round</span>
+          <div className="grid gap-2.5 rounded-xl border border-border bg-surface-raised px-3 py-3">
+            <div className="flex items-center justify-between text-sm">
+              <Label htmlFor={`${idPrefix}-radius`}>Corners</Label>
+              <span className="font-mono text-fg-secondary tabular-nums">{config.radius}px</span>
+            </div>
+            <Slider
+              id={`${idPrefix}-radius`}
+              min={0}
+              max={28}
+              step={1}
+              value={[config.radius]}
+              onValueChange={(value) =>
+                onPatchConfig({ radius: value[0] ?? DEFAULT_CONFIG.radius })
+              }
+              aria-label="Corner radius"
+            />
+            <div className="flex justify-between text-xs text-fg-tertiary">
+              <span>Sharp</span>
+              <span>Soft</span>
+              <span>Round</span>
+            </div>
           </div>
         </ControlGroup>
 
         <Separator />
 
         <div className="grid gap-2">
-          <Label htmlFor={`${idPrefix}-preset-name`}>Preset name</Label>
+          <Label htmlFor={`${idPrefix}-preset-name`}>Save as preset</Label>
           <div className="flex gap-2">
             <Input
               id={`${idPrefix}-preset-name`}
@@ -667,6 +788,9 @@ function CreateControls({
               <Save aria-hidden="true" />
             </Button>
           </div>
+          <p className="text-xs text-fg-tertiary">
+            Stored in this browser. Share the link to send it.
+          </p>
         </div>
 
         <div className="grid grid-cols-2 gap-2">
@@ -684,25 +808,61 @@ function CreateControls({
   );
 }
 
+function IconAction({
+  icon: Icon,
+  label,
+  active,
+  onClick,
+}: {
+  icon: typeof Sparkles;
+  label: string;
+  active?: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          onClick={onClick}
+          aria-label={label}
+          className={active ? "text-primary" : undefined}
+        >
+          <Icon aria-hidden="true" />
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent>{label}</TooltipContent>
+    </Tooltip>
+  );
+}
+
 function ControlGroup({
   icon: Icon,
   title,
+  hint,
   action,
   children,
 }: {
   icon: typeof Sparkles;
   title: string;
+  hint?: string;
   action?: ReactNode;
   children: ReactNode;
 }) {
   return (
     <section className="grid gap-3">
-      <div className="flex items-center justify-between gap-2 text-sm font-medium text-fg">
-        <span className="inline-flex items-center gap-2">
-          <Icon className="size-4 text-fg-tertiary" aria-hidden="true" />
-          <span>{title}</span>
-        </span>
-        {action}
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2">
+          <span className="grid size-7 shrink-0 place-items-center rounded-lg bg-surface-overlay text-fg-tertiary">
+            <Icon className="size-4" aria-hidden="true" />
+          </span>
+          <div className="min-w-0">
+            <p className="text-sm font-semibold text-fg">{title}</p>
+            {hint ? <p className="truncate text-xs text-fg-tertiary">{hint}</p> : null}
+          </div>
+        </div>
+        {action ? <div className="shrink-0">{action}</div> : null}
       </div>
       {children}
     </section>
