@@ -111,6 +111,21 @@ export const COMPONENT_PROPS: Record<string, PropsDoc[]> = {
       ],
     },
   ],
+  "button-group": [
+    {
+      interfaceName: "ButtonGroupProps",
+      extends: "Extends HTMLAttributes<HTMLDivElement>",
+      props: [
+        {
+          name: "orientation",
+          type: '"horizontal" | "vertical"',
+          required: false,
+          description: "Layout direction of the grouped buttons.",
+          default: '"horizontal"',
+        },
+      ],
+    },
+  ],
   input: [
     {
       interfaceName: "InputProps",
@@ -120,6 +135,47 @@ export const COMPONENT_PROPS: Record<string, PropsDoc[]> = {
           name: "invalid",
           type: "boolean",
           required: false,
+          default: "false",
+        },
+      ],
+    },
+  ],
+  "input-group": [
+    {
+      interfaceName: "InputGroupProps",
+      extends: "Extends HTMLAttributes<HTMLDivElement>",
+      props: [],
+    },
+    {
+      interfaceName: "InputGroupAddonProps",
+      extends: "Extends HTMLAttributes<HTMLDivElement>",
+      props: [
+        {
+          name: "align",
+          type: '"start" | "end"',
+          required: false,
+          description:
+            'Which side the addon flanks. Affects the divider edge. Defaults to "start".',
+          default: '"start"',
+        },
+      ],
+    },
+  ],
+  "password-input": [
+    {
+      interfaceName: "PasswordInputProps",
+      extends: 'Extends Omit<InputHTMLAttributes<HTMLInputElement>, "type">',
+      props: [
+        {
+          name: "invalid",
+          type: "boolean",
+          required: false,
+        },
+        {
+          name: "showStrength",
+          type: "boolean",
+          required: false,
+          description: "Show a 4-segment strength meter + label below the field.",
           default: "false",
         },
       ],
@@ -1395,6 +1451,30 @@ export const COMPONENT_PROPS: Record<string, PropsDoc[]> = {
           required: false,
           description: "Stroke width of the line (line type only).",
           default: "1.5",
+        },
+      ],
+    },
+  ],
+  masonry: [
+    {
+      interfaceName: "MasonryProps",
+      extends: "Extends HTMLAttributes<HTMLDivElement>",
+      props: [
+        {
+          name: "columns",
+          type: "number | MasonryColumns",
+          required: false,
+          description:
+            "Number of columns, either a fixed count or a responsive map keyed by breakpoint.",
+          default: "DEFAULT_COLUMNS",
+        },
+        {
+          name: "gap",
+          type: "string",
+          required: false,
+          description:
+            "CSS length used for both the column gap and the vertical gap between items.",
+          default: '"1rem"',
         },
       ],
     },

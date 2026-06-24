@@ -44,6 +44,12 @@ export const CATEGORIES: ComponentCategory[] = [
         name: "CopyButton",
         description: "Copy text to the clipboard with success feedback.",
       },
+      {
+        slug: "button-group",
+        name: "ButtonGroup",
+        description: "Attaches a row or column of buttons into one segmented unit.",
+        importName: "ButtonGroup",
+      },
     ],
   },
   {
@@ -51,6 +57,19 @@ export const CATEGORIES: ComponentCategory[] = [
     name: "Forms",
     items: [
       { slug: "input", name: "Input", description: "Single-line text field with invalid state." },
+      {
+        slug: "input-group",
+        name: "InputGroup",
+        description:
+          "A composable wrapper that fuses prefix/suffix addons to an Input into one bordered field.",
+        importName: "InputGroup, InputGroupAddon",
+      },
+      {
+        slug: "password-input",
+        name: "PasswordInput",
+        description: "A password field with a show/hide toggle and an optional strength meter.",
+        importName: "PasswordInput",
+      },
       { slug: "textarea", name: "Textarea", description: "Multi-line auto-sizing text field." },
       { slug: "label", name: "Label", description: "Accessible label tied to a control." },
       { slug: "checkbox", name: "Checkbox", description: "Binary choice with an indicator." },
@@ -143,6 +162,12 @@ export const CATEGORIES: ComponentCategory[] = [
         slug: "sparkline",
         name: "Sparkline",
         description: "Tiny inline line, area, or bar trend chart for stat tiles.",
+      },
+      {
+        slug: "masonry",
+        name: "Masonry",
+        description: "A responsive CSS multi-column masonry layout for cards and images.",
+        importName: "Masonry",
       },
       { slug: "kbd", name: "Kbd", description: "Keyboard key hint." },
       { slug: "empty", name: "Empty", description: "Empty-state placeholder." },
