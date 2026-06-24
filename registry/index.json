@@ -285,6 +285,16 @@
     ]
   },
   {
+    "name": "comparison-slider",
+    "type": "registry:ui",
+    "dependencies": [
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
     "name": "context-menu",
     "type": "registry:ui",
     "dependencies": [
@@ -365,6 +375,16 @@
     ]
   },
   {
+    "name": "dock",
+    "type": "registry:ui",
+    "dependencies": [
+      "motion@^12.23.0"
+    ],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
     "name": "drawer",
     "type": "registry:ui",
     "dependencies": [
@@ -391,6 +411,17 @@
     "dependencies": [],
     "registryDependencies": [
       "cn"
+    ]
+  },
+  {
+    "name": "fab",
+    "type": "registry:ui",
+    "dependencies": [
+      "motion@^12.23.0"
+    ],
+    "registryDependencies": [
+      "cn",
+      "motion-presets"
     ]
   },
   {
@@ -421,6 +452,16 @@
     "registryDependencies": [
       "cn",
       "label"
+    ]
+  },
+  {
+    "name": "frame",
+    "type": "registry:ui",
+    "dependencies": [
+      "class-variance-authority@^0.7.1"
+    ],
+    "registryDependencies": [
+      "cn"
     ]
   },
   {

@@ -123,6 +123,8 @@ export {
   CommandSeparator,
   CommandShortcut,
 } from "./components/command.js";
+export type { ComparisonSliderProps } from "./components/comparison-slider.js";
+export { ComparisonSlider } from "./components/comparison-slider.js";
 export {
   ContextMenu,
   ContextMenuCheckboxItem,
@@ -176,6 +178,8 @@ export {
   DialogTitle,
   DialogTrigger,
 } from "./components/dialog.js";
+export type { DockItem, DockProps } from "./components/dock.js";
+export { Dock } from "./components/dock.js";
 export {
   Drawer,
   DrawerClose,
@@ -212,6 +216,8 @@ export {
   EmptyIcon,
   EmptyTitle,
 } from "./components/empty.js";
+export type { FabAction, FabProps } from "./components/fab.js";
+export { Fab } from "./components/fab.js";
 export { Field, FieldDescription, FieldError, FieldLabel } from "./components/field.js";
 export type { FileDropzoneProps } from "./components/file-dropzone.js";
 export { FileDropzone } from "./components/file-dropzone.js";
@@ -226,6 +232,8 @@ export {
   useFormContext,
   useFormField,
 } from "./components/form.js";
+export type { FrameProps } from "./components/frame.js";
+export { Frame } from "./components/frame.js";
 export { GlassCard } from "./components/glass-card.js";
 export type { GradientBorderProps } from "./components/gradient-border.js";
 export { GradientBorder } from "./components/gradient-border.js";

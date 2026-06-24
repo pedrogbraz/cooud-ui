@@ -38,6 +38,10 @@ export const EXAMPLE_SECTIONS: Record<string, ExampleSectionMeta[]> = {
     { id: "horizontal", title: "Horizontal" },
     { id: "vertical", title: "Vertical" },
   ],
+  fab: [
+    { id: "default", title: "Default" },
+    { id: "speed-dial", title: "Speed dial" },
+  ],
   input: [
     { id: "default", title: "Default" },
     { id: "invalid-state", title: "Invalid state" },
@@ -144,6 +148,7 @@ export const EXAMPLE_SECTIONS: Record<string, ExampleSectionMeta[]> = {
   timeline: [{ id: "activity", title: "Activity" }],
   kanban: [{ id: "board", title: "Board" }],
   masonry: [{ id: "responsive-cards", title: "Responsive cards" }],
+  "comparison-slider": [{ id: "before-after", title: "Before & after" }],
   alert: [
     { id: "default", title: "Default" },
     { id: "variants", title: "Variants" },
@@ -216,6 +221,11 @@ export const EXAMPLE_SECTIONS: Record<string, ExampleSectionMeta[]> = {
   carousel: [{ id: "slides", title: "Slides" }],
   "segmented-control": [{ id: "single-select", title: "Single select" }],
   "text-effect": [{ id: "headline", title: "Headline" }],
+  frame: [
+    { id: "browser", title: "Browser chrome" },
+    { id: "window", title: "Window chrome" },
+  ],
+  dock: [{ id: "app-dock", title: "App dock" }],
 };
 
 export function getExampleSections(slug: string): ExampleSectionMeta[] {
