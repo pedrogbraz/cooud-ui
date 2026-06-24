@@ -48,6 +48,7 @@ import {
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useMemo, useState } from "react";
+import { LiftCard } from "./lift-card";
 
 /* ──────────────────────────────────────────────────────────────────────────
  * Lazy chart cards
@@ -106,12 +107,18 @@ const usdCents = new Intl.NumberFormat("en-US", {
 
 /* ──────────────────────────────────────────────────────────────────────────
  * Shared surface — every dashboard card sits on the same premium surface as the
- * redesigned controls: a soft hairline border, raised background, and a subtle
+ * redesigned controls: a soft hairline border, raised background, and a fluid
  * lift on hover. Token-driven so it re-themes (radius/border/shadow) live.
+ *
+ * The hover LIFT is driven by a `motion/react` spring (see {@link LiftCard}) so
+ * it glides up with natural momentum and settles cleanly instead of the dry,
+ * fixed-duration CSS ease it used to use. The border + shadow change stay CSS
+ * (`hover:`) — those animate fine and the lift spring lives on the wrapper, so
+ * CSS and motion never fight over the transform.
  * ────────────────────────────────────────────────────────────────────────── */
 
 const surfaceCard =
-  "rounded-2xl border-border-soft bg-surface-raised shadow-sm transition-[border-color,box-shadow,transform] duration-[350ms] ease-[var(--ease-out-quart)] will-change-transform hover:-translate-y-1 hover:border-border hover:shadow-lg";
+  "rounded-2xl border-border-soft bg-surface-raised shadow-sm transition-[border-color,box-shadow] duration-[350ms] ease-[var(--ease-out-quart)] hover:border-border hover:shadow-lg";
 
 /* ──────────────────────────────────────────────────────────────────────────
  * 0. Brand spotlight — a large, brand-filled hero so swapping the brand color
@@ -188,65 +195,67 @@ function PayoutCard() {
   const [amount, setAmount] = useState<number>(1250);
 
   return (
-    <Card className={surfaceCard}>
-      <CardHeader>
-        <CardTitle className="font-display text-base">Payout threshold</CardTitle>
-        <CardDescription>Auto-withdraw once your balance clears this amount.</CardDescription>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-5">
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="payout-currency">Preferred currency</Label>
-          <Select value={currency ?? ""} onValueChange={setCurrency}>
-            <SelectTrigger id="payout-currency" className="w-full">
-              <SelectValue placeholder="Select currency" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="usd">USD — US Dollar</SelectItem>
-              <SelectItem value="eur">EUR — Euro</SelectItem>
-              <SelectItem value="brl">BRL — Brazilian Real</SelectItem>
-              <SelectItem value="gbp">GBP — British Pound</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="flex flex-col gap-3">
-          <div className="flex items-end justify-between">
-            <Label htmlFor="payout-amount">Trigger at</Label>
-            <Metric className="items-end gap-0">
-              <MetricValue className="text-2xl">{usd.format(amount)}</MetricValue>
-            </Metric>
+    <LiftCard>
+      <Card className={surfaceCard}>
+        <CardHeader>
+          <CardTitle className="font-display text-base">Payout threshold</CardTitle>
+          <CardDescription>Auto-withdraw once your balance clears this amount.</CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-5">
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="payout-currency">Preferred currency</Label>
+            <Select value={currency ?? ""} onValueChange={setCurrency}>
+              <SelectTrigger id="payout-currency" className="w-full">
+                <SelectValue placeholder="Select currency" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="usd">USD — US Dollar</SelectItem>
+                <SelectItem value="eur">EUR — Euro</SelectItem>
+                <SelectItem value="brl">BRL — Brazilian Real</SelectItem>
+                <SelectItem value="gbp">GBP — British Pound</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
-          <Slider
-            id="payout-amount"
-            min={PAYOUT_MIN}
-            max={PAYOUT_MAX}
-            step={50}
-            value={[amount]}
-            onValueChange={(v) => setAmount(v[0] ?? PAYOUT_MIN)}
-            aria-label="Payout threshold amount"
-          />
-          <div className="flex justify-between text-xs text-fg-tertiary tabular-nums">
-            <span>{usd.format(PAYOUT_MIN)}</span>
-            <span>{usd.format(PAYOUT_MAX)}</span>
-          </div>
-        </div>
 
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="payout-notes">Notes</Label>
-          <Textarea
-            id="payout-notes"
-            rows={2}
-            placeholder="Add an internal note for your finance team…"
-            defaultValue="Route to operating account ending 4821."
-          />
-        </div>
-      </CardContent>
-      <CardFooter className="border-t border-border-soft pt-5">
-        <Button variant="gradient" className="w-full">
-          Save threshold
-        </Button>
-      </CardFooter>
-    </Card>
+          <div className="flex flex-col gap-3">
+            <div className="flex items-end justify-between">
+              <Label htmlFor="payout-amount">Trigger at</Label>
+              <Metric className="items-end gap-0">
+                <MetricValue className="text-2xl">{usd.format(amount)}</MetricValue>
+              </Metric>
+            </div>
+            <Slider
+              id="payout-amount"
+              min={PAYOUT_MIN}
+              max={PAYOUT_MAX}
+              step={50}
+              value={[amount]}
+              onValueChange={(v) => setAmount(v[0] ?? PAYOUT_MIN)}
+              aria-label="Payout threshold amount"
+            />
+            <div className="flex justify-between text-xs text-fg-tertiary tabular-nums">
+              <span>{usd.format(PAYOUT_MIN)}</span>
+              <span>{usd.format(PAYOUT_MAX)}</span>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="payout-notes">Notes</Label>
+            <Textarea
+              id="payout-notes"
+              rows={2}
+              placeholder="Add an internal note for your finance team…"
+              defaultValue="Route to operating account ending 4821."
+            />
+          </div>
+        </CardContent>
+        <CardFooter className="border-t border-border-soft pt-5">
+          <Button variant="gradient" className="w-full">
+            Save threshold
+          </Button>
+        </CardFooter>
+      </Card>
+    </LiftCard>
   );
 }
 
@@ -269,50 +278,52 @@ const goals: Goal[] = [
 
 function SavingsCard() {
   return (
-    <Card className={surfaceCard}>
-      <CardHeader>
-        <CardTitle className="font-display text-base">Savings targets</CardTitle>
-        <CardDescription>Progress toward your quarterly goals</CardDescription>
-        <CardAction>
-          <Badge variant="primary" className="gap-1">
-            <Plus className="size-3" aria-hidden="true" />
-            New goal
-          </Badge>
-        </CardAction>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-5">
-        {goals.map((goal) => {
-          const pct = Math.round((goal.saved / goal.target) * 100);
-          const Icon = goal.icon;
-          return (
-            <div
-              key={goal.id}
-              className="flex flex-col gap-3 rounded-xl border border-border-soft bg-surface-inset/50 p-3.5"
-            >
-              <div className="flex items-center gap-3">
-                <span className="inline-flex size-9 items-center justify-center rounded-xl bg-surface-overlay text-fg-secondary ring-1 ring-inset ring-border-soft">
-                  <Icon className="size-4" aria-hidden="true" />
-                </span>
-                <div className="flex min-w-0 flex-1 flex-col">
-                  <span className="truncate text-sm font-medium text-fg">{goal.label}</span>
-                  <span className="text-xs text-fg-tertiary">of {usd.format(goal.target)}</span>
+    <LiftCard>
+      <Card className={surfaceCard}>
+        <CardHeader>
+          <CardTitle className="font-display text-base">Savings targets</CardTitle>
+          <CardDescription>Progress toward your quarterly goals</CardDescription>
+          <CardAction>
+            <Badge variant="primary" className="gap-1">
+              <Plus className="size-3" aria-hidden="true" />
+              New goal
+            </Badge>
+          </CardAction>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-5">
+          {goals.map((goal) => {
+            const pct = Math.round((goal.saved / goal.target) * 100);
+            const Icon = goal.icon;
+            return (
+              <div
+                key={goal.id}
+                className="flex flex-col gap-3 rounded-xl border border-border-soft bg-surface-inset/50 p-3.5"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="inline-flex size-9 items-center justify-center rounded-xl bg-surface-overlay text-fg-secondary ring-1 ring-inset ring-border-soft">
+                    <Icon className="size-4" aria-hidden="true" />
+                  </span>
+                  <div className="flex min-w-0 flex-1 flex-col">
+                    <span className="truncate text-sm font-medium text-fg">{goal.label}</span>
+                    <span className="text-xs text-fg-tertiary">of {usd.format(goal.target)}</span>
+                  </div>
+                  <Metric className="items-end gap-0">
+                    <MetricValue className="text-xl">{usd.format(goal.saved)}</MetricValue>
+                  </Metric>
                 </div>
-                <Metric className="items-end gap-0">
-                  <MetricValue className="text-xl">{usd.format(goal.saved)}</MetricValue>
-                </Metric>
+                <Progress value={pct} aria-label={`${goal.label} progress`} />
+                <div className="flex justify-between text-xs">
+                  <span className="font-medium text-success">{pct}% achieved</span>
+                  <span className="text-fg-tertiary tabular-nums">
+                    {usd.format(goal.target - goal.saved)} to go
+                  </span>
+                </div>
               </div>
-              <Progress value={pct} aria-label={`${goal.label} progress`} />
-              <div className="flex justify-between text-xs">
-                <span className="font-medium text-success">{pct}% achieved</span>
-                <span className="text-fg-tertiary tabular-nums">
-                  {usd.format(goal.target - goal.saved)} to go
-                </span>
-              </div>
-            </div>
-          );
-        })}
-      </CardContent>
-    </Card>
+            );
+          })}
+        </CardContent>
+      </Card>
+    </LiftCard>
   );
 }
 
@@ -335,66 +346,68 @@ function InvestCard() {
   }, [amount]);
 
   return (
-    <Card className={surfaceCard}>
-      <CardHeader>
-        <CardTitle className="font-display text-base">Buy investment</CardTitle>
-        <CardDescription>Cooud Growth Index — CGX</CardDescription>
-        <CardAction>
-          <Badge variant="success" className="gap-1">
-            <TrendingUp className="size-3" aria-hidden="true" />
-            +2.4%
-          </Badge>
-        </CardAction>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-5">
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="invest-amount">Amount</Label>
-          <div className="relative">
-            <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-sm font-medium text-fg-tertiary">
-              $
-            </span>
-            <Input
-              id="invest-amount"
-              inputMode="decimal"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              className="pl-7 tabular-nums"
-              placeholder="0.00"
-            />
+    <LiftCard>
+      <Card className={surfaceCard}>
+        <CardHeader>
+          <CardTitle className="font-display text-base">Buy investment</CardTitle>
+          <CardDescription>Cooud Growth Index — CGX</CardDescription>
+          <CardAction>
+            <Badge variant="success" className="gap-1">
+              <TrendingUp className="size-3" aria-hidden="true" />
+              +2.4%
+            </Badge>
+          </CardAction>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-5">
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="invest-amount">Amount</Label>
+            <div className="relative">
+              <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-sm font-medium text-fg-tertiary">
+                $
+              </span>
+              <Input
+                id="invest-amount"
+                inputMode="decimal"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                className="pl-7 tabular-nums"
+                placeholder="0.00"
+              />
+            </div>
           </div>
-        </div>
 
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="invest-order">Order type</Label>
-          <Select value={orderType ?? ""} onValueChange={setOrderType}>
-            <SelectTrigger id="invest-order" className="w-full">
-              <SelectValue placeholder="Select order type" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="market">Market order</SelectItem>
-              <SelectItem value="limit">Limit order</SelectItem>
-              <SelectItem value="recurring">Recurring buy</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="invest-order">Order type</Label>
+            <Select value={orderType ?? ""} onValueChange={setOrderType}>
+              <SelectTrigger id="invest-order" className="w-full">
+                <SelectValue placeholder="Select order type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="market">Market order</SelectItem>
+                <SelectItem value="limit">Limit order</SelectItem>
+                <SelectItem value="recurring">Recurring buy</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
-        <p className="text-sm text-fg-secondary">
-          Executes immediately at the best available price. Settlement in 2 business days.
-        </p>
+          <p className="text-sm text-fg-secondary">
+            Executes immediately at the best available price. Settlement in 2 business days.
+          </p>
 
-        <div className="flex items-center justify-between rounded-xl border border-border-soft bg-surface-inset/50 px-3.5 py-3">
-          <span className="text-sm text-fg-secondary">Estimated shares</span>
-          <span className="font-display text-sm font-semibold text-fg tabular-nums">
-            {estimatedShares.toFixed(4)} @ {usdCents.format(SHARE_PRICE)}
-          </span>
-        </div>
-      </CardContent>
-      <CardFooter className="border-t border-border-soft pt-5">
-        <Button variant="gradient" className="w-full">
-          Review order
-        </Button>
-      </CardFooter>
-    </Card>
+          <div className="flex items-center justify-between rounded-xl border border-border-soft bg-surface-inset/50 px-3.5 py-3">
+            <span className="text-sm text-fg-secondary">Estimated shares</span>
+            <span className="font-display text-sm font-semibold text-fg tabular-nums">
+              {estimatedShares.toFixed(4)} @ {usdCents.format(SHARE_PRICE)}
+            </span>
+          </div>
+        </CardContent>
+        <CardFooter className="border-t border-border-soft pt-5">
+          <Button variant="gradient" className="w-full">
+            Review order
+          </Button>
+        </CardFooter>
+      </Card>
+    </LiftCard>
   );
 }
 
@@ -456,58 +469,60 @@ const transactions: Transaction[] = [
 
 function TransactionsCard() {
   return (
-    <Card className={`gap-0 py-0 ${surfaceCard}`}>
-      <CardHeader className="px-6 py-5">
-        <CardTitle className="font-display text-base">Recent transactions</CardTitle>
-        <CardDescription>Across all connected accounts</CardDescription>
-        <CardAction>
-          <Button variant="ghost" size="sm">
-            View all
-          </Button>
-        </CardAction>
-      </CardHeader>
-      <Separator className="bg-border-soft" />
-      <ul className="flex flex-col p-1.5">
-        {transactions.map((tx) => {
-          const income = tx.amount > 0;
-          const Icon = tx.icon;
-          return (
-            <li
-              key={tx.id}
-              className="flex items-center gap-3.5 rounded-xl px-4 py-3 transition-colors duration-200 ease-[var(--ease-out-quart)] hover:bg-surface-inset/60"
-            >
-              <span
-                className={`inline-flex size-9 shrink-0 items-center justify-center rounded-full ${
-                  income
-                    ? "bg-success/10 text-success"
-                    : "bg-surface-overlay text-fg-secondary ring-1 ring-inset ring-border-soft"
-                }`}
+    <LiftCard>
+      <Card className={`gap-0 py-0 ${surfaceCard}`}>
+        <CardHeader className="px-6 py-5">
+          <CardTitle className="font-display text-base">Recent transactions</CardTitle>
+          <CardDescription>Across all connected accounts</CardDescription>
+          <CardAction>
+            <Button variant="ghost" size="sm">
+              View all
+            </Button>
+          </CardAction>
+        </CardHeader>
+        <Separator className="bg-border-soft" />
+        <ul className="flex flex-col p-1.5">
+          {transactions.map((tx) => {
+            const income = tx.amount > 0;
+            const Icon = tx.icon;
+            return (
+              <li
+                key={tx.id}
+                className="flex items-center gap-3.5 rounded-xl px-4 py-3 transition-colors duration-200 ease-[var(--ease-out-quart)] hover:bg-surface-inset/60"
               >
-                <Icon className="size-4" aria-hidden="true" />
-              </span>
-              <div className="flex min-w-0 flex-1 flex-col">
-                <span className="truncate text-sm font-medium text-fg">{tx.name}</span>
-                <span className="truncate text-xs text-fg-tertiary">{tx.category}</span>
-              </div>
-              <span className="text-xs text-fg-tertiary tabular-nums">{tx.date}</span>
-              <span
-                className={`flex items-center gap-0.5 text-sm font-semibold tabular-nums ${
-                  income ? "text-success" : "text-error"
-                }`}
-              >
-                {income ? (
-                  <ArrowDownLeft className="size-3.5" aria-hidden="true" />
-                ) : (
-                  <ArrowUpRight className="size-3.5" aria-hidden="true" />
-                )}
-                {income ? "+" : "−"}
-                {usdCents.format(Math.abs(tx.amount))}
-              </span>
-            </li>
-          );
-        })}
-      </ul>
-    </Card>
+                <span
+                  className={`inline-flex size-9 shrink-0 items-center justify-center rounded-full ${
+                    income
+                      ? "bg-success/10 text-success"
+                      : "bg-surface-overlay text-fg-secondary ring-1 ring-inset ring-border-soft"
+                  }`}
+                >
+                  <Icon className="size-4" aria-hidden="true" />
+                </span>
+                <div className="flex min-w-0 flex-1 flex-col">
+                  <span className="truncate text-sm font-medium text-fg">{tx.name}</span>
+                  <span className="truncate text-xs text-fg-tertiary">{tx.category}</span>
+                </div>
+                <span className="text-xs text-fg-tertiary tabular-nums">{tx.date}</span>
+                <span
+                  className={`flex items-center gap-0.5 text-sm font-semibold tabular-nums ${
+                    income ? "text-success" : "text-error"
+                  }`}
+                >
+                  {income ? (
+                    <ArrowDownLeft className="size-3.5" aria-hidden="true" />
+                  ) : (
+                    <ArrowUpRight className="size-3.5" aria-hidden="true" />
+                  )}
+                  {income ? "+" : "−"}
+                  {usdCents.format(Math.abs(tx.amount))}
+                </span>
+              </li>
+            );
+          })}
+        </ul>
+      </Card>
+    </LiftCard>
   );
 }
 
@@ -543,38 +558,37 @@ function StatRow() {
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
       {stats.map(({ label, value, delta, trend, icon: Icon }) => (
-        <Card
-          key={label}
-          className="group gap-0 border-border-soft py-0 shadow-sm transition-[border-color,box-shadow,transform] duration-[350ms] ease-[var(--ease-out-quart)] will-change-transform hover:-translate-y-1 hover:border-border hover:shadow-lg"
-        >
-          <CardContent className="flex flex-col gap-4 p-5">
-            <div className="flex items-center justify-between gap-2">
-              <span className="inline-flex size-9 items-center justify-center rounded-xl bg-surface-overlay text-fg-secondary ring-1 ring-inset ring-border-soft transition-colors duration-300 ease-[var(--ease-out-quart)] group-hover:text-primary">
-                <Icon className="size-4" aria-hidden="true" />
-              </span>
-              <span
-                className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${
-                  trend === "down" ? "bg-error/10 text-error" : "bg-success/10 text-success"
-                }`}
-              >
-                {trend === "down" ? (
-                  <TrendingDown className="size-3.5" aria-hidden="true" />
-                ) : (
-                  <TrendingUp className="size-3.5" aria-hidden="true" />
-                )}
-                {delta}
-              </span>
-            </div>
-            <Metric className="gap-1.5">
-              <MetricLabel className="normal-case tracking-normal text-fg-tertiary">
-                {label}
-              </MetricLabel>
-              <MetricValue className="text-[1.75rem] leading-none tracking-tight">
-                {value}
-              </MetricValue>
-            </Metric>
-          </CardContent>
-        </Card>
+        <LiftCard key={label} className="h-full">
+          <Card className="group h-full gap-0 border-border-soft py-0 shadow-sm transition-[border-color,box-shadow] duration-[350ms] ease-[var(--ease-out-quart)] hover:border-border hover:shadow-lg">
+            <CardContent className="flex flex-col gap-4 p-5">
+              <div className="flex items-center justify-between gap-2">
+                <span className="inline-flex size-9 items-center justify-center rounded-xl bg-surface-overlay text-fg-secondary ring-1 ring-inset ring-border-soft transition-colors duration-300 ease-[var(--ease-out-quart)] group-hover:text-primary">
+                  <Icon className="size-4" aria-hidden="true" />
+                </span>
+                <span
+                  className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${
+                    trend === "down" ? "bg-error/10 text-error" : "bg-success/10 text-success"
+                  }`}
+                >
+                  {trend === "down" ? (
+                    <TrendingDown className="size-3.5" aria-hidden="true" />
+                  ) : (
+                    <TrendingUp className="size-3.5" aria-hidden="true" />
+                  )}
+                  {delta}
+                </span>
+              </div>
+              <Metric className="gap-1.5">
+                <MetricLabel className="normal-case tracking-normal text-fg-tertiary">
+                  {label}
+                </MetricLabel>
+                <MetricValue className="text-[1.75rem] leading-none tracking-tight">
+                  {value}
+                </MetricValue>
+              </Metric>
+            </CardContent>
+          </Card>
+        </LiftCard>
       ))}
     </div>
   );
@@ -634,37 +648,39 @@ const members: Member[] = [
 
 function TeamCard() {
   return (
-    <Card className={`gap-0 py-0 ${surfaceCard}`}>
-      <CardHeader className="px-6 py-5">
-        <CardTitle className="font-display text-base">Team</CardTitle>
-        <CardDescription>4 people in this workspace</CardDescription>
-        <CardAction>
-          <Button variant="outline" size="sm">
-            <Users className="size-4" aria-hidden="true" />
-            Invite
-          </Button>
-        </CardAction>
-      </CardHeader>
-      <Separator className="bg-border-soft" />
-      <ul className="flex flex-col p-1.5">
-        {members.map((member) => (
-          <li
-            key={member.id}
-            className="flex items-center gap-3.5 rounded-xl px-4 py-3 transition-colors duration-200 ease-[var(--ease-out-quart)] hover:bg-surface-inset/60"
-          >
-            <Avatar className="size-9 ring-1 ring-inset ring-border-soft">
-              {member.avatar ? <AvatarImage src={member.avatar} alt={member.name} /> : null}
-              <AvatarFallback>{member.initials}</AvatarFallback>
-            </Avatar>
-            <div className="flex min-w-0 flex-1 flex-col">
-              <span className="truncate text-sm font-medium text-fg">{member.name}</span>
-              <span className="truncate text-xs text-fg-tertiary">{member.handle}</span>
-            </div>
-            <Badge variant={member.roleVariant}>{member.role}</Badge>
-          </li>
-        ))}
-      </ul>
-    </Card>
+    <LiftCard>
+      <Card className={`gap-0 py-0 ${surfaceCard}`}>
+        <CardHeader className="px-6 py-5">
+          <CardTitle className="font-display text-base">Team</CardTitle>
+          <CardDescription>4 people in this workspace</CardDescription>
+          <CardAction>
+            <Button variant="outline" size="sm">
+              <Users className="size-4" aria-hidden="true" />
+              Invite
+            </Button>
+          </CardAction>
+        </CardHeader>
+        <Separator className="bg-border-soft" />
+        <ul className="flex flex-col p-1.5">
+          {members.map((member) => (
+            <li
+              key={member.id}
+              className="flex items-center gap-3.5 rounded-xl px-4 py-3 transition-colors duration-200 ease-[var(--ease-out-quart)] hover:bg-surface-inset/60"
+            >
+              <Avatar className="size-9 ring-1 ring-inset ring-border-soft">
+                {member.avatar ? <AvatarImage src={member.avatar} alt={member.name} /> : null}
+                <AvatarFallback>{member.initials}</AvatarFallback>
+              </Avatar>
+              <div className="flex min-w-0 flex-1 flex-col">
+                <span className="truncate text-sm font-medium text-fg">{member.name}</span>
+                <span className="truncate text-xs text-fg-tertiary">{member.handle}</span>
+              </div>
+              <Badge variant={member.roleVariant}>{member.role}</Badge>
+            </li>
+          ))}
+        </ul>
+      </Card>
+    </LiftCard>
   );
 }
 

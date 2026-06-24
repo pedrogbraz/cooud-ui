@@ -111,6 +111,7 @@ import type {
   Mode,
   StylePreset,
 } from "../../lib/create/types";
+import { LiftTile } from "./lift-card";
 import { PreviewDashboard } from "./preview-dashboard";
 
 const STORAGE_KEY = "cooud-ui-create-presets-v1";
@@ -1366,17 +1367,17 @@ function IconLibraryShowcase({ iconLibrary }: { iconLibrary: IconLibraryId }) {
       />
       <div className="mt-4 grid grid-cols-5 gap-1.5 sm:grid-cols-7 2xl:grid-cols-5">
         {ICON_SHOWCASE.map((name) => (
-          <span
+          <LiftTile
             key={name}
             title={name}
             className={cn(
               "grid aspect-square place-items-center rounded-xl border border-border-soft bg-surface-inset text-fg-secondary",
-              "transition-[color,border-color,background-color,transform,box-shadow] duration-[250ms] ease-[var(--ease-out-quart)] will-change-transform",
-              "hover:-translate-y-0.5 hover:scale-105 hover:border-border hover:bg-surface-overlay hover:text-primary hover:shadow-sm",
+              "transition-[color,border-color,background-color,box-shadow] duration-[250ms] ease-[var(--ease-out-quart)]",
+              "hover:border-border hover:bg-surface-overlay hover:text-primary hover:shadow-sm",
             )}
           >
             <LibraryIcon library={iconLibrary} name={name} className="size-5" />
-          </span>
+          </LiftTile>
         ))}
       </div>
     </RailCard>
