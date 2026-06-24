@@ -1010,7 +1010,7 @@
     "registryDependencies": []
   },
   {
-    "name": "stats",
+    "name": "login",
     "type": "registry:block",
     "dependencies": [
       "@cooud-ui/ui@0.1.0",
@@ -1019,7 +1019,43 @@
     "registryDependencies": []
   },
   {
-    "name": "login",
+    "name": "signup",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.1.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "forgot-password",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.1.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "otp",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.1.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "magic-link",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.1.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "stats",
     "type": "registry:block",
     "dependencies": [
       "@cooud-ui/ui@0.1.0",

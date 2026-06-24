@@ -26,6 +26,9 @@ type BlockDetailView = ComponentType<{ slug: string; variant: string }>;
 // One next/dynamic per family; only the family a slug belongs to is imported,
 // so the variant route never loads the *other* family's preview JSX.
 const VIEW_VIEWS: Record<BlockFamily, BlockDetailView> = {
+  auth: dynamic(() => import("../../lib/blocks/auth").then((m) => m.AuthView), {
+    loading: BlockViewSkeleton,
+  }),
   marketing: dynamic(() => import("../../lib/blocks/marketing").then((m) => m.MarketingView), {
     loading: BlockViewSkeleton,
   }),
