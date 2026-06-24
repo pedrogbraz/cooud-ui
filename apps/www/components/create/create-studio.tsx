@@ -360,29 +360,36 @@ export function CreateStudio() {
         </aside>
 
         <section className="min-w-0">
-          <div className="sticky top-16 z-30 border-border/70 border-b bg-surface-base/82 px-4 py-3 backdrop-blur-xl sm:px-6">
+          <div className="sticky top-16 z-30 border-border/70 border-b bg-surface-base/82 px-4 py-3.5 backdrop-blur-xl sm:px-6">
             <div className="mx-auto flex max-w-[100rem] flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-              <div className="min-w-0">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span
-                    className="size-2.5 shrink-0 rounded-full ring-2 ring-primary/25"
-                    style={{ backgroundColor: selectedBrand.swatch }}
-                    aria-hidden="true"
-                  />
-                  <h1 className="font-display text-xl font-semibold tracking-tight text-fg sm:text-2xl">
-                    {config.style}
-                  </h1>
-                  <Badge variant="secondary">{selectedBrand.name}</Badge>
-                  <Badge variant="outline">{selectedChart.name} charts</Badge>
+              <div className="flex min-w-0 items-center gap-3">
+                <span
+                  className="grid size-9 shrink-0 place-items-center rounded-xl ring-1 ring-inset ring-border-soft transition-[background-color,box-shadow] duration-300 ease-[var(--ease-out-quart)]"
+                  style={{
+                    backgroundColor: selectedBrand.swatch,
+                    boxShadow: `0 0 0 4px color-mix(in oklch, ${selectedBrand.swatch} 16%, transparent)`,
+                  }}
+                  aria-hidden="true"
+                />
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h1 className="truncate font-display text-xl font-semibold tracking-tight text-fg sm:text-2xl">
+                      {config.style}
+                    </h1>
+                    <Badge variant="secondary">{selectedBrand.name}</Badge>
+                    <Badge variant="outline" className="hidden sm:inline-flex">
+                      {selectedChart.name} charts
+                    </Badge>
+                  </div>
+                  <p className="mt-0.5 truncate text-sm text-fg-tertiary">
+                    {findFontChoice(config.headingFont).name} headings ·{" "}
+                    {findFontChoice(config.bodyFont).name} body · {config.radius}px radius
+                  </p>
                 </div>
-                <p className="mt-1 text-sm text-fg-secondary">
-                  {findFontChoice(config.headingFont).name} headings ·{" "}
-                  {findFontChoice(config.bodyFont).name} body · {config.radius}px radius
-                </p>
               </div>
               <TooltipProvider delayDuration={250}>
                 <div className="flex flex-wrap items-center gap-2">
-                  <div className="flex items-center gap-1 rounded-xl border border-border bg-surface-raised/70 p-1">
+                  <div className="flex items-center gap-0.5 rounded-xl border border-border-soft bg-surface-raised p-1 shadow-sm">
                     <IconAction
                       icon={RotateCcw}
                       label="Reset to default"
@@ -400,8 +407,10 @@ export function CreateStudio() {
                     <IconAction
                       icon={focusMode ? Minimize2 : Maximize2}
                       label={focusMode ? "Exit focus preview" : "Focus the preview"}
+                      active={focusMode}
                       onClick={() => setFocusMode((open) => !open)}
                     />
+                    <span className="mx-0.5 h-5 w-px bg-border-soft" aria-hidden="true" />
                     <IconAction
                       icon={shareCopied ? Check : Share2}
                       label={shareCopied ? "Link copied" : "Copy a shareable link"}
@@ -429,14 +438,14 @@ export function CreateStudio() {
             )}
           >
             <div className="min-w-0">
-              <div className="overflow-hidden rounded-2xl border border-border bg-surface-inset p-4 shadow-lg sm:p-6">
+              <div className="overflow-hidden rounded-3xl border border-border-soft bg-surface-inset p-4 shadow-lg sm:p-6">
                 <PreviewDashboard />
                 <ComponentSampler config={config} />
               </div>
             </div>
 
             {focusMode ? null : (
-              <div className="grid gap-4 2xl:sticky 2xl:top-36 2xl:self-start">
+              <div className="grid gap-5 2xl:sticky 2xl:top-36 2xl:self-start">
                 <TokenSummary config={config} />
                 <IconLibraryShowcase iconLibrary={config.iconLibrary} />
                 <PresetExchange
@@ -897,7 +906,8 @@ function IconAction({
           size="icon-sm"
           onClick={onClick}
           aria-label={label}
-          className={active ? "text-primary" : undefined}
+          aria-pressed={active}
+          className={active ? "bg-primary/12 text-primary hover:bg-primary/15" : undefined}
         >
           <Icon aria-hidden="true" />
         </Button>
@@ -1309,73 +1319,120 @@ function ComponentSampler({ config }: { config: DesignConfig }) {
   );
 }
 
+/** Shared rail-card shell — mirrors the redesigned controls: a soft hairline
+ *  border, raised surface, and a calm title row with optional trailing slot. */
+function RailCard({ className, children }: { className?: string; children: ReactNode }) {
+  return (
+    <section
+      className={cn(
+        "rounded-2xl border border-border-soft bg-surface-raised p-4 shadow-sm",
+        "transition-[border-color,box-shadow] duration-300 ease-[var(--ease-out-quart)]",
+        className,
+      )}
+    >
+      {children}
+    </section>
+  );
+}
+
+function RailCardHeader({
+  title,
+  description,
+  action,
+}: {
+  title: string;
+  description: string;
+  action?: ReactNode;
+}) {
+  return (
+    <div className="flex items-start justify-between gap-3">
+      <div className="min-w-0">
+        <h2 className="font-display text-sm font-semibold tracking-tight text-fg">{title}</h2>
+        <p className="mt-0.5 truncate text-xs text-fg-tertiary">{description}</p>
+      </div>
+      {action ? <div className="shrink-0">{action}</div> : null}
+    </div>
+  );
+}
+
 function IconLibraryShowcase({ iconLibrary }: { iconLibrary: IconLibraryId }) {
   const libraryName = ICON_LIBRARIES.find((item) => item.id === iconLibrary)?.name ?? iconLibrary;
   return (
-    <section className="rounded-2xl border border-border bg-surface-raised p-4 shadow-sm">
-      <div className="flex items-center justify-between gap-3">
-        <div>
-          <h2 className="font-display text-sm font-semibold text-fg">Icons</h2>
-          <p className="text-xs text-fg-tertiary">Common glyphs in the chosen library.</p>
-        </div>
-        <Badge variant="secondary">{libraryName}</Badge>
-      </div>
-      <div className="mt-4 grid grid-cols-5 gap-2 sm:grid-cols-7 2xl:grid-cols-5">
+    <RailCard>
+      <RailCardHeader
+        title="Icons"
+        description="Common glyphs in the chosen library."
+        action={<Badge variant="secondary">{libraryName}</Badge>}
+      />
+      <div className="mt-4 grid grid-cols-5 gap-1.5 sm:grid-cols-7 2xl:grid-cols-5">
         {ICON_SHOWCASE.map((name) => (
           <span
             key={name}
             title={name}
-            className="grid aspect-square place-items-center rounded-lg border border-border-soft bg-surface-inset text-fg transition-colors hover:border-border-strong hover:text-primary"
+            className={cn(
+              "grid aspect-square place-items-center rounded-xl border border-border-soft bg-surface-inset text-fg-secondary",
+              "transition-[color,border-color,background-color,transform] duration-200 ease-[var(--ease-out-quart)]",
+              "hover:-translate-y-0.5 hover:border-border hover:bg-surface-overlay hover:text-primary",
+            )}
           >
             <LibraryIcon library={iconLibrary} name={name} className="size-5" />
           </span>
         ))}
       </div>
-    </section>
+    </RailCard>
   );
 }
 
 function TokenSummary({ config }: { config: DesignConfig }) {
   const colors = findChartPalette(config.chart).colors;
+  const summaryRows: { label: string; value: string }[] = [
+    { label: "Base", value: findBaseColor(config.baseColor).name },
+    { label: "Brand", value: findBrandColor(config.brand).name },
+    { label: "Heading", value: findFontChoice(config.headingFont).name },
+    { label: "Body", value: findFontChoice(config.bodyFont).name },
+    {
+      label: "Icons",
+      value: ICON_LIBRARIES.find((item) => item.id === config.iconLibrary)?.name ?? "Lucide",
+    },
+    { label: "Radius", value: `${config.radius}px` },
+  ];
   return (
-    <section className="rounded-2xl border border-border bg-surface-raised p-4 shadow-sm">
-      <div className="flex items-center justify-between gap-3">
-        <div>
-          <h2 className="font-display text-sm font-semibold text-fg">System bundle</h2>
-          <p className="text-xs text-fg-tertiary">Saved as one reusable preset.</p>
-        </div>
-        <Badge variant="primary">{config.mode}</Badge>
-      </div>
-      <dl className="mt-4 grid gap-3 text-sm">
-        <SummaryRow label="Base" value={config.baseColor} />
-        <SummaryRow label="Brand" value={config.brand} />
-        <SummaryRow label="Heading" value={findFontChoice(config.headingFont).name} />
-        <SummaryRow label="Body" value={findFontChoice(config.bodyFont).name} />
-        <SummaryRow
-          label="Icons"
-          value={ICON_LIBRARIES.find((item) => item.id === config.iconLibrary)?.name ?? "Lucide"}
-        />
-        <SummaryRow label="Radius" value={`${config.radius}px`} />
+    <RailCard>
+      <RailCardHeader
+        title="System bundle"
+        description="Saved as one reusable preset."
+        action={<Badge variant="primary">{config.mode}</Badge>}
+      />
+      <dl className="mt-4 divide-y divide-border-soft overflow-hidden rounded-xl border border-border-soft">
+        {summaryRows.map((row) => (
+          <SummaryRow key={row.label} label={row.label} value={row.value} />
+        ))}
       </dl>
-      <div className="mt-4 flex gap-2">
+      <div className="mt-3 flex items-center justify-between gap-2">
+        <p className="font-display text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-fg-muted">
+          Chart ramp
+        </p>
+        <Badge variant="outline">{findChartPalette(config.chart).name}</Badge>
+      </div>
+      <div className="mt-2 flex gap-1.5">
         {colors.map((color) => (
           <span
             key={color}
-            className="h-9 flex-1 rounded-lg border border-border-soft"
+            className="h-9 flex-1 rounded-lg ring-1 ring-inset ring-border-soft transition-colors duration-300 ease-[var(--ease-out-quart)]"
             style={{ backgroundColor: color }}
             aria-hidden="true"
           />
         ))}
       </div>
-    </section>
+    </RailCard>
   );
 }
 
 function SummaryRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center justify-between gap-3">
+    <div className="flex items-center justify-between gap-3 bg-surface-inset/40 px-3 py-2.5 text-sm">
       <dt className="text-fg-tertiary">{label}</dt>
-      <dd className="truncate font-medium text-fg capitalize">{value}</dd>
+      <dd className="truncate font-medium capitalize text-fg">{value}</dd>
     </div>
   );
 }
@@ -1394,23 +1451,23 @@ function PresetExchange({
   onCopyPreset: () => void;
 }) {
   return (
-    <section className="rounded-2xl border border-border bg-surface-raised p-4 shadow-sm">
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <h2 className="font-display text-sm font-semibold text-fg">Preset exchange</h2>
-          <p className="text-xs text-fg-tertiary">Copy this system or open one from a code.</p>
-        </div>
-        <Button variant="outline" size="icon-sm" onClick={onCopyPreset} aria-label="Copy preset">
-          <Copy aria-hidden="true" />
-        </Button>
-      </div>
+    <RailCard>
+      <RailCardHeader
+        title="Preset exchange"
+        description="Copy this system or open one from a code."
+        action={
+          <Button variant="outline" size="icon-sm" onClick={onCopyPreset} aria-label="Copy preset">
+            <Copy aria-hidden="true" />
+          </Button>
+        }
+      />
       <div className="mt-4 grid gap-3">
         <Textarea
           value={presetCode}
           onChange={(event) => onPresetCodeChange(event.target.value)}
           placeholder="Paste cooud: preset code or JSON"
           rows={4}
-          className="font-mono text-xs"
+          className="resize-none font-mono text-xs"
           aria-label="Preset import code"
         />
         {error ? <p className="text-xs text-error">{error}</p> : null}
@@ -1419,7 +1476,7 @@ function PresetExchange({
           Open preset
         </Button>
       </div>
-    </section>
+    </RailCard>
   );
 }
 
