@@ -282,6 +282,44 @@ export const BLOCK_CATEGORIES: BlockCategory[] = [
           },
         ],
       },
+      {
+        slug: "manage-subscription",
+        name: "Manage Subscription",
+        description:
+          "A current-subscription card with a renewal banner, usage meters, payment method, and plan actions.",
+      },
+      {
+        slug: "payment-method",
+        name: "Payment Method",
+        description:
+          "Choose a saved card from a radio list or add a new card with a full card-entry form.",
+        variants: [
+          {
+            id: "select",
+            name: "Select method",
+            description:
+              "Pick a saved card from a radio list, mark a default, or add a new payment method.",
+          },
+          {
+            id: "add-card",
+            name: "Add card",
+            description:
+              "A new-card form with cardholder, number, expiry, CVC, and a set-as-default toggle.",
+          },
+        ],
+      },
+      {
+        slug: "usage-dashboard",
+        name: "Usage Dashboard",
+        description:
+          "A usage analytics panel with metric cards, trend sparklines, quota meters, and a top-resources table.",
+      },
+      {
+        slug: "cancel-flow",
+        name: "Cancel Flow",
+        description:
+          "A cancellation survey with reason options and a retention offer to keep the subscription.",
+      },
     ],
   },
   {

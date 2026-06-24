@@ -1135,6 +1135,41 @@
     "registryDependencies": []
   },
   {
+    "name": "manage-subscription",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.1.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "payment-method",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.1.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "usage-dashboard",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.1.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "cancel-flow",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.1.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
     "name": "checkout",
     "type": "registry:block",
     "dependencies": [
