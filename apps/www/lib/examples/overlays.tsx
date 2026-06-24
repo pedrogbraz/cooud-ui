@@ -11,6 +11,19 @@ import {
   CommandList,
   CommandSeparator,
   CommandShortcut,
+  ContextMenu,
+  ContextMenuCheckboxItem,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuLabel,
+  ContextMenuRadioGroup,
+  ContextMenuRadioItem,
+  ContextMenuSeparator,
+  ContextMenuShortcut,
+  ContextMenuSub,
+  ContextMenuSubContent,
+  ContextMenuSubTrigger,
+  ContextMenuTrigger,
   Dialog,
   DialogClose,
   DialogContent,
@@ -62,12 +75,14 @@ import {
 } from "@cooud-ui/ui";
 import {
   CalendarDays,
+  ClipboardPaste,
   Copy,
   CreditCard,
   HelpCircle,
   Keyboard,
   LifeBuoy,
   Plus,
+  Scissors,
   Settings,
   User,
   UserPlus,
@@ -197,6 +212,62 @@ function CommandPaletteDemo() {
         </CommandList>
       </CommandDialog>
     </>
+  );
+}
+
+function ContextMenuDemo() {
+  const [bookmarked, setBookmarked] = useState(true);
+  const [branch, setBranch] = useState("main");
+
+  return (
+    <ContextMenu>
+      <ContextMenuTrigger className="flex h-36 w-full max-w-sm select-none items-center justify-center rounded-lg border border-dashed border-border text-sm text-fg-secondary">
+        Right-click here
+      </ContextMenuTrigger>
+      <ContextMenuContent className="w-56">
+        <ContextMenuItem>
+          <Scissors aria-hidden="true" />
+          Cut
+          <ContextMenuShortcut>⌘X</ContextMenuShortcut>
+        </ContextMenuItem>
+        <ContextMenuItem>
+          <Copy aria-hidden="true" />
+          Copy
+          <ContextMenuShortcut>⌘C</ContextMenuShortcut>
+        </ContextMenuItem>
+        <ContextMenuItem>
+          <ClipboardPaste aria-hidden="true" />
+          Paste
+          <ContextMenuShortcut>⌘V</ContextMenuShortcut>
+        </ContextMenuItem>
+        <ContextMenuSeparator />
+        <ContextMenuCheckboxItem checked={bookmarked} onCheckedChange={setBookmarked}>
+          Bookmarked
+        </ContextMenuCheckboxItem>
+        <ContextMenuSub>
+          <ContextMenuSubTrigger>
+            <Users aria-hidden="true" />
+            Share
+          </ContextMenuSubTrigger>
+          <ContextMenuSubContent>
+            <ContextMenuItem>
+              <UserPlus aria-hidden="true" />
+              Invite people
+            </ContextMenuItem>
+            <ContextMenuItem>
+              <Copy aria-hidden="true" />
+              Copy link
+            </ContextMenuItem>
+          </ContextMenuSubContent>
+        </ContextMenuSub>
+        <ContextMenuSeparator />
+        <ContextMenuLabel>Branch</ContextMenuLabel>
+        <ContextMenuRadioGroup value={branch} onValueChange={setBranch}>
+          <ContextMenuRadioItem value="main">main</ContextMenuRadioItem>
+          <ContextMenuRadioItem value="develop">develop</ContextMenuRadioItem>
+        </ContextMenuRadioGroup>
+      </ContextMenuContent>
+    </ContextMenu>
   );
 }
 
@@ -637,6 +708,71 @@ export const overlaysExamples: ExampleMap = {
   );
 }`,
       preview: <ActionsMenuDemo />,
+    },
+  ],
+
+  "context-menu": [
+    {
+      id: "on-a-surface",
+      title: "On a surface",
+      description:
+        "A right-click menu on a target region — with shortcuts, a checkbox, a submenu and a radio group.",
+      code: `function ContextMenuDemo() {
+  const [bookmarked, setBookmarked] = useState(true);
+  const [branch, setBranch] = useState("main");
+
+  return (
+    <ContextMenu>
+      <ContextMenuTrigger className="flex h-36 w-full max-w-sm select-none items-center justify-center rounded-lg border border-dashed border-border text-sm text-fg-secondary">
+        Right-click here
+      </ContextMenuTrigger>
+      <ContextMenuContent className="w-56">
+        <ContextMenuItem>
+          <Scissors aria-hidden="true" />
+          Cut
+          <ContextMenuShortcut>⌘X</ContextMenuShortcut>
+        </ContextMenuItem>
+        <ContextMenuItem>
+          <Copy aria-hidden="true" />
+          Copy
+          <ContextMenuShortcut>⌘C</ContextMenuShortcut>
+        </ContextMenuItem>
+        <ContextMenuItem>
+          <ClipboardPaste aria-hidden="true" />
+          Paste
+          <ContextMenuShortcut>⌘V</ContextMenuShortcut>
+        </ContextMenuItem>
+        <ContextMenuSeparator />
+        <ContextMenuCheckboxItem checked={bookmarked} onCheckedChange={setBookmarked}>
+          Bookmarked
+        </ContextMenuCheckboxItem>
+        <ContextMenuSub>
+          <ContextMenuSubTrigger>
+            <Users aria-hidden="true" />
+            Share
+          </ContextMenuSubTrigger>
+          <ContextMenuSubContent>
+            <ContextMenuItem>
+              <UserPlus aria-hidden="true" />
+              Invite people
+            </ContextMenuItem>
+            <ContextMenuItem>
+              <Copy aria-hidden="true" />
+              Copy link
+            </ContextMenuItem>
+          </ContextMenuSubContent>
+        </ContextMenuSub>
+        <ContextMenuSeparator />
+        <ContextMenuLabel>Branch</ContextMenuLabel>
+        <ContextMenuRadioGroup value={branch} onValueChange={setBranch}>
+          <ContextMenuRadioItem value="main">main</ContextMenuRadioItem>
+          <ContextMenuRadioItem value="develop">develop</ContextMenuRadioItem>
+        </ContextMenuRadioGroup>
+      </ContextMenuContent>
+    </ContextMenu>
+  );
+}`,
+      preview: <ContextMenuDemo />,
     },
   ],
 

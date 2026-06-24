@@ -111,6 +111,22 @@ export {
   CommandSeparator,
   CommandShortcut,
 } from "./components/command.js";
+export {
+  ContextMenu,
+  ContextMenuCheckboxItem,
+  ContextMenuContent,
+  ContextMenuGroup,
+  ContextMenuItem,
+  ContextMenuLabel,
+  ContextMenuRadioGroup,
+  ContextMenuRadioItem,
+  ContextMenuSeparator,
+  ContextMenuShortcut,
+  ContextMenuSub,
+  ContextMenuSubContent,
+  ContextMenuSubTrigger,
+  ContextMenuTrigger,
+} from "./components/context-menu.js";
 export type { CopyButtonProps } from "./components/copy-button.js";
 export { CopyButton } from "./components/copy-button.js";
 export type {
@@ -222,6 +238,23 @@ export type {
   LogoCarouselVariant,
 } from "./components/logo-carousel.js";
 export { LogoCarousel } from "./components/logo-carousel.js";
+export {
+  Menubar,
+  MenubarCheckboxItem,
+  MenubarContent,
+  MenubarGroup,
+  MenubarItem,
+  MenubarLabel,
+  MenubarMenu,
+  MenubarRadioGroup,
+  MenubarRadioItem,
+  MenubarSeparator,
+  MenubarShortcut,
+  MenubarSub,
+  MenubarSubContent,
+  MenubarSubTrigger,
+  MenubarTrigger,
+} from "./components/menubar.js";
 export type { MetricDeltaProps } from "./components/metric.js";
 export { Metric, MetricDelta, MetricLabel, MetricValue } from "./components/metric.js";
 export type {
@@ -281,6 +314,12 @@ export {
 export { Popover, PopoverAnchor, PopoverContent, PopoverTrigger } from "./components/popover.js";
 export { Progress } from "./components/progress.js";
 export { RadioGroup, RadioGroupItem } from "./components/radio-group.js";
+export type { ResizableHandleProps } from "./components/resizable.js";
+export {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "./components/resizable.js";
 export type { RevealProps } from "./components/reveal.js";
 export { Reveal } from "./components/reveal.js";
 export { ScrollArea, ScrollBar } from "./components/scroll-area.js";
@@ -353,6 +392,23 @@ export { Toaster, toast } from "./components/sonner.js";
 export type { SpinnerProps } from "./components/spinner.js";
 export { Spinner } from "./components/spinner.js";
 export { SpotlightCard } from "./components/spotlight-card.js";
+export type {
+  StepperIndicatorProps,
+  StepperItemProps,
+  StepperProps,
+  StepperTriggerProps,
+} from "./components/stepper.js";
+export {
+  Stepper,
+  StepperDescription,
+  StepperIndicator,
+  StepperItem,
+  StepperList,
+  StepperSeparator,
+  StepperTitle,
+  StepperTrigger,
+  stepperIndicatorVariants,
+} from "./components/stepper.js";
 export { Switch } from "./components/switch.js";
 export {
   Table,

@@ -618,6 +618,85 @@ export const COMPONENT_PROPS: Record<string, PropsDoc[]> = {
       ],
     },
   ],
+  stepper: [
+    {
+      interfaceName: "StepperProps",
+      extends: 'Extends Omit<HTMLAttributes<HTMLDivElement>, "onChange">',
+      props: [
+        {
+          name: "value",
+          type: "number",
+          required: false,
+          description:
+            "Controlled active step index. When provided the stepper is fully controlled.",
+        },
+        {
+          name: "defaultValue",
+          type: "number",
+          required: false,
+          description: "Initial active step index for the uncontrolled case. Defaults to `0`.",
+          default: "0",
+        },
+        {
+          name: "onValueChange",
+          type: "(value: number) => void",
+          required: false,
+          description: "Called whenever a step should become active (controlled or not).",
+        },
+        {
+          name: "orientation",
+          type: "StepperOrientation",
+          required: false,
+          description: 'Layout axis. Defaults to `"horizontal"`.',
+          default: '"horizontal"',
+        },
+      ],
+    },
+    {
+      interfaceName: "StepperItemProps",
+      extends: "Extends HTMLAttributes<HTMLLIElement>",
+      props: [
+        {
+          name: "step",
+          type: "number",
+          required: true,
+          description:
+            "This step's zero-based index. Required so the item can derive its state (completed / active / upcoming) from the stepper's active value.",
+        },
+        {
+          name: "completed",
+          type: "boolean",
+          required: false,
+          description: 'Mark the step done explicitly. Overrides the index-derived "completed".',
+        },
+        {
+          name: "disabled",
+          type: "boolean",
+          required: false,
+          description: "Disable interaction + dim the step.",
+          default: "false",
+        },
+      ],
+    },
+    {
+      interfaceName: "StepperIndicatorProps",
+      extends:
+        'Extends HTMLAttributes<HTMLSpanElement>, Omit<VariantProps<typeof stepperIndicatorVariants>, "state">',
+      props: [
+        {
+          name: "children",
+          type: 'HTMLAttributes<HTMLSpanElement>["children"]',
+          required: false,
+          description: "Override the auto-rendered content (step number / check).",
+        },
+      ],
+    },
+    {
+      interfaceName: "StepperTriggerProps",
+      extends: "Extends ButtonHTMLAttributes<HTMLButtonElement>",
+      props: [],
+    },
+  ],
   badge: [
     {
       interfaceName: "BadgeProps",
@@ -1272,6 +1351,21 @@ export const COMPONENT_PROPS: Record<string, PropsDoc[]> = {
           type: "string",
           required: false,
           description: "Extra classes for the sticky header.",
+        },
+      ],
+    },
+  ],
+  resizable: [
+    {
+      interfaceName: "ResizableHandleProps",
+      extends: "Extends ComponentProps<typeof ResizablePrimitiveHandle>",
+      props: [
+        {
+          name: "withHandle",
+          type: "boolean",
+          required: false,
+          description: "Render a centered grip affordance on the divider. Defaults to `false`.",
+          default: "false",
         },
       ],
     },
