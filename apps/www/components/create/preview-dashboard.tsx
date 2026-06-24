@@ -39,7 +39,9 @@ import {
   PiggyBank,
   Plane,
   Plus,
+  Send,
   ShoppingBag,
+  Sparkles,
   TrendingDown,
   TrendingUp,
   Users,
@@ -99,6 +101,64 @@ const usdCents = new Intl.NumberFormat("en-US", {
   minimumFractionDigits: 2,
   maximumFractionDigits: 2,
 });
+
+/* ──────────────────────────────────────────────────────────────────────────
+ * 0. Brand spotlight — a large, brand-filled hero so swapping the brand color
+ *    reads instantly across the preview (primary gradient surface + accent
+ *    chips + brand-tinted CTAs).
+ * ────────────────────────────────────────────────────────────────────────── */
+
+function SpotlightCard() {
+  return (
+    <div className="relative overflow-hidden rounded-xl bg-gradient-primary-strong text-white shadow-glow">
+      <div
+        className="pointer-events-none absolute -top-16 -right-12 size-48 rounded-full bg-white/15 blur-2xl"
+        aria-hidden="true"
+      />
+      <div
+        className="pointer-events-none absolute -bottom-20 -left-10 size-44 rounded-full bg-black/15 blur-2xl"
+        aria-hidden="true"
+      />
+      <div className="relative flex flex-col gap-6 p-6">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex flex-col gap-1">
+            <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-white/15 px-2.5 py-1 text-xs font-medium backdrop-blur-sm">
+              <Sparkles className="size-3" aria-hidden="true" />
+              Cooud balance
+            </span>
+            <span className="mt-2 font-display text-3xl font-semibold tracking-tight tabular-nums sm:text-4xl">
+              {usd.format(128450)}
+            </span>
+            <span className="text-sm text-white/75">Available across 3 accounts</span>
+          </div>
+          <span className="inline-flex size-11 shrink-0 items-center justify-center rounded-xl bg-white/15 backdrop-blur-sm">
+            <Wallet className="size-5" aria-hidden="true" />
+          </span>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            className="inline-flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-semibold text-[color-mix(in_oklch,var(--cooud-primary),black_35%)] shadow-sm transition hover:opacity-90"
+          >
+            <Send className="size-4" aria-hidden="true" />
+            Send payout
+          </button>
+          <button
+            type="button"
+            className="inline-flex items-center gap-2 rounded-lg border border-white/35 bg-white/10 px-4 py-2 text-sm font-medium text-white backdrop-blur-sm transition hover:bg-white/20"
+          >
+            <Plus className="size-4" aria-hidden="true" />
+            Add funds
+          </button>
+          <span className="ml-auto inline-flex items-center gap-1 text-sm font-medium text-white/90">
+            <TrendingUp className="size-4" aria-hidden="true" />
+            +12.4% this month
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 /* ──────────────────────────────────────────────────────────────────────────
  * 1. Contribution / activity chart → lazy (preview-dashboard-charts.tsx)
@@ -585,16 +645,19 @@ function TeamCard() {
 
 export function PreviewDashboard() {
   return (
-    <div className="w-full columns-1 gap-5 2xl:columns-2 [&>*]:mb-5 [&>*]:break-inside-avoid">
-      <StatRow />
-      <ActivityCard />
-      <PayoutCard />
-      <RevenueCard />
-      <SavingsCard />
-      <TransactionsCard />
-      <InvestCard />
-      <SpendingCard />
-      <TeamCard />
+    <div className="flex w-full flex-col gap-5">
+      <SpotlightCard />
+      <div className="w-full columns-1 gap-5 2xl:columns-2 [&>*]:mb-5 [&>*]:break-inside-avoid">
+        <StatRow />
+        <ActivityCard />
+        <PayoutCard />
+        <RevenueCard />
+        <SavingsCard />
+        <TransactionsCard />
+        <InvestCard />
+        <SpendingCard />
+        <TeamCard />
+      </div>
     </div>
   );
 }

@@ -15,6 +15,7 @@ import type {
   ChartPalette,
   DesignConfig,
   FontChoice,
+  Mode,
   StylePreset,
 } from "./types";
 
@@ -706,6 +707,125 @@ export function parsePresetCode(value: string): StylePreset {
       radius: config.radius,
     },
   };
+}
+
+/* ------------------------------------------------------------------ *
+ * 7. SHAREABLE PERMALINK — encode the 7 core fields (by stable id)
+ *    into a compact base64url `?c=` token. Defaults are omitted to keep
+ *    the link short; decode is fully guarded + validated.
+ * ------------------------------------------------------------------ */
+
+/** Compact shape stored in the `?c=` token. Keys are short; defaults are dropped. */
+interface PermalinkPayload {
+  m?: Mode; // mode
+  b?: string; // baseColor id
+  r?: string; // brand id
+  c?: string; // chart id
+  h?: string; // headingFont id
+  y?: string; // bodyFont id
+  d?: number; // radius
+}
+
+/**
+ * Encode the current config into a compact base64url token. Only the 7 core
+ * fields are encoded, by their stable ids — never raw objects — and any field
+ * equal to {@link DEFAULT_CONFIG} is omitted so a default config yields "".
+ */
+export function encodeConfigParam(config: DesignConfig): string {
+  const payload: PermalinkPayload = {};
+  if (config.mode !== DEFAULT_CONFIG.mode) payload.m = config.mode;
+  if (config.baseColor !== DEFAULT_CONFIG.baseColor) payload.b = config.baseColor;
+  if (config.brand !== DEFAULT_CONFIG.brand) payload.r = config.brand;
+  if (config.chart !== DEFAULT_CONFIG.chart) payload.c = config.chart;
+  if (config.headingFont !== DEFAULT_CONFIG.headingFont) payload.h = config.headingFont;
+  if (config.bodyFont !== DEFAULT_CONFIG.bodyFont) payload.y = config.bodyFont;
+  if (config.radius !== DEFAULT_CONFIG.radius) payload.d = config.radius;
+
+  if (Object.keys(payload).length === 0) return "";
+  return base64UrlEncode(JSON.stringify(payload));
+}
+
+/**
+ * Decode a `?c=` token back into a full {@link DesignConfig}. Every id is
+ * validated against the known lists; anything malformed or unknown is ignored
+ * and falls back to the default for that field. Returns null only if the token
+ * is unusable and contributes nothing on top of defaults.
+ */
+export function decodeConfigParam(token: string | null | undefined): DesignConfig | null {
+  if (!token) return null;
+  let payload: PermalinkPayload;
+  try {
+    payload = JSON.parse(base64UrlDecode(token)) as PermalinkPayload;
+  } catch {
+    return null;
+  }
+  if (!payload || typeof payload !== "object") return null;
+
+  const config: DesignConfig = { ...DEFAULT_CONFIG, style: CUSTOM_STYLE_NAME };
+  let applied = false;
+
+  if (payload.m === "light" || payload.m === "dark") {
+    config.mode = payload.m;
+    applied = true;
+  }
+  applied = applyKnownId(payload.b, BASE_COLORS, (id) => (config.baseColor = id)) || applied;
+  applied = applyKnownId(payload.r, BRAND_COLORS, (id) => (config.brand = id)) || applied;
+  applied = applyKnownId(payload.c, CHART_PALETTES, (id) => (config.chart = id)) || applied;
+  applied = applyKnownId(payload.h, FONT_CHOICES, (id) => (config.headingFont = id)) || applied;
+  applied = applyKnownId(payload.y, FONT_CHOICES, (id) => (config.bodyFont = id)) || applied;
+  const radius = payload.d;
+  if (typeof radius === "number" && Number.isFinite(radius) && radius >= 0 && radius <= 28) {
+    config.radius = radius;
+    applied = true;
+  }
+
+  if (!applied) return null;
+  return matchStyle(config);
+}
+
+/** If `style` ends up matching a known preset's config exactly, name it. */
+function matchStyle(config: DesignConfig): DesignConfig {
+  const match = STYLE_PRESETS.find(
+    (preset) =>
+      preset.config.mode === config.mode &&
+      preset.config.baseColor === config.baseColor &&
+      preset.config.brand === config.brand &&
+      preset.config.chart === config.chart &&
+      preset.config.headingFont === config.headingFont &&
+      preset.config.bodyFont === config.bodyFont &&
+      preset.config.radius === config.radius,
+  );
+  return match ? { ...config, style: match.name } : config;
+}
+
+function applyKnownId(
+  id: string | undefined,
+  items: { id: string }[],
+  set: (id: string) => void,
+): boolean {
+  if (id && items.some((item) => item.id === id)) {
+    set(id);
+    return true;
+  }
+  return false;
+}
+
+function base64UrlEncode(value: string): string {
+  if (typeof btoa === "undefined") return "";
+  const bytes = new TextEncoder().encode(value);
+  let binary = "";
+  for (const byte of bytes) binary += String.fromCharCode(byte);
+  return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
+function base64UrlDecode(value: string): string {
+  if (typeof atob === "undefined") {
+    throw new Error("Permalink decode is unavailable in this environment.");
+  }
+  const padded = value.replace(/-/g, "+").replace(/_/g, "/");
+  const binary = atob(padded);
+  const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
+  return new TextDecoder().decode(bytes);
 }
 
 export function makeShuffledConfig(seed = Date.now()): DesignConfig {
