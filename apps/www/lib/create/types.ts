@@ -3,6 +3,9 @@
  * tweak, bundle into a named Style preset, save, and export.
  */
 
+// Pure server-safe type import — no icon runtime, no client boundary.
+import type { IconLibraryId } from "./icon-library-list";
+
 export type Mode = "light" | "dark";
 
 export interface DesignConfig {
@@ -19,6 +22,8 @@ export interface DesignConfig {
   headingFont: string;
   /** Body font id. */
   bodyFont: string;
+  /** Icon-library id (drives the preview icon set). */
+  iconLibrary: IconLibraryId;
   /** Optional freeform CSS color overriding the selected brand's primary. */
   primaryColor?: string;
   /** Optional freeform CSS color overriding the selected brand's accent. */

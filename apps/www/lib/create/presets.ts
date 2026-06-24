@@ -9,6 +9,7 @@
  */
 
 import type { ThemeOverrides } from "@cooud-ui/tokens";
+import { ICON_LIBRARIES, type IconLibraryId } from "./icon-library-list";
 import type {
   BaseColor,
   BrandColor,
@@ -408,6 +409,7 @@ export const STYLE_PRESETS: StylePreset[] = [
       chart: "brand",
       headingFont: "grotesk",
       bodyFont: "inter",
+      iconLibrary: "lucide",
       radius: 14,
     },
   },
@@ -422,6 +424,7 @@ export const STYLE_PRESETS: StylePreset[] = [
       chart: "vivid",
       headingFont: "geist",
       bodyFont: "geist",
+      iconLibrary: "phosphor",
       radius: 16,
     },
   },
@@ -436,6 +439,7 @@ export const STYLE_PRESETS: StylePreset[] = [
       chart: "neutral",
       headingFont: "inter",
       bodyFont: "inter",
+      iconLibrary: "lucide",
       radius: 8,
     },
   },
@@ -451,6 +455,7 @@ export const STYLE_PRESETS: StylePreset[] = [
       chart: "vivid",
       headingFont: "mono",
       bodyFont: "mono",
+      iconLibrary: "tabler",
       radius: 0,
     },
   },
@@ -465,6 +470,7 @@ export const STYLE_PRESETS: StylePreset[] = [
       chart: "warm",
       headingFont: "serif",
       bodyFont: "inter",
+      iconLibrary: "hugeicons",
       radius: 12,
     },
   },
@@ -480,6 +486,7 @@ export const STYLE_PRESETS: StylePreset[] = [
       chart: "neutral",
       headingFont: "mono",
       bodyFont: "mono",
+      iconLibrary: "remix",
       radius: 4,
     },
   },
@@ -497,6 +504,7 @@ export const DEFAULT_CONFIG: DesignConfig = {
   chart: "brand",
   headingFont: "grotesk",
   bodyFont: "inter",
+  iconLibrary: "lucide",
   radius: 14,
 };
 
@@ -642,6 +650,7 @@ export function createSavedPreset(name: string, config: DesignConfig): StylePres
       chart: config.chart,
       headingFont: config.headingFont,
       bodyFont: config.bodyFont,
+      iconLibrary: config.iconLibrary,
       primaryColor: config.primaryColor,
       accentColor: config.accentColor,
       radius: config.radius,
@@ -687,6 +696,10 @@ export function parsePresetCode(value: string): StylePreset {
   if (!Number.isFinite(config.radius) || config.radius < 0 || config.radius > 28) {
     throw new Error("Preset radius must be between 0 and 28.");
   }
+  // Optional for backward compatibility — older codes predate icon libraries.
+  const iconLibrary = isIconLibraryId(config.iconLibrary)
+    ? config.iconLibrary
+    : DEFAULT_CONFIG.iconLibrary;
 
   return {
     id: parsed.id || `imported-${slugify(parsed.name)}-${Date.now().toString(36)}`,
@@ -702,11 +715,17 @@ export function parsePresetCode(value: string): StylePreset {
       chart: config.chart,
       headingFont: config.headingFont,
       bodyFont: config.bodyFont,
+      iconLibrary,
       primaryColor: config.primaryColor,
       accentColor: config.accentColor,
       radius: config.radius,
     },
   };
+}
+
+/** Type guard: is `value` one of the known icon-library ids? */
+function isIconLibraryId(value: unknown): value is IconLibraryId {
+  return typeof value === "string" && ICON_LIBRARIES.some((lib) => lib.id === value);
 }
 
 /* ------------------------------------------------------------------ *
@@ -723,11 +742,12 @@ interface PermalinkPayload {
   c?: string; // chart id
   h?: string; // headingFont id
   y?: string; // bodyFont id
+  i?: string; // iconLibrary id
   d?: number; // radius
 }
 
 /**
- * Encode the current config into a compact base64url token. Only the 7 core
+ * Encode the current config into a compact base64url token. Only the core
  * fields are encoded, by their stable ids — never raw objects — and any field
  * equal to {@link DEFAULT_CONFIG} is omitted so a default config yields "".
  */
@@ -739,6 +759,7 @@ export function encodeConfigParam(config: DesignConfig): string {
   if (config.chart !== DEFAULT_CONFIG.chart) payload.c = config.chart;
   if (config.headingFont !== DEFAULT_CONFIG.headingFont) payload.h = config.headingFont;
   if (config.bodyFont !== DEFAULT_CONFIG.bodyFont) payload.y = config.bodyFont;
+  if (config.iconLibrary !== DEFAULT_CONFIG.iconLibrary) payload.i = config.iconLibrary;
   if (config.radius !== DEFAULT_CONFIG.radius) payload.d = config.radius;
 
   if (Object.keys(payload).length === 0) return "";
@@ -773,6 +794,10 @@ export function decodeConfigParam(token: string | null | undefined): DesignConfi
   applied = applyKnownId(payload.c, CHART_PALETTES, (id) => (config.chart = id)) || applied;
   applied = applyKnownId(payload.h, FONT_CHOICES, (id) => (config.headingFont = id)) || applied;
   applied = applyKnownId(payload.y, FONT_CHOICES, (id) => (config.bodyFont = id)) || applied;
+  applied =
+    applyKnownId(payload.i, ICON_LIBRARIES, (id) => {
+      config.iconLibrary = id as IconLibraryId;
+    }) || applied;
   const radius = payload.d;
   if (typeof radius === "number" && Number.isFinite(radius) && radius >= 0 && radius <= 28) {
     config.radius = radius;
@@ -793,6 +818,7 @@ function matchStyle(config: DesignConfig): DesignConfig {
       preset.config.chart === config.chart &&
       preset.config.headingFont === config.headingFont &&
       preset.config.bodyFont === config.bodyFont &&
+      preset.config.iconLibrary === config.iconLibrary &&
       preset.config.radius === config.radius,
   );
   return match ? { ...config, style: match.name } : config;
@@ -800,7 +826,7 @@ function matchStyle(config: DesignConfig): DesignConfig {
 
 function applyKnownId(
   id: string | undefined,
-  items: { id: string }[],
+  items: readonly { id: string }[],
   set: (id: string) => void,
 ): boolean {
   if (id && items.some((item) => item.id === id)) {
@@ -847,6 +873,7 @@ export function makeShuffledConfig(seed = Date.now()): DesignConfig {
       29,
       "body font choices",
     ).id,
+    iconLibrary: pick(ICON_LIBRARIES, 31, "icon libraries").id,
     radius: radii[seed % radii.length] ?? 14,
   };
 }
