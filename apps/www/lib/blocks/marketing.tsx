@@ -1,8 +1,14 @@
 "use client";
 
 import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
   Avatar,
   AvatarFallback,
+  AvatarGroup,
+  AvatarImage,
   Badge,
   Button,
   Card,
@@ -13,16 +19,23 @@ import {
   CardTitle,
   Input,
   Label,
+  Marquee,
+  Separator,
 } from "@cooud-ui/ui";
 import {
   ArrowRight,
   BarChart3,
   Check,
+  Github,
+  Hexagon,
   Layers,
+  Linkedin,
   Lock,
+  Menu,
   Palette,
   Send,
   Sparkles,
+  Twitter,
   Workflow,
   Zap,
 } from "lucide-react";
@@ -1031,6 +1044,1015 @@ export function CtaBlock() {
 }`;
 
 /* ──────────────────────────────────────────────────────────────────
+   5. TESTIMONIALS
+   ────────────────────────────────────────────────────────────────── */
+
+const TESTIMONIALS = [
+  {
+    quote:
+      "Cooud let us replace a tangle of one-off components with one themeable system. Our redesign shipped weeks early.",
+    name: "Amara Okafor",
+    role: "VP Design, Northwind",
+    initials: "AO",
+    img: "https://i.pravatar.cc/96?img=5",
+  },
+  {
+    quote:
+      "Every surface inherits our brand the moment we change a token. It's the closest thing to magic our team has shipped.",
+    name: "Marco Rossi",
+    role: "Staff Engineer, Lumen",
+    initials: "MR",
+    img: "https://i.pravatar.cc/96?img=12",
+  },
+  {
+    quote:
+      "Accessibility used to be an afterthought. Now it's the default — we pass audits without a scramble before launch.",
+    name: "Priya Nair",
+    role: "Head of Product, Cobalt",
+    initials: "PN",
+    img: "https://i.pravatar.cc/96?img=32",
+  },
+  {
+    quote:
+      "We onboarded three new engineers in a day. The blocks read like documentation you can paste straight into the app.",
+    name: "Jonas Berg",
+    role: "Engineering Lead, Fathom",
+    initials: "JB",
+    img: "https://i.pravatar.cc/96?img=68",
+  },
+  {
+    quote:
+      "The marquee, the cards, the gradients — it all feels premium out of the box. Our marketing site looks bespoke.",
+    name: "Sofia Lindqvist",
+    role: "Founder, Driftwood",
+    initials: "SL",
+    img: "https://i.pravatar.cc/96?img=47",
+  },
+  {
+    quote:
+      "Cooud is the first design system our designers and engineers actually agree on. That alone paid for itself.",
+    name: "David Chen",
+    role: "CTO, Parallel",
+    initials: "DC",
+    img: "https://i.pravatar.cc/96?img=15",
+  },
+] as const;
+
+const TESTIMONIAL_AVATARS = [
+  { src: "https://i.pravatar.cc/96?img=5", alt: "Amara Okafor", fallback: "AO" },
+  { src: "https://i.pravatar.cc/96?img=12", alt: "Marco Rossi", fallback: "MR" },
+  { src: "https://i.pravatar.cc/96?img=32", alt: "Priya Nair", fallback: "PN" },
+  { src: "https://i.pravatar.cc/96?img=68", alt: "Jonas Berg", fallback: "JB" },
+  { src: "https://i.pravatar.cc/96?img=47", alt: "Sofia Lindqvist", fallback: "SL" },
+];
+
+function TestimonialsHeader() {
+  return (
+    <div className="mx-auto flex max-w-2xl flex-col items-center text-center">
+      <Badge variant="secondary" className="gap-1.5">
+        <Sparkles aria-hidden="true" className="size-3.5" />
+        Loved by teams
+      </Badge>
+      <h2 className="mt-4 text-balance font-display text-3xl font-semibold tracking-tight text-fg sm:text-4xl">
+        Loved by modern product teams
+      </h2>
+      <p className="mt-4 text-balance text-fg-secondary">
+        From seed-stage startups to public companies — teams ship faster when every surface is
+        accessible, themeable, and consistent.
+      </p>
+      <div className="mt-7 flex items-center gap-3">
+        <AvatarGroup avatars={TESTIMONIAL_AVATARS} aria-label="Teams using Cooud" />
+        <p className="text-sm text-fg-tertiary">
+          Join <span className="font-medium text-fg">4,000+</span> teams shipping with Cooud
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function TestimonialCard({ testimonial }: { testimonial: (typeof TESTIMONIALS)[number] }) {
+  return (
+    <Card className="w-80 shrink-0 border-border bg-surface-raised">
+      <CardContent className="flex flex-col gap-5 pt-6">
+        <p className="text-sm leading-6 text-fg-secondary">“{testimonial.quote}”</p>
+        <div className="flex items-center gap-3">
+          <Avatar className="size-9">
+            <AvatarImage src={testimonial.img} alt={testimonial.name} />
+            <AvatarFallback className="bg-surface-overlay text-xs text-fg-secondary">
+              {testimonial.initials}
+            </AvatarFallback>
+          </Avatar>
+          <div className="min-w-0">
+            <p className="truncate text-sm font-medium text-fg">{testimonial.name}</p>
+            <p className="truncate text-xs text-fg-tertiary">{testimonial.role}</p>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function TestimonialsBlock() {
+  return (
+    <section className="px-6 py-20">
+      <TestimonialsHeader />
+      <div className="mt-14">
+        <Marquee pauseOnHover gap="1.5rem">
+          {TESTIMONIALS.map((testimonial) => (
+            <TestimonialCard key={testimonial.name} testimonial={testimonial} />
+          ))}
+        </Marquee>
+      </div>
+    </section>
+  );
+}
+
+const testimonialsCode = `import {
+  Avatar,
+  AvatarFallback,
+  AvatarGroup,
+  AvatarImage,
+  Badge,
+  Card,
+  CardContent,
+  Marquee,
+} from "@cooud-ui/ui";
+import { Sparkles } from "lucide-react";
+
+const TESTIMONIALS = [
+  {
+    quote:
+      "Cooud let us replace a tangle of one-off components with one themeable system. Our redesign shipped weeks early.",
+    name: "Amara Okafor",
+    role: "VP Design, Northwind",
+    initials: "AO",
+    img: "https://i.pravatar.cc/96?img=5",
+  },
+  {
+    quote:
+      "Every surface inherits our brand the moment we change a token. It's the closest thing to magic our team has shipped.",
+    name: "Marco Rossi",
+    role: "Staff Engineer, Lumen",
+    initials: "MR",
+    img: "https://i.pravatar.cc/96?img=12",
+  },
+  {
+    quote:
+      "Accessibility used to be an afterthought. Now it's the default — we pass audits without a scramble before launch.",
+    name: "Priya Nair",
+    role: "Head of Product, Cobalt",
+    initials: "PN",
+    img: "https://i.pravatar.cc/96?img=32",
+  },
+  {
+    quote:
+      "We onboarded three new engineers in a day. The blocks read like documentation you can paste straight into the app.",
+    name: "Jonas Berg",
+    role: "Engineering Lead, Fathom",
+    initials: "JB",
+    img: "https://i.pravatar.cc/96?img=68",
+  },
+  {
+    quote:
+      "The marquee, the cards, the gradients — it all feels premium out of the box. Our marketing site looks bespoke.",
+    name: "Sofia Lindqvist",
+    role: "Founder, Driftwood",
+    initials: "SL",
+    img: "https://i.pravatar.cc/96?img=47",
+  },
+  {
+    quote:
+      "Cooud is the first design system our designers and engineers actually agree on. That alone paid for itself.",
+    name: "David Chen",
+    role: "CTO, Parallel",
+    initials: "DC",
+    img: "https://i.pravatar.cc/96?img=15",
+  },
+];
+
+const TESTIMONIAL_AVATARS = [
+  { src: "https://i.pravatar.cc/96?img=5", alt: "Amara Okafor", fallback: "AO" },
+  { src: "https://i.pravatar.cc/96?img=12", alt: "Marco Rossi", fallback: "MR" },
+  { src: "https://i.pravatar.cc/96?img=32", alt: "Priya Nair", fallback: "PN" },
+  { src: "https://i.pravatar.cc/96?img=68", alt: "Jonas Berg", fallback: "JB" },
+  { src: "https://i.pravatar.cc/96?img=47", alt: "Sofia Lindqvist", fallback: "SL" },
+];
+
+function TestimonialCard({ testimonial }) {
+  return (
+    <Card className="w-80 shrink-0 border-border bg-surface-raised">
+      <CardContent className="flex flex-col gap-5 pt-6">
+        <p className="text-sm leading-6 text-fg-secondary">“{testimonial.quote}”</p>
+        <div className="flex items-center gap-3">
+          <Avatar className="size-9">
+            <AvatarImage src={testimonial.img} alt={testimonial.name} />
+            <AvatarFallback className="bg-surface-overlay text-xs text-fg-secondary">
+              {testimonial.initials}
+            </AvatarFallback>
+          </Avatar>
+          <div className="min-w-0">
+            <p className="truncate text-sm font-medium text-fg">{testimonial.name}</p>
+            <p className="truncate text-xs text-fg-tertiary">{testimonial.role}</p>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+export function TestimonialsBlock() {
+  return (
+    <section className="px-6 py-20">
+      <div className="mx-auto flex max-w-2xl flex-col items-center text-center">
+        <Badge variant="secondary" className="gap-1.5">
+          <Sparkles aria-hidden="true" className="size-3.5" />
+          Loved by teams
+        </Badge>
+        <h2 className="mt-4 text-balance font-display text-3xl font-semibold tracking-tight text-fg sm:text-4xl">
+          Loved by modern product teams
+        </h2>
+        <p className="mt-4 text-balance text-fg-secondary">
+          From seed-stage startups to public companies — teams ship faster when every surface is
+          accessible, themeable, and consistent.
+        </p>
+        <div className="mt-7 flex items-center gap-3">
+          <AvatarGroup avatars={TESTIMONIAL_AVATARS} aria-label="Teams using Cooud" />
+          <p className="text-sm text-fg-tertiary">
+            Join <span className="font-medium text-fg">4,000+</span> teams shipping with Cooud
+          </p>
+        </div>
+      </div>
+      <div className="mt-14">
+        <Marquee pauseOnHover gap="1.5rem">
+          {TESTIMONIALS.map((testimonial) => (
+            <TestimonialCard key={testimonial.name} testimonial={testimonial} />
+          ))}
+        </Marquee>
+      </div>
+    </section>
+  );
+}`;
+
+function TestimonialsGridBlock() {
+  return (
+    <section className="px-6 py-20">
+      <TestimonialsHeader />
+      <div className="mx-auto mt-14 grid max-w-5xl gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {TESTIMONIALS.map((testimonial) => (
+          <Card key={testimonial.name} className="border-border">
+            <CardContent className="flex h-full flex-col gap-5 pt-6">
+              <p className="text-sm leading-6 text-fg-secondary">“{testimonial.quote}”</p>
+              <div className="mt-auto flex items-center gap-3">
+                <Avatar className="size-9">
+                  <AvatarImage src={testimonial.img} alt={testimonial.name} />
+                  <AvatarFallback className="bg-surface-overlay text-xs text-fg-secondary">
+                    {testimonial.initials}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-medium text-fg">{testimonial.name}</p>
+                  <p className="truncate text-xs text-fg-tertiary">{testimonial.role}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+const testimonialsGridCode = `import {
+  Avatar,
+  AvatarFallback,
+  AvatarGroup,
+  AvatarImage,
+  Badge,
+  Card,
+  CardContent,
+} from "@cooud-ui/ui";
+import { Sparkles } from "lucide-react";
+
+const TESTIMONIALS = [
+  {
+    quote:
+      "Cooud let us replace a tangle of one-off components with one themeable system. Our redesign shipped weeks early.",
+    name: "Amara Okafor",
+    role: "VP Design, Northwind",
+    initials: "AO",
+    img: "https://i.pravatar.cc/96?img=5",
+  },
+  {
+    quote:
+      "Every surface inherits our brand the moment we change a token. It's the closest thing to magic our team has shipped.",
+    name: "Marco Rossi",
+    role: "Staff Engineer, Lumen",
+    initials: "MR",
+    img: "https://i.pravatar.cc/96?img=12",
+  },
+  {
+    quote:
+      "Accessibility used to be an afterthought. Now it's the default — we pass audits without a scramble before launch.",
+    name: "Priya Nair",
+    role: "Head of Product, Cobalt",
+    initials: "PN",
+    img: "https://i.pravatar.cc/96?img=32",
+  },
+  {
+    quote:
+      "We onboarded three new engineers in a day. The blocks read like documentation you can paste straight into the app.",
+    name: "Jonas Berg",
+    role: "Engineering Lead, Fathom",
+    initials: "JB",
+    img: "https://i.pravatar.cc/96?img=68",
+  },
+  {
+    quote:
+      "The marquee, the cards, the gradients — it all feels premium out of the box. Our marketing site looks bespoke.",
+    name: "Sofia Lindqvist",
+    role: "Founder, Driftwood",
+    initials: "SL",
+    img: "https://i.pravatar.cc/96?img=47",
+  },
+  {
+    quote:
+      "Cooud is the first design system our designers and engineers actually agree on. That alone paid for itself.",
+    name: "David Chen",
+    role: "CTO, Parallel",
+    initials: "DC",
+    img: "https://i.pravatar.cc/96?img=15",
+  },
+];
+
+const TESTIMONIAL_AVATARS = [
+  { src: "https://i.pravatar.cc/96?img=5", alt: "Amara Okafor", fallback: "AO" },
+  { src: "https://i.pravatar.cc/96?img=12", alt: "Marco Rossi", fallback: "MR" },
+  { src: "https://i.pravatar.cc/96?img=32", alt: "Priya Nair", fallback: "PN" },
+  { src: "https://i.pravatar.cc/96?img=68", alt: "Jonas Berg", fallback: "JB" },
+  { src: "https://i.pravatar.cc/96?img=47", alt: "Sofia Lindqvist", fallback: "SL" },
+];
+
+export function TestimonialsGridBlock() {
+  return (
+    <section className="px-6 py-20">
+      <div className="mx-auto flex max-w-2xl flex-col items-center text-center">
+        <Badge variant="secondary" className="gap-1.5">
+          <Sparkles aria-hidden="true" className="size-3.5" />
+          Loved by teams
+        </Badge>
+        <h2 className="mt-4 text-balance font-display text-3xl font-semibold tracking-tight text-fg sm:text-4xl">
+          Loved by modern product teams
+        </h2>
+        <p className="mt-4 text-balance text-fg-secondary">
+          From seed-stage startups to public companies — teams ship faster when every surface is
+          accessible, themeable, and consistent.
+        </p>
+        <div className="mt-7 flex items-center gap-3">
+          <AvatarGroup avatars={TESTIMONIAL_AVATARS} aria-label="Teams using Cooud" />
+          <p className="text-sm text-fg-tertiary">
+            Join <span className="font-medium text-fg">4,000+</span> teams shipping with Cooud
+          </p>
+        </div>
+      </div>
+      <div className="mx-auto mt-14 grid max-w-5xl gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {TESTIMONIALS.map((testimonial) => (
+          <Card key={testimonial.name} className="border-border">
+            <CardContent className="flex h-full flex-col gap-5 pt-6">
+              <p className="text-sm leading-6 text-fg-secondary">“{testimonial.quote}”</p>
+              <div className="mt-auto flex items-center gap-3">
+                <Avatar className="size-9">
+                  <AvatarImage src={testimonial.img} alt={testimonial.name} />
+                  <AvatarFallback className="bg-surface-overlay text-xs text-fg-secondary">
+                    {testimonial.initials}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-medium text-fg">{testimonial.name}</p>
+                  <p className="truncate text-xs text-fg-tertiary">{testimonial.role}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </section>
+  );
+}`;
+
+/* ──────────────────────────────────────────────────────────────────
+   6. FAQ
+   ────────────────────────────────────────────────────────────────── */
+
+const FAQ_ITEMS = [
+  {
+    question: "What exactly do I get with Cooud?",
+    answer:
+      "A themeable component library plus a registry of copy-paste product sections. Add what you need with the CLI and everything inherits your tokens, radius, and color scale automatically.",
+  },
+  {
+    question: "Do the components work with my existing stack?",
+    answer:
+      "Yes. Components are framework-agnostic React built on accessible primitives and Tailwind, so they drop into Next.js, Remix, Vite, or any modern React setup.",
+  },
+  {
+    question: "How do themes work?",
+    answer:
+      "Themes are driven entirely by CSS tokens. Swap a palette and every surface, border, and gradient updates live — no per-component overrides and no rebuild required.",
+  },
+  {
+    question: "Is everything accessible out of the box?",
+    answer:
+      "Accessibility is the default, not an add-on. Focus management, keyboard interaction, and ARIA semantics are built in and verified, so you pass audits without a last-minute scramble.",
+  },
+  {
+    question: "Can I cancel anytime?",
+    answer:
+      "Absolutely. Plans are month-to-month with no lock-in, and anything you've already added to your codebase is yours to keep.",
+  },
+] as const;
+
+function FaqBlock() {
+  return (
+    <section className="px-6 py-20">
+      <div className="mx-auto max-w-2xl text-center">
+        <Badge variant="secondary">FAQ</Badge>
+        <h2 className="mt-4 font-display text-4xl font-semibold tracking-tight text-fg">
+          Frequently asked questions
+        </h2>
+        <p className="mt-4 text-balance text-fg-secondary">
+          Everything you need to know about the product and billing. Can&apos;t find an answer?
+          Reach out to our team.
+        </p>
+      </div>
+
+      <Accordion type="single" collapsible className="mx-auto mt-12 max-w-2xl">
+        {FAQ_ITEMS.map((item) => (
+          <AccordionItem key={item.question} value={item.question}>
+            <AccordionTrigger>{item.question}</AccordionTrigger>
+            <AccordionContent>{item.answer}</AccordionContent>
+          </AccordionItem>
+        ))}
+      </Accordion>
+    </section>
+  );
+}
+
+const faqCode = `import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+  Badge,
+} from "@cooud-ui/ui";
+
+const FAQ_ITEMS = [
+  {
+    question: "What exactly do I get with Cooud?",
+    answer:
+      "A themeable component library plus a registry of copy-paste product sections. Add what you need with the CLI and everything inherits your tokens, radius, and color scale automatically.",
+  },
+  {
+    question: "Do the components work with my existing stack?",
+    answer:
+      "Yes. Components are framework-agnostic React built on accessible primitives and Tailwind, so they drop into Next.js, Remix, Vite, or any modern React setup.",
+  },
+  {
+    question: "How do themes work?",
+    answer:
+      "Themes are driven entirely by CSS tokens. Swap a palette and every surface, border, and gradient updates live — no per-component overrides and no rebuild required.",
+  },
+  {
+    question: "Is everything accessible out of the box?",
+    answer:
+      "Accessibility is the default, not an add-on. Focus management, keyboard interaction, and ARIA semantics are built in and verified, so you pass audits without a last-minute scramble.",
+  },
+  {
+    question: "Can I cancel anytime?",
+    answer:
+      "Absolutely. Plans are month-to-month with no lock-in, and anything you've already added to your codebase is yours to keep.",
+  },
+];
+
+export function FaqBlock() {
+  return (
+    <section className="px-6 py-20">
+      <div className="mx-auto max-w-2xl text-center">
+        <Badge variant="secondary">FAQ</Badge>
+        <h2 className="mt-4 font-display text-4xl font-semibold tracking-tight text-fg">
+          Frequently asked questions
+        </h2>
+        <p className="mt-4 text-balance text-fg-secondary">
+          Everything you need to know about the product and billing. Can't find an answer?
+          Reach out to our team.
+        </p>
+      </div>
+
+      <Accordion type="single" collapsible className="mx-auto mt-12 max-w-2xl">
+        {FAQ_ITEMS.map((item) => (
+          <AccordionItem key={item.question} value={item.question}>
+            <AccordionTrigger>{item.question}</AccordionTrigger>
+            <AccordionContent>{item.answer}</AccordionContent>
+          </AccordionItem>
+        ))}
+      </Accordion>
+    </section>
+  );
+}`;
+
+function FaqSplitBlock() {
+  return (
+    <section className="px-6 py-20">
+      <div className="mx-auto grid max-w-5xl gap-12 lg:grid-cols-2">
+        <div>
+          <Badge variant="secondary">FAQ</Badge>
+          <h2 className="mt-4 font-display text-4xl font-semibold tracking-tight text-fg">
+            Frequently asked questions
+          </h2>
+          <p className="mt-4 max-w-md text-fg-secondary">
+            Answers to the questions we hear most. We keep this short so you can get back to
+            building.
+          </p>
+          <div className="mt-8 rounded-2xl border border-border bg-surface-inset p-5">
+            <p className="text-sm font-medium text-fg">Still have questions?</p>
+            <p className="mt-1 text-sm text-fg-secondary">
+              Our team usually replies within a few hours.
+            </p>
+            <Button variant="outline" className="mt-4">
+              Contact support
+            </Button>
+          </div>
+        </div>
+
+        <Accordion type="single" collapsible>
+          {FAQ_ITEMS.map((item) => (
+            <AccordionItem key={item.question} value={item.question}>
+              <AccordionTrigger>{item.question}</AccordionTrigger>
+              <AccordionContent>{item.answer}</AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
+      </div>
+    </section>
+  );
+}
+
+const faqSplitCode = `import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+  Badge,
+  Button,
+} from "@cooud-ui/ui";
+
+const FAQ_ITEMS = [
+  {
+    question: "What exactly do I get with Cooud?",
+    answer:
+      "A themeable component library plus a registry of copy-paste product sections. Add what you need with the CLI and everything inherits your tokens, radius, and color scale automatically.",
+  },
+  {
+    question: "Do the components work with my existing stack?",
+    answer:
+      "Yes. Components are framework-agnostic React built on accessible primitives and Tailwind, so they drop into Next.js, Remix, Vite, or any modern React setup.",
+  },
+  {
+    question: "How do themes work?",
+    answer:
+      "Themes are driven entirely by CSS tokens. Swap a palette and every surface, border, and gradient updates live — no per-component overrides and no rebuild required.",
+  },
+  {
+    question: "Is everything accessible out of the box?",
+    answer:
+      "Accessibility is the default, not an add-on. Focus management, keyboard interaction, and ARIA semantics are built in and verified, so you pass audits without a last-minute scramble.",
+  },
+  {
+    question: "Can I cancel anytime?",
+    answer:
+      "Absolutely. Plans are month-to-month with no lock-in, and anything you've already added to your codebase is yours to keep.",
+  },
+];
+
+export function FaqSplitBlock() {
+  return (
+    <section className="px-6 py-20">
+      <div className="mx-auto grid max-w-5xl gap-12 lg:grid-cols-2">
+        <div>
+          <Badge variant="secondary">FAQ</Badge>
+          <h2 className="mt-4 font-display text-4xl font-semibold tracking-tight text-fg">
+            Frequently asked questions
+          </h2>
+          <p className="mt-4 max-w-md text-fg-secondary">
+            Answers to the questions we hear most. We keep this short so you can get back to
+            building.
+          </p>
+          <div className="mt-8 rounded-2xl border border-border bg-surface-inset p-5">
+            <p className="text-sm font-medium text-fg">Still have questions?</p>
+            <p className="mt-1 text-sm text-fg-secondary">
+              Our team usually replies within a few hours.
+            </p>
+            <Button variant="outline" className="mt-4">
+              Contact support
+            </Button>
+          </div>
+        </div>
+
+        <Accordion type="single" collapsible>
+          {FAQ_ITEMS.map((item) => (
+            <AccordionItem key={item.question} value={item.question}>
+              <AccordionTrigger>{item.question}</AccordionTrigger>
+              <AccordionContent>{item.answer}</AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
+      </div>
+    </section>
+  );
+}`;
+
+/* ──────────────────────────────────────────────────────────────────
+   7. FOOTER
+   ────────────────────────────────────────────────────────────────── */
+
+const FOOTER_COLUMNS = [
+  {
+    heading: "Product",
+    links: [
+      { label: "Features", href: "#features" },
+      { label: "Pricing", href: "#pricing" },
+      { label: "Blocks", href: "#blocks" },
+      { label: "Changelog", href: "#changelog" },
+      { label: "Roadmap", href: "#roadmap" },
+    ],
+  },
+  {
+    heading: "Company",
+    links: [
+      { label: "About", href: "#about" },
+      { label: "Careers", href: "#careers" },
+      { label: "Customers", href: "#customers" },
+      { label: "Brand", href: "#brand" },
+      { label: "Contact", href: "#contact" },
+    ],
+  },
+  {
+    heading: "Resources",
+    links: [
+      { label: "Documentation", href: "#docs" },
+      { label: "Guides", href: "#guides" },
+      { label: "API reference", href: "#api" },
+      { label: "Community", href: "#community" },
+      { label: "Support", href: "#support" },
+    ],
+  },
+] as const;
+
+function FooterBlock() {
+  return (
+    <footer className="border-t border-border bg-surface-base px-6 py-16">
+      <div className="mx-auto max-w-6xl">
+        <div className="grid gap-12 lg:grid-cols-[1.5fr_repeat(3,1fr)]">
+          <div className="max-w-xs">
+            <div className="flex items-center gap-2.5">
+              <span className="grid size-9 place-items-center rounded-xl bg-gradient-primary text-primary-foreground shadow-glow">
+                <Hexagon aria-hidden="true" className="size-5" />
+              </span>
+              <span className="font-display text-lg font-semibold text-fg">Cooud</span>
+            </div>
+            <p className="mt-4 text-sm leading-6 text-fg-secondary">
+              The themeable component library and block registry for teams who ship polished
+              products fast.
+            </p>
+            <div className="mt-5 flex items-center gap-1">
+              <Button variant="ghost" size="icon-sm" aria-label="GitHub">
+                <Github aria-hidden="true" />
+              </Button>
+              <Button variant="ghost" size="icon-sm" aria-label="Twitter">
+                <Twitter aria-hidden="true" />
+              </Button>
+              <Button variant="ghost" size="icon-sm" aria-label="LinkedIn">
+                <Linkedin aria-hidden="true" />
+              </Button>
+            </div>
+          </div>
+
+          {FOOTER_COLUMNS.map((column) => (
+            <div key={column.heading}>
+              <h3 className="text-sm font-medium text-fg">{column.heading}</h3>
+              <ul className="mt-4 flex flex-col gap-3">
+                {column.links.map((link) => (
+                  <li key={link.label}>
+                    <a
+                      href={link.href}
+                      className="text-sm text-fg-secondary transition-colors hover:text-fg"
+                    >
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-12 rounded-2xl border border-border bg-surface-raised p-6 sm:flex sm:items-center sm:justify-between sm:gap-8">
+          <div>
+            <p className="font-display text-lg font-semibold text-fg">Stay in the loop</p>
+            <p className="mt-1 text-sm text-fg-secondary">
+              Product updates and new blocks, a few times a month.
+            </p>
+          </div>
+          <form
+            className="mt-4 flex max-w-sm flex-col gap-3 sm:mt-0 sm:flex-row"
+            onSubmit={(event) => event.preventDefault()}
+          >
+            <div className="flex-1">
+              <Label htmlFor="footer-email" className="sr-only">
+                Email address
+              </Label>
+              <Input
+                id="footer-email"
+                type="email"
+                required
+                placeholder="you@company.com"
+                autoComplete="email"
+              />
+            </div>
+            <Button type="submit" variant="gradient">
+              Subscribe
+              <Send aria-hidden="true" />
+            </Button>
+          </form>
+        </div>
+
+        <Separator className="my-8" />
+
+        <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
+          <p className="text-sm text-fg-tertiary">© 2026 Cooud. All rights reserved.</p>
+          <div className="flex items-center gap-6">
+            <a
+              href="#privacy"
+              className="text-sm text-fg-secondary transition-colors hover:text-fg"
+            >
+              Privacy
+            </a>
+            <a href="#terms" className="text-sm text-fg-secondary transition-colors hover:text-fg">
+              Terms
+            </a>
+            <a href="#status" className="text-sm text-fg-secondary transition-colors hover:text-fg">
+              Status
+            </a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+const footerCode = `import { Button, Input, Label, Separator } from "@cooud-ui/ui";
+import { Github, Hexagon, Linkedin, Send, Twitter } from "lucide-react";
+
+const FOOTER_COLUMNS = [
+  {
+    heading: "Product",
+    links: [
+      { label: "Features", href: "#features" },
+      { label: "Pricing", href: "#pricing" },
+      { label: "Blocks", href: "#blocks" },
+      { label: "Changelog", href: "#changelog" },
+      { label: "Roadmap", href: "#roadmap" },
+    ],
+  },
+  {
+    heading: "Company",
+    links: [
+      { label: "About", href: "#about" },
+      { label: "Careers", href: "#careers" },
+      { label: "Customers", href: "#customers" },
+      { label: "Brand", href: "#brand" },
+      { label: "Contact", href: "#contact" },
+    ],
+  },
+  {
+    heading: "Resources",
+    links: [
+      { label: "Documentation", href: "#docs" },
+      { label: "Guides", href: "#guides" },
+      { label: "API reference", href: "#api" },
+      { label: "Community", href: "#community" },
+      { label: "Support", href: "#support" },
+    ],
+  },
+];
+
+export function FooterBlock() {
+  return (
+    <footer className="border-t border-border bg-surface-base px-6 py-16">
+      <div className="mx-auto max-w-6xl">
+        <div className="grid gap-12 lg:grid-cols-[1.5fr_repeat(3,1fr)]">
+          <div className="max-w-xs">
+            <div className="flex items-center gap-2.5">
+              <span className="grid size-9 place-items-center rounded-xl bg-gradient-primary text-primary-foreground shadow-glow">
+                <Hexagon aria-hidden="true" className="size-5" />
+              </span>
+              <span className="font-display text-lg font-semibold text-fg">Cooud</span>
+            </div>
+            <p className="mt-4 text-sm leading-6 text-fg-secondary">
+              The themeable component library and block registry for teams who ship polished
+              products fast.
+            </p>
+            <div className="mt-5 flex items-center gap-1">
+              <Button variant="ghost" size="icon-sm" aria-label="GitHub">
+                <Github aria-hidden="true" />
+              </Button>
+              <Button variant="ghost" size="icon-sm" aria-label="Twitter">
+                <Twitter aria-hidden="true" />
+              </Button>
+              <Button variant="ghost" size="icon-sm" aria-label="LinkedIn">
+                <Linkedin aria-hidden="true" />
+              </Button>
+            </div>
+          </div>
+
+          {FOOTER_COLUMNS.map((column) => (
+            <div key={column.heading}>
+              <h3 className="text-sm font-medium text-fg">{column.heading}</h3>
+              <ul className="mt-4 flex flex-col gap-3">
+                {column.links.map((link) => (
+                  <li key={link.label}>
+                    <a
+                      href={link.href}
+                      className="text-sm text-fg-secondary transition-colors hover:text-fg"
+                    >
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-12 rounded-2xl border border-border bg-surface-raised p-6 sm:flex sm:items-center sm:justify-between sm:gap-8">
+          <div>
+            <p className="font-display text-lg font-semibold text-fg">Stay in the loop</p>
+            <p className="mt-1 text-sm text-fg-secondary">
+              Product updates and new blocks, a few times a month.
+            </p>
+          </div>
+          <form
+            className="mt-4 flex max-w-sm flex-col gap-3 sm:mt-0 sm:flex-row"
+            onSubmit={(event) => event.preventDefault()}
+          >
+            <div className="flex-1">
+              <Label htmlFor="footer-email" className="sr-only">
+                Email address
+              </Label>
+              <Input
+                id="footer-email"
+                type="email"
+                required
+                placeholder="you@company.com"
+                autoComplete="email"
+              />
+            </div>
+            <Button type="submit" variant="gradient">
+              Subscribe
+              <Send aria-hidden="true" />
+            </Button>
+          </form>
+        </div>
+
+        <Separator className="my-8" />
+
+        <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
+          <p className="text-sm text-fg-tertiary">© 2026 Cooud. All rights reserved.</p>
+          <div className="flex items-center gap-6">
+            <a
+              href="#privacy"
+              className="text-sm text-fg-secondary transition-colors hover:text-fg"
+            >
+              Privacy
+            </a>
+            <a href="#terms" className="text-sm text-fg-secondary transition-colors hover:text-fg">
+              Terms
+            </a>
+            <a href="#status" className="text-sm text-fg-secondary transition-colors hover:text-fg">
+              Status
+            </a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}`;
+
+/* ──────────────────────────────────────────────────────────────────
+   8. NAVBAR
+   ────────────────────────────────────────────────────────────────── */
+
+const NAVBAR_LINKS = [
+  { label: "Features", href: "#features" },
+  { label: "Pricing", href: "#pricing" },
+  { label: "Docs", href: "#docs" },
+  { label: "Changelog", href: "#changelog" },
+] as const;
+
+function NavbarBlock() {
+  return (
+    <section className="px-6 py-8">
+      <nav className="mx-auto flex max-w-5xl items-center justify-between gap-4 rounded-full border border-border bg-surface-raised/80 px-4 py-2 shadow-sm backdrop-blur">
+        <div className="flex items-center gap-2.5">
+          <span className="grid size-8 place-items-center rounded-lg bg-gradient-primary text-primary-foreground shadow-glow">
+            <Hexagon aria-hidden="true" className="size-4" />
+          </span>
+          <span className="font-display text-base font-semibold text-fg">Cooud</span>
+          <Badge variant="secondary" className="ml-0.5">
+            Beta
+          </Badge>
+        </div>
+
+        <div className="hidden items-center gap-6 md:flex">
+          {NAVBAR_LINKS.map((link) => (
+            <a
+              key={link.label}
+              href={link.href}
+              className="text-sm text-fg-secondary transition-colors hover:text-fg"
+            >
+              {link.label}
+            </a>
+          ))}
+        </div>
+
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" size="sm" className="hidden sm:inline-flex">
+            Sign in
+          </Button>
+          <Button variant="gradient" size="sm">
+            Get started
+          </Button>
+          <Button variant="ghost" size="icon-sm" className="md:hidden" aria-label="Open menu">
+            <Menu aria-hidden="true" />
+          </Button>
+        </div>
+      </nav>
+    </section>
+  );
+}
+
+const navbarCode = `import { Badge, Button } from "@cooud-ui/ui";
+import { Hexagon, Menu } from "lucide-react";
+
+const NAVBAR_LINKS = [
+  { label: "Features", href: "#features" },
+  { label: "Pricing", href: "#pricing" },
+  { label: "Docs", href: "#docs" },
+  { label: "Changelog", href: "#changelog" },
+];
+
+export function NavbarBlock() {
+  return (
+    <section className="px-6 py-8">
+      <nav className="mx-auto flex max-w-5xl items-center justify-between gap-4 rounded-full border border-border bg-surface-raised/80 px-4 py-2 shadow-sm backdrop-blur">
+        <div className="flex items-center gap-2.5">
+          <span className="grid size-8 place-items-center rounded-lg bg-gradient-primary text-primary-foreground shadow-glow">
+            <Hexagon aria-hidden="true" className="size-4" />
+          </span>
+          <span className="font-display text-base font-semibold text-fg">Cooud</span>
+          <Badge variant="secondary" className="ml-0.5">
+            Beta
+          </Badge>
+        </div>
+
+        <div className="hidden items-center gap-6 md:flex">
+          {NAVBAR_LINKS.map((link) => (
+            <a
+              key={link.label}
+              href={link.href}
+              className="text-sm text-fg-secondary transition-colors hover:text-fg"
+            >
+              {link.label}
+            </a>
+          ))}
+        </div>
+
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" size="sm" className="hidden sm:inline-flex">
+            Sign in
+          </Button>
+          <Button variant="gradient" size="sm">
+            Get started
+          </Button>
+          <Button variant="ghost" size="icon-sm" className="md:hidden" aria-label="Open menu">
+            <Menu aria-hidden="true" />
+          </Button>
+        </div>
+      </nav>
+    </section>
+  );
+}`;
+
+/* ──────────────────────────────────────────────────────────────────
    Export map
    ────────────────────────────────────────────────────────────────── */
 
@@ -1118,6 +2140,52 @@ export const marketingBlocks: BlockContentMap = {
     ],
   },
   cta: { preview: <CtaBlock />, code: ctaCode },
+  testimonials: {
+    preview: <TestimonialsBlock />,
+    code: testimonialsCode,
+    variants: [
+      {
+        id: "marquee",
+        name: "Marquee wall",
+        description: "A scrolling, pause-on-hover wall of testimonials with avatar social proof.",
+        appearance: "dark",
+        preview: <TestimonialsBlock />,
+        code: testimonialsCode,
+      },
+      {
+        id: "grid",
+        name: "Card grid",
+        description: "A static responsive grid of testimonial cards for dense social proof.",
+        appearance: "light",
+        preview: <TestimonialsGridBlock />,
+        code: testimonialsGridCode,
+      },
+    ],
+  },
+  faq: {
+    preview: <FaqBlock />,
+    code: faqCode,
+    variants: [
+      {
+        id: "accordion",
+        name: "Centered accordion",
+        description: "A centered, width-constrained accordion of common questions and answers.",
+        appearance: "dark",
+        preview: <FaqBlock />,
+        code: faqCode,
+      },
+      {
+        id: "split",
+        name: "Split with support",
+        description: "A two-column layout pairing the questions with a contact-support panel.",
+        appearance: "light",
+        preview: <FaqSplitBlock />,
+        code: faqSplitCode,
+      },
+    ],
+  },
+  footer: { preview: <FooterBlock />, code: footerCode },
+  navbar: { preview: <NavbarBlock />, code: navbarCode },
 };
 
 /* -------------------------------------------------------------------------- */

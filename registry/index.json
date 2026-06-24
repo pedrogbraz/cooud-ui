@@ -1010,6 +1010,41 @@
     "registryDependencies": []
   },
   {
+    "name": "testimonials",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.1.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "faq",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.1.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "footer",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.1.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "navbar",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.1.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
     "name": "login",
     "type": "registry:block",
     "dependencies": [
