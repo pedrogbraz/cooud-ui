@@ -1061,6 +1061,62 @@ export const COMPONENT_PROPS: Record<string, PropsDoc[]> = {
       ],
     },
   ],
+  "tree-view": [
+    {
+      interfaceName: "TreeViewProps",
+      extends: 'Extends Omit<HTMLAttributes<HTMLDivElement>, "onChange">',
+      props: [
+        {
+          name: "data",
+          type: "TreeNode[]",
+          required: true,
+          description: "The hierarchy to render.",
+        },
+        {
+          name: "value",
+          type: "string",
+          required: false,
+          description: "Controlled selected node id.",
+        },
+        {
+          name: "defaultValue",
+          type: "string",
+          required: false,
+          description: "Initial selected node id for the uncontrolled case.",
+        },
+        {
+          name: "onValueChange",
+          type: "(id: string) => void",
+          required: false,
+          description: "Called when the selection changes (controlled or not).",
+        },
+        {
+          name: "expandedIds",
+          type: "string[]",
+          required: false,
+          description: "Controlled set of expanded branch ids.",
+        },
+        {
+          name: "defaultExpandedIds",
+          type: "string[]",
+          required: false,
+          description: "Initial expanded branch ids for the uncontrolled case.",
+        },
+        {
+          name: "onExpandedChange",
+          type: "(ids: string[]) => void",
+          required: false,
+          description: "Called whenever the expanded set changes (controlled or not).",
+        },
+        {
+          name: "aria-label",
+          type: "string",
+          required: false,
+          description: "Accessible label for the tree landmark.",
+        },
+      ],
+    },
+  ],
   alert: [
     {
       interfaceName: "AlertProps",
@@ -1107,6 +1163,99 @@ export const COMPONENT_PROPS: Record<string, PropsDoc[]> = {
           type: '"top" | "right" | "bottom" | "left"',
           required: false,
           default: '"right"',
+        },
+      ],
+    },
+  ],
+  "notification-center": [
+    {
+      interfaceName: "NotificationRowProps",
+      extends:
+        'Extends Omit<HTMLAttributes<HTMLButtonElement>, "id" | "title" | "onClick" | "onSelect">',
+      props: [
+        {
+          name: "notification",
+          type: "NotificationItem",
+          required: true,
+        },
+        {
+          name: "onSelect",
+          type: "(id: string) => void",
+          required: false,
+          description: "Fired with the notification id when the row is activated.",
+        },
+      ],
+    },
+    {
+      interfaceName: "NotificationListProps",
+      extends: 'Extends Omit<HTMLAttributes<HTMLDivElement>, "onSelect">',
+      props: [
+        {
+          name: "notifications",
+          type: "readonly NotificationItem[]",
+          required: true,
+        },
+        {
+          name: "onSelect",
+          type: "(id: string) => void",
+          required: false,
+          description: "Fired with the notification id when a row is activated.",
+        },
+        {
+          name: "emptyState",
+          type: "ReactNode",
+          required: false,
+          description: 'Replaces the built-in "You\'re all caught up" empty state.',
+        },
+      ],
+    },
+    {
+      interfaceName: "NotificationCenterProps",
+      extends:
+        'Extends Omit<ComponentPropsWithoutRef<typeof PopoverContent>, "onSelect" | "title">',
+      props: [
+        {
+          name: "notifications",
+          type: "readonly NotificationItem[]",
+          required: true,
+          description: "Items to display in the inbox.",
+        },
+        {
+          name: "onMarkAllRead",
+          type: "() => void",
+          required: false,
+          description: 'Fired when the "Mark all read" affordance is activated.',
+        },
+        {
+          name: "onNotificationClick",
+          type: "(id: string) => void",
+          required: false,
+          description: "Fired with the notification id when a row is activated.",
+        },
+        {
+          name: "title",
+          type: "ReactNode",
+          required: false,
+          description: "Header heading text.",
+          default: '"Notifications"',
+        },
+        {
+          name: "emptyState",
+          type: "ReactNode",
+          required: false,
+          description: 'Custom empty-state content (defaults to "You\'re all caught up").',
+        },
+        {
+          name: "footer",
+          type: "ReactNode",
+          required: false,
+          description: 'Optional footer rendered below the list (e.g. a "View all" link).',
+        },
+        {
+          name: "className",
+          type: "string",
+          required: false,
+          description: "Class names for the popover panel.",
         },
       ],
     },
@@ -1501,6 +1650,73 @@ export const COMPONENT_PROPS: Record<string, PropsDoc[]> = {
           type: "string",
           required: false,
           description: "ID of an element labelling the trigger.",
+        },
+      ],
+    },
+  ],
+  scheduler: [
+    {
+      interfaceName: "SchedulerProps",
+      extends: 'Extends Omit<HTMLAttributes<HTMLDivElement>, "onChange" | "defaultValue">',
+      props: [
+        {
+          name: "month",
+          type: "Date",
+          required: false,
+          description: "Controlled visible month. Provide together with `onMonthChange`.",
+        },
+        {
+          name: "defaultMonth",
+          type: "Date",
+          required: false,
+          description: 'Initial visible month for the uncontrolled case. Defaults to "today".',
+        },
+        {
+          name: "onMonthChange",
+          type: "(month: Date) => void",
+          required: false,
+          description: "Called with the first day of the next visible month on Prev/Today/Next.",
+        },
+        {
+          name: "events",
+          type: "SchedulerEvent[]",
+          required: false,
+          description: "Events to lay out across the grid. Bucketed by calendar day.",
+          default: "[]",
+        },
+        {
+          name: "onEventClick",
+          type: "(event: SchedulerEvent) => void",
+          required: false,
+          description: "Fired when an event chip is activated.",
+        },
+        {
+          name: "onDayClick",
+          type: "(date: Date) => void",
+          required: false,
+          description: "Fired when a day cell (not a chip) is activated, with that day's date.",
+        },
+        {
+          name: "today",
+          type: "Date",
+          required: false,
+          description:
+            'The day to highlight as "today". Optional and defaulting to `undefined` so server render and first client paint are deterministic — pass a stable Date (or compute one in an effect) to light up the current day without a hydration mismatch.',
+        },
+        {
+          name: "weekStartsOn",
+          type: "0 | 1 | 2 | 3 | 4 | 5 | 6",
+          required: false,
+          description:
+            "Locale-aware start of the week (0 = Sunday … 6 = Saturday). Defaults to `0`, matching the Sun…Sat header.",
+          default: "0",
+        },
+        {
+          name: "ariaLabel",
+          type: "string",
+          required: false,
+          description: 'Accessible label for the grid. Defaults to "Event calendar".',
+          default: '"Event calendar"',
         },
       ],
     },

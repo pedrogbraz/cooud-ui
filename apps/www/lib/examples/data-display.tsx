@@ -43,6 +43,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  type TreeNode,
+  TreeView,
 } from "@cooud-ui/ui";
 import type { ColumnDef } from "@tanstack/react-table";
 import {
@@ -51,6 +53,8 @@ import {
   ChevronsUpDown,
   CircleDashed,
   CircleSlash,
+  FileText,
+  Folder,
   Inbox,
   Mail,
 } from "lucide-react";
@@ -365,6 +369,46 @@ const collapsibleDemoCode = `function CollapsibleDemo() {
     </Collapsible>
   );
 }`;
+
+const FILE_TREE: TreeNode[] = [
+  {
+    id: "src",
+    label: "src",
+    icon: <Folder aria-hidden="true" />,
+    children: [
+      {
+        id: "components",
+        label: "components",
+        icon: <Folder aria-hidden="true" />,
+        children: [
+          { id: "button.tsx", label: "button.tsx", icon: <FileText aria-hidden="true" /> },
+          { id: "card.tsx", label: "card.tsx", icon: <FileText aria-hidden="true" /> },
+        ],
+      },
+      {
+        id: "lib",
+        label: "lib",
+        icon: <Folder aria-hidden="true" />,
+        children: [{ id: "cn.ts", label: "cn.ts", icon: <FileText aria-hidden="true" /> }],
+      },
+      { id: "index.ts", label: "index.ts", icon: <FileText aria-hidden="true" /> },
+    ],
+  },
+  { id: "package.json", label: "package.json", icon: <FileText aria-hidden="true" /> },
+  { id: "readme", label: "README.md", icon: <FileText aria-hidden="true" /> },
+];
+
+function FileTreeDemo() {
+  return (
+    <TreeView
+      data={FILE_TREE}
+      defaultExpandedIds={["src", "components"]}
+      defaultValue="button.tsx"
+      aria-label="Project files"
+      className="max-w-xs rounded-lg border border-border p-1.5"
+    />
+  );
+}
 
 export const dataDisplayExamples: ExampleMap = {
   avatar: [
@@ -1189,6 +1233,46 @@ export function Save() {
           </AspectRatio>
         </div>
       ),
+    },
+  ],
+
+  "tree-view": [
+    {
+      id: "file-tree",
+      title: "File tree",
+      description:
+        "A data-driven hierarchy rendered from a `data` array of `TreeNode`s. Branches expand and collapse; selection and the expanded set are both controllable. Full keyboard support (arrows to move, Right/Left to open/close, Enter/Space to select).",
+      code: `const data: TreeNode[] = [
+  {
+    id: "src",
+    label: "src",
+    icon: <Folder aria-hidden="true" />,
+    children: [
+      {
+        id: "components",
+        label: "components",
+        icon: <Folder aria-hidden="true" />,
+        children: [
+          { id: "button.tsx", label: "button.tsx", icon: <FileText aria-hidden="true" /> },
+          { id: "card.tsx", label: "card.tsx", icon: <FileText aria-hidden="true" /> },
+        ],
+      },
+      { id: "index.ts", label: "index.ts", icon: <FileText aria-hidden="true" /> },
+    ],
+  },
+  { id: "package.json", label: "package.json", icon: <FileText aria-hidden="true" /> },
+];
+
+return (
+  <TreeView
+    data={data}
+    defaultExpandedIds={["src", "components"]}
+    defaultValue="button.tsx"
+    aria-label="Project files"
+    className="max-w-xs rounded-lg border border-border p-1.5"
+  />
+);`,
+      preview: <FileTreeDemo />,
     },
   ],
 };

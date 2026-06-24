@@ -529,6 +529,21 @@
     ]
   },
   {
+    "name": "notification-center",
+    "type": "registry:ui",
+    "dependencies": [
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": [
+      "avatar",
+      "badge",
+      "button",
+      "cn",
+      "popover",
+      "scroll-area"
+    ]
+  },
+  {
     "name": "number-input",
     "type": "registry:ui",
     "dependencies": [
@@ -601,6 +616,18 @@
     ],
     "registryDependencies": [
       "motion-presets"
+    ]
+  },
+  {
+    "name": "scheduler",
+    "type": "registry:ui",
+    "dependencies": [
+      "date-fns@^3.6.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": [
+      "button",
+      "cn"
     ]
   },
   {
@@ -809,6 +836,16 @@
     "type": "registry:ui",
     "dependencies": [
       "@radix-ui/react-tooltip@^1.2.7"
+    ],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "tree-view",
+    "type": "registry:ui",
+    "dependencies": [
+      "lucide-react@^0.577.0"
     ],
     "registryDependencies": [
       "cn"
