@@ -7,7 +7,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-_Nothing yet._
+### Added
+
+- **9 new components** — `Marquee`, `AvatarGroup`, `Banner`, `TagsInput`, `Sparkline`,
+  `InputGroup`, `PasswordInput`, `ButtonGroup`, and `Masonry` (each CLI-installable
+  via `npx cooud-ui add <slug>`).
+- **Chart breadth** — donut, radar, and radial-bar-gauge examples on the `Chart`
+  page (recharts composed inside `ChartContainer`, tokenized, code-split).
+- **Blocks: 8 new families / many new blocks.** A dedicated **Auth** family
+  (Login, Sign Up, Forgot Password, Two-Factor Code, Magic Link); **Onboarding**
+  (Welcome, Setup Wizard, Setup Checklist); **AI & Chat** (Chat Thread, Prompt
+  Box, AI Response); **Notifications** (Notification Panel, Activity Feed, Toast
+  Stack); **Email** (Welcome, Receipt, Verify); **States** (Not Found, Error,
+  Success, Maintenance); **Feedback** (NPS Survey, Feedback Form, Contact Form);
+  plus new **Marketing** (Testimonials, FAQ, Footer, Navbar) and **Billing**
+  (Manage Subscription, Payment Method, Usage Dashboard, Cancel Flow) blocks.
+  The blocks catalog grew from ~17 to ~48 blocks across 13 families.
+
+### Changed
+
+- **Redesigned the `/blocks` and `/components` catalogs** — a stat header, a
+  sticky toolbar with live text search + category filter chips (with counts), a
+  fuller card grid, and a live result count. The `/components` default view keeps
+  its anchor-linkable category sections.
+- Fixed the `Marquee` `motionPreference` semantics (`"always"` now always scrolls;
+  default is `"respect"`) and its loop travel (one copy + gap → correct px/sec
+  speed and a seamless seam).
+
+### Fixed
+
+- **Accessibility** — labelled the toast dismiss buttons (`button-name`), named
+  the setup-checklist progress bar (`aria-progressbar-name`), and gave the
+  donut/radar/radial chart demos a proper image role + text alternative
+  (`svg-img-alt` / `aria-hidden-focus`). The a11y test suite now also scans the
+  batch-5 components and a representative block from each new family.
 
 ## [0.1.0] — 2026-06-23
 
