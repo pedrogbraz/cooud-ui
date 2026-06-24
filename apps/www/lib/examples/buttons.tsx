@@ -5,6 +5,7 @@ import {
   Button,
   ButtonGroup,
   CopyButton,
+  Fab,
   Spinner,
   Toggle,
   ToggleGroup,
@@ -20,9 +21,13 @@ import {
   ChevronRight,
   Download,
   Heart,
+  Image,
   Italic,
+  Pencil,
+  Plus,
   Settings,
   Underline,
+  Upload,
 } from "lucide-react";
 import { useState } from "react";
 import { ExampleList } from "../../components/docs/example-list";
@@ -491,6 +496,58 @@ return (
             Right
           </Button>
         </ButtonGroup>
+      ),
+    },
+  ],
+  fab: [
+    {
+      id: "default",
+      title: "Default",
+      description:
+        "A single floating action button. Positioning is left to you — here it's pinned to the bottom-right of a relative demo box.",
+      code: `<div className="relative h-64 rounded-xl border border-border">
+  <Fab
+    icon={<Plus />}
+    label="New item"
+    className="absolute bottom-4 right-4"
+  />
+</div>`,
+      preview: (
+        <div className="relative h-64 w-full rounded-xl border border-border">
+          <Fab icon={<Plus />} label="New item" className="absolute bottom-4 right-4" />
+        </div>
+      ),
+    },
+    {
+      id: "speed-dial",
+      title: "Speed dial",
+      description:
+        "Pass `actions` to turn the FAB into a speed-dial: clicking it reveals a vertical stack of smaller round buttons, each with its own label chip. The main glyph rotates while open.",
+      code: `<div className="relative h-64 rounded-xl border border-border">
+  <Fab
+    icon={<Plus />}
+    label="Create"
+    className="absolute bottom-4 right-4"
+    actions={[
+      { icon: <Pencil />, label: "Write a note" },
+      { icon: <Image />, label: "Upload an image" },
+      { icon: <Upload />, label: "Import a file" },
+    ]}
+  />
+</div>`,
+      preview: (
+        <div className="relative h-64 w-full rounded-xl border border-border">
+          <Fab
+            icon={<Plus />}
+            label="Create"
+            className="absolute bottom-4 right-4"
+            actions={[
+              { icon: <Pencil />, label: "Write a note" },
+              { icon: <Image />, label: "Upload an image" },
+              { icon: <Upload />, label: "Import a file" },
+            ]}
+          />
+        </div>
       ),
     },
   ],

@@ -15,6 +15,8 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
+  Dock,
+  Frame,
   GlassCard,
   GradientBorder,
   GradientText,
@@ -36,15 +38,20 @@ import {
 } from "@cooud-ui/ui";
 import {
   ArrowRight,
+  Bell,
   Copy,
   Gauge,
+  Home,
   MessageSquarePlus,
   Pencil,
   Plus,
   RotateCw,
+  Search,
+  Settings,
   Share2,
   Sparkles,
   Trash2,
+  User,
 } from "lucide-react";
 import { useId, useState } from "react";
 import { ExampleList } from "../../components/docs/example-list";
@@ -1104,6 +1111,80 @@ export const premiumExamples: ExampleMap = {
   Ship premium by default
 </TextEffect>`,
       preview: <TextEffectDemo />,
+    },
+  ],
+  frame: [
+    {
+      id: "browser",
+      title: "Browser chrome",
+      description:
+        "Wrap a screenshot or mockup in browser chrome — traffic-light dots plus an address bar fed by `url`. Anything you nest becomes the framed content.",
+      code: `<Frame url="cooud.app/dashboard">
+  <div className="space-y-2 p-6">
+    <h3 className="font-display text-lg font-semibold text-fg">Faturamento</h3>
+    <p className="text-sm text-fg-secondary">R$ 128.940 nos últimos 30 dias.</p>
+    <p className="text-sm text-fg-secondary">+18% vs. o período anterior.</p>
+  </div>
+</Frame>`,
+      preview: (
+        <Frame url="cooud.app/dashboard" className="w-full max-w-md">
+          <div className="space-y-2 p-6">
+            <h3 className="font-display text-lg font-semibold text-fg">Faturamento</h3>
+            <p className="text-sm text-fg-secondary">R$ 128.940 nos últimos 30 dias.</p>
+            <p className="text-sm text-fg-secondary">+18% vs. o período anterior.</p>
+          </div>
+        </Frame>
+      ),
+    },
+    {
+      id: "window",
+      title: "Window chrome",
+      description:
+        "The `window` variant drops the address bar for a plain title bar — handy for desktop-app mockups.",
+      code: `<Frame variant="window">
+  <div className="space-y-2 p-6">
+    <h3 className="font-display text-lg font-semibold text-fg">Preferências</h3>
+    <p className="text-sm text-fg-secondary">Tema, notificações e atalhos.</p>
+  </div>
+</Frame>`,
+      preview: (
+        <Frame variant="window" className="w-full max-w-md">
+          <div className="space-y-2 p-6">
+            <h3 className="font-display text-lg font-semibold text-fg">Preferências</h3>
+            <p className="text-sm text-fg-secondary">Tema, notificações e atalhos.</p>
+          </div>
+        </Frame>
+      ),
+    },
+  ],
+  dock: [
+    {
+      id: "app-dock",
+      title: "App dock",
+      description:
+        "A macOS-style icon dock: items magnify as the pointer approaches and settle back on a spring. Each item is named for assistive tech via its `label`; reduced-motion visitors get a static bar.",
+      code: `<Dock
+  items={[
+    { icon: <Home />, label: "Home" },
+    { icon: <Search />, label: "Search" },
+    { icon: <Bell />, label: "Notifications" },
+    { icon: <User />, label: "Profile" },
+    { icon: <Settings />, label: "Settings" },
+  ]}
+/>`,
+      preview: (
+        <div className="flex w-full justify-center p-6">
+          <Dock
+            items={[
+              { icon: <Home />, label: "Home" },
+              { icon: <Search />, label: "Search" },
+              { icon: <Bell />, label: "Notifications" },
+              { icon: <User />, label: "Profile" },
+              { icon: <Settings />, label: "Settings" },
+            ]}
+          />
+        </div>
+      ),
     },
   ],
 };

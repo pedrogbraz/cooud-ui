@@ -30,6 +30,7 @@ export const EXAMPLE_FAMILY_BY_SLUG: Record<string, ExampleFamily> = {
   "toggle-group": "buttons",
   "copy-button": "buttons",
   "button-group": "buttons",
+  fab: "buttons",
   // forms
   input: "forms",
   "input-group": "forms",
@@ -59,6 +60,7 @@ export const EXAMPLE_FAMILY_BY_SLUG: Record<string, ExampleFamily> = {
   "avatar-group": "data-display",
   sparkline: "data-display",
   masonry: "data-display",
+  "comparison-slider": "data-display",
   badge: "data-display",
   card: "data-display",
   table: "data-display",
@@ -126,6 +128,8 @@ export const EXAMPLE_FAMILY_BY_SLUG: Record<string, ExampleFamily> = {
   carousel: "premium",
   "segmented-control": "premium",
   "text-effect": "premium",
+  frame: "premium",
+  dock: "premium",
 };
 
 export function getExampleFamily(slug: string): ExampleFamily | undefined {

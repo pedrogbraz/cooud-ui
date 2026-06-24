@@ -20,6 +20,7 @@ import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
+  ComparisonSlider,
   DataTable,
   DataTableColumnHeader,
   type DataTableFacetedFilter,
@@ -1736,6 +1737,52 @@ return (
         "A pure CSS multi-column layout that flows items top-to-bottom, balancing columns regardless of card height. `columns` takes a responsive map and `gap` controls both axes — no JS measurement, no layout shift.",
       code: masonryDemoCode,
       preview: <MasonryDemo />,
+    },
+  ],
+  "comparison-slider": [
+    {
+      id: "before-after",
+      title: "Before & after",
+      description:
+        "Drag the divider — or focus it and use the arrow keys — to wipe between two layers. Here two labelled panels stand in for a before/after image pair so it reads clearly offline.",
+      code: `<ComparisonSlider
+  aria-label="Before and after"
+  className="h-64"
+  before={
+    <div className="flex size-full items-center justify-center bg-surface-inset">
+      <span className="rounded-md bg-surface-overlay px-3 py-1 text-sm font-medium text-fg">
+        Before
+      </span>
+    </div>
+  }
+  after={
+    <div className="flex size-full items-center justify-center bg-gradient-primary">
+      <span className="rounded-md bg-surface-base/80 px-3 py-1 text-sm font-medium text-fg">
+        After
+      </span>
+    </div>
+  }
+/>`,
+      preview: (
+        <ComparisonSlider
+          aria-label="Before and after"
+          className="h-64"
+          before={
+            <div className="flex size-full items-center justify-center bg-surface-inset">
+              <span className="rounded-md bg-surface-overlay px-3 py-1 text-sm font-medium text-fg">
+                Before
+              </span>
+            </div>
+          }
+          after={
+            <div className="flex size-full items-center justify-center bg-gradient-primary">
+              <span className="rounded-md bg-surface-base/80 px-3 py-1 text-sm font-medium text-fg">
+                After
+              </span>
+            </div>
+          }
+        />
+      ),
     },
   ],
 };

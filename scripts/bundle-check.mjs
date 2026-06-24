@@ -158,6 +158,10 @@ const SHARED_CHUNK_BUDGETS = /** @type {SharedChunkBudgets} */ ({
  *   masonry.js                       787      1,000
  *   input-group.js                   647        850
  *   button-group.js                  539        700
+ *   dock.js                        1,774      2,280
+ *   comparison-slider.js           1,473      1,890
+ *   fab.js                         1,466      1,880
+ *   frame.js                         574        740
  */
 const PACKAGE_ENTRY_GZIP_BUDGETS = /** @type {Record<string, number>} */ ({
   "index.js": 2_820,
@@ -177,6 +181,10 @@ const PACKAGE_ENTRY_GZIP_BUDGETS = /** @type {Record<string, number>} */ ({
   "components/masonry.js": 1_000,
   "components/input-group.js": 850,
   "components/button-group.js": 700,
+  "components/dock.js": 2_280,
+  "components/comparison-slider.js": 1_890,
+  "components/fab.js": 1_880,
+  "components/frame.js": 740,
 });
 
 /**

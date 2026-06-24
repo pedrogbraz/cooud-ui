@@ -126,6 +126,33 @@ export const COMPONENT_PROPS: Record<string, PropsDoc[]> = {
       ],
     },
   ],
+  fab: [
+    {
+      interfaceName: "FabProps",
+      extends: "Extends ButtonHTMLAttributes<HTMLButtonElement>",
+      props: [
+        {
+          name: "icon",
+          type: "ReactNode",
+          required: true,
+          description: "The main glyph shown inside the floating button.",
+        },
+        {
+          name: "label",
+          type: "string",
+          required: true,
+          description: "Accessible name for the main button — wired to `aria-label`.",
+        },
+        {
+          name: "actions",
+          type: "FabAction[]",
+          required: false,
+          description:
+            "Optional speed-dial actions. When provided, clicking the FAB toggles an expanded vertical stack of smaller round buttons rendered above it.",
+        },
+      ],
+    },
+  ],
   input: [
     {
       interfaceName: "InputProps",
@@ -1475,6 +1502,52 @@ export const COMPONENT_PROPS: Record<string, PropsDoc[]> = {
           description:
             "CSS length used for both the column gap and the vertical gap between items.",
           default: '"1rem"',
+        },
+      ],
+    },
+  ],
+  "comparison-slider": [
+    {
+      interfaceName: "ComparisonSliderProps",
+      extends: 'Extends Omit<HTMLAttributes<HTMLDivElement>, "onChange">',
+      props: [
+        {
+          name: "before",
+          type: "ReactNode",
+          required: true,
+          description:
+            'Content shown on the left, revealed by the clip (typically the "before" image).',
+        },
+        {
+          name: "after",
+          type: "ReactNode",
+          required: true,
+          description: 'Content shown as the full base layer (typically the "after" image).',
+        },
+        {
+          name: "defaultPosition",
+          type: "number",
+          required: false,
+          description: "Initial divider position as a percentage (0–100). Uncontrolled.",
+          default: "50",
+        },
+        {
+          name: "position",
+          type: "number",
+          required: false,
+          description: "Controlled divider position as a percentage (0–100).",
+        },
+        {
+          name: "onPositionChange",
+          type: "(position: number) => void",
+          required: false,
+          description: "Called with the next position when the divider moves.",
+        },
+        {
+          name: "aria-label",
+          type: "string",
+          required: false,
+          description: "Accessible name for the divider handle.",
         },
       ],
     },
@@ -2991,6 +3064,64 @@ export const COMPONENT_PROPS: Record<string, PropsDoc[]> = {
           description:
             'How `prefers-reduced-motion` is honoured. Defaults to `"user"` (render the text statically for users who opt out). Pass `"never"` to always play the stagger — e.g. a showcase that must demonstrate it — or `"always"` to force the static render.',
           default: '"user"',
+        },
+      ],
+    },
+  ],
+  frame: [
+    {
+      interfaceName: "FrameProps",
+      extends: "Extends HTMLAttributes<HTMLDivElement>, VariantProps<typeof frameVariants>",
+      props: [
+        {
+          name: "variant",
+          type: '"browser" | "window"',
+          required: false,
+          description:
+            "Chrome style. `browser` shows an address bar; `window` is a plain title bar.",
+          default: '"browser"',
+        },
+        {
+          name: "url",
+          type: "string",
+          required: false,
+          description: "URL shown in the address bar (browser variant only).",
+        },
+      ],
+    },
+  ],
+  dock: [
+    {
+      interfaceName: "DockProps",
+      extends: "Extends HTMLAttributes<HTMLDivElement>",
+      props: [
+        {
+          name: "items",
+          type: "DockItem[]",
+          required: true,
+          description: "The dock entries, left to right.",
+        },
+        {
+          name: "magnification",
+          type: "number",
+          required: false,
+          description: "Peak scale an item reaches at the pointer's center. Defaults to `1.6`.",
+          default: "DEFAULT_MAGNIFICATION",
+        },
+        {
+          name: "baseItemSize",
+          type: "number",
+          required: false,
+          description: "Resting item size in pixels. Defaults to `44`.",
+          default: "DEFAULT_BASE_ITEM_SIZE",
+        },
+        {
+          name: "distance",
+          type: "number",
+          required: false,
+          description:
+            "Pointer influence radius in pixels — how far the magnify reaches. Defaults to `120`.",
+          default: "DEFAULT_DISTANCE",
         },
       ],
     },
