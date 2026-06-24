@@ -752,9 +752,10 @@ function CreateControls({
         >
           <Select
             value={String(config.radius)}
-            onValueChange={(value) =>
-              onPatchConfig({ radius: Number.parseInt(value, 10) || DEFAULT_CONFIG.radius })
-            }
+            onValueChange={(value) => {
+              const parsed = Number.parseInt(value, 10);
+              onPatchConfig({ radius: Number.isNaN(parsed) ? DEFAULT_CONFIG.radius : parsed });
+            }}
           >
             <SelectTrigger id={`${idPrefix}-radius`} aria-label="Corner radius">
               <SelectValue />
