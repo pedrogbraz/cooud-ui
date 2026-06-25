@@ -491,6 +491,14 @@
     ]
   },
   {
+    "name": "heatmap",
+    "type": "registry:ui",
+    "dependencies": [],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
     "name": "hover-card",
     "type": "registry:ui",
     "dependencies": [
@@ -557,6 +565,17 @@
     ],
     "registryDependencies": [
       "cn"
+    ]
+  },
+  {
+    "name": "lightbox",
+    "type": "registry:ui",
+    "dependencies": [
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": [
+      "cn",
+      "dialog"
     ]
   },
   {
@@ -802,6 +821,14 @@
     ]
   },
   {
+    "name": "scroll-progress",
+    "type": "registry:ui",
+    "dependencies": [],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
     "name": "segmented-control",
     "type": "registry:ui",
     "dependencies": [
@@ -1017,6 +1044,14 @@
       "@radix-ui/react-toggle@^1.1.9",
       "class-variance-authority@^0.7.1"
     ],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "toolbar",
+    "type": "registry:ui",
+    "dependencies": [],
     "registryDependencies": [
       "cn"
     ]
