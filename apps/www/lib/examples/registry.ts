@@ -61,6 +61,7 @@ export const EXAMPLE_FAMILY_BY_SLUG: Record<string, ExampleFamily> = {
   sparkline: "data-display",
   masonry: "data-display",
   "comparison-slider": "data-display",
+  heatmap: "data-display",
   badge: "data-display",
   card: "data-display",
   table: "data-display",
@@ -96,6 +97,7 @@ export const EXAMPLE_FAMILY_BY_SLUG: Record<string, ExampleFamily> = {
   "context-menu": "overlays",
   command: "overlays",
   "notification-center": "overlays",
+  lightbox: "overlays",
   // navigation
   tabs: "navigation",
   accordion: "navigation",
@@ -106,6 +108,7 @@ export const EXAMPLE_FAMILY_BY_SLUG: Record<string, ExampleFamily> = {
   sidebar: "navigation",
   "app-shell": "navigation",
   resizable: "navigation",
+  toolbar: "navigation",
   // date-time
   calendar: "date-time",
   "date-picker": "date-time",
@@ -118,6 +121,7 @@ export const EXAMPLE_FAMILY_BY_SLUG: Record<string, ExampleFamily> = {
   "gradient-border": "premium",
   "gradient-text": "premium",
   "spotlight-card": "premium",
+  "scroll-progress": "premium",
   "aurora-background": "premium",
   "logo-carousel": "premium",
   marquee: "premium",
