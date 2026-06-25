@@ -162,6 +162,10 @@ const SHARED_CHUNK_BUDGETS = /** @type {SharedChunkBudgets} */ ({
  *   comparison-slider.js           1,473      1,890
  *   fab.js                         1,466      1,880
  *   frame.js                         574        740
+ *   heatmap.js                     1,187      1,520
+ *   scroll-progress.js             1,639      2,100
+ *   lightbox.js                    1,695      2,170
+ *   toolbar.js                     1,602      2,050
  */
 const PACKAGE_ENTRY_GZIP_BUDGETS = /** @type {Record<string, number>} */ ({
   "index.js": 2_820,
@@ -185,6 +189,10 @@ const PACKAGE_ENTRY_GZIP_BUDGETS = /** @type {Record<string, number>} */ ({
   "components/comparison-slider.js": 1_890,
   "components/fab.js": 1_880,
   "components/frame.js": 740,
+  "components/heatmap.js": 1_520,
+  "components/scroll-progress.js": 2_100,
+  "components/lightbox.js": 2_170,
+  "components/toolbar.js": 2_050,
 });
 
 /**

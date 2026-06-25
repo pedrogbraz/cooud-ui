@@ -1552,6 +1552,34 @@ export const COMPONENT_PROPS: Record<string, PropsDoc[]> = {
       ],
     },
   ],
+  heatmap: [
+    {
+      interfaceName: "HeatmapProps",
+      extends: "Extends HTMLAttributes<HTMLDivElement>",
+      props: [
+        {
+          name: "data",
+          type: "HeatmapDay[]",
+          required: true,
+          description: "One item per day, laid out into week columns of 7 (top → bottom).",
+        },
+        {
+          name: "levels",
+          type: "number",
+          required: false,
+          description: "Number of discrete levels including the empty level 0.",
+          default: "5",
+        },
+        {
+          name: "weekCount",
+          type: "number",
+          required: false,
+          description:
+            "Hint for the intended number of week columns. Ignored — the data drives the layout — but accepted so callers can document intent.",
+        },
+      ],
+    },
+  ],
   "code-block": [
     {
       interfaceName: "CodeBlockProps",
@@ -1900,6 +1928,22 @@ export const COMPONENT_PROPS: Record<string, PropsDoc[]> = {
       props: [],
     },
   ],
+  dialog: [
+    {
+      interfaceName: "DialogContentProps",
+      extends: "Extends ComponentPropsWithoutRef<typeof DialogPrimitive.Content>",
+      props: [
+        {
+          name: "showCloseButton",
+          type: "boolean",
+          required: false,
+          description:
+            "Render the built-in top-right close button. Set `false` when the content supplies its own close affordance (e.g. a full-bleed gallery header).",
+          default: "true",
+        },
+      ],
+    },
+  ],
   sheet: [
     {
       interfaceName: "SheetContentProps",
@@ -2024,6 +2068,58 @@ export const COMPONENT_PROPS: Record<string, PropsDoc[]> = {
           type: "string",
           required: false,
           default: '"Search for a command to run..."',
+        },
+      ],
+    },
+  ],
+  lightbox: [
+    {
+      interfaceName: "LightboxProps",
+      extends: "Extends HTMLAttributes<HTMLDivElement>",
+      props: [
+        {
+          name: "images",
+          type: "LightboxImage[]",
+          required: true,
+          description: "The images to display in the gallery.",
+        },
+        {
+          name: "open",
+          type: "boolean",
+          required: false,
+          description: "Controlled open state.",
+        },
+        {
+          name: "onOpenChange",
+          type: "(open: boolean) => void",
+          required: false,
+          description: "Called when the open state should change.",
+        },
+        {
+          name: "defaultOpen",
+          type: "boolean",
+          required: false,
+          description: "Uncontrolled initial open state.",
+          default: "false",
+        },
+        {
+          name: "index",
+          type: "number",
+          required: false,
+          description: "Controlled active image index.",
+        },
+        {
+          name: "onIndexChange",
+          type: "(index: number) => void",
+          required: false,
+          description: "Called when the active index should change.",
+        },
+        {
+          name: "defaultIndex",
+          type: "number",
+          required: false,
+          description: "Uncontrolled initial index.",
+          default: "0",
         },
       ],
     },
@@ -2267,6 +2363,33 @@ export const COMPONENT_PROPS: Record<string, PropsDoc[]> = {
       ],
     },
   ],
+  toolbar: [
+    {
+      interfaceName: "ToolbarProps",
+      extends: "Extends HTMLAttributes<HTMLDivElement>",
+      props: [
+        {
+          name: "orientation",
+          type: '"horizontal" | "vertical"',
+          required: false,
+          description: "Layout orientation; also drives which arrow keys move focus.",
+          default: '"horizontal"',
+        },
+      ],
+    },
+    {
+      interfaceName: "ToolbarButtonProps",
+      extends: "Extends ButtonHTMLAttributes<HTMLButtonElement>",
+      props: [
+        {
+          name: "pressed",
+          type: "boolean",
+          required: false,
+          description: "Toggle-button pressed state; reflected as aria-pressed.",
+        },
+      ],
+    },
+  ],
   "date-picker": [
     {
       interfaceName: "DatePickerProps",
@@ -2498,6 +2621,42 @@ export const COMPONENT_PROPS: Record<string, PropsDoc[]> = {
           type: "boolean",
           required: false,
           default: "false",
+        },
+      ],
+    },
+  ],
+  "scroll-progress": [
+    {
+      interfaceName: "ScrollProgressProps",
+      extends: "Extends HTMLAttributes<HTMLDivElement>",
+      props: [
+        {
+          name: "variant",
+          type: "ScrollProgressVariant",
+          required: false,
+          description: "Render a thin horizontal bar or a circular ring.",
+          default: '"bar"',
+        },
+        {
+          name: "target",
+          type: "RefObject<HTMLElement | null>",
+          required: false,
+          description:
+            "The scroll container to track. When omitted, the window / document scrolling element is tracked instead.",
+        },
+        {
+          name: "position",
+          type: "ScrollProgressPosition",
+          required: false,
+          description: "Where to pin the bar variant (ignored for the circle).",
+          default: '"top"',
+        },
+        {
+          name: "size",
+          type: "number",
+          required: false,
+          description: "Diameter of the ring in px (circle variant only).",
+          default: "40",
         },
       ],
     },

@@ -192,6 +192,10 @@
       "types": "./dist/components/gradient-text.d.ts",
       "import": "./dist/components/gradient-text.js"
     },
+    "./heatmap": {
+      "types": "./dist/components/heatmap.d.ts",
+      "import": "./dist/components/heatmap.js"
+    },
     "./hover-card": {
       "types": "./dist/components/hover-card.d.ts",
       "import": "./dist/components/hover-card.js"
@@ -219,6 +223,10 @@
     "./label": {
       "types": "./dist/components/label.d.ts",
       "import": "./dist/components/label.js"
+    },
+    "./lightbox": {
+      "types": "./dist/components/lightbox.d.ts",
+      "import": "./dist/components/lightbox.js"
     },
     "./logo-carousel": {
       "types": "./dist/components/logo-carousel.d.ts",
@@ -308,6 +316,10 @@
       "types": "./dist/components/scroll-area.d.ts",
       "import": "./dist/components/scroll-area.js"
     },
+    "./scroll-progress": {
+      "types": "./dist/components/scroll-progress.d.ts",
+      "import": "./dist/components/scroll-progress.js"
+    },
     "./segmented-control": {
       "types": "./dist/components/segmented-control.d.ts",
       "import": "./dist/components/segmented-control.js"
@@ -395,6 +407,10 @@
     "./toggle-group": {
       "types": "./dist/components/toggle-group.d.ts",
       "import": "./dist/components/toggle-group.js"
+    },
+    "./toolbar": {
+      "types": "./dist/components/toolbar.d.ts",
+      "import": "./dist/components/toolbar.js"
     },
     "./tooltip": {
       "types": "./dist/components/tooltip.d.ts",

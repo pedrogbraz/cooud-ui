@@ -166,6 +166,7 @@ export type {
   DateRangePreset,
 } from "./components/date-range-picker.js";
 export { DateRangePicker } from "./components/date-range-picker.js";
+export type { DialogContentProps } from "./components/dialog.js";
 export {
   Dialog,
   DialogClose,
@@ -239,6 +240,8 @@ export type { GradientBorderProps } from "./components/gradient-border.js";
 export { GradientBorder } from "./components/gradient-border.js";
 export type { GradientTextProps } from "./components/gradient-text.js";
 export { GradientText } from "./components/gradient-text.js";
+export type { HeatmapDay, HeatmapProps } from "./components/heatmap.js";
+export { getHeatmapLevel, Heatmap } from "./components/heatmap.js";
 export { HoverCard, HoverCardContent, HoverCardTrigger } from "./components/hover-card.js";
 export type { InputProps } from "./components/input.js";
 export { Input } from "./components/input.js";
@@ -254,6 +257,8 @@ export type { KanbanColumn, KanbanItem, KanbanProps } from "./components/kanban.
 export { Kanban } from "./components/kanban.js";
 export { Kbd } from "./components/kbd.js";
 export { Label } from "./components/label.js";
+export type { LightboxImage, LightboxProps } from "./components/lightbox.js";
+export { Lightbox } from "./components/lightbox.js";
 export type {
   LogoCarouselItem,
   LogoCarouselMotionPreference,
@@ -374,6 +379,8 @@ export type {
 } from "./components/scheduler.js";
 export { Scheduler } from "./components/scheduler.js";
 export { ScrollArea, ScrollBar } from "./components/scroll-area.js";
+export type { ScrollProgressProps } from "./components/scroll-progress.js";
+export { ScrollProgress } from "./components/scroll-progress.js";
 export type {
   SegmentedControlItemProps,
   SegmentedControlProps,
@@ -500,6 +507,8 @@ export {
 export type { ToggleProps } from "./components/toggle.js";
 export { Toggle, toggleVariants } from "./components/toggle.js";
 export { ToggleGroup, ToggleGroupItem } from "./components/toggle-group.js";
+export type { ToolbarButtonProps, ToolbarProps } from "./components/toolbar.js";
+export { Toolbar, ToolbarButton, ToolbarGroup, ToolbarSeparator } from "./components/toolbar.js";
 export {
   Tooltip,
   TooltipContent,
