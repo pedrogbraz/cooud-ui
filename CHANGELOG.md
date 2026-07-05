@@ -12,6 +12,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **9 new components** — `Marquee`, `AvatarGroup`, `Banner`, `TagsInput`, `Sparkline`,
   `InputGroup`, `PasswordInput`, `ButtonGroup`, and `Masonry` (each CLI-installable
   via `npx cooud-ui add <slug>`).
+- **10 new premium components** — three payments-grade inputs `CurrencyInput`
+  (currency selector + live minor-unit formatting), `PhoneInput` (country selector,
+  emits E.164) and `CreditCardInput` (brand detection + Luhn, display-only/PCI-safe);
+  `TimePicker` (12h/24h popover), `FloatingLabelInput`; and premium motion showpieces
+  `BorderBeam` (animated perimeter light), `FlipCard` (3D front/back), `TiltCard`
+  (pointer-driven 3D tilt), `SplitButton`, and `ConfirmationDialog`. All tokenized,
+  reduced-motion-safe, axe-tested, and CLI-installable via `npx cooud-ui add <slug>`.
 - **Chart breadth** — donut, radar, and radial-bar-gauge examples on the `Chart`
   page (recharts composed inside `ChartContainer`, tokenized, code-split).
 - **Blocks: 8 new families / many new blocks.** A dedicated **Auth** family
