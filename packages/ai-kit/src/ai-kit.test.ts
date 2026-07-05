@@ -26,6 +26,8 @@ describe("writeAiKit", () => {
     expect(existsSync(join(dir, ".cursor/rules/00-doctrine.mdc"))).toBe(true);
     expect(existsSync(join(dir, ".cursor/rules/10-cooud-ui.mdc"))).toBe(true);
     expect(existsSync(join(dir, ".github/copilot-instructions.md"))).toBe(true);
+    expect(existsSync(join(dir, ".windsurf/rules/doctrine.md"))).toBe(true);
+    expect(existsSync(join(dir, "GEMINI.md"))).toBe(true);
     expect(written.length).toBeGreaterThan(10);
   });
 
@@ -36,21 +38,30 @@ describe("writeAiKit", () => {
     expect(agents).not.toContain("__APP_NAME__");
   });
 
-  it("appends the fintech preset only when preset=fintech", () => {
-    writeAiKit({ targetDir: dir, name: "acme", preset: "fintech" });
-    expect(readFileSync(join(dir, "AGENTS.md"), "utf8")).toContain("Fintech / payments preset");
+  it.each([
+    ["fintech", "Fintech / payments preset"],
+    ["saas", "SaaS preset"],
+    ["oss", "Open-source preset"],
+    ["agency", "Agency / client-work preset"],
+  ] as const)("appends the %s preset addendum to AGENTS.md", (preset, heading) => {
+    writeAiKit({ targetDir: dir, name: "acme", preset });
+    expect(readFileSync(join(dir, "AGENTS.md"), "utf8")).toContain(heading);
   });
 
-  it("standard preset omits the fintech section", () => {
+  it("standard preset is the base doctrine only (no preset addendum)", () => {
     writeAiKit({ targetDir: dir, name: "acme", preset: "standard" });
-    expect(readFileSync(join(dir, "AGENTS.md"), "utf8")).not.toContain("Fintech / payments preset");
+    const agents = readFileSync(join(dir, "AGENTS.md"), "utf8");
+    expect(agents).not.toContain("Fintech / payments preset");
+    expect(agents).not.toContain("SaaS preset");
   });
 
-  it("respects the assistants selection (claude only → no cursor/github)", () => {
+  it("respects the assistants selection (claude only → no cursor/github/windsurf/gemini)", () => {
     writeAiKit({ targetDir: dir, name: "acme", assistants: ["claude"] });
     expect(existsSync(join(dir, ".claude/settings.json"))).toBe(true);
     expect(existsSync(join(dir, ".cursor"))).toBe(false);
     expect(existsSync(join(dir, ".github/copilot-instructions.md"))).toBe(false);
+    expect(existsSync(join(dir, ".windsurf"))).toBe(false);
+    expect(existsSync(join(dir, "GEMINI.md"))).toBe(false);
   });
 
   it("includes only the selected skills", () => {
@@ -88,6 +99,6 @@ describe("parseList", () => {
   });
 
   it("throws on an unknown token", () => {
-    expect(() => parseList("windsurf", ASSISTANTS, "assistant")).toThrow(/Unknown assistant/);
+    expect(() => parseList("notepad", ASSISTANTS, "assistant")).toThrow(/Unknown assistant/);
   });
 });

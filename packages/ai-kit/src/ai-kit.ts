@@ -4,13 +4,20 @@ import { fileURLToPath } from "node:url";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 
-/** AI assistants we can generate configuration for. */
-export const ASSISTANTS = ["claude", "cursor", "copilot"] as const;
+/**
+ * AI assistants we generate config FILES for. Codex CLI and Zed additionally
+ * read the repo-root `AGENTS.md` natively, so they are covered by the doctrine
+ * without a dedicated file (no separate entry needed).
+ */
+export const ASSISTANTS = ["claude", "cursor", "copilot", "windsurf", "gemini"] as const;
 export type Assistant = (typeof ASSISTANTS)[number];
 export const DEFAULT_ASSISTANTS: readonly Assistant[] = ASSISTANTS;
 
-/** Doctrine presets: the generic doctrine, the fintech add-on, or no doctrine. */
-export const DOCTRINE_PRESETS = ["standard", "fintech", "none"] as const;
+/**
+ * Doctrine presets. `standard` = the generic base doctrine; the domain presets
+ * append a specialized addendum (`AGENTS.<preset>.md`); `none` = no doctrine.
+ */
+export const DOCTRINE_PRESETS = ["standard", "fintech", "saas", "oss", "agency", "none"] as const;
 export type DoctrinePreset = (typeof DOCTRINE_PRESETS)[number];
 export const DEFAULT_PRESET: DoctrinePreset = "standard";
 
@@ -99,11 +106,12 @@ export function writeAiKit(options: AiKitOptions): AiKitResult {
     emit(rel, readFileSync(join(root, templateRel), "utf8"));
   };
 
-  // AGENTS.md — the shared source of truth. base [+ preset addendum].
+  // AGENTS.md — the shared source of truth: the base doctrine plus the chosen
+  // domain preset's addendum (standard = base only; none = no doctrine at all).
   if (withDoctrine) {
     let doctrine = readFileSync(join(root, "AGENTS.base.md"), "utf8");
-    if (preset === "fintech") {
-      doctrine += `\n\n${readFileSync(join(root, "AGENTS.fintech.md"), "utf8")}`;
+    if (preset !== "standard") {
+      doctrine += `\n\n${readFileSync(join(root, `AGENTS.${preset}.md`), "utf8")}`;
     }
     emit("AGENTS.md", doctrine);
   }
@@ -129,6 +137,16 @@ export function writeAiKit(options: AiKitOptions): AiKitResult {
   // GitHub Copilot — a digest of the doctrine.
   if (wants("copilot") && withDoctrine) {
     emitTemplate("github/copilot-instructions.md", ".github/copilot-instructions.md");
+  }
+
+  // Windsurf — an always-on rules file that digests the doctrine.
+  if (wants("windsurf") && withDoctrine) {
+    emitTemplate("windsurf/rules/doctrine.md", ".windsurf/rules/doctrine.md");
+  }
+
+  // Gemini CLI — a GEMINI.md that @-imports the shared AGENTS.md doctrine.
+  if (wants("gemini") && withDoctrine) {
+    emitTemplate("gemini/GEMINI.md", "GEMINI.md");
   }
 
   return { written, skipped };
