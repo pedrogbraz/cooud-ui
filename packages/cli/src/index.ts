@@ -1,9 +1,11 @@
 #!/usr/bin/env node
 import { Command } from "commander";
 import { add } from "./commands/add.js";
+import { aiAdd } from "./commands/ai.js";
 import { diff } from "./commands/diff.js";
 import { init } from "./commands/init.js";
 import { list } from "./commands/list.js";
+import { themeSet } from "./commands/theme.js";
 import { CLI_VERSION } from "./config.js";
 
 const program = new Command();
@@ -61,5 +63,30 @@ program
   .option("-c, --cwd <dir>", "working directory", process.cwd())
   .option("-r, --registry <source>", "registry URL or local directory")
   .action((components, opts) => diff(components, { cwd: opts.cwd, registry: opts.registry }));
+
+const theme = program.command("theme").description("Manage the app's Cooud UI theme preset.");
+theme
+  .command("set")
+  .description("Switch the theme preset (and optionally the color mode).")
+  .argument("<name>", "theme preset (aurora, neutral, midnight, sunset, emerald)")
+  .option("-m, --mode <mode>", "color mode (dark or light)")
+  .option("-c, --cwd <dir>", "working directory", process.cwd())
+  .action((name, opts) => themeSet({ name, mode: opts.mode, cwd: opts.cwd }));
+
+program
+  .command("ai")
+  .description("Add the AI Kit (AGENTS.md doctrine + Claude Code / Cursor / Copilot config).")
+  .option("-c, --cwd <dir>", "working directory", process.cwd())
+  .option("-a, --assistants <list>", "comma-separated: claude, cursor, copilot (or 'all')")
+  .option("-p, --preset <name>", "doctrine preset: standard, fintech, or none", "standard")
+  .option("-s, --skills <list>", "comma-separated Claude Code skills (or 'all')")
+  .action((opts) =>
+    aiAdd({
+      cwd: opts.cwd,
+      assistants: opts.assistants,
+      preset: opts.preset,
+      skills: opts.skills,
+    }),
+  );
 
 program.parseAsync(process.argv);
