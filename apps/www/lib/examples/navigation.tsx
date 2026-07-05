@@ -58,8 +58,24 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
+  Toolbar,
+  ToolbarButton,
+  ToolbarGroup,
+  ToolbarSeparator,
 } from "@cooud-ui/ui";
-import { Calendar, Home, Inbox, Search, Settings } from "lucide-react";
+import {
+  AlignCenter,
+  AlignLeft,
+  AlignRight,
+  Bold,
+  Calendar,
+  Home,
+  Inbox,
+  Italic,
+  Search,
+  Settings,
+  Underline,
+} from "lucide-react";
 import { useState } from "react";
 import { ExampleList } from "../../components/docs/example-list";
 import type { ExampleMap } from "./types";
@@ -123,6 +139,58 @@ function MenubarDemo() {
         </MenubarContent>
       </MenubarMenu>
     </Menubar>
+  );
+}
+
+function ToolbarDemo() {
+  const [marks, setMarks] = useState({ bold: true, italic: false, underline: false });
+  const [align, setAlign] = useState<"left" | "center" | "right">("left");
+
+  const toggle = (mark: keyof typeof marks) =>
+    setMarks((prev) => ({ ...prev, [mark]: !prev[mark] }));
+
+  return (
+    <Toolbar aria-label="Formatting">
+      <ToolbarGroup>
+        <ToolbarButton aria-label="Bold" pressed={marks.bold} onClick={() => toggle("bold")}>
+          <Bold aria-hidden="true" />
+        </ToolbarButton>
+        <ToolbarButton aria-label="Italic" pressed={marks.italic} onClick={() => toggle("italic")}>
+          <Italic aria-hidden="true" />
+        </ToolbarButton>
+        <ToolbarButton
+          aria-label="Underline"
+          pressed={marks.underline}
+          onClick={() => toggle("underline")}
+        >
+          <Underline aria-hidden="true" />
+        </ToolbarButton>
+      </ToolbarGroup>
+      <ToolbarSeparator />
+      <ToolbarGroup>
+        <ToolbarButton
+          aria-label="Align left"
+          pressed={align === "left"}
+          onClick={() => setAlign("left")}
+        >
+          <AlignLeft aria-hidden="true" />
+        </ToolbarButton>
+        <ToolbarButton
+          aria-label="Align center"
+          pressed={align === "center"}
+          onClick={() => setAlign("center")}
+        >
+          <AlignCenter aria-hidden="true" />
+        </ToolbarButton>
+        <ToolbarButton
+          aria-label="Align right"
+          pressed={align === "right"}
+          onClick={() => setAlign("right")}
+        >
+          <AlignRight aria-hidden="true" />
+        </ToolbarButton>
+      </ToolbarGroup>
+    </Toolbar>
   );
 }
 
@@ -730,6 +798,47 @@ export const navigationExamples: ExampleMap = {
           </ResizablePanel>
         </ResizablePanelGroup>
       ),
+    },
+  ],
+  toolbar: [
+    {
+      id: "formatting",
+      title: "Formatting",
+      description:
+        'An accessible `role="toolbar"` with roving tabindex — Tab moves in, then the arrow keys move between buttons. Toggle buttons reflect `aria-pressed`, and a separator splits the text marks from the alignment group.',
+      code: `function ToolbarDemo() {
+  const [marks, setMarks] = useState({ bold: true, italic: false, underline: false });
+  const [align, setAlign] = useState("left");
+
+  return (
+    <Toolbar aria-label="Formatting">
+      <ToolbarGroup>
+        <ToolbarButton aria-label="Bold" pressed={marks.bold}>
+          <Bold aria-hidden="true" />
+        </ToolbarButton>
+        <ToolbarButton aria-label="Italic" pressed={marks.italic}>
+          <Italic aria-hidden="true" />
+        </ToolbarButton>
+        <ToolbarButton aria-label="Underline" pressed={marks.underline}>
+          <Underline aria-hidden="true" />
+        </ToolbarButton>
+      </ToolbarGroup>
+      <ToolbarSeparator />
+      <ToolbarGroup>
+        <ToolbarButton aria-label="Align left" pressed={align === "left"}>
+          <AlignLeft aria-hidden="true" />
+        </ToolbarButton>
+        <ToolbarButton aria-label="Align center" pressed={align === "center"}>
+          <AlignCenter aria-hidden="true" />
+        </ToolbarButton>
+        <ToolbarButton aria-label="Align right" pressed={align === "right"}>
+          <AlignRight aria-hidden="true" />
+        </ToolbarButton>
+      </ToolbarGroup>
+    </Toolbar>
+  );
+}`,
+      preview: <ToolbarDemo />,
     },
   ],
 };

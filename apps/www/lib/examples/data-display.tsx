@@ -29,6 +29,8 @@ import {
   EmptyDescription,
   EmptyIcon,
   EmptyTitle,
+  Heatmap,
+  type HeatmapDay,
   Kanban,
   type KanbanColumn,
   Kbd,
@@ -587,6 +589,42 @@ return (
     ))}
   </Masonry>
 );`;
+
+// 17 weeks × 7 days ≈ 119 deterministic days. A cheap LCG keeps the values
+// varied (so every level shows) without pulling randomness into the render.
+function buildHeatmapData(days = 119): HeatmapDay[] {
+  const start = new Date(Date.UTC(2026, 2, 1));
+  let seed = 1337;
+  const next = () => {
+    seed = (seed * 1103515245 + 12345) & 0x7fffffff;
+    return seed / 0x7fffffff;
+  };
+  return Array.from({ length: days }, (_, index) => {
+    const date = new Date(start);
+    date.setUTCDate(start.getUTCDate() + index);
+    const roll = next();
+    // ~25% empty days, the rest spread across 1–12 contributions.
+    const value = roll < 0.25 ? 0 : Math.round(next() * 11) + 1;
+    return { date: date.toISOString().slice(0, 10), value };
+  });
+}
+
+const HEATMAP_DATA = buildHeatmapData();
+
+function HeatmapDemo() {
+  return <Heatmap data={HEATMAP_DATA} aria-label="Contributions" />;
+}
+
+const heatmapDemoCode = `// 17 weeks of daily activity, laid out into week columns of 7.
+const data = Array.from({ length: 119 }, (_, i) => {
+  const date = new Date(2026, 2, 1 + i);
+  return {
+    date: date.toISOString().slice(0, 10),
+    value: Math.round(Math.random() * 12),
+  };
+});
+
+return <Heatmap data={data} aria-label="Contributions" />;`;
 
 export const dataDisplayExamples: ExampleMap = {
   avatar: [
@@ -1737,6 +1775,16 @@ return (
         "A pure CSS multi-column layout that flows items top-to-bottom, balancing columns regardless of card height. `columns` takes a responsive map and `gap` controls both axes — no JS measurement, no layout shift.",
       code: masonryDemoCode,
       preview: <MasonryDemo />,
+    },
+  ],
+  heatmap: [
+    {
+      id: "contributions",
+      title: "Contributions",
+      description:
+        "A calendar-style activity grid: each cell is one day, laid out into week columns of 7. Values bucket into discrete levels against the series max, with the empty level reserved for zero-activity days.",
+      code: heatmapDemoCode,
+      preview: <HeatmapDemo />,
     },
   ],
   "comparison-slider": [

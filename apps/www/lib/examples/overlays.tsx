@@ -58,6 +58,8 @@ import {
   HoverCardTrigger,
   Input,
   Label,
+  Lightbox,
+  type LightboxImage,
   NotificationCenter,
   type NotificationItem,
   Popover,
@@ -318,6 +320,49 @@ function NotificationCenterDemo() {
         </Button>
       }
     />
+  );
+}
+
+const LIGHTBOX_IMAGES: LightboxImage[] = [
+  { src: "https://picsum.photos/seed/cooud1/800/600", alt: "Mountain ridge at dawn" },
+  { src: "https://picsum.photos/seed/cooud2/800/600", alt: "Coastline from above" },
+  { src: "https://picsum.photos/seed/cooud3/800/600", alt: "Forest canopy" },
+  { src: "https://picsum.photos/seed/cooud4/800/600", alt: "City skyline at dusk" },
+  { src: "https://picsum.photos/seed/cooud5/800/600", alt: "Desert dunes" },
+  { src: "https://picsum.photos/seed/cooud6/800/600", alt: "Quiet harbour" },
+];
+
+function LightboxDemo() {
+  const [open, setOpen] = useState(false);
+  const [index, setIndex] = useState(0);
+
+  return (
+    <>
+      <div className="grid grid-cols-3 gap-2">
+        {LIGHTBOX_IMAGES.map((image, i) => (
+          <button
+            key={image.src}
+            type="button"
+            aria-label={`Open ${image.alt}`}
+            onClick={() => {
+              setIndex(i);
+              setOpen(true);
+            }}
+            className="overflow-hidden rounded-lg outline-none transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            {/* biome-ignore lint/performance/noImgElement: docs example renders external picsum images directly */}
+            <img src={image.src} alt={image.alt} className="aspect-[4/3] size-full object-cover" />
+          </button>
+        ))}
+      </div>
+      <Lightbox
+        images={LIGHTBOX_IMAGES}
+        open={open}
+        onOpenChange={setOpen}
+        index={index}
+        onIndexChange={setIndex}
+      />
+    </>
   );
 }
 
@@ -1107,6 +1152,50 @@ function NotificationCenterDemo() {
   );
 }`,
       preview: <CommandPaletteDemo />,
+    },
+  ],
+  lightbox: [
+    {
+      id: "gallery",
+      title: "Gallery",
+      description:
+        "A controlled full-screen gallery: clicking a thumbnail opens the lightbox at that image. Arrow keys (or the on-image controls and thumbnail strip) move between images, and the counter tracks position.",
+      code: `function LightboxDemo() {
+  const [open, setOpen] = useState(false);
+  const [index, setIndex] = useState(0);
+  const images = [
+    { src: "/photos/1.jpg", alt: "Mountain ridge at dawn" },
+    { src: "/photos/2.jpg", alt: "Coastline from above" },
+    // …
+  ];
+
+  return (
+    <>
+      <div className="grid grid-cols-3 gap-2">
+        {images.map((image, i) => (
+          <button
+            key={image.src}
+            type="button"
+            onClick={() => {
+              setIndex(i);
+              setOpen(true);
+            }}
+          >
+            <img src={image.src} alt={image.alt} />
+          </button>
+        ))}
+      </div>
+      <Lightbox
+        images={images}
+        open={open}
+        onOpenChange={setOpen}
+        index={index}
+        onIndexChange={setIndex}
+      />
+    </>
+  );
+}`,
+      preview: <LightboxDemo />,
     },
   ],
 };

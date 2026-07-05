@@ -211,6 +211,13 @@ export const CATEGORIES: ComponentCategory[] = [
         description: "Drag a divider to reveal a before/after comparison of two layers.",
         importName: "ComparisonSlider",
       },
+      {
+        slug: "heatmap",
+        name: "Heatmap",
+        description:
+          "A calendar-style contribution heatmap that buckets daily activity into levels.",
+        importName: "Heatmap",
+      },
       { slug: "kbd", name: "Kbd", description: "Keyboard key hint." },
       { slug: "empty", name: "Empty", description: "Empty-state placeholder." },
       { slug: "separator", name: "Separator", description: "Visual divider between content." },
@@ -310,6 +317,12 @@ export const CATEGORIES: ComponentCategory[] = [
       },
       { slug: "command", name: "Command", description: "⌘K command palette (cmdk)." },
       {
+        slug: "lightbox",
+        name: "Lightbox",
+        description: "Full-screen image gallery with thumbnails and keyboard navigation.",
+        importName: "Lightbox",
+      },
+      {
         slug: "confirmation-dialog",
         name: "ConfirmationDialog",
         description: "Ergonomic AlertDialog wrapper for destructive actions with async confirm.",
@@ -358,6 +371,12 @@ export const CATEGORIES: ComponentCategory[] = [
         description: "Draggable split panes for resizable layouts.",
         importName: "ResizablePanelGroup, ResizablePanel, ResizableHandle",
       },
+      {
+        slug: "toolbar",
+        name: "Toolbar",
+        description: "An accessible button toolbar with roving focus and grouped controls.",
+        importName: "Toolbar, ToolbarButton, ToolbarSeparator, ToolbarGroup",
+      },
     ],
   },
   {
@@ -404,6 +423,12 @@ export const CATEGORIES: ComponentCategory[] = [
       { slug: "gradient-border", name: "GradientBorder", description: "Aurora gradient border." },
       { slug: "gradient-text", name: "GradientText", description: "Gradient-clipped text." },
       { slug: "spotlight-card", name: "SpotlightCard", description: "Cursor-following spotlight." },
+      {
+        slug: "scroll-progress",
+        name: "ScrollProgress",
+        description: "A bar or ring that tracks how far a scroll container has been read.",
+        importName: "ScrollProgress",
+      },
       {
         slug: "aurora-background",
         name: "AuroraBackground",

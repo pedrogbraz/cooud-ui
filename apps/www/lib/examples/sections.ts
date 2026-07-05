@@ -173,6 +173,7 @@ export const EXAMPLE_SECTIONS: Record<string, ExampleSectionMeta[]> = {
   timeline: [{ id: "activity", title: "Activity" }],
   kanban: [{ id: "board", title: "Board" }],
   masonry: [{ id: "responsive-cards", title: "Responsive cards" }],
+  heatmap: [{ id: "contributions", title: "Contributions" }],
   "comparison-slider": [{ id: "before-after", title: "Before & after" }],
   alert: [
     { id: "default", title: "Default" },
@@ -206,6 +207,7 @@ export const EXAMPLE_SECTIONS: Record<string, ExampleSectionMeta[]> = {
   "dropdown-menu": [{ id: "actions", title: "Actions" }],
   "context-menu": [{ id: "on-a-surface", title: "On a surface" }],
   command: [{ id: "command-palette", title: "Command palette" }],
+  lightbox: [{ id: "gallery", title: "Gallery" }],
   tabs: [{ id: "three-tabs", title: "Three tabs" }],
   accordion: [{ id: "faq", title: "FAQ" }],
   breadcrumb: [{ id: "trail", title: "Trail" }],
@@ -215,6 +217,7 @@ export const EXAMPLE_SECTIONS: Record<string, ExampleSectionMeta[]> = {
   sidebar: [{ id: "collapsible-nav", title: "Collapsible navigation" }],
   "app-shell": [{ id: "shell-layout", title: "Shell layout" }],
   resizable: [{ id: "split-panes", title: "Split panes" }],
+  toolbar: [{ id: "formatting", title: "Formatting" }],
   calendar: [{ id: "single-date", title: "Single date" }],
   "date-picker": [{ id: "pick-a-date", title: "Pick a date" }],
   "date-range-picker": [
@@ -240,6 +243,7 @@ export const EXAMPLE_SECTIONS: Record<string, ExampleSectionMeta[]> = {
   ],
   "gradient-text": [{ id: "headline", title: "Headline" }],
   "spotlight-card": [{ id: "hover-spotlight", title: "Hover spotlight" }],
+  "scroll-progress": [{ id: "reading-bar", title: "Reading bar & ring" }],
   "aurora-background": [{ id: "animated-backdrop", title: "Animated backdrop" }],
   "logo-carousel": [{ id: "hero-lockup", title: "Hero lockup" }],
   marquee: [
