@@ -31,6 +31,7 @@ export const EXAMPLE_FAMILY_BY_SLUG: Record<string, ExampleFamily> = {
   "copy-button": "buttons",
   "button-group": "buttons",
   fab: "buttons",
+  "split-button": "buttons",
   // forms
   input: "forms",
   "input-group": "forms",
@@ -55,6 +56,10 @@ export const EXAMPLE_FAMILY_BY_SLUG: Record<string, ExampleFamily> = {
   "rich-text-editor": "forms",
   "color-picker": "forms",
   rating: "forms",
+  "currency-input": "forms",
+  "phone-input": "forms",
+  "credit-card-input": "forms",
+  "floating-label-input": "forms",
   // data-display
   avatar: "data-display",
   "avatar-group": "data-display",
@@ -98,6 +103,7 @@ export const EXAMPLE_FAMILY_BY_SLUG: Record<string, ExampleFamily> = {
   command: "overlays",
   "notification-center": "overlays",
   lightbox: "overlays",
+  "confirmation-dialog": "overlays",
   // navigation
   tabs: "navigation",
   accordion: "navigation",
@@ -114,6 +120,7 @@ export const EXAMPLE_FAMILY_BY_SLUG: Record<string, ExampleFamily> = {
   "date-picker": "date-time",
   "date-range-picker": "date-time",
   scheduler: "date-time",
+  "time-picker": "date-time",
   // charts
   chart: "charts",
   // premium
@@ -134,6 +141,9 @@ export const EXAMPLE_FAMILY_BY_SLUG: Record<string, ExampleFamily> = {
   "text-effect": "premium",
   frame: "premium",
   dock: "premium",
+  "border-beam": "premium",
+  "flip-card": "premium",
+  "tilt-card": "premium",
 };
 
 export function getExampleFamily(slug: string): ExampleFamily | undefined {

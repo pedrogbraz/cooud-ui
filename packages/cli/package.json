@@ -49,6 +49,7 @@
     "registry:check": "bun run scripts/check-registry.ts"
   },
   "dependencies": {
+    "@cooud-ui/ai-kit": "workspace:*",
     "commander": "^12.1.0",
     "picocolors": "^1.1.1"
   },

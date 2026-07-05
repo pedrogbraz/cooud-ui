@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "cooud-ui": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "cooud-ui-mcp"]
+    }
+  }
+}

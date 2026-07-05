@@ -42,6 +42,11 @@ export const EXAMPLE_SECTIONS: Record<string, ExampleSectionMeta[]> = {
     { id: "default", title: "Default" },
     { id: "speed-dial", title: "Speed dial" },
   ],
+  "split-button": [
+    { id: "default", title: "Default" },
+    { id: "variants", title: "Variants" },
+    { id: "loading", title: "Loading" },
+  ],
   input: [
     { id: "default", title: "Default" },
     { id: "invalid-state", title: "Invalid state" },
@@ -99,6 +104,26 @@ export const EXAMPLE_SECTIONS: Record<string, ExampleSectionMeta[]> = {
     { id: "read-only", title: "Read-only with a count" },
   ],
   "color-picker": [{ id: "swatches", title: "With swatches" }],
+  "currency-input": [
+    { id: "multi-currency", title: "Multi-currency" },
+    { id: "single-currency", title: "Single currency" },
+    { id: "limit", title: "Hard ceiling" },
+  ],
+  "phone-input": [
+    { id: "default", title: "Default" },
+    { id: "default-country", title: "Default country & value" },
+    { id: "invalid", title: "Invalid" },
+  ],
+  "credit-card-input": [
+    { id: "default", title: "Default" },
+    { id: "brand-detection", title: "Brand detection" },
+    { id: "error", title: "With error" },
+  ],
+  "floating-label-input": [
+    { id: "default", title: "Default" },
+    { id: "adornments", title: "With adornments" },
+    { id: "invalid", title: "Invalid" },
+  ],
   avatar: [
     { id: "image-fallback", title: "Image & fallback" },
     { id: "group", title: "Group" },
@@ -148,8 +173,8 @@ export const EXAMPLE_SECTIONS: Record<string, ExampleSectionMeta[]> = {
   timeline: [{ id: "activity", title: "Activity" }],
   kanban: [{ id: "board", title: "Board" }],
   masonry: [{ id: "responsive-cards", title: "Responsive cards" }],
-  "comparison-slider": [{ id: "before-after", title: "Before & after" }],
   heatmap: [{ id: "contributions", title: "Contributions" }],
+  "comparison-slider": [{ id: "before-after", title: "Before & after" }],
   alert: [
     { id: "default", title: "Default" },
     { id: "variants", title: "Variants" },
@@ -167,6 +192,11 @@ export const EXAMPLE_SECTIONS: Record<string, ExampleSectionMeta[]> = {
   ],
   sonner: [{ id: "toasts", title: "Toasts" }],
   "alert-dialog": [{ id: "confirm", title: "Confirm" }],
+  "confirmation-dialog": [
+    { id: "basic", title: "Basic" },
+    { id: "destructive", title: "Destructive" },
+    { id: "async", title: "Async confirm" },
+  ],
   dialog: [{ id: "basic", title: "Basic" }],
   sheet: [{ id: "sides", title: "Sides" }],
   drawer: [{ id: "bottom-drawer", title: "Bottom drawer" }],
@@ -184,10 +214,10 @@ export const EXAMPLE_SECTIONS: Record<string, ExampleSectionMeta[]> = {
   pagination: [{ id: "pager", title: "Pager" }],
   "navigation-menu": [{ id: "menu-bar", title: "Menu bar" }],
   menubar: [{ id: "menus", title: "Menus" }],
-  toolbar: [{ id: "formatting", title: "Formatting" }],
   sidebar: [{ id: "collapsible-nav", title: "Collapsible navigation" }],
   "app-shell": [{ id: "shell-layout", title: "Shell layout" }],
   resizable: [{ id: "split-panes", title: "Split panes" }],
+  toolbar: [{ id: "formatting", title: "Formatting" }],
   calendar: [{ id: "single-date", title: "Single date" }],
   "date-picker": [{ id: "pick-a-date", title: "Pick a date" }],
   "date-range-picker": [
@@ -195,6 +225,11 @@ export const EXAMPLE_SECTIONS: Record<string, ExampleSectionMeta[]> = {
     { id: "presets", title: "With presets" },
   ],
   scheduler: [{ id: "month-view", title: "Month view" }],
+  "time-picker": [
+    { id: "twelve-hour", title: "12-hour clock" },
+    { id: "twenty-four-hour-seconds", title: "24-hour with seconds" },
+    { id: "disabled", title: "Disabled" },
+  ],
   chart: [
     { id: "bar-chart", title: "Bar chart" },
     { id: "pie-chart", title: "Donut chart" },
@@ -230,6 +265,21 @@ export const EXAMPLE_SECTIONS: Record<string, ExampleSectionMeta[]> = {
     { id: "window", title: "Window chrome" },
   ],
   dock: [{ id: "app-dock", title: "App dock" }],
+  "border-beam": [
+    { id: "featured-card", title: "Featured card" },
+    { id: "prompt-bar", title: "Prompt bar" },
+    { id: "custom-colours", title: "Custom colours & reverse" },
+  ],
+  "flip-card": [
+    { id: "hover", title: "Hover to flip" },
+    { id: "click", title: "Click to flip" },
+    { id: "controlled", title: "Controlled" },
+  ],
+  "tilt-card": [
+    { id: "glare-parallax", title: "Glare & parallax" },
+    { id: "payment-card", title: "Payment card" },
+    { id: "subtle", title: "Subtle" },
+  ],
 };
 
 export function getExampleSections(slug: string): ExampleSectionMeta[] {

@@ -46,6 +46,8 @@ export type { BadgeProps } from "./components/badge.js";
 export { Badge, badgeVariants } from "./components/badge.js";
 export type { BannerProps } from "./components/banner.js";
 export { Banner, bannerVariants } from "./components/banner.js";
+export type { BorderBeamProps } from "./components/border-beam.js";
+export { BorderBeam } from "./components/border-beam.js";
 export type { BreadcrumbLinkProps } from "./components/breadcrumb.js";
 export {
   Breadcrumb,
@@ -125,6 +127,8 @@ export {
 } from "./components/command.js";
 export type { ComparisonSliderProps } from "./components/comparison-slider.js";
 export { ComparisonSlider } from "./components/comparison-slider.js";
+export type { ConfirmationDialogProps } from "./components/confirmation-dialog.js";
+export { ConfirmationDialog } from "./components/confirmation-dialog.js";
 export {
   ContextMenu,
   ContextMenuCheckboxItem,
@@ -143,6 +147,18 @@ export {
 } from "./components/context-menu.js";
 export type { CopyButtonProps } from "./components/copy-button.js";
 export { CopyButton } from "./components/copy-button.js";
+export type {
+  CardBrand,
+  CreditCardInputProps,
+  CreditCardValue,
+} from "./components/credit-card-input.js";
+export { CreditCardInput } from "./components/credit-card-input.js";
+export type {
+  CurrencyInputMeta,
+  CurrencyInputProps,
+  CurrencyOption,
+} from "./components/currency-input.js";
+export { CurrencyInput } from "./components/currency-input.js";
 export type {
   DataTableColumnHeaderProps,
   DataTableDensity,
@@ -222,6 +238,10 @@ export { Fab } from "./components/fab.js";
 export { Field, FieldDescription, FieldError, FieldLabel } from "./components/field.js";
 export type { FileDropzoneProps } from "./components/file-dropzone.js";
 export { FileDropzone } from "./components/file-dropzone.js";
+export type { FlipCardAxis, FlipCardProps, FlipCardTrigger } from "./components/flip-card.js";
+export { FlipCard, FlipCardBack, FlipCardFront } from "./components/flip-card.js";
+export type { FloatingLabelInputProps } from "./components/floating-label-input.js";
+export { FloatingLabelInput } from "./components/floating-label-input.js";
 export {
   Form,
   FormControl,
@@ -357,6 +377,8 @@ export {
 } from "./components/pagination.js";
 export type { PasswordInputProps } from "./components/password-input.js";
 export { getPasswordStrength, PasswordInput } from "./components/password-input.js";
+export type { PhoneCountry, PhoneInputProps } from "./components/phone-input.js";
+export { DEFAULT_PHONE_COUNTRIES, PhoneInput } from "./components/phone-input.js";
 export { Popover, PopoverAnchor, PopoverContent, PopoverTrigger } from "./components/popover.js";
 export { Progress } from "./components/progress.js";
 export { RadioGroup, RadioGroupItem } from "./components/radio-group.js";
@@ -451,6 +473,8 @@ export type { SparklineProps } from "./components/sparkline.js";
 export { Sparkline } from "./components/sparkline.js";
 export type { SpinnerProps } from "./components/spinner.js";
 export { Spinner } from "./components/spinner.js";
+export type { SplitButtonItem, SplitButtonProps } from "./components/split-button.js";
+export { SplitButton } from "./components/split-button.js";
 export { SpotlightCard } from "./components/spotlight-card.js";
 export type {
   StepperIndicatorProps,
@@ -492,6 +516,10 @@ export type {
 export { TextEffect } from "./components/text-effect.js";
 export type { TextareaProps } from "./components/textarea.js";
 export { Textarea } from "./components/textarea.js";
+export type { TiltCardProps } from "./components/tilt-card.js";
+export { TiltCard } from "./components/tilt-card.js";
+export type { TimePickerProps, TimeValue } from "./components/time-picker.js";
+export { TimePicker } from "./components/time-picker.js";
 export type { TimelineDotProps, TimelineItemProps } from "./components/timeline.js";
 export {
   Timeline,

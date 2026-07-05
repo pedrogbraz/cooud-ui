@@ -153,6 +153,120 @@ export const COMPONENT_PROPS: Record<string, PropsDoc[]> = {
       ],
     },
   ],
+  "split-button": [
+    {
+      interfaceName: "SplitButtonProps",
+      extends: 'Extends Omit<HTMLAttributes<HTMLDivElement>, "onClick">',
+      props: [
+        {
+          name: "children",
+          type: "ReactNode",
+          required: true,
+          description: "The primary action's label.",
+        },
+        {
+          name: "onClick",
+          type: "MouseEventHandler<HTMLButtonElement>",
+          required: false,
+          description: "Fires when the primary (left) segment is clicked.",
+        },
+        {
+          name: "icon",
+          type: "ReactNode",
+          required: false,
+          description:
+            "Optional leading icon for the primary segment (replaced by a spinner while `loading`).",
+        },
+        {
+          name: "items",
+          type: "SplitButtonItem[]",
+          required: false,
+          description:
+            "Declarative secondary actions. Ignored when a custom `menu` slot is supplied.",
+        },
+        {
+          name: "menu",
+          type: "ReactNode",
+          required: false,
+          description:
+            "Escape hatch for fully custom menu content (compose `DropdownMenuItem`, `DropdownMenuSeparator`, `DropdownMenuLabel`, …). Takes precedence over `items`.",
+        },
+        {
+          name: "variant",
+          type: "SplitButtonVariant",
+          required: false,
+          description: "Visual style, shared by both segments — mirrors `Button`'s variants.",
+          default: '"primary"',
+        },
+        {
+          name: "size",
+          type: "SplitButtonSize",
+          required: false,
+          description: "Control height/density, shared by both segments.",
+          default: '"md"',
+        },
+        {
+          name: "disabled",
+          type: "boolean",
+          required: false,
+          description: "Disables both segments.",
+          default: "false",
+        },
+        {
+          name: "loading",
+          type: "boolean",
+          required: false,
+          description: "Shows a spinner in the primary segment and disables the control.",
+          default: "false",
+        },
+        {
+          name: "menuLabel",
+          type: "string",
+          required: false,
+          description: "Accessible name for the icon-only menu trigger.",
+          default: '"More actions"',
+        },
+        {
+          name: "align",
+          type: '"start" | "center" | "end"',
+          required: false,
+          description: "Horizontal alignment of the menu relative to the trigger.",
+          default: '"end"',
+        },
+        {
+          name: "sideOffset",
+          type: "number",
+          required: false,
+          description: "Gap in px between the trigger and the opened menu.",
+          default: "6",
+        },
+        {
+          name: "contentClassName",
+          type: "string",
+          required: false,
+          description: "Class applied to the dropdown menu surface.",
+        },
+        {
+          name: "defaultOpen",
+          type: "boolean",
+          required: false,
+          description: "Uncontrolled initial open state of the menu.",
+        },
+        {
+          name: "open",
+          type: "boolean",
+          required: false,
+          description: "Controlled open state of the menu.",
+        },
+        {
+          name: "onOpenChange",
+          type: "(open: boolean) => void",
+          required: false,
+          description: "Notified whenever the menu opens or closes.",
+        },
+      ],
+    },
+  ],
   input: [
     {
       interfaceName: "InputProps",
@@ -1071,6 +1185,297 @@ export const COMPONENT_PROPS: Record<string, PropsDoc[]> = {
           type: "string",
           required: false,
           description: "Native id for the trigger.",
+        },
+      ],
+    },
+  ],
+  "currency-input": [
+    {
+      interfaceName: "CurrencyInputProps",
+      extends:
+        'Extends Omit< InputHTMLAttributes<HTMLInputElement>, "value" | "defaultValue" | "onChange" | "min" | "max" | "type" >',
+      props: [
+        {
+          name: "value",
+          type: "number | null",
+          required: false,
+          description:
+            "Controlled amount in **minor units** (integer cents). Use `null` for empty. Pair with `onValueChange`.",
+        },
+        {
+          name: "defaultValue",
+          type: "number | null",
+          required: false,
+          description:
+            "Initial amount in minor units for uncontrolled usage. Defaults to `null` (empty).",
+          default: "null",
+        },
+        {
+          name: "onValueChange",
+          type: "(value: number | null, meta: CurrencyInputMeta) => void",
+          required: false,
+          description:
+            "Fired on every edit with the amount in **minor units** (`null` when cleared) plus formatting `meta`.",
+        },
+        {
+          name: "currencies",
+          type: "CurrencyOption[]",
+          required: false,
+          description:
+            "Selectable currencies. Defaults to BRL, USD and EUR. A single entry renders a static (non-interactive) prefix.",
+        },
+        {
+          name: "currency",
+          type: "string",
+          required: false,
+          description: "Controlled active currency code. Pair with `onCurrencyChange`.",
+        },
+        {
+          name: "defaultCurrency",
+          type: "string",
+          required: false,
+          description:
+            "Initial active currency code for uncontrolled usage. Defaults to the first `currencies` entry.",
+        },
+        {
+          name: "onCurrencyChange",
+          type: "(code: string, meta: CurrencyInputMeta) => void",
+          required: false,
+          description:
+            "Fired when the user picks a different currency (also re-fires `onValueChange` with the new `meta`).",
+        },
+        {
+          name: "min",
+          type: "number",
+          required: false,
+          description:
+            "Lower clamp in minor units, enforced on blur. Defaults to `0` (no negatives).",
+          default: "0",
+        },
+        {
+          name: "max",
+          type: "number",
+          required: false,
+          description:
+            "Upper clamp in minor units — a hard live ceiling the value can never be typed past.",
+        },
+        {
+          name: "invalid",
+          type: "boolean",
+          required: false,
+          description: "Marks the field invalid (red border + `aria-invalid`).",
+          default: "false",
+        },
+        {
+          name: "disabled",
+          type: "boolean",
+          required: false,
+          description: "Disables the field and the currency selector.",
+          default: "false",
+        },
+        {
+          name: "selectorLabel",
+          type: "string",
+          required: false,
+          description: "Accessible name for the currency selector button.",
+          default: '"Select currency"',
+        },
+        {
+          name: "inputClassName",
+          type: "string",
+          required: false,
+          description: "Extra classes for the underlying `<input>`.",
+        },
+      ],
+    },
+  ],
+  "phone-input": [
+    {
+      interfaceName: "PhoneInputProps",
+      extends:
+        'Extends Omit< InputHTMLAttributes<HTMLInputElement>, "value" | "defaultValue" | "onChange" | "type" >',
+      props: [
+        {
+          name: "value",
+          type: "string",
+          required: false,
+          description:
+            'Controlled value as an E.164 string (e.g. `"+5511987654321"`). Pair with `onChange`.',
+        },
+        {
+          name: "defaultValue",
+          type: "string",
+          required: false,
+          description: "Initial E.164 (or bare national) value for uncontrolled usage.",
+        },
+        {
+          name: "onChange",
+          type: "(value: string) => void",
+          required: false,
+          description:
+            "Called with the full E.164 string on every edit; empty string when no number is entered.",
+        },
+        {
+          name: "defaultCountry",
+          type: "string",
+          required: false,
+          description: 'ISO 3166-1 alpha-2 code selected on first render. Defaults to `"BR"`.',
+          default: '"BR"',
+        },
+        {
+          name: "countries",
+          type: "PhoneCountry[]",
+          required: false,
+          description: "Overrides the built-in country list. Order controls the list order.",
+          default: "DEFAULT_PHONE_COUNTRIES",
+        },
+        {
+          name: "invalid",
+          type: "boolean",
+          required: false,
+          description: "Marks the field invalid (red border/ring + `aria-invalid`).",
+          default: "false",
+        },
+        {
+          name: "searchPlaceholder",
+          type: "string",
+          required: false,
+          description: "Placeholder for the country search box inside the selector.",
+          default: '"Search country…"',
+        },
+        {
+          name: "emptyText",
+          type: "string",
+          required: false,
+          description: "Message shown when no country matches the search.",
+          default: '"No country found."',
+        },
+        {
+          name: "label",
+          type: "string",
+          required: false,
+          description:
+            'Accessible name for the whole control and the number field. Defaults to `"Phone number"`.',
+          default: '"Phone number"',
+        },
+        {
+          name: "countryLabel",
+          type: "string",
+          required: false,
+          description:
+            'Accessible name for the country selector trigger. Defaults to `"Select country"`.',
+          default: '"Select country"',
+        },
+        {
+          name: "contentClassName",
+          type: "string",
+          required: false,
+          description: "Extra classes for the country selector popover.",
+        },
+        {
+          name: "name",
+          type: "string",
+          required: false,
+          description:
+            "Name for a hidden input carrying the E.164 value, so the field submits inside a form.",
+        },
+      ],
+    },
+  ],
+  "credit-card-input": [
+    {
+      interfaceName: "CreditCardInputProps",
+      extends: 'Extends Omit<HTMLAttributes<HTMLDivElement>, "onChange">',
+      props: [
+        {
+          name: "label",
+          type: "string",
+          required: false,
+          description: "Accessible group label announced to assistive tech.",
+          default: '"Credit card"',
+        },
+        {
+          name: "defaultNumber",
+          type: "string",
+          required: false,
+          description: "Uncontrolled initial card number (digits or already-spaced).",
+        },
+        {
+          name: "onChange",
+          type: "(value: CreditCardValue) => void",
+          required: false,
+          description:
+            "Fires on every keystroke with the parsed, validated card value. Display-side only — do not persist, log, or transmit the raw PAN/CVC.",
+        },
+        {
+          name: "invalid",
+          type: "boolean",
+          required: false,
+          description: "Forces the invalid styling and sets `aria-invalid` on every field.",
+          default: "false",
+        },
+        {
+          name: "disabled",
+          type: "boolean",
+          required: false,
+          description: "Disables all three fields.",
+          default: "false",
+        },
+        {
+          name: "error",
+          type: "string",
+          required: false,
+          description: 'Optional error message rendered under the group with `role="alert"`.',
+        },
+      ],
+    },
+  ],
+  "floating-label-input": [
+    {
+      interfaceName: "FloatingLabelInputProps",
+      extends: 'Extends Omit<InputHTMLAttributes<HTMLInputElement>, "placeholder">',
+      props: [
+        {
+          name: "label",
+          type: "ReactNode",
+          required: true,
+          description:
+            "The label text. Sits in the placeholder position, then floats up when the field is focused or filled.",
+        },
+        {
+          name: "helperText",
+          type: "ReactNode",
+          required: false,
+          description:
+            "Optional caption rendered under the field and linked to the input via `aria-describedby`. Turns into an error message when `invalid`.",
+        },
+        {
+          name: "invalid",
+          type: "boolean",
+          required: false,
+          description:
+            'Marks the field invalid — drives the error border/ring, error label color, and an announced (`role="alert"`) helper.',
+          default: "false",
+        },
+        {
+          name: "startAdornment",
+          type: "ReactNode",
+          required: false,
+          description:
+            "Decorative content (usually an icon) pinned to the left; the label and input inset to make room.",
+        },
+        {
+          name: "endAdornment",
+          type: "ReactNode",
+          required: false,
+          description:
+            "Content (icon or button) pinned to the right; the input insets to make room.",
+        },
+        {
+          name: "labelClassName",
+          type: "string",
+          required: false,
+          description: "Extra classes for the floating `<label>`.",
         },
       ],
     },
@@ -2124,6 +2529,93 @@ export const COMPONENT_PROPS: Record<string, PropsDoc[]> = {
       ],
     },
   ],
+  "confirmation-dialog": [
+    {
+      interfaceName: "ConfirmationDialogProps",
+      extends:
+        'Extends Omit<ComponentPropsWithoutRef<typeof AlertDialogContent>, "title" | "children">',
+      props: [
+        {
+          name: "trigger",
+          type: "ReactNode",
+          required: false,
+          description:
+            "Element that opens the dialog. Rendered inside an `AlertDialogTrigger asChild`, so a single focusable child (e.g. a `Button`) is expected. Omit when driving the dialog purely via `open`.",
+        },
+        {
+          name: "title",
+          type: "ReactNode",
+          required: true,
+          description:
+            "Dialog heading — labels the dialog for assistive tech (rendered as `AlertDialogTitle`).",
+        },
+        {
+          name: "description",
+          type: "ReactNode",
+          required: false,
+          description:
+            "Supporting copy describing the consequence of the action (rendered as `AlertDialogDescription`).",
+        },
+        {
+          name: "confirmLabel",
+          type: "ReactNode",
+          required: false,
+          description: "Text for the confirm button.",
+          default: '"Confirm"',
+        },
+        {
+          name: "cancelLabel",
+          type: "ReactNode",
+          required: false,
+          description: "Text for the cancel button.",
+          default: '"Cancel"',
+        },
+        {
+          name: "destructive",
+          type: "boolean",
+          required: false,
+          description:
+            "Style the confirm button as a destructive (red) action and default the header icon to a warning triangle.",
+          default: "false",
+        },
+        {
+          name: "icon",
+          type: "ReactNode",
+          required: false,
+          description:
+            "Icon shown in the header badge. Defaults to a warning triangle when `destructive`, otherwise none. Pass `null` to force it off.",
+        },
+        {
+          name: "onConfirm",
+          type: "() => void | Promise<void>",
+          required: false,
+          description:
+            "Invoked when the user confirms. If it returns a promise, the confirm button shows a spinner and is disabled until it settles; on resolve the dialog closes, on reject it stays open and surfaces the error message.",
+        },
+        {
+          name: "open",
+          type: "boolean",
+          required: false,
+          description:
+            "Controlled open state. Provide alongside `onOpenChange` to control the dialog externally.",
+        },
+        {
+          name: "defaultOpen",
+          type: "boolean",
+          required: false,
+          description: "Uncontrolled initial open state.",
+          default: "false",
+        },
+        {
+          name: "onOpenChange",
+          type: "(open: boolean) => void",
+          required: false,
+          description:
+            "Called whenever the open state changes (opening, cancelling, or confirming). Dismissal is suppressed while a confirm promise is pending.",
+        },
+      ],
+    },
+  ],
   breadcrumb: [
     {
       interfaceName: "BreadcrumbLinkProps",
@@ -2588,6 +3080,107 @@ export const COMPONENT_PROPS: Record<string, PropsDoc[]> = {
           required: false,
           description: 'Accessible label for the grid. Defaults to "Event calendar".',
           default: '"Event calendar"',
+        },
+      ],
+    },
+  ],
+  "time-picker": [
+    {
+      interfaceName: "TimePickerProps",
+      props: [
+        {
+          name: "value",
+          type: "TimeValue | string",
+          required: false,
+          description:
+            'Controlled value — a `{ hours, minutes, seconds }` object (24h `hours`) or a `"HH:mm"` / `"HH:mm:ss"` string.',
+        },
+        {
+          name: "defaultValue",
+          type: "TimeValue | string",
+          required: false,
+          description: "Initial value for uncontrolled usage.",
+        },
+        {
+          name: "onChange",
+          type: "(value: TimeValue) => void",
+          required: false,
+          description:
+            "Fired with the normalized `{ hours, minutes, seconds }` whenever the time changes.",
+        },
+        {
+          name: "hourCycle",
+          type: "12 | 24",
+          required: false,
+          description:
+            "`12` renders a 1–12 hour column plus an AM/PM column; `24` renders a 0–23 column.",
+          default: "12",
+        },
+        {
+          name: "minuteStep",
+          type: "number",
+          required: false,
+          description: "Granularity of the minute column, in minutes.",
+          default: "1",
+        },
+        {
+          name: "showSeconds",
+          type: "boolean",
+          required: false,
+          description: "Render a seconds column.",
+          default: "false",
+        },
+        {
+          name: "secondStep",
+          type: "number",
+          required: false,
+          description: "Granularity of the seconds column, in seconds.",
+          default: "1",
+        },
+        {
+          name: "placeholder",
+          type: "string",
+          required: false,
+          description: "Text shown on the trigger when no value is set.",
+          default: '"Select time"',
+        },
+        {
+          name: "disabled",
+          type: "boolean",
+          required: false,
+          description: "Disable the trigger and the whole panel.",
+          default: "false",
+        },
+        {
+          name: "aria-label",
+          type: "string",
+          required: false,
+          description: "Accessible name for the trigger when there is no visible label.",
+        },
+        {
+          name: "className",
+          type: "string",
+          required: false,
+          description: "Extra classes for the trigger button.",
+        },
+        {
+          name: "contentClassName",
+          type: "string",
+          required: false,
+          description: "Extra classes for the popover panel.",
+        },
+        {
+          name: "id",
+          type: "string",
+          required: false,
+          description: "Native id for the trigger.",
+        },
+        {
+          name: "align",
+          type: '"start" | "center" | "end"',
+          required: false,
+          description: "Popover alignment relative to the trigger.",
+          default: '"start"',
         },
       ],
     },
@@ -3281,6 +3874,159 @@ export const COMPONENT_PROPS: Record<string, PropsDoc[]> = {
           description:
             "Pointer influence radius in pixels — how far the magnify reaches. Defaults to `120`.",
           default: "DEFAULT_DISTANCE",
+        },
+      ],
+    },
+  ],
+  "border-beam": [
+    {
+      interfaceName: "BorderBeamProps",
+      extends: "Extends HTMLAttributes<HTMLDivElement>",
+      props: [
+        {
+          name: "size",
+          type: "number",
+          required: false,
+          description:
+            "Length of the luminous head, in pixels. Also sets the corner radius of the travel path so the beam rounds the corners smoothly. Larger values read as a longer comet trail. Defaults to `60`.",
+          default: "60",
+        },
+        {
+          name: "duration",
+          type: "number",
+          required: false,
+          description:
+            "Seconds for one full lap around the perimeter. Defaults to `8` (a calm, premium drift).",
+          default: "8",
+        },
+        {
+          name: "delay",
+          type: "number",
+          required: false,
+          description:
+            "Phase offset in seconds — the beam starts as if it had already been running for this long, so two beams on stacked cards can be staggered around the loop instead of moving in lockstep. Defaults to `0`.",
+          default: "0",
+        },
+        {
+          name: "colorFrom",
+          type: "string",
+          required: false,
+          description:
+            "Colour of the leading edge of the beam. Defaults to the theme primary (`var(--cooud-primary)`).",
+          default: '"var(--cooud-primary)"',
+        },
+        {
+          name: "colorTo",
+          type: "string",
+          required: false,
+          description:
+            "Colour the trail fades through before it dissolves. Defaults to the theme accent (`var(--cooud-accent)`).",
+          default: '"var(--cooud-accent)"',
+        },
+        {
+          name: "borderWidth",
+          type: "number",
+          required: false,
+          description:
+            "Thickness of the border band the beam rides in, in pixels. Defaults to `1.5`.",
+          default: "1.5",
+        },
+        {
+          name: "reverse",
+          type: "boolean",
+          required: false,
+          description: "Travel counter-clockwise instead of clockwise. Defaults to `false`.",
+          default: "false",
+        },
+      ],
+    },
+  ],
+  "flip-card": [
+    {
+      interfaceName: "FlipCardProps",
+      extends: 'Extends Omit<HTMLAttributes<HTMLDivElement>, "onChange">',
+      props: [
+        {
+          name: "trigger",
+          type: "FlipCardTrigger",
+          required: false,
+          description:
+            'What flips the card. `"hover"` flips on pointer hover **and** keyboard focus (so it is fully operable without a mouse); `"click"` toggles on click, Enter or Space and exposes `role="button"` + `aria-pressed`; `"controlled"` never self-flips — you drive it entirely through the prop.',
+          default: '"hover"',
+        },
+        {
+          name: "axis",
+          type: "FlipCardAxis",
+          required: false,
+          description:
+            'Axis the card rotates around. `"horizontal"` spins left↔right (`rotateY`); `"vertical"` tumbles top↔bottom (`rotateX`).',
+          default: '"horizontal"',
+        },
+        {
+          name: "flipped",
+          type: "boolean",
+          required: false,
+          description:
+            "Controlled flip state. When provided the card shows the back face iff `true` and its own hover/click toggling is suppressed (parent owns the state).",
+        },
+        {
+          name: "defaultFlipped",
+          type: "boolean",
+          required: false,
+          description: "Initial flip state when uncontrolled.",
+          default: "false",
+        },
+        {
+          name: "onFlippedChange",
+          type: "(flipped: boolean) => void",
+          required: false,
+          description:
+            "Fires with the next flip state whenever the card would flip. Still called while controlled, so you can lift the state up.",
+        },
+        {
+          name: "aria-label",
+          type: "string",
+          required: false,
+          description:
+            'Accessible name for the flip control. Strongly recommended for `trigger="click"`, where the whole card is a single button.',
+        },
+      ],
+    },
+  ],
+  "tilt-card": [
+    {
+      interfaceName: "TiltCardProps",
+      extends: "Extends HTMLAttributes<HTMLDivElement>",
+      props: [
+        {
+          name: "maxTilt",
+          type: "number",
+          required: false,
+          description:
+            "Maximum rotation, in degrees, reached on each axis at the card's edges. Higher feels more dramatic.",
+          default: "12",
+        },
+        {
+          name: "glare",
+          type: "boolean",
+          required: false,
+          description: "Render a soft pointer-following glare sheen across the surface.",
+          default: "false",
+        },
+        {
+          name: "scale",
+          type: "number",
+          required: false,
+          description: "Uniform zoom applied while the pointer is over the card (`1` = none).",
+          default: "1.03",
+        },
+        {
+          name: "parallax",
+          type: "boolean",
+          required: false,
+          description:
+            "Lift the content toward the viewer on hover for a layered parallax depth effect.",
+          default: "false",
         },
       ],
     },

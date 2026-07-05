@@ -18,10 +18,19 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       suppressHydrationWarning
     >
       <head>
-        <CooudThemeScript storageKey="theme" defaultThemeName="aurora" />
+        <CooudThemeScript
+          storageKey="theme"
+          defaultThemeName="__THEME__"
+          defaultModeName="__MODE__"
+        />
       </head>
       <body>
-        <CooudUIProvider asRoot defaultThemeName="aurora" storageKey="theme">
+        <CooudUIProvider
+          asRoot
+          defaultThemeName="__THEME__"
+          defaultModeName="__MODE__"
+          storageKey="theme"
+        >
           {children}
         </CooudUIProvider>
       </body>

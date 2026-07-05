@@ -8,11 +8,16 @@ import {
   Checkbox,
   ColorPicker,
   Combobox,
+  CreditCardInput,
+  type CreditCardValue,
+  CurrencyInput,
+  type CurrencyInputMeta,
   Field,
   FieldDescription,
   FieldError,
   FieldLabel,
   FileDropzone,
+  FloatingLabelInput,
   Form,
   FormControl,
   FormField,
@@ -30,6 +35,7 @@ import {
   MultiSelect,
   NumberInput,
   PasswordInput,
+  PhoneInput,
   RadioGroup,
   RadioGroupItem,
   Rating,
@@ -56,7 +62,7 @@ import {
   Textarea,
 } from "@cooud-ui/ui";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AtSign, Check, FileText, Link2 } from "lucide-react";
+import { AtSign, Check, FileText, Link2, Lock, Mail } from "lucide-react";
 import { useId, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -1184,6 +1190,195 @@ const richTextEditorDemoCode = `function RichTextEditorDemo() {
   );
 }`;
 
+// ── CurrencyInput ──────────────────────────────────────────────────
+function CurrencyInputDemo() {
+  const [cents, setCents] = useState<number | null>(129900);
+  const [meta, setMeta] = useState<CurrencyInputMeta | null>(null);
+
+  return (
+    <div className="flex w-full max-w-xs flex-col gap-2">
+      <FieldLabel htmlFor="amount">Amount</FieldLabel>
+      <CurrencyInput
+        id="amount"
+        value={cents}
+        onValueChange={(next, info) => {
+          setCents(next);
+          setMeta(info);
+        }}
+        aria-label="Amount"
+      />
+      <FieldDescription>
+        {cents == null
+          ? "Digits fill in from the right — try typing 5 0 0 0 0."
+          : `${meta?.currency ?? "BRL"} · ${(cents / 100).toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+            })} in major units`}
+      </FieldDescription>
+    </div>
+  );
+}
+
+const currencyInputDemoCode = `function CurrencyInputDemo() {
+  const [cents, setCents] = useState<number | null>(129900);
+  const [meta, setMeta] = useState<CurrencyInputMeta | null>(null);
+
+  return (
+    <div className="flex w-full max-w-xs flex-col gap-2">
+      <FieldLabel htmlFor="amount">Amount</FieldLabel>
+      <CurrencyInput
+        id="amount"
+        value={cents}
+        onValueChange={(next, info) => {
+          setCents(next);
+          setMeta(info);
+        }}
+        aria-label="Amount"
+      />
+      <FieldDescription>
+        {cents == null
+          ? "Digits fill in from the right — try typing 5 0 0 0 0."
+          : \`\${meta?.currency ?? "BRL"} · \${(cents / 100).toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+            })} in major units\`}
+      </FieldDescription>
+    </div>
+  );
+}`;
+
+function CurrencyLimitDemo() {
+  // R$ 5.000,00 hard ceiling, expressed in minor units (cents).
+  const MAX_CENTS = 500000;
+  const [cents, setCents] = useState<number | null>(320000);
+
+  return (
+    <div className="flex w-full max-w-xs flex-col gap-2">
+      <div className="flex items-center justify-between">
+        <FieldLabel htmlFor="budget">Monthly budget</FieldLabel>
+        <span className="text-xs text-fg-tertiary tabular-nums">Máx R$ 5.000,00</span>
+      </div>
+      <CurrencyInput
+        id="budget"
+        currencies={[{ code: "BRL", symbol: "R$", locale: "pt-BR" }]}
+        value={cents}
+        onValueChange={setCents}
+        max={MAX_CENTS}
+        aria-label="Monthly budget"
+      />
+      <FieldDescription>A hard live ceiling — you can’t type past the limit.</FieldDescription>
+    </div>
+  );
+}
+
+const currencyLimitDemoCode = `function CurrencyLimitDemo() {
+  // R$ 5.000,00 hard ceiling, expressed in minor units (cents).
+  const MAX_CENTS = 500000;
+  const [cents, setCents] = useState<number | null>(320000);
+
+  return (
+    <div className="flex w-full max-w-xs flex-col gap-2">
+      <div className="flex items-center justify-between">
+        <FieldLabel htmlFor="budget">Monthly budget</FieldLabel>
+        <span className="text-xs text-fg-tertiary tabular-nums">Máx R$ 5.000,00</span>
+      </div>
+      <CurrencyInput
+        id="budget"
+        currencies={[{ code: "BRL", symbol: "R$", locale: "pt-BR" }]}
+        value={cents}
+        onValueChange={setCents}
+        max={MAX_CENTS}
+        aria-label="Monthly budget"
+      />
+      <FieldDescription>A hard live ceiling — you can’t type past the limit.</FieldDescription>
+    </div>
+  );
+}`;
+
+// ── PhoneInput ─────────────────────────────────────────────────────
+function PhoneInputDemo() {
+  const [phone, setPhone] = useState("");
+
+  return (
+    <div className="flex w-full max-w-xs flex-col gap-2">
+      <FieldLabel htmlFor="phone">Phone number</FieldLabel>
+      <PhoneInput id="phone" value={phone} onChange={setPhone} />
+      <FieldDescription>
+        {phone ? (
+          <span className="font-mono text-xs tabular-nums text-fg-secondary">{phone}</span>
+        ) : (
+          "Pick a country and type — we compose the E.164 string."
+        )}
+      </FieldDescription>
+    </div>
+  );
+}
+
+const phoneInputDemoCode = `function PhoneInputDemo() {
+  const [phone, setPhone] = useState("");
+
+  return (
+    <div className="flex w-full max-w-xs flex-col gap-2">
+      <FieldLabel htmlFor="phone">Phone number</FieldLabel>
+      <PhoneInput id="phone" value={phone} onChange={setPhone} />
+      <FieldDescription>
+        {phone ? (
+          <span className="font-mono text-xs tabular-nums text-fg-secondary">{phone}</span>
+        ) : (
+          "Pick a country and type — we compose the E.164 string."
+        )}
+      </FieldDescription>
+    </div>
+  );
+}`;
+
+// ── CreditCardInput ────────────────────────────────────────────────
+function CreditCardDemo() {
+  const [card, setCard] = useState<CreditCardValue | null>(null);
+
+  return (
+    <div className="flex w-full max-w-sm flex-col gap-3">
+      <CreditCardInput label="Card details" onChange={setCard} />
+      <div className="flex min-h-6 items-center text-xs text-fg-tertiary">
+        {card?.valid ? (
+          <Badge variant="success">
+            <Check aria-hidden="true" />
+            Valid card
+          </Badge>
+        ) : (
+          <span className="capitalize">
+            {card && card.brand !== "unknown"
+              ? `${card.brand} detected`
+              : "Try 4242 4242 4242 4242 · 12/34 · 123"}
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
+
+const creditCardDemoCode = `function CreditCardDemo() {
+  const [card, setCard] = useState<CreditCardValue | null>(null);
+
+  return (
+    <div className="flex w-full max-w-sm flex-col gap-3">
+      <CreditCardInput label="Card details" onChange={setCard} />
+      <div className="flex min-h-6 items-center text-xs text-fg-tertiary">
+        {card?.valid ? (
+          <Badge variant="success">
+            <Check aria-hidden="true" />
+            Valid card
+          </Badge>
+        ) : (
+          <span className="capitalize">
+            {card && card.brand !== "unknown"
+              ? \`\${card.brand} detected\`
+              : "Try 4242 4242 4242 4242 · 12/34 · 123"}
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}`;
+
 export const formsExamples: ExampleMap = {
   input: [
     {
@@ -1641,6 +1836,205 @@ function StepperDemo() {
         "A controlled OKLCH color input on a popover — drag the area and hue slider, type any channel or the full oklch() string, or pick one of the preset swatches.",
       code: colorPickerDemoCode,
       preview: <ColorPickerDemo />,
+    },
+  ],
+
+  "currency-input": [
+    {
+      id: "multi-currency",
+      title: "Multi-currency",
+      description:
+        "A payments-grade money field. Digits accumulate from the right as minor units (typing 1 2 3 4 5 reads 0,01 → 12,34 → 123,45), grouping and decimals are live-formatted per the currency's locale, and `onValueChange` hands back integer cents plus formatting `meta`. Switch currencies from the fused selector.",
+      code: currencyInputDemoCode,
+      preview: <CurrencyInputDemo />,
+    },
+    {
+      id: "single-currency",
+      title: "Single currency",
+      description:
+        "Pass a one-entry `currencies` list to lock the field to a currency — the selector collapses into a static, non-interactive prefix.",
+      code: `<CurrencyInput
+  currencies={[{ code: "BRL", symbol: "R$", locale: "pt-BR" }]}
+  defaultValue={12900}
+  aria-label="Price"
+/>`,
+      preview: (
+        <CurrencyInput
+          currencies={[{ code: "BRL", symbol: "R$", locale: "pt-BR" }]}
+          defaultValue={12900}
+          aria-label="Price"
+          className="max-w-xs"
+        />
+      ),
+    },
+    {
+      id: "limit",
+      title: "Hard ceiling",
+      description:
+        "`max` is a live upper clamp (in minor units) the amount can never be typed past, while `min` is enforced on blur so in-progress entries aren't fought mid-type.",
+      code: currencyLimitDemoCode,
+      preview: <CurrencyLimitDemo />,
+    },
+  ],
+
+  "phone-input": [
+    {
+      id: "default",
+      title: "Default",
+      description:
+        "A searchable country selector (flag + dial code) fused to a national-number field that auto-groups digits for the selected country. `onChange` emits the composed E.164 string; the caret is preserved across reformatting.",
+      code: phoneInputDemoCode,
+      preview: <PhoneInputDemo />,
+    },
+    {
+      id: "default-country",
+      title: "Default country & value",
+      description:
+        "Seed an uncontrolled field from an E.164 string — the country is resolved by the longest matching dial code, and the national number is grouped to that country's pattern.",
+      code: `<PhoneInput defaultValue="+12025550142" aria-label="Phone number" />`,
+      preview: (
+        <PhoneInput defaultValue="+12025550142" aria-label="Phone number" className="max-w-xs" />
+      ),
+    },
+    {
+      id: "invalid",
+      title: "Invalid",
+      description:
+        "Set `invalid` and pair it with a FieldError for accessible validation feedback.",
+      code: `<Field>
+  <FieldLabel htmlFor="phone">Phone number</FieldLabel>
+  <PhoneInput id="phone" invalid defaultValue="+551198" aria-describedby="phone-err" />
+  <FieldError id="phone-err">Enter a complete phone number.</FieldError>
+</Field>`,
+      preview: (
+        <Field className="max-w-xs">
+          <FieldLabel htmlFor="ex-phone">Phone number</FieldLabel>
+          <PhoneInput
+            id="ex-phone"
+            invalid
+            defaultValue="+551198"
+            aria-describedby="ex-phone-err"
+          />
+          <FieldError id="ex-phone-err">Enter a complete phone number.</FieldError>
+        </Field>
+      ),
+    },
+  ],
+
+  "credit-card-input": [
+    {
+      id: "default",
+      title: "Default",
+      description:
+        "One unified field group — card number (auto-spaced with live brand detection), expiry (MM/YY auto-slash), and CVC. Focus auto-advances as each field completes, values are Luhn-validated, and a single `onChange` surfaces `{ number, expiry, cvc, brand, complete, valid }`.",
+      code: creditCardDemoCode,
+      preview: <CreditCardDemo />,
+    },
+    {
+      id: "brand-detection",
+      title: "Brand detection",
+      description:
+        "The payment network is inferred from the IIN/prefix as you type and rendered as a monochrome glyph — here a Visa test number seeds the field.",
+      code: `<CreditCardInput label="Card details" defaultNumber="4242 4242 4242 4242" />`,
+      preview: (
+        <CreditCardInput
+          label="Card details"
+          defaultNumber="4242 4242 4242 4242"
+          className="max-w-sm"
+        />
+      ),
+    },
+    {
+      id: "error",
+      title: "With error",
+      description:
+        'Pass `error` to force the invalid styling and render an announced (`role="alert"`) message under the group.',
+      code: `<CreditCardInput
+  label="Card details"
+  defaultNumber="4000 0000 0000 0002"
+  error="Your card was declined. Try another card."
+/>`,
+      preview: (
+        <CreditCardInput
+          label="Card details"
+          defaultNumber="4000 0000 0000 0002"
+          error="Your card was declined. Try another card."
+          className="max-w-sm"
+        />
+      ),
+    },
+  ],
+
+  "floating-label-input": [
+    {
+      id: "default",
+      title: "Default",
+      description:
+        "The label starts in the placeholder position and floats up to a compact caption on focus or when the field is filled. The float is pure CSS (`peer-*` variants) — no state, no re-render while typing.",
+      code: `<FloatingLabelInput
+  label="Email address"
+  type="email"
+  helperText="We'll never share your email."
+/>`,
+      preview: (
+        <FloatingLabelInput
+          label="Email address"
+          type="email"
+          helperText="We'll never share your email."
+          className="max-w-sm"
+        />
+      ),
+    },
+    {
+      id: "adornments",
+      title: "With adornments",
+      description:
+        "Pin decorative icons with `startAdornment` / `endAdornment`; the label and input inset to make room. A prefilled field shows the floated resting state.",
+      code: `<div className="flex flex-col gap-4">
+  <FloatingLabelInput
+    label="Email address"
+    type="email"
+    defaultValue="ada@cooud.dev"
+    startAdornment={<Mail />}
+  />
+  <FloatingLabelInput label="Password" type="password" startAdornment={<Lock />} />
+</div>`,
+      preview: (
+        <div className="flex w-full max-w-sm flex-col gap-4">
+          <FloatingLabelInput
+            label="Email address"
+            type="email"
+            defaultValue="ada@cooud.dev"
+            startAdornment={<Mail />}
+          />
+          <FloatingLabelInput label="Password" type="password" startAdornment={<Lock />} />
+        </div>
+      ),
+    },
+    {
+      id: "invalid",
+      title: "Invalid",
+      description:
+        '`invalid` turns the border, label, and helper to the error color and announces the helper via `role="alert"`.',
+      code: `<FloatingLabelInput
+  label="Password"
+  type="password"
+  defaultValue="123"
+  invalid
+  startAdornment={<Lock />}
+  helperText="Use at least 8 characters."
+/>`,
+      preview: (
+        <FloatingLabelInput
+          label="Password"
+          type="password"
+          defaultValue="123"
+          invalid
+          startAdornment={<Lock />}
+          helperText="Use at least 8 characters."
+          className="max-w-sm"
+        />
+      ),
     },
   ],
 };

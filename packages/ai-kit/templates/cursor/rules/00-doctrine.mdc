@@ -1,0 +1,17 @@
+---
+description: Always-on engineering doctrine for __APP_NAME__ (digest of AGENTS.md)
+alwaysApply: true
+---
+
+Always-on rules for __APP_NAME__. This is a digest; the full doctrine is in AGENTS.md at the repo root.
+
+1. Evidence before claims. Verify before you assert; never invent facts, numbers, or sources; state what you did not check.
+2. Root cause over symptom. Separate fact from inference from assumption.
+3. Preserve shared contracts. Read the surrounding context, map the blast radius, and find every caller before changing code; do not break other consumers in the same diff.
+4. No unbounded work: no retry without a ceiling, infinite polling, unthrottled fan-out, or boot that crashes on a missing dependency; no silent fallback that hides an error.
+5. Reliability gate. Anything critical (P0/P1) is not done until code review and QA reach high confidence — build green, relevant tests passing, error paths exercised. After three failed cycles, stop and escalate.
+6. Commit cleanly: dedicated branch, small Conventional Commits, no AI attribution, no debug leftovers in the final diff.
+7. Production is read-only. Any deploy, migration, or data change needs explicit approval and a named rollback first.
+8. Ask when unsure; state assumptions instead of guessing.
+
+See AGENTS.md for the full doctrine.

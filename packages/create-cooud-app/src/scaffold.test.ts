@@ -75,4 +75,28 @@ describe("scaffold (into a temp dir, no install)", () => {
     scaffold({ targetDir, name });
     expect(existsSync(join(targetDir, "cooud-ui.json"))).toBe(true);
   });
+
+  it("defaults to the aurora/dark theme when none is given (no tokens left behind)", () => {
+    scaffold({ targetDir, name });
+    const layout = readFileSync(join(targetDir, "app", "layout.tsx"), "utf8");
+    expect(layout).toContain('defaultThemeName="aurora"');
+    expect(layout).toContain('defaultModeName="dark"');
+    expect(layout).not.toContain("__THEME__");
+    expect(layout).not.toContain("__MODE__");
+    const config = JSON.parse(readFileSync(join(targetDir, "cooud-ui.json"), "utf8")) as {
+      theme: { name: string; mode: string };
+    };
+    expect(config.theme).toEqual({ name: "aurora", mode: "dark" });
+  });
+
+  it("bakes the chosen theme + mode into layout.tsx and cooud-ui.json", () => {
+    scaffold({ targetDir, name, theme: "sunset", mode: "light" });
+    const layout = readFileSync(join(targetDir, "app", "layout.tsx"), "utf8");
+    expect(layout).toContain('defaultThemeName="sunset"');
+    expect(layout).toContain('defaultModeName="light"');
+    const config = JSON.parse(readFileSync(join(targetDir, "cooud-ui.json"), "utf8")) as {
+      theme: { name: string; mode: string };
+    };
+    expect(config.theme).toEqual({ name: "sunset", mode: "light" });
+  });
 });

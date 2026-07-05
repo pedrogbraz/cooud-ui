@@ -1,0 +1,54 @@
+{
+  "name": "@cooud-ui/ai-kit",
+  "version": "0.1.0",
+  "description": "The Cooud UI AI Kit — an engineering doctrine, skills, and per-assistant config, scaffolded into your project.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Cooud",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pedrogbraz/cooud-ui.git",
+    "directory": "packages/ai-kit"
+  },
+  "homepage": "https://github.com/pedrogbraz/cooud-ui#readme",
+  "bugs": {
+    "url": "https://github.com/pedrogbraz/cooud-ui/issues"
+  },
+  "keywords": [
+    "cooud",
+    "ai",
+    "agents",
+    "claude-code",
+    "cursor",
+    "copilot",
+    "scaffold"
+  ],
+  "files": [
+    "dist",
+    "templates",
+    "LICENSE",
+    "README.md",
+    "!dist/**/*.map"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "prepublishOnly": "tsc -p tsconfig.json"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

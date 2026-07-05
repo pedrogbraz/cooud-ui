@@ -1,3 +1,4 @@
+import { fileURLToPath } from "node:url";
 import { defineConfig } from "vitest/config";
 
 /**
@@ -9,7 +10,17 @@ import { defineConfig } from "vitest/config";
  * Test files live next to their sources and are excluded from each package's
  * tsconfig "include", so they never land in `dist`.
  */
+
+// Resolve the workspace `@cooud-ui/ai-kit` package to its SOURCE in tests, so the
+// CLI packages that consume it don't need a prior build to run their unit tests.
+const aiKitSrc = fileURLToPath(new URL("./packages/ai-kit/src/index.ts", import.meta.url));
+
 export default defineConfig({
+  resolve: {
+    alias: {
+      "@cooud-ui/ai-kit": aiKitSrc,
+    },
+  },
   test: {
     projects: [
       {
@@ -24,6 +35,14 @@ export default defineConfig({
         test: {
           name: "create-cooud-app",
           root: "./packages/create-cooud-app",
+          environment: "node",
+          include: ["src/**/*.test.ts"],
+        },
+      },
+      {
+        test: {
+          name: "ai-kit",
+          root: "./packages/ai-kit",
           environment: "node",
           include: ["src/**/*.test.ts"],
         },

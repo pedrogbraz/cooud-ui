@@ -3,6 +3,7 @@
 import {
   AnimatedNumber,
   AuroraBackground,
+  BorderBeam,
   Button,
   Card,
   CardContent,
@@ -16,6 +17,9 @@ import {
   CarouselNext,
   CarouselPrevious,
   Dock,
+  FlipCard,
+  FlipCardBack,
+  FlipCardFront,
   Frame,
   GlassCard,
   GradientBorder,
@@ -36,13 +40,17 @@ import {
   Shimmer,
   SpotlightCard,
   TextEffect,
+  TiltCard,
 } from "@cooud-ui/ui";
 import {
   ArrowRight,
   Bell,
+  Check,
   Copy,
   Gauge,
+  Github,
   Home,
+  Linkedin,
   MessageSquarePlus,
   Pencil,
   Plus,
@@ -50,9 +58,13 @@ import {
   Search,
   Settings,
   Share2,
+  ShieldCheck,
   Sparkles,
+  Star,
   Trash2,
   User,
+  Wifi,
+  Zap,
 } from "lucide-react";
 import { useId, useRef, useState } from "react";
 import { ExampleList } from "../../components/docs/example-list";
@@ -504,6 +516,63 @@ function TextEffectDemo() {
       <Button size="sm" variant="outline" onClick={() => setRunId((n) => n + 1)}>
         <RotateCw aria-hidden="true" className="size-4" />
         Replay
+      </Button>
+    </div>
+  );
+}
+
+/**
+ * FlipCard (controlled): the card never self-flips — a Button below owns the
+ * `flipped` state and toggles between an order summary (front) and its line-item
+ * breakdown (back). Uses the vertical axis so it tumbles top-to-bottom.
+ */
+function FlipCardControlledDemo() {
+  const [flipped, setFlipped] = useState(false);
+  return (
+    <div className="flex w-full flex-col items-center gap-4">
+      <FlipCard
+        trigger="controlled"
+        flipped={flipped}
+        axis="vertical"
+        aria-label="Detalhe do pedido"
+        className="h-64 w-full max-w-xs"
+      >
+        <FlipCardFront className="justify-between p-6">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-medium uppercase tracking-wide text-fg-tertiary">
+              Pedido #4821
+            </span>
+            <span className="rounded-full bg-success/15 px-2.5 py-0.5 text-xs font-medium text-success">
+              Pago
+            </span>
+          </div>
+          <div>
+            <p className="font-display text-3xl font-semibold text-fg">R$ 297,00</p>
+            <p className="mt-1 text-sm text-fg-secondary">Curso de Copywriting</p>
+          </div>
+          <p className="text-xs text-fg-tertiary">Toque em “Ver detalhes”.</p>
+        </FlipCardFront>
+        <FlipCardBack className="justify-between p-6">
+          <p className="text-xs font-medium uppercase tracking-wide text-fg-tertiary">Composição</p>
+          <dl className="flex flex-col gap-2 text-sm">
+            <div className="flex items-center justify-between">
+              <dt className="text-fg-secondary">Subtotal</dt>
+              <dd className="tabular-nums text-fg">R$ 320,00</dd>
+            </div>
+            <div className="flex items-center justify-between">
+              <dt className="text-fg-secondary">Cupom BEMVINDO</dt>
+              <dd className="tabular-nums text-success">− R$ 23,00</dd>
+            </div>
+            <div className="flex items-center justify-between border-t border-border pt-2 font-medium">
+              <dt className="text-fg">Total</dt>
+              <dd className="tabular-nums text-fg">R$ 297,00</dd>
+            </div>
+          </dl>
+        </FlipCardBack>
+      </FlipCard>
+      <Button size="sm" variant="outline" onClick={() => setFlipped((value) => !value)}>
+        <RotateCw aria-hidden="true" className="size-4" />
+        {flipped ? "Ver resumo" : "Ver detalhes"}
       </Button>
     </div>
   );
@@ -1247,6 +1316,462 @@ export const premiumExamples: ExampleMap = {
             ]}
           />
         </div>
+      ),
+    },
+  ],
+  "border-beam": [
+    {
+      id: "featured-card",
+      title: "Featured card",
+      description:
+        "A single light head continuously orbits the border like a comet — the calm way to say “this is the one”. It's one composited CSS animation (no JS, no re-renders) and is fully suppressed under prefers-reduced-motion.",
+      code: `<BorderBeam duration={6} className="w-full max-w-xs">
+  <div className="flex flex-col gap-4 rounded-2xl bg-surface-raised p-6">
+    <div className="flex items-center justify-between">
+      <span className="grid size-9 place-items-center rounded-lg bg-gradient-primary text-primary-foreground shadow-glow">
+        <Sparkles className="size-4" aria-hidden="true" />
+      </span>
+      <span className="rounded-full border border-border px-2.5 py-0.5 text-xs font-medium text-fg-secondary">
+        Popular
+      </span>
+    </div>
+    <div>
+      <h3 className="font-display text-base font-semibold text-fg">Pro</h3>
+      <p className="mt-1 text-sm text-fg-secondary">Tudo para escalar a sua loja.</p>
+    </div>
+    <div className="flex items-baseline gap-1">
+      <span className="font-display text-3xl font-semibold text-fg">R$ 79</span>
+      <span className="text-sm text-fg-tertiary">/ mês</span>
+    </div>
+    <Button variant="gradient" className="w-full">
+      Assinar o Pro
+      <ArrowRight aria-hidden="true" className="size-4" />
+    </Button>
+  </div>
+</BorderBeam>`,
+      preview: (
+        <BorderBeam duration={6} className="w-full max-w-xs">
+          <div className="flex flex-col gap-4 rounded-2xl bg-surface-raised p-6">
+            <div className="flex items-center justify-between">
+              <span className="grid size-9 place-items-center rounded-lg bg-gradient-primary text-primary-foreground shadow-glow">
+                <Sparkles className="size-4" aria-hidden="true" />
+              </span>
+              <span className="rounded-full border border-border px-2.5 py-0.5 text-xs font-medium text-fg-secondary">
+                Popular
+              </span>
+            </div>
+            <div>
+              <h3 className="font-display text-base font-semibold text-fg">Pro</h3>
+              <p className="mt-1 text-sm text-fg-secondary">Tudo para escalar a sua loja.</p>
+            </div>
+            <div className="flex items-baseline gap-1">
+              <span className="font-display text-3xl font-semibold text-fg">R$ 79</span>
+              <span className="text-sm text-fg-tertiary">/ mês</span>
+            </div>
+            <Button variant="gradient" className="w-full">
+              Assinar o Pro
+              <ArrowRight aria-hidden="true" className="size-4" />
+            </Button>
+          </div>
+        </BorderBeam>
+      ),
+    },
+    {
+      id: "prompt-bar",
+      title: "Prompt bar",
+      description:
+        "The beam isn't only for cards — wrap an input to give an AI prompt bar a living, premium edge. A larger `size` reads as a longer comet trail.",
+      code: `<BorderBeam size={80} duration={5} className="w-full max-w-md">
+  <div className="flex items-center gap-3 rounded-2xl bg-surface-raised px-4 py-3">
+    <Sparkles className="size-4 shrink-0 text-primary" aria-hidden="true" />
+    <span className="flex-1 truncate text-sm text-fg-tertiary">
+      Pergunte qualquer coisa ao Cooud…
+    </span>
+    <Button size="icon" variant="gradient" aria-label="Enviar">
+      <ArrowRight aria-hidden="true" className="size-4" />
+    </Button>
+  </div>
+</BorderBeam>`,
+      preview: (
+        <BorderBeam size={80} duration={5} className="w-full max-w-md">
+          <div className="flex items-center gap-3 rounded-2xl bg-surface-raised px-4 py-3">
+            <Sparkles className="size-4 shrink-0 text-primary" aria-hidden="true" />
+            <span className="flex-1 truncate text-sm text-fg-tertiary">
+              Pergunte qualquer coisa ao Cooud…
+            </span>
+            <Button size="icon" variant="gradient" aria-label="Enviar">
+              <ArrowRight aria-hidden="true" className="size-4" />
+            </Button>
+          </div>
+        </BorderBeam>
+      ),
+    },
+    {
+      id: "custom-colours",
+      title: "Custom colours & reverse",
+      description:
+        "Every knob rides a CSS variable: set `colorFrom`/`colorTo` for a bespoke gradient head and `reverse` to orbit counter-clockwise. Here an amber→pink trail circles a security card.",
+      code: `<BorderBeam
+  colorFrom="#f59e0b"
+  colorTo="#ec4899"
+  size={90}
+  duration={5}
+  reverse
+  className="w-full max-w-xs"
+>
+  <div className="flex flex-col gap-3 rounded-2xl bg-surface-raised p-6">
+    <span className="grid size-9 place-items-center rounded-lg bg-surface-overlay text-fg">
+      <ShieldCheck className="size-4" aria-hidden="true" />
+    </span>
+    <h3 className="font-display text-base font-semibold text-fg">Pagamentos protegidos</h3>
+    <p className="text-sm text-fg-secondary">
+      Antifraude e 3-D Secure em cada transação — o feixe reverso mantém o olhar na borda.
+    </p>
+  </div>
+</BorderBeam>`,
+      preview: (
+        <BorderBeam
+          colorFrom="#f59e0b"
+          colorTo="#ec4899"
+          size={90}
+          duration={5}
+          reverse
+          className="w-full max-w-xs"
+        >
+          <div className="flex flex-col gap-3 rounded-2xl bg-surface-raised p-6">
+            <span className="grid size-9 place-items-center rounded-lg bg-surface-overlay text-fg">
+              <ShieldCheck className="size-4" aria-hidden="true" />
+            </span>
+            <h3 className="font-display text-base font-semibold text-fg">Pagamentos protegidos</h3>
+            <p className="text-sm text-fg-secondary">
+              Antifraude e 3-D Secure em cada transação — o feixe reverso mantém o olhar na borda.
+            </p>
+          </div>
+        </BorderBeam>
+      ),
+    },
+  ],
+  "flip-card": [
+    {
+      id: "hover",
+      title: "Hover to flip",
+      description:
+        "The default trigger flips on pointer hover and keyboard focus, so it's fully operable without a mouse. The inactive face is `inert` — its content never double-reads to a screen reader. Hover the card to reveal the plan's benefits.",
+      code: `<FlipCard aria-label="Plano Pro" className="h-72 w-full max-w-xs">
+  <FlipCardFront className="justify-between p-6">
+    <span className="grid size-11 place-items-center rounded-xl bg-gradient-primary text-primary-foreground shadow-glow">
+      <Sparkles className="size-5" aria-hidden="true" />
+    </span>
+    <div>
+      <h3 className="font-display text-lg font-semibold text-fg">Plano Pro</h3>
+      <p className="mt-1 text-sm text-fg-secondary">
+        Tudo o que você precisa para escalar a sua loja.
+      </p>
+    </div>
+    <span className="text-xs font-medium text-fg-tertiary">Passe o mouse →</span>
+  </FlipCardFront>
+  <FlipCardBack className="justify-between p-6">
+    <ul className="flex flex-col gap-2.5 text-sm text-fg-secondary">
+      <li className="flex items-center gap-2">
+        <Check className="size-4 shrink-0 text-primary" aria-hidden="true" />
+        Repasses em D+2
+      </li>
+      <li className="flex items-center gap-2">
+        <Check className="size-4 shrink-0 text-primary" aria-hidden="true" />
+        Checkout sem marca
+      </li>
+      <li className="flex items-center gap-2">
+        <Check className="size-4 shrink-0 text-primary" aria-hidden="true" />
+        Suporte prioritário
+      </li>
+    </ul>
+    <Button variant="gradient" className="w-full">
+      Assinar o Pro
+      <ArrowRight aria-hidden="true" className="size-4" />
+    </Button>
+  </FlipCardBack>
+</FlipCard>`,
+      preview: (
+        <FlipCard aria-label="Plano Pro" className="h-72 w-full max-w-xs">
+          <FlipCardFront className="justify-between p-6">
+            <span className="grid size-11 place-items-center rounded-xl bg-gradient-primary text-primary-foreground shadow-glow">
+              <Sparkles className="size-5" aria-hidden="true" />
+            </span>
+            <div>
+              <h3 className="font-display text-lg font-semibold text-fg">Plano Pro</h3>
+              <p className="mt-1 text-sm text-fg-secondary">
+                Tudo o que você precisa para escalar a sua loja.
+              </p>
+            </div>
+            <span className="text-xs font-medium text-fg-tertiary">Passe o mouse →</span>
+          </FlipCardFront>
+          <FlipCardBack className="justify-between p-6">
+            <ul className="flex flex-col gap-2.5 text-sm text-fg-secondary">
+              <li className="flex items-center gap-2">
+                <Check className="size-4 shrink-0 text-primary" aria-hidden="true" />
+                Repasses em D+2
+              </li>
+              <li className="flex items-center gap-2">
+                <Check className="size-4 shrink-0 text-primary" aria-hidden="true" />
+                Checkout sem marca
+              </li>
+              <li className="flex items-center gap-2">
+                <Check className="size-4 shrink-0 text-primary" aria-hidden="true" />
+                Suporte prioritário
+              </li>
+            </ul>
+            <Button variant="gradient" className="w-full">
+              Assinar o Pro
+              <ArrowRight aria-hidden="true" className="size-4" />
+            </Button>
+          </FlipCardBack>
+        </FlipCard>
+      ),
+    },
+    {
+      id: "click",
+      title: "Click to flip",
+      description:
+        '`trigger="click"` turns the whole card into a single button — it toggles on click, Enter or Space and exposes `role="button"` + `aria-pressed`. Give it an `aria-label` so the control is named. Click to read the testimonial.',
+      code: `<FlipCard
+  trigger="click"
+  aria-label="Ver depoimento de Ana Ribeiro"
+  className="h-72 w-full max-w-xs"
+>
+  <FlipCardFront className="items-center justify-center gap-3 p-6 text-center">
+    <span className="grid size-16 place-items-center rounded-full bg-surface-overlay text-lg font-semibold text-fg-secondary">
+      AR
+    </span>
+    <div>
+      <p className="font-display text-base font-semibold text-fg">Ana Ribeiro</p>
+      <p className="text-sm text-fg-tertiary">Head of Design, Northwind</p>
+    </div>
+    <span className="text-xs text-fg-tertiary">Clique para ler</span>
+  </FlipCardFront>
+  <FlipCardBack className="items-center justify-center gap-4 p-6 text-center">
+    <div className="flex gap-0.5 text-primary">
+      {[1, 2, 3, 4, 5].map((n) => (
+        <Star key={n} className="size-4 fill-current" aria-hidden="true" />
+      ))}
+    </div>
+    <p className="text-sm leading-relaxed text-fg">
+      “Shipped a polished, on-brand UI in a weekend. The theming alone paid for itself.”
+    </p>
+    <div className="flex items-center gap-3 text-fg-tertiary">
+      <Github className="size-4" aria-hidden="true" />
+      <Linkedin className="size-4" aria-hidden="true" />
+    </div>
+  </FlipCardBack>
+</FlipCard>`,
+      preview: (
+        <FlipCard
+          trigger="click"
+          aria-label="Ver depoimento de Ana Ribeiro"
+          className="h-72 w-full max-w-xs"
+        >
+          <FlipCardFront className="items-center justify-center gap-3 p-6 text-center">
+            <span className="grid size-16 place-items-center rounded-full bg-surface-overlay text-lg font-semibold text-fg-secondary">
+              AR
+            </span>
+            <div>
+              <p className="font-display text-base font-semibold text-fg">Ana Ribeiro</p>
+              <p className="text-sm text-fg-tertiary">Head of Design, Northwind</p>
+            </div>
+            <span className="text-xs text-fg-tertiary">Clique para ler</span>
+          </FlipCardFront>
+          <FlipCardBack className="items-center justify-center gap-4 p-6 text-center">
+            <div className="flex gap-0.5 text-primary">
+              {[1, 2, 3, 4, 5].map((n) => (
+                <Star key={n} className="size-4 fill-current" aria-hidden="true" />
+              ))}
+            </div>
+            <p className="text-sm leading-relaxed text-fg">
+              “Shipped a polished, on-brand UI in a weekend. The theming alone paid for itself.”
+            </p>
+            <div className="flex items-center gap-3 text-fg-tertiary">
+              <Github className="size-4" aria-hidden="true" />
+              <Linkedin className="size-4" aria-hidden="true" />
+            </div>
+          </FlipCardBack>
+        </FlipCard>
+      ),
+    },
+    {
+      id: "controlled",
+      title: "Controlled",
+      description:
+        '`trigger="controlled"` never self-flips — you own the `flipped` prop and drive it from anywhere. Here a Button toggles between an order summary and its breakdown, tumbling on the vertical axis.',
+      code: `function OrderCard() {
+  const [flipped, setFlipped] = useState(false);
+  return (
+    <div className="flex flex-col items-center gap-4">
+      <FlipCard
+        trigger="controlled"
+        flipped={flipped}
+        axis="vertical"
+        aria-label="Detalhe do pedido"
+        className="h-64 w-full max-w-xs"
+      >
+        <FlipCardFront className="justify-between p-6">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-medium uppercase tracking-wide text-fg-tertiary">
+              Pedido #4821
+            </span>
+            <span className="rounded-full bg-success/15 px-2.5 py-0.5 text-xs font-medium text-success">
+              Pago
+            </span>
+          </div>
+          <div>
+            <p className="font-display text-3xl font-semibold text-fg">R$ 297,00</p>
+            <p className="mt-1 text-sm text-fg-secondary">Curso de Copywriting</p>
+          </div>
+          <p className="text-xs text-fg-tertiary">Toque em “Ver detalhes”.</p>
+        </FlipCardFront>
+        <FlipCardBack className="justify-between p-6">
+          <p className="text-xs font-medium uppercase tracking-wide text-fg-tertiary">Composição</p>
+          <dl className="flex flex-col gap-2 text-sm">
+            <div className="flex items-center justify-between">
+              <dt className="text-fg-secondary">Subtotal</dt>
+              <dd className="tabular-nums text-fg">R$ 320,00</dd>
+            </div>
+            <div className="flex items-center justify-between">
+              <dt className="text-fg-secondary">Cupom BEMVINDO</dt>
+              <dd className="tabular-nums text-success">− R$ 23,00</dd>
+            </div>
+            <div className="flex items-center justify-between border-t border-border pt-2 font-medium">
+              <dt className="text-fg">Total</dt>
+              <dd className="tabular-nums text-fg">R$ 297,00</dd>
+            </div>
+          </dl>
+        </FlipCardBack>
+      </FlipCard>
+      <Button size="sm" variant="outline" onClick={() => setFlipped((value) => !value)}>
+        <RotateCw aria-hidden="true" className="size-4" />
+        {flipped ? "Ver resumo" : "Ver detalhes"}
+      </Button>
+    </div>
+  );
+}`,
+      preview: <FlipCardControlledDemo />,
+    },
+  ],
+  "tilt-card": [
+    {
+      id: "glare-parallax",
+      title: "Glare & parallax",
+      description:
+        "A real perspective transform that tilts toward the pointer, with a soft `glare` sheen and `parallax` lifting the content toward the viewer on hover. The pointer writes straight to CSS variables inside one rAF — no re-renders — and it flattens under prefers-reduced-motion.",
+      code: `<TiltCard glare parallax maxTilt={14} className="w-full max-w-xs">
+  <div className="flex flex-col gap-3">
+    <span className="grid size-11 place-items-center rounded-xl bg-gradient-primary text-primary-foreground shadow-glow">
+      <Zap className="size-5" aria-hidden="true" />
+    </span>
+    <h3 className="font-display text-lg font-semibold text-fg">Repasses instantâneos</h3>
+    <p className="text-sm text-fg-secondary">
+      O saldo entra no mesmo instante em que a venda é aprovada — sem lote noturno, sem espera.
+    </p>
+  </div>
+</TiltCard>`,
+      preview: (
+        <TiltCard glare parallax maxTilt={14} className="w-full max-w-xs">
+          <div className="flex flex-col gap-3">
+            <span className="grid size-11 place-items-center rounded-xl bg-gradient-primary text-primary-foreground shadow-glow">
+              <Zap className="size-5" aria-hidden="true" />
+            </span>
+            <h3 className="font-display text-lg font-semibold text-fg">Repasses instantâneos</h3>
+            <p className="text-sm text-fg-secondary">
+              O saldo entra no mesmo instante em que a venda é aprovada — sem lote noturno, sem
+              espera.
+            </p>
+          </div>
+        </TiltCard>
+      ),
+    },
+    {
+      id: "payment-card",
+      title: "Payment card",
+      description:
+        "Push `maxTilt` and `scale` for a tactile, dramatic feel — perfect for a payment-card mockup that leans into the cursor. Override the surface via `className` to paint it with the brand gradient.",
+      code: `<TiltCard
+  glare
+  parallax
+  maxTilt={16}
+  scale={1.05}
+  className="w-full max-w-sm border-transparent bg-gradient-primary text-primary-foreground"
+>
+  <div className="flex flex-col gap-6">
+    <div className="flex items-start justify-between">
+      <span className="font-display text-lg font-semibold">Cooud</span>
+      <Wifi className="size-6 rotate-90 opacity-90" aria-hidden="true" />
+    </div>
+    <div className="h-9 w-12 rounded-md bg-white/25 ring-1 ring-white/20" aria-hidden="true" />
+    <div className="flex flex-col gap-4">
+      <p className="font-mono text-xl tracking-[0.25em]">4242 4242 4242 4242</p>
+      <div className="flex items-center justify-between text-xs uppercase tracking-wide opacity-90">
+        <span>Pedro Gontijo</span>
+        <span className="tabular-nums">12/29</span>
+      </div>
+    </div>
+  </div>
+</TiltCard>`,
+      preview: (
+        <TiltCard
+          glare
+          parallax
+          maxTilt={16}
+          scale={1.05}
+          className="w-full max-w-sm border-transparent bg-gradient-primary text-primary-foreground"
+        >
+          <div className="flex flex-col gap-6">
+            <div className="flex items-start justify-between">
+              <span className="font-display text-lg font-semibold">Cooud</span>
+              <Wifi className="size-6 rotate-90 opacity-90" aria-hidden="true" />
+            </div>
+            <div
+              className="h-9 w-12 rounded-md bg-white/25 ring-1 ring-white/20"
+              aria-hidden="true"
+            />
+            <div className="flex flex-col gap-4">
+              <p className="font-mono text-xl tracking-[0.25em]">4242 4242 4242 4242</p>
+              <div className="flex items-center justify-between text-xs uppercase tracking-wide opacity-90">
+                <span>Pedro Gontijo</span>
+                <span className="tabular-nums">12/29</span>
+              </div>
+            </div>
+          </div>
+        </TiltCard>
+      ),
+    },
+    {
+      id: "subtle",
+      title: "Subtle",
+      description:
+        "Dial `maxTilt` and `scale` right down (and skip the glare) for a restrained lift that suits dense lists and rows — motion that's felt more than seen.",
+      code: `<TiltCard maxTilt={6} scale={1.02} className="w-full max-w-xs">
+  <div className="flex items-center gap-4">
+    <span className="grid size-11 place-items-center rounded-full bg-surface-overlay text-fg-secondary">
+      <User className="size-5" aria-hidden="true" />
+    </span>
+    <div className="min-w-0">
+      <p className="truncate text-sm font-medium text-fg">Ana Ribeiro</p>
+      <p className="truncate text-sm text-fg-tertiary">ana@cooud.app</p>
+    </div>
+    <ArrowRight className="ml-auto size-4 shrink-0 text-fg-tertiary" aria-hidden="true" />
+  </div>
+</TiltCard>`,
+      preview: (
+        <TiltCard maxTilt={6} scale={1.02} className="w-full max-w-xs">
+          <div className="flex items-center gap-4">
+            <span className="grid size-11 place-items-center rounded-full bg-surface-overlay text-fg-secondary">
+              <User className="size-5" aria-hidden="true" />
+            </span>
+            <div className="min-w-0">
+              <p className="truncate text-sm font-medium text-fg">Ana Ribeiro</p>
+              <p className="truncate text-sm text-fg-tertiary">ana@cooud.app</p>
+            </div>
+            <ArrowRight className="ml-auto size-4 shrink-0 text-fg-tertiary" aria-hidden="true" />
+          </div>
+        </TiltCard>
       ),
     },
   ],
