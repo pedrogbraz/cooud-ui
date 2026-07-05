@@ -4,18 +4,10 @@ import { useTheme } from "@cooud-ui/theme";
 import { type ThemeName, themeNames } from "@cooud-ui/tokens";
 import { Badge } from "@cooud-ui/ui/badge";
 import { cn } from "@cooud-ui/ui/cn";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuTrigger,
-} from "@cooud-ui/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@cooud-ui/ui/sheet";
-import { Github, Menu, Moon, Palette, Sun } from "lucide-react";
+import { Check, Github, Menu, Moon, Palette, Sun } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CooudMark } from "./brand/cooud-mark";
 import { CommandSearch } from "./docs/command-search";
 import { ComponentNavList } from "./docs/docs-sidebar";
@@ -75,8 +67,111 @@ function ModeIcon({ isDark }: { isDark: boolean }) {
   );
 }
 
+/**
+ * Theme-preset selector — a lightweight custom popover (button + a menu of the 5
+ * presets with swatches) that re-themes the whole site live via `setTheme`.
+ *
+ * Deliberately NOT the Radix dropdown-menu: this control lives in the shared site
+ * header, so pulling `@radix-ui/react-dropdown-menu` into it would tax the First
+ * Load JS of EVERY route. A ~30-line native popover (outside-click + Escape to
+ * close) keeps the shared bundle within budget while preserving the UX.
+ */
+function ThemeSelect() {
+  const { theme, setTheme } = useTheme();
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+    const onPointerDown = (event: PointerEvent) => {
+      if (ref.current && !ref.current.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    };
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [open]);
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        type="button"
+        aria-haspopup="menu"
+        aria-expanded={open}
+        aria-label={`Change theme (current: ${themeLabels[theme]})`}
+        onClick={() => setOpen((value) => !value)}
+        className="grid size-9 place-items-center rounded-lg text-fg-secondary outline-none transition-colors hover:bg-surface-overlay hover:text-fg focus-visible:ring-2 focus-visible:ring-ring aria-expanded:bg-surface-overlay aria-expanded:text-fg"
+      >
+        <span className="relative grid size-[18px] place-items-center">
+          <Palette className="size-[18px]" aria-hidden="true" />
+          <span
+            className="absolute -right-0.5 -bottom-0.5 size-2 rounded-full ring-2 ring-surface-base"
+            style={{ backgroundColor: themeSwatches[theme] }}
+            aria-hidden="true"
+          />
+        </span>
+      </button>
+      {open ? (
+        <div
+          // biome-ignore lint/a11y/useSemanticElements: a role="menu" radio popover is the right pattern for a compact theme switcher.
+          role="menu"
+          aria-label="Theme"
+          aria-orientation="vertical"
+          className="absolute right-0 top-full z-50 mt-2 min-w-[11rem] overflow-hidden rounded-xl border border-border bg-surface-floating p-1 shadow-lg"
+        >
+          <p className="px-2.5 py-1.5 text-xs font-medium text-fg-tertiary" aria-hidden="true">
+            Theme
+          </p>
+          {themeNames.map((name) => {
+            const active = theme === name;
+            return (
+              <button
+                key={name}
+                type="button"
+                role="menuitemradio"
+                aria-checked={active}
+                onClick={() => {
+                  setTheme(name);
+                  setOpen(false);
+                }}
+                className={cn(
+                  "flex w-full items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-sm outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring",
+                  active
+                    ? "bg-surface-overlay text-fg"
+                    : "text-fg-secondary hover:bg-surface-overlay hover:text-fg",
+                )}
+              >
+                <span
+                  className="size-3.5 shrink-0 rounded-full shadow-xs ring-1 ring-inset ring-border"
+                  style={{ backgroundColor: themeSwatches[name] }}
+                  aria-hidden="true"
+                />
+                {themeLabels[name]}
+                {active ? (
+                  <Check className="ml-auto size-4 text-primary" aria-hidden="true" />
+                ) : null}
+              </button>
+            );
+          })}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 export function SiteNav() {
-  const { theme, mode, toggleMode, setTheme } = useTheme();
+  const { mode, toggleMode } = useTheme();
   const isDark = mode === "dark";
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -139,39 +234,7 @@ export function SiteNav() {
           </a>
 
           {/* Theme preset selector */}
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              aria-label={`Change theme (current: ${themeLabels[theme]})`}
-              className="grid size-9 place-items-center rounded-lg text-fg-secondary outline-none transition-colors hover:bg-surface-overlay hover:text-fg focus-visible:ring-2 focus-visible:ring-ring data-[state=open]:bg-surface-overlay data-[state=open]:text-fg"
-            >
-              <span className="relative grid size-[18px] place-items-center">
-                <Palette className="size-[18px]" aria-hidden="true" />
-                <span
-                  className="absolute -right-0.5 -bottom-0.5 size-2 rounded-full ring-2 ring-surface-base"
-                  style={{ backgroundColor: themeSwatches[theme] }}
-                  aria-hidden="true"
-                />
-              </span>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="min-w-[11rem]">
-              <DropdownMenuLabel>Theme</DropdownMenuLabel>
-              <DropdownMenuRadioGroup
-                value={theme}
-                onValueChange={(value) => setTheme(value as ThemeName)}
-              >
-                {themeNames.map((name) => (
-                  <DropdownMenuRadioItem key={name} value={name} className="gap-2.5">
-                    <span
-                      className="size-3.5 shrink-0 rounded-full ring-1 ring-inset ring-border shadow-xs"
-                      style={{ backgroundColor: themeSwatches[name] }}
-                      aria-hidden="true"
-                    />
-                    {themeLabels[name]}
-                  </DropdownMenuRadioItem>
-                ))}
-              </DropdownMenuRadioGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <ThemeSelect />
 
           {/* Light / dark mode toggle */}
           <button
