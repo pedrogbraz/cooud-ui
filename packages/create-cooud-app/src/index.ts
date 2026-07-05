@@ -14,7 +14,7 @@ import {
   SKILLS,
   type Skill,
   writeAiKit,
-} from "./ai-kit.js";
+} from "@cooud-ui/ai-kit";
 import { runInstall, scaffold } from "./scaffold.js";
 import {
   c,
@@ -45,9 +45,10 @@ ${c.bold("Options")}
                              Theme preset to bake in (default: ${DEFAULT_THEME})
   --mode <${MODES.join("|")}>            Default color mode (default: ${DEFAULT_MODE})
   --ai / --no-ai             Include (or skip) the AI Kit: skills, rules & doctrine
-  --assistants <claude,cursor,copilot|all>
-                             Which assistants to configure (default: all)
-  --preset <standard|fintech|none>
+  --assistants <${ASSISTANTS.join(",")}|all>
+                             Which assistants to configure (default: all).
+                             Codex CLI and Zed read the root AGENTS.md natively.
+  --preset <${DOCTRINE_PRESETS.join("|")}>
                              Which engineering doctrine to ship (default: standard)
   --skills <name,...|all>    Which Claude Code skills to include (default: all)
   --pm <bun|npm|pnpm|yarn>   Package manager to install with (auto-detected otherwise)

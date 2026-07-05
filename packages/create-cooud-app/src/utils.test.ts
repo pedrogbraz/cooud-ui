@@ -64,7 +64,7 @@ describe("parseCli", () => {
     const parsed = parseCli(["my-app"]);
     expect(parsed.ai).toBeUndefined();
     expect(parsed.preset).toBe("standard");
-    expect(parsed.assistants).toEqual(["claude", "cursor", "copilot"]);
+    expect(parsed.assistants).toEqual(["claude", "cursor", "copilot", "windsurf", "gemini"]);
     expect(parsed.skills).toEqual(["ui-add", "theme", "code-review", "ship-pr", "evidence-check"]);
   });
 
@@ -103,7 +103,7 @@ describe("parseCli", () => {
   });
 
   it("throws on an unknown --assistant, --preset, or --skill", () => {
-    expect(() => parseCli(["my-app", "--assistants", "windsurf"])).toThrow(/Unknown assistant/);
+    expect(() => parseCli(["my-app", "--assistants", "notepad"])).toThrow(/Unknown assistant/);
     expect(() => parseCli(["my-app", "--preset", "crypto"])).toThrow(/Unknown --preset/);
     expect(() => parseCli(["my-app", "--skills", "deploy"])).toThrow(/Unknown skill/);
   });

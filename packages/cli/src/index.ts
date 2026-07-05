@@ -75,10 +75,19 @@ theme
 
 program
   .command("ai")
-  .description("Add the AI Kit (AGENTS.md doctrine + Claude Code / Cursor / Copilot config).")
+  .description(
+    "Add the AI Kit (AGENTS.md doctrine + Claude Code / Cursor / Copilot / Windsurf / Gemini config).",
+  )
   .option("-c, --cwd <dir>", "working directory", process.cwd())
-  .option("-a, --assistants <list>", "comma-separated: claude, cursor, copilot (or 'all')")
-  .option("-p, --preset <name>", "doctrine preset: standard, fintech, or none", "standard")
+  .option(
+    "-a, --assistants <list>",
+    "comma-separated: claude, cursor, copilot, windsurf, gemini (or 'all')",
+  )
+  .option(
+    "-p, --preset <name>",
+    "doctrine preset: standard, fintech, saas, oss, agency, or none",
+    "standard",
+  )
   .option("-s, --skills <list>", "comma-separated Claude Code skills (or 'all')")
   .action((opts) =>
     aiAdd({
