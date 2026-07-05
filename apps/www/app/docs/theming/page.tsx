@@ -1,3 +1,6 @@
+import { Button } from "@cooud-ui/ui";
+import { ArrowRight, Palette } from "lucide-react";
+import Link from "next/link";
 import { CodeBlock } from "../../../components/docs/code-block";
 import {
   DocCallout,
@@ -96,6 +99,36 @@ export default function ThemingPage() {
       >
         <PrimaryLink href="/create">Build a preset</PrimaryLink>
       </DocsHeader>
+
+      {/* Live Theme Builder callout — a quick path to the interactive home playground. */}
+      <div className="relative mt-8 overflow-hidden rounded-xl border border-border bg-surface-raised p-5 shadow-xs sm:p-6">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent"
+        />
+        <div className="relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-start gap-4">
+            <span className="flex size-11 shrink-0 items-center justify-center rounded-lg border border-primary/30 bg-primary/10 text-primary">
+              <Palette className="size-5" aria-hidden="true" />
+            </span>
+            <div>
+              <h2 className="font-display text-lg font-semibold text-fg">
+                Prefer to play? Try the live Theme Builder
+              </h2>
+              <p className="mt-1 max-w-xl text-sm leading-6 text-fg-secondary">
+                Drag the sliders, pick colors, and watch the whole page re-theme in real time — then
+                copy the CSS overrides.
+              </p>
+            </div>
+          </div>
+          <Button asChild className="shrink-0">
+            <Link href="/#playground">
+              Open Theme Builder
+              <ArrowRight aria-hidden="true" />
+            </Link>
+          </Button>
+        </div>
+      </div>
 
       <DocsSection title="Theme layers">
         <DocsGrid>

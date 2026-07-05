@@ -1,9 +1,19 @@
 "use client";
 
 import { useTheme } from "@cooud-ui/theme";
+import { type ThemeName, themeNames } from "@cooud-ui/tokens";
 import { Badge } from "@cooud-ui/ui/badge";
+import { cn } from "@cooud-ui/ui/cn";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from "@cooud-ui/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@cooud-ui/ui/sheet";
-import { Github, Menu } from "lucide-react";
+import { Github, Menu, Moon, Palette, Sun } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { CooudMark } from "./brand/cooud-mark";
@@ -16,25 +26,57 @@ const navLinks = [
   { label: "Components", href: "/components" },
   { label: "Blocks", href: "/blocks" },
   { label: "Create", href: "/create" },
+  { label: "Playground", href: "/#playground" },
   { label: "Stack", href: "/stack", badge: "BETA" },
   { label: "Changelog", href: "/changelog" },
 ] as const;
 
 const GITHUB_URL = "https://github.com/pedrogbraz/cooud-ui";
 
-function ThemeGlyph({ className }: { className?: string }) {
+/** Friendly Title Case label for each theme preset. */
+const themeLabels: Record<ThemeName, string> = {
+  aurora: "Aurora",
+  neutral: "Neutral",
+  midnight: "Midnight",
+  sunset: "Sunset",
+  emerald: "Emerald",
+};
+
+/** A representative swatch per theme, derived from each preset's `primary` token. */
+const themeSwatches: Record<ThemeName, string> = {
+  aurora: "oklch(0.685 0.169 237.3)",
+  neutral: "oklch(0.62 0 0)",
+  midnight: "oklch(0.55 0.205 280)",
+  sunset: "oklch(0.78 0.16 65)",
+  emerald: "oklch(0.74 0.16 160)",
+};
+
+/** Sun ⇄ moon glyph that crossfades with the active color mode (motion-reduce safe). */
+function ModeIcon({ isDark }: { isDark: boolean }) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true" focusable="false">
-      <circle cx="12" cy="12" r="8.1" stroke="currentColor" strokeWidth="1.7" />
-      <path d="M7.7 17.2 16.3 6.8" stroke="currentColor" strokeLinecap="round" strokeWidth="1.7" />
-      <path d="M9.2 7.6v8.7" stroke="currentColor" strokeLinecap="round" strokeWidth="1.7" />
-      <path d="M12.4 8.6v7" stroke="currentColor" strokeLinecap="round" strokeWidth="1.7" />
-    </svg>
+    <span className="relative block size-[18px]" aria-hidden="true">
+      <Sun
+        className={cn(
+          "absolute inset-0 size-[18px] transition-all duration-300 ease-out motion-reduce:transition-none",
+          isDark
+            ? "opacity-0 motion-safe:-rotate-90 motion-safe:scale-0"
+            : "rotate-0 scale-100 opacity-100",
+        )}
+      />
+      <Moon
+        className={cn(
+          "absolute inset-0 size-[18px] transition-all duration-300 ease-out motion-reduce:transition-none",
+          isDark
+            ? "rotate-0 scale-100 opacity-100"
+            : "opacity-0 motion-safe:rotate-90 motion-safe:scale-0",
+        )}
+      />
+    </span>
   );
 }
 
 export function SiteNav() {
-  const { mode, toggleMode } = useTheme();
+  const { theme, mode, toggleMode, setTheme } = useTheme();
   const isDark = mode === "dark";
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -96,13 +138,49 @@ export function SiteNav() {
             <Github className="size-[18px]" aria-hidden="true" />
           </a>
 
+          {/* Theme preset selector */}
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              aria-label={`Change theme (current: ${themeLabels[theme]})`}
+              className="grid size-9 place-items-center rounded-lg text-fg-secondary outline-none transition-colors hover:bg-surface-overlay hover:text-fg focus-visible:ring-2 focus-visible:ring-ring data-[state=open]:bg-surface-overlay data-[state=open]:text-fg"
+            >
+              <span className="relative grid size-[18px] place-items-center">
+                <Palette className="size-[18px]" aria-hidden="true" />
+                <span
+                  className="absolute -right-0.5 -bottom-0.5 size-2 rounded-full ring-2 ring-surface-base"
+                  style={{ backgroundColor: themeSwatches[theme] }}
+                  aria-hidden="true"
+                />
+              </span>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="min-w-[11rem]">
+              <DropdownMenuLabel>Theme</DropdownMenuLabel>
+              <DropdownMenuRadioGroup
+                value={theme}
+                onValueChange={(value) => setTheme(value as ThemeName)}
+              >
+                {themeNames.map((name) => (
+                  <DropdownMenuRadioItem key={name} value={name} className="gap-2.5">
+                    <span
+                      className="size-3.5 shrink-0 rounded-full ring-1 ring-inset ring-border shadow-xs"
+                      style={{ backgroundColor: themeSwatches[name] }}
+                      aria-hidden="true"
+                    />
+                    {themeLabels[name]}
+                  </DropdownMenuRadioItem>
+                ))}
+              </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* Light / dark mode toggle */}
           <button
             type="button"
             onClick={toggleMode}
             aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
             className="grid size-9 place-items-center rounded-lg text-fg-secondary outline-none transition-colors hover:bg-surface-overlay hover:text-fg focus-visible:ring-2 focus-visible:ring-ring"
           >
-            <ThemeGlyph className="size-[18px]" />
+            <ModeIcon isDark={isDark} />
           </button>
 
           {/* Mobile hamburger */}
