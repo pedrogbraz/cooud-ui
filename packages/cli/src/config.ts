@@ -23,6 +23,11 @@ export interface CooudUIConfig {
   };
   /** Registry source (http base URL or local directory). */
   registry: string;
+  /** The app's theme preset + color mode (written by the scaffolder / `theme set`). */
+  theme?: {
+    name: string;
+    mode: string;
+  };
 }
 
 export const DEFAULT_CONFIG: CooudUIConfig = {
@@ -46,6 +51,8 @@ export async function readConfig(cwd: string): Promise<CooudUIConfig> {
     aliases: { ...DEFAULT_CONFIG.aliases, ...parsed.aliases },
     paths: { ...DEFAULT_CONFIG.paths, ...parsed.paths },
     registry: parsed.registry ?? DEFAULT_CONFIG.registry,
+    // Preserve the theme block when present so `add`/`init` round-trips never drop it.
+    ...(parsed.theme ? { theme: parsed.theme } : {}),
   };
 }
 

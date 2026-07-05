@@ -28,6 +28,7 @@
   },
   "files": [
     "dist",
+    "templates",
     "LICENSE",
     "README.md",
     "!dist/**/*.map"
