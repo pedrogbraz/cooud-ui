@@ -10,7 +10,13 @@ import {
 } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import type { PackageManager } from "./utils.js";
+import {
+  DEFAULT_MODE,
+  DEFAULT_THEME,
+  type ModeName,
+  type PackageManager,
+  type Theme,
+} from "./utils.js";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 
@@ -67,9 +73,22 @@ function isTextFile(path: string): boolean {
   return dot !== -1 && TEXT_EXTENSIONS.has(path.slice(dot));
 }
 
-/** Replace template tokens. Currently just the app name. */
-export function applyTokens(content: string, name: string): string {
-  return content.replaceAll("__APP_NAME__", name);
+/**
+ * Replace template tokens. `__APP_NAME__` is the package name; `__THEME__` /
+ * `__MODE__` are the chosen theme preset + color mode (baked into layout.tsx and
+ * cooud-ui.json). Theme/mode default to the ship defaults so existing callers
+ * (and tests) that pass only a name keep working.
+ */
+export function applyTokens(
+  content: string,
+  name: string,
+  theme: Theme = DEFAULT_THEME,
+  mode: ModeName = DEFAULT_MODE,
+): string {
+  return content
+    .replaceAll("__APP_NAME__", name)
+    .replaceAll("__THEME__", theme)
+    .replaceAll("__MODE__", mode);
 }
 
 export interface ScaffoldOptions {
@@ -77,6 +96,10 @@ export interface ScaffoldOptions {
   targetDir: string;
   /** Package name written into package.json / README (may be scoped). */
   name: string;
+  /** Theme preset baked into the app. @default "aurora" */
+  theme?: Theme;
+  /** Default color mode baked into the app. @default "dark" */
+  mode?: ModeName;
 }
 
 export interface ScaffoldResult {
@@ -89,24 +112,30 @@ export interface ScaffoldResult {
  */
 export function scaffold(options: ScaffoldOptions): ScaffoldResult {
   const src = templateRoot();
-  const { targetDir, name } = options;
+  const { targetDir, name, theme = DEFAULT_THEME, mode = DEFAULT_MODE } = options;
   mkdirSync(targetDir, { recursive: true });
-  const fileCount = copyDir(src, targetDir, name);
+  const fileCount = copyDir(src, targetDir, name, theme, mode);
   return { fileCount };
 }
 
-function copyDir(srcDir: string, destDir: string, name: string): number {
+function copyDir(
+  srcDir: string,
+  destDir: string,
+  name: string,
+  theme: Theme,
+  mode: ModeName,
+): number {
   mkdirSync(destDir, { recursive: true });
   let count = 0;
   for (const entry of readdirSync(srcDir)) {
     const srcPath = join(srcDir, entry);
     const destPath = join(destDir, restoreDotfileName(entry));
     if (statSync(srcPath).isDirectory()) {
-      count += copyDir(srcPath, destPath, name);
+      count += copyDir(srcPath, destPath, name, theme, mode);
       continue;
     }
     if (isTextFile(srcPath)) {
-      const content = applyTokens(readFileSync(srcPath, "utf8"), name);
+      const content = applyTokens(readFileSync(srcPath, "utf8"), name, theme, mode);
       writeFileSync(destPath, content);
     } else {
       cpSync(srcPath, destPath);

@@ -7,11 +7,19 @@ import { parseArgs } from "node:util";
 import { runInstall, scaffold } from "./scaffold.js";
 import {
   c,
+  DEFAULT_MODE,
+  DEFAULT_THEME,
   dirNameFromProjectName,
   isValidProjectName,
   log,
+  type ModeName,
+  MODES,
   PACKAGE_MANAGERS,
   type PackageManager,
+  promptSelect,
+  type Theme,
+  THEME_HINTS,
+  THEMES,
 } from "./utils.js";
 import { CREATE_VERSION } from "./version.js";
 
@@ -21,15 +29,19 @@ ${c.bold("Usage")}
   create-cooud-app [project-name] [options]
 
 ${c.bold("Options")}
+  --theme <${THEMES.join("|")}>
+                             Theme preset to bake in (default: ${DEFAULT_THEME})
+  --mode <${MODES.join("|")}>            Default color mode (default: ${DEFAULT_MODE})
   --pm <bun|npm|pnpm|yarn>   Package manager to install with (auto-detected otherwise)
   --no-install               Skip installing dependencies
+  -y, --yes                  Accept defaults; skip interactive prompts
   -h, --help                 Show this help
   -v, --version              Show the version
 
 ${c.bold("Examples")}
   npx create-cooud-app my-app
-  npx create-cooud-app my-dashboard --pm pnpm
-  npx create-cooud-app my-app --no-install
+  npx create-cooud-app my-app --theme sunset --mode light
+  npx create-cooud-app my-dashboard --pm pnpm --yes
 `;
 
 interface ParsedCli {
@@ -37,6 +49,12 @@ interface ParsedCli {
   name?: string;
   pm?: PackageManager;
   install: boolean;
+  /** Theme from `--theme`, or undefined to prompt. */
+  theme?: Theme;
+  /** Mode from `--mode`, or undefined to prompt. */
+  mode?: ModeName;
+  /** `--yes`: accept defaults, skip prompts (also implied when not a TTY). */
+  yes: boolean;
 }
 
 /**
@@ -50,25 +68,41 @@ export function parseCli(argv: string[]): ParsedCli {
     args: argv,
     allowPositionals: true,
     options: {
+      theme: { type: "string" },
+      mode: { type: "string" },
       pm: { type: "string" },
       "no-install": { type: "boolean", default: false },
+      yes: { type: "boolean", short: "y", default: false },
       help: { type: "boolean", short: "h", default: false },
       version: { type: "boolean", short: "v", default: false },
     },
   });
 
-  if (values.help) return { install: true, name: "--help" };
-  if (values.version) return { install: true, name: "--version" };
+  if (values.help) return { install: true, yes: false, name: "--help" };
+  if (values.version) return { install: true, yes: false, name: "--version" };
 
   const pm = values.pm;
   if (pm !== undefined && !PACKAGE_MANAGERS.includes(pm as PackageManager)) {
     throw new Error(`Unknown --pm "${pm}". Use one of: ${PACKAGE_MANAGERS.join(", ")}.`);
   }
 
+  const theme = values.theme;
+  if (theme !== undefined && !THEMES.includes(theme as Theme)) {
+    throw new Error(`Unknown --theme "${theme}". Use one of: ${THEMES.join(", ")}.`);
+  }
+
+  const mode = values.mode;
+  if (mode !== undefined && !MODES.includes(mode as ModeName)) {
+    throw new Error(`Unknown --mode "${mode}". Use one of: ${MODES.join(", ")}.`);
+  }
+
   return {
     name: positionals[0],
     pm: pm as PackageManager | undefined,
     install: !values["no-install"],
+    theme: theme as Theme | undefined,
+    mode: mode as ModeName | undefined,
+    yes: values.yes,
   };
 }
 
@@ -129,9 +163,17 @@ async function main(): Promise<void> {
     return;
   }
 
+  // Theme + mode: an explicit flag wins; otherwise prompt on a TTY (unless
+  // --yes), and fall back to the ship defaults when piped/CI.
+  const theme =
+    parsed.theme ??
+    (parsed.yes ? DEFAULT_THEME : await promptSelect("Theme", THEMES, DEFAULT_THEME, THEME_HINTS));
+  const mode =
+    parsed.mode ?? (parsed.yes ? DEFAULT_MODE : await promptSelect("Default mode", MODES, DEFAULT_MODE));
+
   log.step(`Scaffolding into ${c.cyan(dirName)}…`);
-  const { fileCount } = scaffold({ targetDir, name });
-  log.ok(`Created ${fileCount} files.`);
+  const { fileCount } = scaffold({ targetDir, name, theme, mode });
+  log.ok(`Created ${fileCount} files (${c.cyan(theme)} theme, ${mode} mode).`);
 
   const pm = parsed.pm ?? detectPackageManager();
 

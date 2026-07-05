@@ -55,6 +55,61 @@ export const log = {
   },
 };
 
+/** The five shipped theme presets (must match @cooud-ui/tokens `ThemeName`). */
+export const THEMES = ["aurora", "neutral", "midnight", "sunset", "emerald"] as const;
+export type Theme = (typeof THEMES)[number];
+export const DEFAULT_THEME: Theme = "aurora";
+
+/** One-line vibe per theme, shown in the picker. */
+export const THEME_HINTS: Record<Theme, string> = {
+  aurora: "sky → cyan premium gradient (default)",
+  neutral: "clean black & white, shadcn-like",
+  midnight: "deep indigo / violet",
+  sunset: "warm amber / rose",
+  emerald: "fresh green / teal",
+};
+
+/** Color modes the provider supports natively (no built-in "system"). */
+export const MODES = ["dark", "light"] as const;
+export type ModeName = (typeof MODES)[number];
+export const DEFAULT_MODE: ModeName = "dark";
+
+/**
+ * A single-select TTY prompt: prints a numbered list and returns the option the
+ * user picks (by number or name), the default on empty input, or the default
+ * verbatim when stdin is not a TTY (piped/CI) so scaffolding never blocks.
+ */
+export async function promptSelect<T extends string>(
+  label: string,
+  options: readonly T[],
+  defaultValue: T,
+  hints?: Partial<Record<T, string>>,
+): Promise<T> {
+  if (!process.stdin.isTTY) return defaultValue;
+  const { createInterface } = await import("node:readline/promises");
+  const rl = createInterface({ input: process.stdin, output: process.stdout });
+  try {
+    process.stdout.write(`${c.bold(label)}\n`);
+    options.forEach((opt, i) => {
+      const marker = opt === defaultValue ? c.green("●") : c.dim("○");
+      const hint = hints?.[opt] ? `  ${c.dim(hints[opt] as string)}` : "";
+      process.stdout.write(`  ${marker} ${c.cyan(String(i + 1))} ${opt}${hint}\n`);
+    });
+    const answer = (
+      await rl.question(`${c.dim(`(1-${options.length} or name, default ${defaultValue})`)} `)
+    ).trim();
+    if (!answer) return defaultValue;
+    const asNum = Number.parseInt(answer, 10);
+    if (Number.isInteger(asNum) && asNum >= 1 && asNum <= options.length) {
+      return options[asNum - 1] as T;
+    }
+    const byName = options.find((o) => o === answer.toLowerCase());
+    return byName ?? defaultValue;
+  } finally {
+    rl.close();
+  }
+}
+
 // npm's package-name rules (the spec subset we care about): optionally scoped,
 // lowercase, URL-safe, may not start with "." or "_", <= 214 chars.
 const SCOPED = /^(?:@[a-z0-9-~][a-z0-9-._~]*\/)?[a-z0-9-~][a-z0-9-._~]*$/;

@@ -33,7 +33,14 @@ describe("dirNameFromProjectName", () => {
 
 describe("parseCli", () => {
   it("reads the positional name and defaults install to true", () => {
-    expect(parseCli(["my-app"])).toEqual({ name: "my-app", pm: undefined, install: true });
+    expect(parseCli(["my-app"])).toEqual({
+      name: "my-app",
+      pm: undefined,
+      install: true,
+      theme: undefined,
+      mode: undefined,
+      yes: false,
+    });
   });
 
   it("honors --no-install and --pm", () => {
@@ -41,10 +48,32 @@ describe("parseCli", () => {
       name: "my-app",
       pm: "pnpm",
       install: false,
+      theme: undefined,
+      mode: undefined,
+      yes: false,
+    });
+  });
+
+  it("parses --theme, --mode and --yes", () => {
+    expect(parseCli(["my-app", "--theme", "sunset", "--mode", "light", "--yes"])).toEqual({
+      name: "my-app",
+      pm: undefined,
+      install: true,
+      theme: "sunset",
+      mode: "light",
+      yes: true,
     });
   });
 
   it("throws on an unknown --pm", () => {
     expect(() => parseCli(["my-app", "--pm", "cargo"])).toThrow(/Unknown --pm/);
+  });
+
+  it("throws on an unknown --theme", () => {
+    expect(() => parseCli(["my-app", "--theme", "galaxy"])).toThrow(/Unknown --theme/);
+  });
+
+  it("throws on an unknown --mode", () => {
+    expect(() => parseCli(["my-app", "--mode", "sepia"])).toThrow(/Unknown --mode/);
   });
 });
