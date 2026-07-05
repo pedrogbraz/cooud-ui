@@ -53,10 +53,11 @@ Classify the work so the right amount of rigor is applied.
 
 Do not over-engineer the trivial. Do not under-verify the critical.
 
-## The 95% reliability gate
+## The reliability gate
 
-Nothing P0/P1 ships, deploys, or is presented as final until both Code Review and QA
-reach at least 95% confidence. Below that: fix, review, and test again.
+Nothing P0/P1 ships, deploys, or is presented as final until both the review and QA
+rubrics below are fully met. Until then: fix, review, and test again. The rubric is the
+gate — not a mood, a deadline, or a confidence number.
 
 ### Code review rubric
 
@@ -83,7 +84,7 @@ QA passes only with objective evidence:
 
 ### Correction limit
 
-At most three correction cycles. If confidence is still short after three, stop and
+At most three correction cycles. If the rubrics still are not met after three, stop and
 escalate with: what was tried, what is still uncertain, the risk of continuing, and the
 recommended alternative. Do not loop indefinitely, and do not ship on hope.
 
@@ -115,13 +116,33 @@ Never introduce:
 
 Fix the cause, not the symptom. A workaround that hides the real problem is a liability.
 
+## Dependencies
+
+Adding a dependency is a decision, not a reflex. Justify why it is needed, prefer the
+standard library or something already in the project, and pin exact versions. Every new
+dependency is new attack surface and ongoing maintenance — weigh the supply-chain and
+security cost before pulling it in, and do not add one to save a few lines you could
+write yourself.
+
+## Testing
+
+Test the contract and the error paths, not just the happy path. Write tests for any
+non-trivial logic you add or change, and keep them deterministic. Never delete or loosen
+a test to make a build pass — a failing test is usually telling the truth; if it is
+genuinely wrong, fix it deliberately and say why.
+
+## Accessibility and performance
+
+Hold a baseline: keyboard-operable, semantic and labeled markup, and readable contrast;
+and avoid obvious performance regressions or unbounded work on hot paths.
+
 ## Git, PR, and deploy
 
 For code work:
 
 - work on a **dedicated branch**, never directly on the main branch;
 - make **small, focused commits** using Conventional Commits (`feat:`, `fix:`,
-  `refactor:`, `docs:`, `chore:`, `test:`);
+  `perf:`, `refactor:`, `docs:`, `chore:`, `test:`);
 - **no AI attribution** anywhere — not in commits, PR bodies, code comments, or files;
 - **no debug instrumentation** left in the final diff (stray logs, dumps, scratch code);
 - open a PR whose body states: **objective, changes, tests, risks, and rollback;**

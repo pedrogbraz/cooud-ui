@@ -5,9 +5,9 @@ payouts, wallets, subscriptions, ledgers, or anything that reports balances to a
 who makes decisions with that number. It appends to and specializes the base rules.
 
 Central rule: **money, trust, and operational continuity outrank apparent speed.**
-A product can ship with cosmetic bugs. The financial layer cannot be obscure. Any
-number a user acts on — to scale ad spend, to pause, to withdraw, to reconcile — must
-be traceable to a real source of record.
+The financial layer holds the highest bar in the product: it cannot be approximate,
+obscure, or unverified. Any number a user acts on — to scale ad spend, to pause, to
+withdraw, to reconcile — must be traceable to a real source of record.
 
 ### 1. Financial truth before UI
 
@@ -81,13 +81,17 @@ do not answer on impulse. Run the protocol:
 Hard rule: **never call something a "visual bug" before it has been reconciled.** A
 silent explanation protects you today and destroys trust later.
 
-### 6. Production is read-only by default
+### 6. Money-handling essentials
 
-Production financial systems are not a test environment. Reads, queries, and audits
-are the default posture. Any mutation — deploy, migration, restart, queue redrive,
-DB/env/secret/config change, or payout/ledger write — requires explicit approval in the
-session and a **named, tested rollback defined before the change**. No rollback, no
-mutation. Prefer a dry-run or a read-only reconciliation before touching money.
+Get the mechanics right or the money is wrong at the source:
+
+- **Never use floating-point for monetary amounts.** Store and compute in minor units
+  (integer cents) or a fixed-precision decimal type; binary floats silently lose cents.
+- **Put an idempotency key on every money-moving mutation.** A retry, double-click, or
+  webhook redelivery must collapse to exactly one charge, refund, or payout.
+- **Verify every webhook and callback signature, and treat the payload as untrusted.**
+  A processor callback is a public HTTP endpoint until proven authentic; validate before
+  you act on it.
 
 ### Evidence and criticality for money
 
@@ -95,17 +99,18 @@ This preset raises the base gates for financial work:
 
 - Anything touching money, balance, payout, checkout, or ledger is **P0/P1** — the
   full review + QA gate is mandatory, not optional.
-- Financial conclusions must not close below **evidence level L3** (data cross-checked
-  across independent systems); anything affecting payout, balance, or production money
-  should reach **L4** (end-to-end verified against the primary source with a closed
-  reconciliation).
+- Financial conclusions must not close below **L3**; anything affecting payout, balance,
+  or production money must reach **L4**, with a closed reconciliation.
+- Prefer a dry-run or a read-only reconciliation before any money-moving mutation.
 - Never invent amounts, rates, or reconciliations. State exactly what was not verified.
 
-### Money-flow anti-patterns — never introduce
+### Money-flow anti-patterns
 
-- unbounded retry or infinite polling on a payment/payout path;
-- fan-out or redrive without a throttle or cap;
-- a `4xx` re-enqueuing forever;
-- a boot dependency that turns a missing service into silent double-charges or drops;
-- a **silent fallback that turns a financial error into a trustworthy-looking zero**
-  (show the error state; never fabricate a clean number).
+The base "never introduce" list (unbounded retry, infinite polling, unthrottled fan-out,
+messages that requeue forever, crash-on-missing-dependency) applies in full. Two failure
+modes are money-specific and worse:
+
+- a boot or dependency failure that degrades into silent double-charges or dropped
+  transactions instead of failing loudly and cleanly;
+- a **silent fallback that turns a financial error into a trustworthy-looking zero** —
+  show the error state; never fabricate a clean number.
