@@ -1,43 +1,39 @@
 ---
 name: evidence-check
-description: Label the claims in an answer with evidence levels before relying on them. Use before making confident technical or financial assertions, when reconciling data or numbers, or when the user asks how sure you are — tag each statement L0–L4 and list an explicit NOT-VERIFIED set.
+description: Tag each claim in an answer with an evidence level (L0–L4) and list what is NOT verified, before the answer is trusted or acted on. Use before making confident technical or financial assertions, when reconciling data or numbers, or when the user asks how sure you are.
+allowed-tools: Bash, Read, Grep, Glob
 ---
 
-# Label claims with evidence levels
+# Tag claims with evidence levels
 
-Grade the confidence behind an answer before it is trusted or acted on. The evidence
-scale and gates are defined in `AGENTS.md`; apply them here.
+The L0–L4 scale and the confidence gates are defined in **`AGENTS.md`** — this skill
+applies them, it does not re-teach them. Quick anchor: **L0** context/opinion, **L1**
+single signal, **L2** read of code/config/data, **L3** cross-referenced across independent
+sources, **L4** end-to-end verified with a closed reconciliation.
 
 The answer or claim to grade: `$ARGUMENTS`
 
-## Evidence levels
+## Do this
 
-- **L0** — opinion, hypothesis, or a reading of context.
-- **L1** — a screenshot, a report, or a partial signal.
-- **L2** — a read of code, config, or local/internal data.
-- **L3** — cross-referenced across two or more independent systems.
-- **L4** — end-to-end verified against a primary source with a **closed reconciliation**.
-
-## Process
-
-1. Break the answer into discrete, checkable claims.
-2. Separate **fact** from **inference** from **assumption**.
-3. Tag each claim with the highest level you can actually justify — not the level you hope
-   for. If the basis is a single screenshot, it is L1, not L3.
-4. Identify what evidence would raise each claim one level.
+1. Split the answer into discrete, checkable claims; separate **fact** from **inference**
+   from **assumption**.
+2. Tag each claim with the highest level you can actually justify — not the one you hope
+   for. A single screenshot is L1, not L3. Use the read-only tools to raise a level where
+   cheap (read the code, grep the source, run a query) rather than guessing.
+3. Name, for each load-bearing claim, the one check that would move it up a level.
 
 ## Output
 
-- A table: **claim → level → basis** (the concrete artifact that supports it).
-- A **NOT VERIFIED** list: every claim that is assumed, inferred, or unchecked, stated
-  plainly.
-- The next check that would move the weakest load-bearing claim up a level.
+- **Table** — `claim → level → basis` (the concrete artifact behind the tag).
+- **NOT VERIFIED** — an explicit list of every claim that is assumed, inferred, or
+  unchecked, stated plainly. Do not omit or soften this set.
+- **Next check** — the single verification that would raise the weakest load-bearing claim.
 
 ## Gates
 
-- **Block any confident technical or financial claim below L3.** Claims that affect money,
-  production, or irreversible actions should reach **L4**.
+- Block any confident technical or financial claim below **L3**; money, production, or
+  irreversible actions need **L4**.
 - Never invent numbers, sources, rankings, or receipts. If you lack access, say exactly
-  what was **not** verified rather than filling the gap.
-- Do not label something a "visual bug", "harmless", or "already fine" before it has been
+  what was not verified instead of filling the gap.
+- Do not label something "visual only", "harmless", or "already fine" before it has been
   reconciled against the source.

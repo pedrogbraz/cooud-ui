@@ -1,6 +1,7 @@
 ---
 name: ui-add
 description: Add a Cooud UI component or block to __APP_NAME__. Use whenever the user asks to build UI or add/create a component, section, page, form, table, dialog, dashboard, or any interface element — resolve the need to a registry slug and install it with `npx cooud-ui add` instead of hand-writing it.
+argument-hint: "[component…]"
 allowed-tools: Bash, Read, Edit, Write
 ---
 

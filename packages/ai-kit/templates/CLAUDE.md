@@ -12,8 +12,10 @@ every session. This file adds only what is specific to Claude Code.
   P0/P1. Present the plan, get agreement, then execute. Don't plan trivial edits.
 - **Prefer the project skills and subagents.** Reusable workflows live in
   `.claude/skills/` and subagents in `.claude/agents/`. Reach for them before
-  improvising. Delegate pre-merge reviews to the `code-reviewer` subagent so the
-  Code-Review and QA rubrics get applied consistently.
+  improvising. For a pre-merge review, run the `code-review` skill for an inline
+  review in the current session, or delegate to the `code-reviewer` subagent for
+  a review in a fresh, isolated context — both apply the Code-Review and QA
+  rubrics from `AGENTS.md`.
 - **Keep commits AI-attribution-free.** No assistant or tool attribution in
   commit messages, PR descriptions, or code comments. Follow the git and PR
   rules in `AGENTS.md`.
@@ -27,5 +29,5 @@ every session. This file adds only what is specific to Claude Code.
 
 ## Tools
 
-- The `cooud-ui` MCP server (registered in `mcp.json`) exposes component and
+- The `cooud-ui` MCP server (registered in `.mcp.json`) exposes component and
   block metadata. Use it to look up available UI primitives instead of guessing.

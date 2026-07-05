@@ -1,6 +1,7 @@
 ---
 name: theme
 description: Preview or switch the Cooud UI theme in __APP_NAME__. Use when the user wants to change the look, try a preset, toggle dark/light, or tweak brand color or radius — set the theme via config or at runtime, and never by inlining raw colors.
+argument-hint: "[preset]"
 allowed-tools: Read, Edit, Bash
 ---
 
