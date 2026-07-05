@@ -1,10 +1,10 @@
 ---
 description: Cooud UI design-system rules for __APP_NAME__ (TypeScript/React)
-globs: ["**/*.tsx", "**/*.ts"]
+globs: **/*.ts,**/*.tsx
 alwaysApply: false
 ---
 
-Design-system rules for UI work in __APP_NAME__. See AGENTS.md for the full doctrine.
+Design-system rules for UI work in __APP_NAME__. See AGENTS.md at the repo root if present for the full doctrine.
 
 - Build UI from `@cooud-ui/ui` components. Do not re-implement a primitive that already exists there.
 - Prefer `npx cooud-ui add <slug>` to scaffold a component or block before hand-rolling one. Own only the parts you actually need to customize.
