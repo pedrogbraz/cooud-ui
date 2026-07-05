@@ -4,6 +4,17 @@ import { join } from "node:path";
 import { argv } from "node:process";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
+import {
+  ASSISTANTS,
+  type Assistant,
+  DEFAULT_PRESET,
+  DOCTRINE_PRESETS,
+  type DoctrinePreset,
+  parseList,
+  SKILLS,
+  type Skill,
+  writeAiKit,
+} from "./ai-kit.js";
 import { runInstall, scaffold } from "./scaffold.js";
 import {
   c,
@@ -12,14 +23,15 @@ import {
   dirNameFromProjectName,
   isValidProjectName,
   log,
-  type ModeName,
   MODES,
+  type ModeName,
   PACKAGE_MANAGERS,
   type PackageManager,
+  promptConfirm,
   promptSelect,
-  type Theme,
   THEME_HINTS,
   THEMES,
+  type Theme,
 } from "./utils.js";
 import { CREATE_VERSION } from "./version.js";
 
@@ -32,6 +44,12 @@ ${c.bold("Options")}
   --theme <${THEMES.join("|")}>
                              Theme preset to bake in (default: ${DEFAULT_THEME})
   --mode <${MODES.join("|")}>            Default color mode (default: ${DEFAULT_MODE})
+  --ai / --no-ai             Include (or skip) the AI Kit: skills, rules & doctrine
+  --assistants <claude,cursor,copilot|all>
+                             Which assistants to configure (default: all)
+  --preset <standard|fintech|none>
+                             Which engineering doctrine to ship (default: standard)
+  --skills <name,...|all>    Which Claude Code skills to include (default: all)
   --pm <bun|npm|pnpm|yarn>   Package manager to install with (auto-detected otherwise)
   --no-install               Skip installing dependencies
   -y, --yes                  Accept defaults; skip interactive prompts
@@ -41,7 +59,8 @@ ${c.bold("Options")}
 ${c.bold("Examples")}
   npx create-cooud-app my-app
   npx create-cooud-app my-app --theme sunset --mode light
-  npx create-cooud-app my-dashboard --pm pnpm --yes
+  npx create-cooud-app my-app --ai --assistants claude,cursor --preset fintech
+  npx create-cooud-app my-app --no-ai --pm pnpm --yes
 `;
 
 interface ParsedCli {
@@ -55,6 +74,14 @@ interface ParsedCli {
   mode?: ModeName;
   /** `--yes`: accept defaults, skip prompts (also implied when not a TTY). */
   yes: boolean;
+  /** AI Kit: true (`--ai`) / false (`--no-ai`) / undefined (decide later). */
+  ai?: boolean;
+  /** Assistants to configure (defaults to all). */
+  assistants?: readonly Assistant[];
+  /** Doctrine preset (defaults to "standard"). */
+  preset?: DoctrinePreset;
+  /** Claude Code skills to include (defaults to all). */
+  skills?: readonly Skill[];
 }
 
 /**
@@ -70,6 +97,11 @@ export function parseCli(argv: string[]): ParsedCli {
     options: {
       theme: { type: "string" },
       mode: { type: "string" },
+      ai: { type: "boolean", default: false },
+      "no-ai": { type: "boolean", default: false },
+      assistants: { type: "string" },
+      preset: { type: "string" },
+      skills: { type: "string" },
       pm: { type: "string" },
       "no-install": { type: "boolean", default: false },
       yes: { type: "boolean", short: "y", default: false },
@@ -96,6 +128,15 @@ export function parseCli(argv: string[]): ParsedCli {
     throw new Error(`Unknown --mode "${mode}". Use one of: ${MODES.join(", ")}.`);
   }
 
+  const preset = values.preset;
+  if (preset !== undefined && !DOCTRINE_PRESETS.includes(preset as DoctrinePreset)) {
+    throw new Error(`Unknown --preset "${preset}". Use one of: ${DOCTRINE_PRESETS.join(", ")}.`);
+  }
+
+  // `parseList` validates each token and expands "all"/empty to the full set.
+  const assistants = parseList(values.assistants, ASSISTANTS, "assistant");
+  const skills = parseList(values.skills, SKILLS, "skill");
+
   return {
     name: positionals[0],
     pm: pm as PackageManager | undefined,
@@ -103,6 +144,10 @@ export function parseCli(argv: string[]): ParsedCli {
     theme: theme as Theme | undefined,
     mode: mode as ModeName | undefined,
     yes: values.yes,
+    ai: values["no-ai"] ? false : values.ai ? true : undefined,
+    assistants,
+    preset: (preset as DoctrinePreset | undefined) ?? DEFAULT_PRESET,
+    skills,
   };
 }
 
@@ -169,11 +214,28 @@ async function main(): Promise<void> {
     parsed.theme ??
     (parsed.yes ? DEFAULT_THEME : await promptSelect("Theme", THEMES, DEFAULT_THEME, THEME_HINTS));
   const mode =
-    parsed.mode ?? (parsed.yes ? DEFAULT_MODE : await promptSelect("Default mode", MODES, DEFAULT_MODE));
+    parsed.mode ??
+    (parsed.yes ? DEFAULT_MODE : await promptSelect("Default mode", MODES, DEFAULT_MODE));
 
   log.step(`Scaffolding into ${c.cyan(dirName)}…`);
   const { fileCount } = scaffold({ targetDir, name, theme, mode });
   log.ok(`Created ${fileCount} files (${c.cyan(theme)} theme, ${mode} mode).`);
+
+  // AI Kit: skills, rules & doctrine for Claude Code / Cursor / Copilot.
+  const wantAi =
+    parsed.ai ??
+    (parsed.yes
+      ? true
+      : await promptConfirm("Add the AI Kit (skills, rules & doctrine for AI assistants)?", true));
+  if (wantAi) {
+    const assistants = parsed.assistants ?? ASSISTANTS;
+    const preset = parsed.preset ?? DEFAULT_PRESET;
+    const skills = parsed.skills ?? SKILLS;
+    const { written } = writeAiKit({ targetDir, name, assistants, preset, skills });
+    log.ok(
+      `AI Kit added — ${written.length} files for ${assistants.join(", ")} (${preset} doctrine).`,
+    );
+  }
 
   const pm = parsed.pm ?? detectPackageManager();
 

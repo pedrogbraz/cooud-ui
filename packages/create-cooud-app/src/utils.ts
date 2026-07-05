@@ -110,6 +110,26 @@ export async function promptSelect<T extends string>(
   }
 }
 
+/**
+ * A yes/no TTY prompt. Returns `defaultValue` on empty input or when stdin is
+ * not a TTY (piped/CI), so scaffolding never blocks on a confirmation.
+ */
+export async function promptConfirm(label: string, defaultValue = true): Promise<boolean> {
+  if (!process.stdin.isTTY) return defaultValue;
+  const { createInterface } = await import("node:readline/promises");
+  const rl = createInterface({ input: process.stdin, output: process.stdout });
+  try {
+    const hint = defaultValue ? "Y/n" : "y/N";
+    const answer = (await rl.question(`${c.bold(label)} ${c.dim(`(${hint})`)} `))
+      .trim()
+      .toLowerCase();
+    if (!answer) return defaultValue;
+    return answer === "y" || answer === "yes";
+  } finally {
+    rl.close();
+  }
+}
+
 // npm's package-name rules (the spec subset we care about): optionally scoped,
 // lowercase, URL-safe, may not start with "." or "_", <= 214 chars.
 const SCOPED = /^(?:@[a-z0-9-~][a-z0-9-._~]*\/)?[a-z0-9-~][a-z0-9-._~]*$/;

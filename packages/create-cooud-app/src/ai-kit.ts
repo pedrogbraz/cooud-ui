@@ -1,0 +1,151 @@
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+import { applyTokens } from "./scaffold.js";
+
+const HERE = dirname(fileURLToPath(import.meta.url));
+
+/** AI assistants we can generate configuration for. */
+export const ASSISTANTS = ["claude", "cursor", "copilot"] as const;
+export type Assistant = (typeof ASSISTANTS)[number];
+export const DEFAULT_ASSISTANTS: readonly Assistant[] = ASSISTANTS;
+
+/** Doctrine presets: the generic doctrine, the fintech add-on, or no doctrine. */
+export const DOCTRINE_PRESETS = ["standard", "fintech", "none"] as const;
+export type DoctrinePreset = (typeof DOCTRINE_PRESETS)[number];
+export const DEFAULT_PRESET: DoctrinePreset = "standard";
+
+/** The curated Claude Code skills that ship with the kit. */
+export const SKILLS = ["ui-add", "theme", "code-review", "ship-pr", "evidence-check"] as const;
+export type Skill = (typeof SKILLS)[number];
+export const DEFAULT_SKILLS: readonly Skill[] = SKILLS;
+
+export interface AiKitOptions {
+  /** Absolute path of the (already scaffolded) project. */
+  targetDir: string;
+  /** Package name, substituted for the __APP_NAME__ token. */
+  name: string;
+  /** Which assistants to write config for. @default all */
+  assistants?: readonly Assistant[];
+  /** Which doctrine to ship. @default "standard" */
+  preset?: DoctrinePreset;
+  /** Which Claude Code skills to include. @default all */
+  skills?: readonly Skill[];
+}
+
+export interface AiKitResult {
+  /** Relative paths written (fresh files only). */
+  written: string[];
+  /** Relative paths skipped because they already existed (never clobbered). */
+  skipped: string[];
+}
+
+/** Locate the bundled `templates/ai-kit` dir (same resolution as the scaffolder). */
+function aiKitRoot(): string {
+  const candidates = [
+    join(HERE, "..", "templates", "ai-kit"),
+    join(HERE, "..", "..", "templates", "ai-kit"),
+  ];
+  const found = candidates.find((p) => existsSync(p));
+  if (!found) {
+    throw new Error(`Could not locate templates/ai-kit (looked in: ${candidates.join(", ")}).`);
+  }
+  return found;
+}
+
+/**
+ * Write the AI Kit into `targetDir`, honoring the chosen assistants, doctrine
+ * preset, and skill set. Every write is **idempotent and non-destructive**: an
+ * existing file is left untouched and reported under `skipped`, so re-running
+ * against a project with hand-edited AI config never clobbers it.
+ */
+export function writeAiKit(options: AiKitOptions): AiKitResult {
+  const {
+    targetDir,
+    name,
+    assistants = DEFAULT_ASSISTANTS,
+    preset = DEFAULT_PRESET,
+    skills = DEFAULT_SKILLS,
+  } = options;
+  const root = aiKitRoot();
+  const written: string[] = [];
+  const skipped: string[] = [];
+
+  const withDoctrine = preset !== "none";
+  const wants = (a: Assistant) => assistants.includes(a);
+
+  /** Write `content` to `rel` unless it already exists. Tokens are substituted. */
+  const emit = (rel: string, content: string): void => {
+    const dest = join(targetDir, rel);
+    if (existsSync(dest)) {
+      skipped.push(rel);
+      return;
+    }
+    mkdirSync(dirname(dest), { recursive: true });
+    writeFileSync(dest, applyTokens(content, name));
+    written.push(rel);
+  };
+
+  /** Copy a template file verbatim (token-substituted) to `rel`. */
+  const emitTemplate = (templateRel: string, rel: string): void => {
+    emit(rel, readFileSync(join(root, templateRel), "utf8"));
+  };
+
+  // AGENTS.md — the shared source of truth. base [+ fintech].
+  if (withDoctrine) {
+    let doctrine = readFileSync(join(root, "AGENTS.base.md"), "utf8");
+    if (preset === "fintech") {
+      doctrine += `\n\n${readFileSync(join(root, "AGENTS.fintech.md"), "utf8")}`;
+    }
+    emit("AGENTS.md", doctrine);
+  }
+
+  // Claude Code
+  if (wants("claude")) {
+    if (withDoctrine) emitTemplate("CLAUDE.md", "CLAUDE.md");
+    emitTemplate("claude/settings.json", ".claude/settings.json");
+    emitTemplate("claude/agents/code-reviewer.md", ".claude/agents/code-reviewer.md");
+    emitTemplate("mcp.json", ".mcp.json");
+    for (const skill of skills) {
+      emitTemplate(`claude/skills/${skill}/SKILL.md`, `.claude/skills/${skill}/SKILL.md`);
+    }
+  }
+
+  // Cursor — the design-system rule always applies; the doctrine digest only with a preset.
+  if (wants("cursor")) {
+    if (withDoctrine) emitTemplate("cursor/rules/00-doctrine.mdc", ".cursor/rules/00-doctrine.mdc");
+    emitTemplate("cursor/rules/10-cooud-ui.mdc", ".cursor/rules/10-cooud-ui.mdc");
+  }
+
+  // GitHub Copilot — a digest of the doctrine.
+  if (wants("copilot") && withDoctrine) {
+    emitTemplate("github/copilot-instructions.md", ".github/copilot-instructions.md");
+  }
+
+  return { written, skipped };
+}
+
+/**
+ * Parse a comma-separated `--assistants`/`--skills` value (or the literal
+ * "all"). Returns the full set for "all"/empty, validates each token against
+ * `valid`, and throws a friendly Error naming the bad token.
+ */
+export function parseList<T extends string>(
+  raw: string | undefined,
+  valid: readonly T[],
+  label: string,
+): readonly T[] {
+  if (raw === undefined || raw.trim() === "" || raw.trim() === "all") return valid;
+  const picked = raw
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+  for (const item of picked) {
+    if (!valid.includes(item as T)) {
+      throw new Error(
+        `Unknown ${label} "${item}". Use one or more of: ${valid.join(", ")} (or "all").`,
+      );
+    }
+  }
+  return picked as T[];
+}
