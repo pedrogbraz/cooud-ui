@@ -59,10 +59,11 @@ describe("writeAiKit", () => {
     expect(existsSync(join(dir, ".claude/skills/theme/SKILL.md"))).toBe(false);
   });
 
-  it("preset=none skips the doctrine docs but keeps the design-system rule", () => {
+  it("preset=none skips the doctrine + its references but keeps the design-system rule", () => {
     writeAiKit({ targetDir: dir, name: "acme", preset: "none" });
     expect(existsSync(join(dir, "AGENTS.md"))).toBe(false);
     expect(existsSync(join(dir, "CLAUDE.md"))).toBe(false);
+    expect(existsSync(join(dir, ".claude/agents/code-reviewer.md"))).toBe(false);
     expect(existsSync(join(dir, ".cursor/rules/00-doctrine.mdc"))).toBe(false);
     expect(existsSync(join(dir, ".cursor/rules/10-cooud-ui.mdc"))).toBe(true);
   });

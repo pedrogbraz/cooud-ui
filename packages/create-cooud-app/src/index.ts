@@ -14,7 +14,7 @@ import {
   SKILLS,
   type Skill,
   writeAiKit,
-} from "./ai-kit.js";
+} from "@cooud-ui/ai-kit";
 import { runInstall, scaffold } from "./scaffold.js";
 import {
   c,

@@ -9,7 +9,7 @@ import {
   SKILLS,
   type Skill,
   writeAiKit,
-} from "../ai-kit.js";
+} from "@cooud-ui/ai-kit";
 import { log } from "../utils.js";
 
 interface AiOptions {

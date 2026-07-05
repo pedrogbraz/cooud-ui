@@ -20,7 +20,7 @@ export type Skill = (typeof SKILLS)[number];
 export const DEFAULT_SKILLS: readonly Skill[] = SKILLS;
 
 export interface AiKitOptions {
-  /** Absolute path of the project to write the kit into. */
+  /** Absolute path of the (already scaffolded) project. */
   targetDir: string;
   /** Package name, substituted for the __APP_NAME__ token. */
   name: string;
@@ -39,20 +39,19 @@ export interface AiKitResult {
   skipped: string[];
 }
 
-/** Replace template tokens. `__APP_NAME__` is the project/package name. */
+/** Replace template tokens (currently just the app name) in file content. */
 function applyTokens(content: string, name: string): string {
   return content.replaceAll("__APP_NAME__", name);
 }
 
-/** Locate the bundled `templates/ai-kit` dir (works from src/ and dist/). */
-function aiKitRoot(): string {
-  const candidates = [
-    join(HERE, "..", "templates", "ai-kit"),
-    join(HERE, "..", "..", "templates", "ai-kit"),
-  ];
-  const found = candidates.find((p) => existsSync(p));
+/** Locate the bundled `templates` dir, whether running from `src` or `dist`. */
+function templatesRoot(): string {
+  const candidates = [join(HERE, "..", "templates"), join(HERE, "..", "..", "templates")];
+  const found = candidates.find((p) => existsSync(join(p, "AGENTS.base.md")));
   if (!found) {
-    throw new Error(`Could not locate templates/ai-kit (looked in: ${candidates.join(", ")}).`);
+    throw new Error(
+      `Could not locate @cooud-ui/ai-kit templates (looked in: ${candidates.join(", ")}).`,
+    );
   }
   return found;
 }
@@ -62,6 +61,11 @@ function aiKitRoot(): string {
  * preset, and skill set. Every write is **idempotent and non-destructive**: an
  * existing file is left untouched and reported under `skipped`, so re-running
  * against a project with hand-edited AI config never clobbers it.
+ *
+ * When `preset` is `"none"`, no doctrine (`AGENTS.md`) is written, so the
+ * artifacts that reference it — `CLAUDE.md`, the doctrine Cursor rule, the
+ * Copilot digest — are skipped too; only the design-system rule and the Claude
+ * tooling (settings, skills, subagent, MCP) ship.
  */
 export function writeAiKit(options: AiKitOptions): AiKitResult {
   const {
@@ -71,7 +75,7 @@ export function writeAiKit(options: AiKitOptions): AiKitResult {
     preset = DEFAULT_PRESET,
     skills = DEFAULT_SKILLS,
   } = options;
-  const root = aiKitRoot();
+  const root = templatesRoot();
   const written: string[] = [];
   const skipped: string[] = [];
 
@@ -95,7 +99,7 @@ export function writeAiKit(options: AiKitOptions): AiKitResult {
     emit(rel, readFileSync(join(root, templateRel), "utf8"));
   };
 
-  // AGENTS.md — the shared source of truth. base [+ fintech].
+  // AGENTS.md — the shared source of truth. base [+ preset addendum].
   if (withDoctrine) {
     let doctrine = readFileSync(join(root, "AGENTS.base.md"), "utf8");
     if (preset === "fintech") {
@@ -104,11 +108,12 @@ export function writeAiKit(options: AiKitOptions): AiKitResult {
     emit("AGENTS.md", doctrine);
   }
 
-  // Claude Code
+  // Claude Code — the doctrine-referencing CLAUDE.md only ships with a doctrine.
   if (wants("claude")) {
     if (withDoctrine) emitTemplate("CLAUDE.md", "CLAUDE.md");
     emitTemplate("claude/settings.json", ".claude/settings.json");
-    emitTemplate("claude/agents/code-reviewer.md", ".claude/agents/code-reviewer.md");
+    if (withDoctrine)
+      emitTemplate("claude/agents/code-reviewer.md", ".claude/agents/code-reviewer.md");
     emitTemplate("mcp.json", ".mcp.json");
     for (const skill of skills) {
       emitTemplate(`claude/skills/${skill}/SKILL.md`, `.claude/skills/${skill}/SKILL.md`);

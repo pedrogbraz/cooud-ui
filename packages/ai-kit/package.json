@@ -1,14 +1,14 @@
 {
-  "name": "cooud-ui",
+  "name": "@cooud-ui/ai-kit",
   "version": "0.1.0",
-  "description": "cooud-ui — add Cooud UI components to your project, shadcn-style (copy-paste registry).",
+  "description": "The Cooud UI AI Kit — an engineering doctrine, skills, and per-assistant config, scaffolded into your project.",
   "type": "module",
   "license": "MIT",
   "author": "Cooud",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/pedrogbraz/cooud-ui.git",
-    "directory": "packages/cli"
+    "directory": "packages/ai-kit"
   },
   "homepage": "https://github.com/pedrogbraz/cooud-ui#readme",
   "bugs": {
@@ -16,18 +16,16 @@
   },
   "keywords": [
     "cooud",
-    "components",
-    "design-system",
-    "registry",
-    "shadcn",
-    "tailwind",
-    "ui"
+    "ai",
+    "agents",
+    "claude-code",
+    "cursor",
+    "copilot",
+    "scaffold"
   ],
-  "bin": {
-    "cooud-ui": "./dist/index.js"
-  },
   "files": [
     "dist",
+    "templates",
     "LICENSE",
     "README.md",
     "!dist/**/*.map"
@@ -44,14 +42,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "prepublishOnly": "tsc -p tsconfig.json",
-    "registry": "bun run scripts/build-registry.ts",
-    "registry:check": "bun run scripts/check-registry.ts"
-  },
-  "dependencies": {
-    "@cooud-ui/ai-kit": "workspace:*",
-    "commander": "^12.1.0",
-    "picocolors": "^1.1.1"
+    "prepublishOnly": "tsc -p tsconfig.json"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",
