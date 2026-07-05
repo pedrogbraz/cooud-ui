@@ -11,6 +11,7 @@ import {
   CommandList,
   CommandSeparator,
   CommandShortcut,
+  ConfirmationDialog,
   ContextMenu,
   ContextMenuCheckboxItem,
   ContextMenuContent,
@@ -86,13 +87,14 @@ import {
   LifeBuoy,
   MessageSquare,
   Plus,
+  Rocket,
   Scissors,
   Settings,
   User,
   UserPlus,
   Users,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ExampleList } from "../../components/docs/example-list";
 import type { ExampleMap } from "./types";
 
@@ -319,7 +321,161 @@ function NotificationCenterDemo() {
   );
 }
 
+/**
+ * Async confirm demo. `onConfirm` returns a promise, so the confirm button shows
+ * a spinner and locks both actions while it settles — the dialog can't be
+ * dismissed mid-flight. The first attempt rejects to surface the inline error
+ * region (the dialog stays open); the retry resolves and closes it. Reopening
+ * resets the demo so it's repeatable.
+ */
+function ConfirmationDialogAsyncDemo() {
+  const [open, setOpen] = useState(false);
+  const attemptRef = useRef(0);
+  const [deleted, setDeleted] = useState(false);
+
+  return (
+    <div className="flex flex-col items-center gap-3">
+      <ConfirmationDialog
+        open={open}
+        onOpenChange={(next) => {
+          if (next) {
+            attemptRef.current = 0;
+            setDeleted(false);
+          }
+          setOpen(next);
+        }}
+        destructive
+        trigger={<Button variant="outline">Delete workspace</Button>}
+        title="Delete this workspace?"
+        description="This permanently removes 3 projects and 128 files. This action can’t be undone."
+        confirmLabel="Delete workspace"
+        cancelLabel="Keep workspace"
+        onConfirm={() =>
+          new Promise<void>((resolve, reject) => {
+            attemptRef.current += 1;
+            window.setTimeout(() => {
+              if (attemptRef.current === 1) {
+                reject(
+                  new Error("Couldn’t reach the server. Check your connection and try again."),
+                );
+              } else {
+                setDeleted(true);
+                resolve();
+              }
+            }, 1400);
+          })
+        }
+      />
+      <p className="text-xs text-fg-tertiary">
+        {deleted
+          ? "Workspace deleted."
+          : "Confirm to see the pending spinner — the first attempt fails inline, the retry succeeds."}
+      </p>
+    </div>
+  );
+}
+
 export const overlaysExamples: ExampleMap = {
+  "confirmation-dialog": [
+    {
+      id: "basic",
+      title: "Basic",
+      description:
+        "An ergonomic wrapper over AlertDialog for confirming an action. Pass a `trigger`, a `title`, and optional `description`; a custom `icon` fills the primary-tinted header badge.",
+      code: `<ConfirmationDialog
+  trigger={<Button>Publish article</Button>}
+  icon={<Rocket aria-hidden="true" />}
+  title="Publish this article?"
+  description="It becomes visible to everyone on your blog immediately. You can unpublish it again at any time."
+  confirmLabel="Publish"
+/>`,
+      preview: (
+        <ConfirmationDialog
+          trigger={<Button>Publish article</Button>}
+          icon={<Rocket aria-hidden="true" />}
+          title="Publish this article?"
+          description="It becomes visible to everyone on your blog immediately. You can unpublish it again at any time."
+          confirmLabel="Publish"
+        />
+      ),
+    },
+    {
+      id: "destructive",
+      title: "Destructive",
+      description:
+        "Set `destructive` to render a red confirm button and a warning-triangle badge — the pattern for irreversible actions like deleting an account.",
+      code: `<ConfirmationDialog
+  destructive
+  trigger={<Button variant="outline">Delete account</Button>}
+  title="Delete your account?"
+  description="This permanently deletes your account and everything in it. This action cannot be undone."
+  confirmLabel="Delete account"
+  cancelLabel="Cancel"
+/>`,
+      preview: (
+        <ConfirmationDialog
+          destructive
+          trigger={<Button variant="outline">Delete account</Button>}
+          title="Delete your account?"
+          description="This permanently deletes your account and everything in it. This action cannot be undone."
+          confirmLabel="Delete account"
+          cancelLabel="Cancel"
+        />
+      ),
+    },
+    {
+      id: "async",
+      title: "Async confirm",
+      description:
+        "When `onConfirm` returns a promise the confirm button shows a spinner and both actions lock until it settles — the dialog can’t be dismissed mid-flight. On reject it stays open and surfaces the error inline; on resolve it closes.",
+      code: `function ConfirmationDialogAsyncDemo() {
+  const [open, setOpen] = useState(false);
+  const attemptRef = useRef(0);
+  const [deleted, setDeleted] = useState(false);
+
+  return (
+    <div className="flex flex-col items-center gap-3">
+      <ConfirmationDialog
+        open={open}
+        onOpenChange={(next) => {
+          if (next) {
+            attemptRef.current = 0;
+            setDeleted(false);
+          }
+          setOpen(next);
+        }}
+        destructive
+        trigger={<Button variant="outline">Delete workspace</Button>}
+        title="Delete this workspace?"
+        description="This permanently removes 3 projects and 128 files. This action can’t be undone."
+        confirmLabel="Delete workspace"
+        cancelLabel="Keep workspace"
+        onConfirm={() =>
+          new Promise<void>((resolve, reject) => {
+            attemptRef.current += 1;
+            window.setTimeout(() => {
+              if (attemptRef.current === 1) {
+                reject(new Error("Couldn’t reach the server. Check your connection and try again."));
+              } else {
+                setDeleted(true);
+                resolve();
+              }
+            }, 1400);
+          })
+        }
+      />
+      <p className="text-xs text-fg-tertiary">
+        {deleted
+          ? "Workspace deleted."
+          : "Confirm to see the pending spinner — the first attempt fails inline, the retry succeeds."}
+      </p>
+    </div>
+  );
+}`,
+      preview: <ConfirmationDialogAsyncDemo />,
+    },
+  ],
+
   dialog: [
     {
       id: "basic",

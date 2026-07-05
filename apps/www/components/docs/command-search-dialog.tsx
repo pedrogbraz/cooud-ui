@@ -190,7 +190,7 @@ export default function CommandSearchDialog({
               return (
                 <CommandItem
                   key={item.slug}
-                  value={displayName}
+                  value={`${displayName} ${item.description ?? ""}`}
                   onSelect={() => onSelectComponent(item.slug)}
                   className="flex flex-col items-start gap-0.5"
                 >
@@ -204,6 +204,22 @@ export default function CommandSearchDialog({
           </CommandGroup>
         ))}
       </CommandList>
+      <div
+        aria-hidden
+        className="flex select-none items-center justify-center gap-2 border-t border-border px-3 py-2 text-xs text-fg-tertiary"
+      >
+        <span>
+          <span className="font-medium text-fg-secondary">↑↓</span> navigate
+        </span>
+        <span>·</span>
+        <span>
+          <span className="font-medium text-fg-secondary">↵</span> select
+        </span>
+        <span>·</span>
+        <span>
+          <span className="font-medium text-fg-secondary">esc</span> close
+        </span>
+      </div>
     </CommandDialog>
   );
 }

@@ -7,6 +7,8 @@ import {
   DateRangePicker,
   Scheduler,
   type SchedulerEvent,
+  TimePicker,
+  type TimeValue,
 } from "@cooud-ui/ui";
 import { useState } from "react";
 import { ExampleList } from "../../components/docs/example-list";
@@ -100,6 +102,39 @@ function SchedulerDemo() {
       events={SCHEDULER_EVENTS}
       today={SCHEDULER_MONTH}
       className="max-w-2xl"
+    />
+  );
+}
+
+function TimePickerDemo() {
+  // Fixed initial value keeps SSR + first client paint identical (no hydration drift).
+  const [time, setTime] = useState<TimeValue | undefined>(() => ({ hours: 9, minutes: 30 }));
+  return (
+    <div className="flex flex-col gap-3">
+      <TimePicker value={time} onChange={setTime} aria-label="Meeting time" />
+      <span className="text-sm text-fg-tertiary">
+        {time
+          ? `Selected ${String(time.hours).padStart(2, "0")}:${String(time.minutes).padStart(2, "0")}`
+          : "No time selected yet."}
+      </span>
+    </div>
+  );
+}
+
+function TimePicker24Demo() {
+  const [time, setTime] = useState<TimeValue | undefined>(() => ({
+    hours: 14,
+    minutes: 45,
+    seconds: 0,
+  }));
+  return (
+    <TimePicker
+      value={time}
+      onChange={setTime}
+      hourCycle={24}
+      minuteStep={5}
+      showSeconds
+      aria-label="Broadcast start"
     />
   );
 }
@@ -212,6 +247,59 @@ return (
   />
 );`,
       preview: <SchedulerDemo />,
+    },
+  ],
+  "time-picker": [
+    {
+      id: "twelve-hour",
+      title: "12-hour clock",
+      description:
+        "A controlled picker with a `Clock` trigger and scrollable hour / minute / AM–PM wheels. Pass `value` and `onChange`; the callback always emits a normalized `{ hours, minutes, seconds }` (24-hour `hours`).",
+      code: `// Fixed initial value keeps SSR + client identical (avoids hydration drift).
+const [time, setTime] = useState<TimeValue | undefined>(() => ({ hours: 9, minutes: 30 }));
+
+return (
+  <div className="flex flex-col gap-3">
+    <TimePicker value={time} onChange={setTime} aria-label="Meeting time" />
+    <span className="text-sm text-fg-tertiary">
+      {time
+        ? \`Selected \${String(time.hours).padStart(2, "0")}:\${String(time.minutes).padStart(2, "0")}\`
+        : "No time selected yet."}
+    </span>
+  </div>
+);`,
+      preview: <TimePickerDemo />,
+    },
+    {
+      id: "twenty-four-hour-seconds",
+      title: "24-hour with seconds",
+      description:
+        "Set `hourCycle={24}` for a 0–23 column (no AM/PM), tune column granularity with `minuteStep`, and reveal a seconds wheel with `showSeconds`.",
+      code: `const [time, setTime] = useState<TimeValue | undefined>(() => ({
+  hours: 14,
+  minutes: 45,
+  seconds: 0,
+}));
+
+return (
+  <TimePicker
+    value={time}
+    onChange={setTime}
+    hourCycle={24}
+    minuteStep={5}
+    showSeconds
+    aria-label="Broadcast start"
+  />
+);`,
+      preview: <TimePicker24Demo />,
+    },
+    {
+      id: "disabled",
+      title: "Disabled",
+      description:
+        "Set `disabled` to lock the trigger and the whole panel while still displaying its current value — useful for read-only or gated slots.",
+      code: `<TimePicker defaultValue="08:00" disabled aria-label="Locked slot" />`,
+      preview: <TimePicker defaultValue="08:00" disabled aria-label="Locked slot" />,
     },
   ],
 };

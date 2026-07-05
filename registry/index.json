@@ -146,6 +146,14 @@
     ]
   },
   {
+    "name": "border-beam",
+    "type": "registry:ui",
+    "dependencies": [],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
     "name": "breadcrumb",
     "type": "registry:ui",
     "dependencies": [
@@ -295,6 +303,19 @@
     ]
   },
   {
+    "name": "confirmation-dialog",
+    "type": "registry:ui",
+    "dependencies": [
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": [
+      "alert-dialog",
+      "button",
+      "cn",
+      "spinner"
+    ]
+  },
+  {
     "name": "context-menu",
     "type": "registry:ui",
     "dependencies": [
@@ -314,6 +335,27 @@
     "registryDependencies": [
       "button",
       "cn"
+    ]
+  },
+  {
+    "name": "credit-card-input",
+    "type": "registry:ui",
+    "dependencies": [
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "currency-input",
+    "type": "registry:ui",
+    "dependencies": [
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": [
+      "cn",
+      "dropdown-menu"
     ]
   },
   {
@@ -440,6 +482,23 @@
     ],
     "registryDependencies": [
       "cn"
+    ]
+  },
+  {
+    "name": "flip-card",
+    "type": "registry:ui",
+    "dependencies": [],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "floating-label-input",
+    "type": "registry:ui",
+    "dependencies": [],
+    "registryDependencies": [
+      "cn",
+      "input"
     ]
   },
   {
@@ -703,6 +762,18 @@
     ]
   },
   {
+    "name": "phone-input",
+    "type": "registry:ui",
+    "dependencies": [
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": [
+      "cn",
+      "command",
+      "popover"
+    ]
+  },
+  {
     "name": "popover",
     "type": "registry:ui",
     "dependencies": [
@@ -913,6 +984,20 @@
     ]
   },
   {
+    "name": "split-button",
+    "type": "registry:ui",
+    "dependencies": [
+      "class-variance-authority@^0.7.1",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": [
+      "button",
+      "cn",
+      "dropdown-menu",
+      "spinner"
+    ]
+  },
+  {
     "name": "spotlight-card",
     "type": "registry:ui",
     "dependencies": [],
@@ -986,6 +1071,26 @@
     "dependencies": [],
     "registryDependencies": [
       "cn"
+    ]
+  },
+  {
+    "name": "tilt-card",
+    "type": "registry:ui",
+    "dependencies": [],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "time-picker",
+    "type": "registry:ui",
+    "dependencies": [
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": [
+      "button",
+      "cn",
+      "popover"
     ]
   },
   {

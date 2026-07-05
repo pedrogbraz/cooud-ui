@@ -1,5 +1,6 @@
 "use client";
 
+import { useTheme } from "@cooud-ui/theme";
 import {
   Avatar,
   AvatarFallback,
@@ -25,8 +26,19 @@ import { COMPONENT_COUNT } from "../lib/components-index";
 
 const INSTALL_COMMAND = "npx cooud-ui add button";
 
+/** Pull a px number out of a `radius` override (or fall back to the default). */
+function parseRadius(radius: string | undefined): number {
+  if (!radius) return 14;
+  const n = Number.parseInt(radius, 10);
+  return Number.isNaN(n) ? 14 : n;
+}
+
 export function Hero() {
   const [copied, setCopied] = useState(false);
+  const { theme, overrides, setTheme, setOverrides } = useTheme();
+
+  const isAurora = theme === "aurora";
+  const radius = parseRadius(overrides.radius);
 
   async function copyCommand() {
     try {
@@ -179,13 +191,19 @@ export function Hero() {
               <div className="flex flex-col gap-4 rounded-2xl border border-border bg-surface-raised/80 p-4 shadow-lg backdrop-blur">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="hero-dark">Aurora mode</Label>
-                  <Switch id="hero-dark" defaultChecked aria-label="Toggle aurora mode" />
+                  <Switch
+                    id="hero-dark"
+                    checked={isAurora}
+                    onCheckedChange={(next) => setTheme(next ? "aurora" : "neutral")}
+                    aria-label="Toggle aurora mode"
+                  />
                 </div>
                 <div className="flex flex-col gap-2">
                   <Label htmlFor="hero-radius">Corner radius</Label>
                   <Slider
                     id="hero-radius"
-                    defaultValue={[14]}
+                    value={[radius]}
+                    onValueChange={([next]) => setOverrides({ ...overrides, radius: `${next}px` })}
                     max={28}
                     step={1}
                     aria-label="Corner radius"

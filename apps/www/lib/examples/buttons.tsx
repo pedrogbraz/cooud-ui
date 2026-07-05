@@ -7,6 +7,7 @@ import {
   CopyButton,
   Fab,
   Spinner,
+  SplitButton,
   Toggle,
   ToggleGroup,
   ToggleGroupItem,
@@ -17,15 +18,22 @@ import {
   AlignRight,
   ArrowRight,
   Bold,
+  CalendarClock,
   ChevronLeft,
   ChevronRight,
+  Copy,
   Download,
+  FileText,
   Heart,
   Image,
   Italic,
   Pencil,
   Plus,
+  Save,
+  Send,
   Settings,
+  Share2,
+  Trash2,
   Underline,
   Upload,
 } from "lucide-react";
@@ -116,6 +124,69 @@ function ToggleGroupMultipleDemo() {
         <Underline />
       </ToggleGroupItem>
     </ToggleGroup>
+  );
+}
+
+function SplitButtonSaveDemo() {
+  const [status, setStatus] = useState("Draft saved 2 minutes ago");
+  return (
+    <div className="flex flex-col items-start gap-3">
+      <SplitButton
+        icon={<Save />}
+        onClick={() => setStatus("Saved just now")}
+        items={[
+          {
+            icon: <FileText />,
+            label: "Save as draft",
+            onSelect: () => setStatus("Saved to drafts"),
+          },
+          { icon: <Copy />, label: "Save a copy", onSelect: () => setStatus("Copy saved") },
+          {
+            icon: <Trash2 />,
+            label: "Discard changes",
+            destructive: true,
+            onSelect: () => setStatus("Changes discarded"),
+          },
+        ]}
+      >
+        Save
+      </SplitButton>
+      <p className="text-sm text-fg-tertiary">{status}</p>
+    </div>
+  );
+}
+
+function SplitButtonPublishDemo() {
+  const [loading, setLoading] = useState(false);
+  const [published, setPublished] = useState(false);
+
+  const publish = () => {
+    setLoading(true);
+    setPublished(false);
+    setTimeout(() => {
+      setLoading(false);
+      setPublished(true);
+    }, 1400);
+  };
+
+  return (
+    <div className="flex flex-col items-start gap-3">
+      <SplitButton
+        icon={<Send />}
+        loading={loading}
+        onClick={publish}
+        menuLabel="Publishing options"
+        items={[
+          { icon: <CalendarClock />, label: "Schedule for later" },
+          { icon: <FileText />, label: "Save as draft" },
+        ]}
+      >
+        {loading ? "Publishing…" : "Publish"}
+      </SplitButton>
+      <p className="text-sm text-fg-tertiary">
+        {published ? "Your post is live." : "Ready when you are."}
+      </p>
+    </div>
   );
 }
 
@@ -549,6 +620,161 @@ return (
           />
         </div>
       ),
+    },
+  ],
+
+  "split-button": [
+    {
+      id: "default",
+      title: "Default",
+      description:
+        "A primary action fused to a menu of related secondaries. Clicking the left segment runs the default action; the chevron opens declarative `items`, including a destructive row.",
+      code: `const [status, setStatus] = useState("Draft saved 2 minutes ago");
+
+return (
+  <div className="flex flex-col items-start gap-3">
+    <SplitButton
+      icon={<Save />}
+      onClick={() => setStatus("Saved just now")}
+      items={[
+        { icon: <FileText />, label: "Save as draft", onSelect: () => setStatus("Saved to drafts") },
+        { icon: <Copy />, label: "Save a copy", onSelect: () => setStatus("Copy saved") },
+        {
+          icon: <Trash2 />,
+          label: "Discard changes",
+          destructive: true,
+          onSelect: () => setStatus("Changes discarded"),
+        },
+      ]}
+    >
+      Save
+    </SplitButton>
+    <p className="text-sm text-fg-tertiary">{status}</p>
+  </div>
+);`,
+      preview: <SplitButtonSaveDemo />,
+    },
+    {
+      id: "variants",
+      title: "Variants",
+      description:
+        "Both segments share `Button`'s variants and collapse their inner edges into one seamless control — a single hairline seam reads cleanly across every tone.",
+      code: `<div className="flex flex-wrap items-center gap-3">
+  <SplitButton
+    variant="primary"
+    items={[
+      { icon: <Copy />, label: "Duplicate" },
+      { icon: <Share2 />, label: "Share" },
+    ]}
+  >
+    Primary
+  </SplitButton>
+  <SplitButton
+    variant="gradient"
+    items={[
+      { icon: <Copy />, label: "Duplicate" },
+      { icon: <Share2 />, label: "Share" },
+    ]}
+  >
+    Gradient
+  </SplitButton>
+  <SplitButton
+    variant="secondary"
+    items={[
+      { icon: <Copy />, label: "Duplicate" },
+      { icon: <Share2 />, label: "Share" },
+    ]}
+  >
+    Secondary
+  </SplitButton>
+  <SplitButton
+    variant="outline"
+    items={[
+      { icon: <Copy />, label: "Duplicate" },
+      { icon: <Share2 />, label: "Share" },
+    ]}
+  >
+    Outline
+  </SplitButton>
+</div>`,
+      preview: (
+        <div className="flex flex-wrap items-center gap-3">
+          <SplitButton
+            variant="primary"
+            items={[
+              { icon: <Copy />, label: "Duplicate" },
+              { icon: <Share2 />, label: "Share" },
+            ]}
+          >
+            Primary
+          </SplitButton>
+          <SplitButton
+            variant="gradient"
+            items={[
+              { icon: <Copy />, label: "Duplicate" },
+              { icon: <Share2 />, label: "Share" },
+            ]}
+          >
+            Gradient
+          </SplitButton>
+          <SplitButton
+            variant="secondary"
+            items={[
+              { icon: <Copy />, label: "Duplicate" },
+              { icon: <Share2 />, label: "Share" },
+            ]}
+          >
+            Secondary
+          </SplitButton>
+          <SplitButton
+            variant="outline"
+            items={[
+              { icon: <Copy />, label: "Duplicate" },
+              { icon: <Share2 />, label: "Share" },
+            ]}
+          >
+            Outline
+          </SplitButton>
+        </div>
+      ),
+    },
+    {
+      id: "loading",
+      title: "Loading",
+      description:
+        "Set `loading` to swap the primary icon for a spinner and disable both segments while the action is in flight — perfect for publish or submit flows.",
+      code: `const [loading, setLoading] = useState(false);
+const [published, setPublished] = useState(false);
+
+const publish = () => {
+  setLoading(true);
+  setPublished(false);
+  setTimeout(() => {
+    setLoading(false);
+    setPublished(true);
+  }, 1400);
+};
+
+return (
+  <div className="flex flex-col items-start gap-3">
+    <SplitButton
+      icon={<Send />}
+      loading={loading}
+      onClick={publish}
+      menuLabel="Publishing options"
+      items={[
+        { icon: <CalendarClock />, label: "Schedule for later" },
+        { icon: <FileText />, label: "Save as draft" },
+      ]}
+    >
+      {loading ? "Publishing…" : "Publish"}
+    </SplitButton>
+    <p className="text-sm text-fg-tertiary">
+      {published ? "Your post is live." : "Ready when you are."}
+    </p>
+  </div>
+);`,
+      preview: <SplitButtonPublishDemo />,
     },
   ],
 };
