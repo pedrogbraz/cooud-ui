@@ -18,8 +18,7 @@ import {
 const outputCards = [
   {
     title: "Preview command",
-    description:
-      "A deterministic command contract generated from the resolved stack. It is beta-only until the cooud-stack generator package ships.",
+    description: "A deterministic command contract generated from the resolved stack.",
   },
   {
     title: "KICKOFF.md",
@@ -42,7 +41,7 @@ export default function StackBuilderDocsPage() {
       <DocsHeader
         eyebrow="Stack Builder"
         title="Compose a stack, then export the truth"
-        description="The Stack Builder is a beta preview for choosing web, backend, runtime, data, auth, UI, AI, MCP, deploy, and tooling layers with live compatibility checks."
+        description="The Stack Builder lets you choose web, backend, runtime, data, auth, UI, AI, MCP, deploy, and tooling layers with live compatibility checks."
       >
         <PrimaryLink href={STACK_BUILDER_METADATA.route}>Open Stack Builder</PrimaryLink>
       </DocsHeader>

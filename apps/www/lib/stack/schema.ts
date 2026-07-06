@@ -9,7 +9,7 @@ export const STACK_GENERATOR_PACKAGE = "cooud-stack";
 
 export const STACK_BUILDER_METADATA = {
   name: "Cooud Stack Builder",
-  statusLabel: "Beta preview",
+  statusLabel: "Stable",
   route: "/stack",
   docsRoute: "/docs/stack-builder",
   schemaId: STACK_SCHEMA_ID,
@@ -58,7 +58,7 @@ export const STACK_SCHEMA: JsonSchema = {
   $schema: "https://json-schema.org/draft/2020-12/schema",
   $id: STACK_SCHEMA_ID,
   title: "Cooud Stack Builder snapshot",
-  description: "A machine-readable snapshot emitted by the Cooud Stack Builder beta preview.",
+  description: "A machine-readable snapshot emitted by the Cooud Stack Builder.",
   type: "object",
   additionalProperties: false,
   required: ["$schema", "version", "name", "generator", "stack"],

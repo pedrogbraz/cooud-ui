@@ -63,8 +63,7 @@ export const DOC_NAV_SECTIONS: { heading: string; items: DocNavItem[] }[] = [
         label: "Stack Builder",
         href: "/docs/stack-builder",
         description:
-          "Beta full-stack picker, preview scaffolding command, KICKOFF.md, and stack.json schema.",
-        status: "beta",
+          "Full-stack picker with a scaffolding command, KICKOFF.md, and stack.json schema.",
       },
       {
         label: "RTL",
@@ -150,7 +149,7 @@ export const INSTALL_OPTIONS = [
   {
     title: "Use Stack Builder",
     description:
-      "Compose a full-stack app and export beta preview artifacts while the generator package is still pending.",
+      "Compose a full-stack app and export a scaffolding command, KICKOFF.md, and stack.json.",
     href: "/stack",
     action: "Open Stack Builder",
   },

@@ -19,7 +19,7 @@ const navLinks = [
   { label: "Blocks", href: "/blocks" },
   { label: "Create", href: "/create" },
   { label: "Playground", href: "/#playground" },
-  { label: "Stack", href: "/stack", badge: "BETA" },
+  { label: "Stack", href: "/stack" },
   { label: "Changelog", href: "/changelog" },
 ] as const;
 
@@ -206,14 +206,6 @@ export function SiteNav() {
                 className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm text-fg-secondary outline-none transition-colors hover:text-fg focus-visible:ring-2 focus-visible:ring-ring"
               >
                 {link.label}
-                {"badge" in link && (
-                  <Badge
-                    variant="secondary"
-                    className="px-1 py-0 text-[9px] font-semibold uppercase tracking-wide"
-                  >
-                    {link.badge}
-                  </Badge>
-                )}
               </Link>
             </li>
           ))}
@@ -270,14 +262,6 @@ export function SiteNav() {
                       className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-fg-secondary outline-none transition-colors hover:bg-surface-overlay hover:text-fg focus-visible:ring-2 focus-visible:ring-ring"
                     >
                       {link.label}
-                      {"badge" in link && (
-                        <Badge
-                          variant="secondary"
-                          className="px-1 py-0 text-[9px] font-semibold uppercase tracking-wide"
-                        >
-                          {link.badge}
-                        </Badge>
-                      )}
                     </Link>
                   </li>
                 ))}
