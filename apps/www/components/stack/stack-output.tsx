@@ -198,12 +198,14 @@ export function StackOutput({
                 copiedLabel="Copied to clipboard"
               />
             </div>
+            {/* No inner height cap: the code flows full-height and the sticky
+                rail (the `aside`) is the single scroll region, so there is never
+                a nested-scroll trap on the KICKOFF brief. */}
             <CodeBlock
               {...codeBlockBase}
               code={kickoff}
               language="markdown"
               filename="KICKOFF.md"
-              className="w-full min-w-0 border-border [&_[data-slot=code-block-scroll]]:max-h-[28rem] [&_[data-slot=code-block-scroll]]:overflow-auto"
             />
           </TabsContent>
 
@@ -218,13 +220,7 @@ export function StackOutput({
               value={stackJson}
               copyLabel="Copy stack JSON"
             />
-            <CodeBlock
-              {...codeBlockBase}
-              code={stackJson}
-              language="json"
-              filename="stack.json"
-              className="w-full min-w-0 border-border [&_[data-slot=code-block-scroll]]:max-h-[28rem] [&_[data-slot=code-block-scroll]]:overflow-auto"
-            />
+            <CodeBlock {...codeBlockBase} code={stackJson} language="json" filename="stack.json" />
           </TabsContent>
         </Tabs>
       </section>

@@ -238,16 +238,23 @@ export function StackBuilder() {
             )}
             aria-label="Selected stack and output"
           >
+            {/* shrink-0: the rail is a flex column with a max-height + scroll, so
+                its children must keep their natural height instead of being
+                compressed to fit — otherwise the output frame's overflow-hidden
+                would clip the KICKOFF brief and the rail would have nothing to
+                scroll. With shrink-0 the content overflows and the rail scrolls. */}
             <SelectedSummary
               resolution={resolution}
               catalog={catalog}
               onReset={handleReset}
               onRandomize={handleRandomize}
+              className="shrink-0"
             />
             <StackOutput
               config={resolution.selection}
               projectName={projectName}
               catalog={catalog}
+              className="shrink-0"
             />
           </aside>
         </div>
