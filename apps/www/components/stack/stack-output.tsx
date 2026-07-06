@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  Badge,
   CodeBlock,
   type CodeBlockProps,
   CopyButton,
@@ -128,7 +127,6 @@ export function StackOutput({
             <h2 id={titleId} className="text-base font-semibold text-fg">
               Your stack is ready
             </h2>
-            <Badge variant="warning">Beta</Badge>
           </div>
         </header>
 

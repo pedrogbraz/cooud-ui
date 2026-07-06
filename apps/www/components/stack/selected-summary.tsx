@@ -3,6 +3,7 @@
 import { Badge, Button, cn, GlassCard, ScrollArea } from "@cooud-ui/ui";
 import { Layers, RotateCcw, Shuffle } from "lucide-react";
 import { useMemo } from "react";
+import { GROUP_ORDER } from "@/lib/stack/catalog";
 import type { Catalog, Resolution } from "@/lib/stack/types";
 
 export interface SelectedSummaryProps {
@@ -41,8 +42,10 @@ export function SelectedSummary({
   onRandomize,
   className,
 }: SelectedSummaryProps) {
-  const rows = useMemo<SummaryRow[]>(() => {
-    const out: SummaryRow[] = [];
+  // Rows grouped by builder section (Framework, Data, Conventions, …), in the
+  // same order as the left column, so the summary reads as its mirror.
+  const grouped = useMemo(() => {
+    const byGroup = new Map<string, SummaryRow[]>();
     for (const cat of catalog) {
       const rc = resolution.categories[cat.id];
       if (!rc) continue;
@@ -63,13 +66,20 @@ export function SelectedSummary({
         values.push("On");
       }
 
-      if (values.length > 0) out.push({ categoryId: cat.id, title: cat.title, values });
+      if (values.length === 0) continue;
+      const group = cat.group ?? "Other";
+      const arr = byGroup.get(group) ?? [];
+      arr.push({ categoryId: cat.id, title: cat.title, values });
+      byGroup.set(group, arr);
     }
-    return out;
+    return GROUP_ORDER.filter((g) => byGroup.has(g)).map((g) => ({
+      group: g,
+      rows: byGroup.get(g) ?? [],
+    }));
   }, [resolution, catalog]);
 
   // Count distinct selected choices (each value counts once).
-  const count = rows.reduce((n, r) => n + r.values.length, 0);
+  const count = grouped.reduce((n, g) => n + g.rows.reduce((m, r) => m + r.values.length, 0), 0);
   const hasErrors = resolution.issues.some((i) => i.level === "error");
   const infos = resolution.issues.filter((i) => i.level === "info");
 
@@ -93,41 +103,42 @@ export function SelectedSummary({
               Selected stack
             </h2>
           </div>
-          {/* Count badge — re-keyed on change so it replays a subtle scale pop. */}
           <Badge
-            key={count}
             variant="secondary"
             aria-label={`${count} choices selected`}
-            className="tabular-nums transition-transform duration-200 ease-[var(--ease-spring)] starting:scale-90 motion-reduce:transition-none motion-reduce:starting:scale-100"
+            className="tabular-nums"
           >
             {count}
           </Badge>
         </header>
 
-        <ScrollArea className="-mr-2 mt-4 max-h-[18rem] pr-2">
-          <dl className="flex flex-col gap-2.5">
-            {rows.map((row) => (
-              <div
-                key={row.categoryId}
-                className="flex items-start justify-between gap-3 border-b border-border/50 pb-2.5 last:border-b-0 last:pb-0"
-              >
-                <dt className="shrink-0 text-xs text-fg-tertiary">{row.title}</dt>
-                <dd className="flex flex-wrap justify-end gap-1.5 text-right">
-                  {row.values.map((v) => (
-                    // Each chip is keyed by its value, so a newly-selected option
-                    // mounts fresh and runs a one-shot fade/scale-in (Tailwind v4
-                    // @starting-style). Reduced-motion keeps it instant.
-                    <span
-                      key={`${row.categoryId}-${v}`}
-                      className="inline-flex rounded-md bg-surface-overlay/70 px-1.5 py-0.5 text-xs font-medium text-fg transition-[opacity,transform] duration-200 ease-[var(--ease-out-quart)] starting:scale-95 starting:opacity-0 motion-reduce:transition-none motion-reduce:starting:scale-100 motion-reduce:starting:opacity-100"
-                    >
-                      {v}
-                    </span>
+        <ScrollArea className="-mr-2 mt-4 max-h-[20rem] pr-2">
+          <div className="flex flex-col gap-4">
+            {grouped.map(({ group, rows }) => (
+              <div key={group} className="flex flex-col gap-2">
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-fg-tertiary">
+                  {group}
+                </p>
+                <dl className="flex flex-col gap-2">
+                  {rows.map((row) => (
+                    <div key={row.categoryId} className="flex items-start justify-between gap-3">
+                      <dt className="shrink-0 text-xs text-fg-tertiary">{row.title}</dt>
+                      <dd className="flex flex-wrap justify-end gap-1.5 text-right">
+                        {row.values.map((v) => (
+                          <span
+                            key={`${row.categoryId}-${v}`}
+                            className="inline-flex rounded-md bg-surface-overlay px-1.5 py-0.5 text-xs font-medium text-fg"
+                          >
+                            {v}
+                          </span>
+                        ))}
+                      </dd>
+                    </div>
                   ))}
-                </dd>
+                </dl>
               </div>
             ))}
-          </dl>
+          </div>
         </ScrollArea>
 
         {/* Advisory recommendations (info-level issues). */}
