@@ -6,7 +6,6 @@ import {
   type CodeBlockProps,
   CopyButton,
   cn,
-  GradientBorder,
   Tabs,
   TabsContent,
   TabsList,
@@ -102,12 +101,13 @@ export function StackOutput({
   };
 
   return (
-    // A whisper-thin gradient border frames the finished artifact — the single
-    // place we spend the brand gradient in this panel, marking it as the payoff.
-    // The inner surface carries all real chrome so tokens stay semantic.
-    <GradientBorder
-      className={cn("rounded-2xl", className)}
-      innerClassName="overflow-hidden bg-surface-base"
+    // A single restrained accent border marks the finished artifact as the payoff
+    // — a quiet primary tint, no gradient and no glow, so it stays clean and modern.
+    <div
+      className={cn(
+        "overflow-hidden rounded-2xl border border-primary/25 bg-surface-base",
+        className,
+      )}
       data-slot="stack-output-frame"
     >
       <section
@@ -230,6 +230,6 @@ export function StackOutput({
           </TabsContent>
         </Tabs>
       </section>
-    </GradientBorder>
+    </div>
   );
 }
