@@ -659,6 +659,129 @@ export const catalog: Catalog = [
     kind: "toggle",
     options: [],
   },
+
+  // ---------------------------------------------------------- CONVENTIONS ---
+  // Project standards baked into the KICKOFF brief so generated code stays
+  // consistent from the first commit. These are simple, self-evident choices, so
+  // they render as compact segmented pickers (layout: "segmented") rather than
+  // icon cards. The first option in each is the recommended best-practice default.
+  {
+    id: "naming",
+    title: "File naming",
+    description: "How files and folders are cased.",
+    kind: "single",
+    layout: "segmented",
+    options: [
+      {
+        id: "naming-kebab",
+        name: "kebab-case",
+        description: "user-profile.tsx",
+        icon: "case-sensitive",
+      },
+      {
+        id: "naming-camel",
+        name: "camelCase",
+        description: "userProfile.tsx",
+        icon: "case-sensitive",
+      },
+      {
+        id: "naming-pascal",
+        name: "PascalCase",
+        description: "UserProfile.tsx",
+        icon: "case-sensitive",
+      },
+      {
+        id: "naming-snake",
+        name: "snake_case",
+        description: "user_profile.tsx",
+        icon: "case-sensitive",
+      },
+    ],
+  },
+  {
+    id: "structure",
+    title: "Directory structure",
+    description: "Where application code lives.",
+    kind: "single",
+    layout: "segmented",
+    options: [
+      {
+        id: "structure-src",
+        name: "src/ directory",
+        description: "All app code under src/.",
+        icon: "folder-tree",
+      },
+      {
+        id: "structure-root",
+        name: "Root-level",
+        description: "app/ and code at the repo root.",
+        icon: "folder",
+      },
+    ],
+  },
+  {
+    id: "importAlias",
+    title: "Import paths",
+    description: "How modules reference each other.",
+    kind: "single",
+    layout: "segmented",
+    options: [
+      {
+        id: "import-alias",
+        name: "@/ alias",
+        description: "Absolute imports from the app root.",
+        icon: "at-sign",
+      },
+      {
+        id: "import-relative",
+        name: "Relative",
+        description: "Relative ./ and ../ paths.",
+        icon: "route",
+      },
+    ],
+  },
+  {
+    id: "commitStyle",
+    title: "Commits",
+    description: "Commit message convention.",
+    kind: "single",
+    layout: "segmented",
+    options: [
+      {
+        id: "commit-conventional",
+        name: "Conventional",
+        description: "type(scope): subject",
+        icon: "git-commit",
+      },
+      {
+        id: "commit-plain",
+        name: "Plain",
+        description: "Freeform commit messages.",
+        icon: "git-commit",
+      },
+    ],
+  },
+  {
+    id: "tsStrict",
+    title: "TypeScript",
+    description: "Type-checking strictness.",
+    kind: "single",
+    layout: "segmented",
+    options: [
+      {
+        id: "ts-strict",
+        name: "Strict",
+        description: "strict + no implicit any.",
+        icon: "shield-check",
+      },
+      {
+        id: "ts-standard",
+        name: "Standard",
+        description: "Default tsconfig strictness.",
+        icon: "shield",
+      },
+    ],
+  },
 ];
 
 /**
@@ -687,3 +810,47 @@ export const MULTI_DEFAULTS: Record<string, string[]> = {
 
 /** Re-exported convenience groups (also consumed by tests). */
 export const GROUPS = { REACT_WEB, SQL_DBS, DEDICATED_BACKENDS } as const;
+
+/**
+ * The builder section each category renders under. Assigned to `category.group`
+ * at module load so the catalog stays the single source of truth; the builder
+ * reads `group` + {@link GROUP_ORDER} to lay the page out in labeled sections.
+ */
+const CATEGORY_GROUP: Record<string, string> = {
+  web: "Framework",
+  backend: "Framework",
+  runtime: "Framework",
+  api: "Framework",
+  database: "Data",
+  orm: "Data",
+  dbSetup: "Data",
+  auth: "Product",
+  payments: "Product",
+  ui: "Product",
+  assistants: "AI & agents",
+  mcp: "AI & agents",
+  skills: "AI & agents",
+  vibe: "AI & agents",
+  naming: "Conventions",
+  structure: "Conventions",
+  importAlias: "Conventions",
+  commitStyle: "Conventions",
+  tsStrict: "Conventions",
+  deploy: "Tooling",
+  packageManager: "Tooling",
+  addons: "Tooling",
+  git: "Tooling",
+  install: "Tooling",
+};
+
+/** The fixed order builder sections render in (empty sections are skipped). */
+export const GROUP_ORDER: readonly string[] = [
+  "Framework",
+  "Data",
+  "Product",
+  "AI & agents",
+  "Conventions",
+  "Tooling",
+];
+
+for (const cat of catalog) cat.group = CATEGORY_GROUP[cat.id];

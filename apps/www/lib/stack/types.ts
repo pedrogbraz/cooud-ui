@@ -61,6 +61,20 @@ export interface Category {
    * single categories always hold a value (their default).
    */
   optional?: boolean;
+  /**
+   * The builder section this category is displayed under, e.g. "Framework",
+   * "Data", "Conventions". Categories with the same group render together beneath
+   * one section header, in catalog order.
+   */
+  group?: string;
+  /**
+   * Render style for a "single" category:
+   *  - "cards" (default): the icon-card grid — for choices that benefit from an
+   *    icon + description (frameworks, databases, …).
+   *  - "segmented": a compact inline pill row — for simple, self-evident choices
+   *    (naming convention, directory layout, …) where a big card would be noise.
+   */
+  layout?: "cards" | "segmented";
 }
 
 /** The full, ordered taxonomy. */
