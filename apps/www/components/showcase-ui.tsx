@@ -25,6 +25,24 @@ interface EyebrowProps {
   className?: string;
 }
 
+/**
+ * A tasteful "aurora glass" accent for a section's top edge: a glowing hairline
+ * that sits on the border plus a soft aurora glow bleeding downward — the same
+ * blue-glass shimmer the translucent nav catches on scroll. Drop it as the first
+ * child of a `relative` section (it's absolutely positioned + aria-hidden).
+ */
+export function SectionGlow({ className }: { className?: string }) {
+  return (
+    <div
+      aria-hidden="true"
+      className={cn("pointer-events-none absolute inset-x-0 top-0", className)}
+    >
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
+      <div className="absolute inset-x-0 top-0 -z-10 h-72 bg-gradient-aurora opacity-[0.10] blur-3xl" />
+    </div>
+  );
+}
+
 /** A small uppercase label preceded by a gradient dot. */
 export function Eyebrow({ children, className }: EyebrowProps) {
   return (

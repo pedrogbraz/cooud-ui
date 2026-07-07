@@ -14,7 +14,7 @@ import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { CATEGORIES, COMPONENT_COUNT } from "../../lib/components-index";
-import { Eyebrow, PreviewFrame } from "../showcase-ui";
+import { Eyebrow, PreviewFrame, SectionGlow } from "../showcase-ui";
 
 /**
  * A single collage tile: a tiny uppercase caption above a dotted-grid
@@ -46,7 +46,8 @@ function Swatch({ className, label }: { className: string; label: string }) {
 
 export function ComponentShowcase() {
   return (
-    <section id="components" className="scroll-mt-20 border-t border-border/60">
+    <section id="components" className="relative scroll-mt-20 border-t border-border/60">
+      <SectionGlow />
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24">
         <div className="flex flex-col gap-3">
           <Eyebrow>Component library</Eyebrow>

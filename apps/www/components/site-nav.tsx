@@ -177,6 +177,14 @@ export function SiteNav() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/70 bg-surface-base/70 backdrop-blur-xl">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 top-full h-24 bg-gradient-aurora opacity-[0.11] blur-2xl"
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent"
+      />
       <nav
         className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8"
         aria-label="Primary"

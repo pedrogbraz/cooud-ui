@@ -8,7 +8,7 @@ import {
   TerminalSquare,
 } from "lucide-react";
 import type { ReactNode } from "react";
-import { Eyebrow } from "../showcase-ui";
+import { Eyebrow, SectionGlow } from "../showcase-ui";
 
 interface Feature {
   icon: LucideIcon;
@@ -77,7 +77,8 @@ const FEATURES: Feature[] = [
  */
 export function FeatureGrid() {
   return (
-    <section className="border-t border-border/60">
+    <section className="relative border-t border-border/60">
+      <SectionGlow />
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24">
         <div className="flex flex-col gap-3">
           <Eyebrow>Why Cooud UI</Eyebrow>

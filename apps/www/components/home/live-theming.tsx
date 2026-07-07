@@ -17,7 +17,7 @@ import {
   Switch,
 } from "@cooud-ui/ui";
 import { Check, Moon, Sun } from "lucide-react";
-import { Eyebrow } from "../showcase-ui";
+import { Eyebrow, SectionGlow } from "../showcase-ui";
 
 /** The five shipped presets, each with a fixed swatch derived from its `primary`. */
 const THEMES = [
@@ -50,10 +50,7 @@ export function LiveTheming() {
 
   return (
     <section id="theming" className="relative scroll-mt-20 border-t border-border/60">
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-72 bg-gradient-aurora opacity-[0.08] blur-3xl"
-      />
+      <SectionGlow />
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24">
         <div className="flex flex-col gap-3">
           <Eyebrow>Live theming</Eyebrow>

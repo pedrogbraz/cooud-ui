@@ -4,7 +4,7 @@ import { Button } from "@cooud-ui/ui/button";
 import { ArrowRight, Check, Copy, PackagePlus, Sparkles, Terminal } from "lucide-react";
 import Link from "next/link";
 import { type ReactNode, useState } from "react";
-import { Eyebrow } from "../showcase-ui";
+import { Eyebrow, SectionGlow } from "../showcase-ui";
 
 /**
  * A command block with a monospace `$`-prefixed command and a copy button.
@@ -76,7 +76,8 @@ export function GetStarted() {
   return (
     <>
       {/* Part 1 — two ways in */}
-      <section className="border-t border-border/60">
+      <section className="relative border-t border-border/60">
+        <SectionGlow />
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24">
           <div className="flex flex-col gap-3">
             <Eyebrow>Get started</Eyebrow>
