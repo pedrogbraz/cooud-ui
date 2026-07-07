@@ -94,6 +94,12 @@ earlier packages in the order may already be published, so fix the permission
 and re-run only with an explicit recovery plan (a re-publish of an already
 published version will error — bump the version if needed).
 
+Before a real `--publish`, name the recovery plan in the release note or run log:
+if the tag was pushed but no package was published, delete `vX.Y.Z` locally and
+remotely; after the first npm package publishes, do **not** delete or unpublish by
+default. Recover with a follow-up version and deprecate the bad version only if
+needed.
+
 ## Exact release procedure
 
 1. **Bump the version** in all nine publishable `package.json` files to the new

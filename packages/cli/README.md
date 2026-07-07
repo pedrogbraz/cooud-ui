@@ -31,8 +31,8 @@ npx cooud-ui diff                 # show which installed components drifted
   a release tag exists.
 - `init` installs only the base copy dependencies used by generated components
   (`clsx`, `tailwind-merge`, `class-variance-authority`, and Radix Slot). It does
-  not install the private/scoped Cooud token and theme packages unless you do that
-  separately with registry access.
+  not install the public Cooud token and theme packages unless you add them
+  separately for runtime theming.
 - `add` resolves the transitive closure of `registryDependencies`, writes the files
   into your project, and **rewrites imports to your aliases**:
   `../lib/cn.js → @/lib/cn`, `./button.js → @/components/ui/button`.
@@ -51,5 +51,5 @@ npx cooud-ui diff                 # show which installed components drifted
 
 Point `-r, --registry <path-or-url>` at a local `registry/` directory for offline use
 or testing. Regenerate the registry after changing components:
-`bun run -F cooud-ui registry`. Verify it is in sync in CI with
+`bun run -F cooud-ui registry`. Verify it is in sync locally with
 `bun run -F cooud-ui registry:check`.

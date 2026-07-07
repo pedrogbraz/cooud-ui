@@ -68,6 +68,12 @@ describe("kickoff — conventions & standards", () => {
     expect(md).not.toContain("bun test");
   });
 
+  it("does not require lint/format in the DoD unless lint tooling is selected", () => {
+    const withoutBiome = { ...config, addons: [] };
+    const md = generateKickoff(withoutBiome, "acme", catalog);
+    expect(md).not.toContain("Lint/format pass.");
+  });
+
   it("KICKOFF.md reflects root app structure when selected", () => {
     const rootStructure = { ...config, structure: "structure-root" };
     const md = generateKickoff(rootStructure, "acme", catalog);

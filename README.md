@@ -40,7 +40,7 @@ apps/
 | AI assistant doctrine, skills, and rules           | `@cooud-ui/ai-kit`                        | [packages/ai-kit](packages/ai-kit/README.md) |
 | To own the component source (copy-in, shadcn-style) | `npx cooud-ui add <component>`        | [packages/cli](packages/cli/README.md)  |
 | To scaffold a new app                              | `npx create-cooud-app my-app`             | [packages/create-cooud-app](packages/create-cooud-app/README.md) |
-| To scaffold a resolved full stack                  | `bun create cooud-stack@latest my-app`    | [packages/create-cooud-stack](packages/create-cooud-stack/README.md) |
+| To scaffold a runnable default stack + KICKOFF     | `bun create cooud-stack@latest my-app`    | [packages/create-cooud-stack](packages/create-cooud-stack/README.md) |
 | To expose the registry through MCP                 | `npx cooud-ui-mcp`                        | [packages/mcp](packages/mcp/README.md) |
 
 Most apps install all three library packages — `@cooud-ui/ui` renders against the
@@ -208,5 +208,5 @@ See `CONTRACT.md` — semantic tokens only, CVA variants, `forwardRef`, `data-sl
 
 ## Roadmap
 ~~Wave 1 (forms)~~ ✅ → ~~Wave 2 (overlays/nav)~~ ✅ → ~~Wave 3 (data)~~ ✅ → ~~Wave 4 (premium/brand)~~ ✅ →
-`cooud-ui` CLI registry (`npx cooud-ui add`) + `create-cooud-stack` generator → publish to public npm under `@cooud-ui`
+`cooud-ui` CLI registry (`npx cooud-ui add`) + `create-cooud-stack` generator → publish the scoped and unscoped packages to public npm
 → migrate `dashboard` first. Full plan in the SDD.

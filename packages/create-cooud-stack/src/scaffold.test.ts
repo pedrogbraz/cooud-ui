@@ -78,4 +78,51 @@ describe("scaffoldStack", () => {
       blocks: "components/blocks",
     });
   });
+
+  it("creates a neutral Next starter for non-Cooud UI selections", () => {
+    const config = resolve(catalog, {
+      ...defaultSelection(catalog),
+      ui: "ui-shadcn",
+      install: false,
+    }).selection;
+    const result = scaffoldStack({ targetDir, projectName: "my-app", config, catalog });
+
+    expect(result.unsupported).toContain(
+      "The selected UI library is captured in KICKOFF.md; this generator writes a neutral Next.js starter unless Cooud UI is selected, so install and wire the chosen UI library manually.",
+    );
+    expect(existsSync(join(targetDir, "src", "app", "page.tsx"))).toBe(true);
+    expect(existsSync(join(targetDir, "cooud-ui.json"))).toBe(false);
+    expect(existsSync(join(targetDir, "postcss.config.mjs"))).toBe(false);
+
+    const pkg = JSON.parse(readFileSync(join(targetDir, "package.json"), "utf8")) as {
+      dependencies: Record<string, string>;
+      devDependencies: Record<string, string>;
+      scripts: Record<string, string>;
+    };
+    expect(pkg.dependencies["@cooud-ui/ui"]).toBeUndefined();
+    expect(pkg.dependencies["@cooud-ui/tokens"]).toBeUndefined();
+    expect(pkg.dependencies["@cooud-ui/theme"]).toBeUndefined();
+    expect(pkg.devDependencies.tailwindcss).toBeUndefined();
+    expect(pkg.scripts.dev).toBe("next dev");
+
+    const layout = readFileSync(join(targetDir, "src", "app", "layout.tsx"), "utf8");
+    const page = readFileSync(join(targetDir, "src", "app", "page.tsx"), "utf8");
+    const globals = readFileSync(join(targetDir, "src", "app", "globals.css"), "utf8");
+    expect(layout).not.toContain("@cooud-ui");
+    expect(page).not.toContain("@cooud-ui");
+    expect(globals).not.toContain("@cooud-ui");
+  });
+
+  it("does not tell ui-none projects to install a selected UI library", () => {
+    const config = resolve(catalog, {
+      ...defaultSelection(catalog),
+      ui: "ui-none",
+      install: false,
+    }).selection;
+    scaffoldStack({ targetDir, projectName: "my-app", config, catalog });
+
+    const page = readFileSync(join(targetDir, "src", "app", "page.tsx"), "utf8");
+    expect(page).toContain("No UI library was selected");
+    expect(page).not.toContain("Install and configure the selected UI library");
+  });
 });

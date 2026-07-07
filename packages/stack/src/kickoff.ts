@@ -434,11 +434,14 @@ export function generateKickoff(
   lines.push("");
 
   // --- AI capabilities ---
-  lines.push("## AI capabilities configured");
+  lines.push("## AI capabilities selected");
   lines.push("");
   lines.push(`- **Assistants:** ${assistants.length ? assistants.join(", ") : "none"}`);
   lines.push(`- **MCP servers:** ${mcp.length ? mcp.join(", ") : "none"}`);
   lines.push(`- **Skills:** ${skills.length ? skills.join(", ") : "none"}`);
+  lines.push(
+    "- Generated files cover the supported assistants/templates; any unsupported MCP server or skill pack remains manual follow-up.",
+  );
   if (vibe) {
     lines.push(
       "- **Vibe Mode: ON** — looser guardrails for fast prototyping. Prefer momentum over ceremony, but never skip the security/DoD checks below.",
@@ -474,9 +477,12 @@ export function generateKickoff(
 
   // --- Addons ---
   if (addons.length > 0) {
-    lines.push("## Addons");
+    lines.push("## Addons selected");
     lines.push("");
     for (const a of addons) lines.push(`- ${a}`);
+    lines.push(
+      "- Generated files include only addons implemented by the generator; anything else is tracked as manual follow-up in the scaffold README.",
+    );
     lines.push("");
   }
 
@@ -498,7 +504,7 @@ export function generateKickoff(
   lines.push("## Definition of Done");
   lines.push("");
   lines.push("- [ ] Type checks pass (no errors, no new `any`).");
-  lines.push("- [ ] Lint/format pass.");
+  if (hasLint) lines.push("- [ ] Lint/format pass.");
   lines.push("- [ ] Tests pass (and new behavior is covered).");
   if (isCooudUi)
     lines.push("- [ ] UI uses only `@cooud-ui/ui` + semantic tokens; axe a11y gate is green.");
