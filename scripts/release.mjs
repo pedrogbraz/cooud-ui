@@ -431,7 +431,7 @@ function summary({ version, tag, published }) {
 
   log(`\n${c.bold("Post-publish steps this script did NOT do:")}`);
   log(
-    `  ${c.dim("·")} Make the GitHub repo ${c.bold("pedrogbraz/cooud-ui")} ${c.bold("public")} so the` +
+    `  ${c.dim("·")} Confirm the GitHub repo ${c.bold("pedrogbraz/cooud-ui")} is ${c.bold("public")} so the` +
       ` published CLI's pinned registry`,
   );
   log(

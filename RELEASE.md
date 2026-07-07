@@ -121,15 +121,15 @@ published version will error — bump the version if needed).
    > `v0.2.0`: all nine publishable packages must share `0.2.0`, and the
    > release cuts `v0.2.0` before any future `0.x` bump.
 
-6. **Ensure the GitHub repo is public.** Before publishing, make
-   `pedrogbraz/cooud-ui` **public** so the CLI's pinned registry
+6. **Ensure the GitHub repo is public.** Before publishing, confirm
+   `pedrogbraz/cooud-ui` is **public** so the CLI's pinned registry
    (`raw.githubusercontent.com/pedrogbraz/cooud-ui/vX.Y.Z/registry`) is reachable
    and `npx cooud-ui add <component>` resolves component sources from the tagged
    `vX.Y.Z` registry (not mutable `main`). The release script prints this as a
    post-publish reminder — it does **not** do it for you.
 
 > The `release` script prints a final summary plus the post-publish steps it did
-> **not** do (make the repo public, cut a GitHub Release, generate SBOM /
+> **not** do (confirm repo visibility, cut a GitHub Release, generate SBOM /
 > provenance). Keep this doc in sync with what `scripts/release.mjs` actually
 > does.
 
