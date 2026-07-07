@@ -18,12 +18,11 @@ This monorepo publishes **nine** packages. They are versioned in lockstep at
 
 `apps/www` (showcase) is **not** published.
 
-The release tooling is **channel-agnostic**: it never hard-codes a registry. Each
-package publishes according to its own `publishConfig` — all nine use
-`access: public` and default to npmjs (`https://registry.npmjs.org`), so the
-registry question is decided in the `package.json` files, not in the release
-script. (Point a package elsewhere by adding a `publishConfig.registry`; none do
-today.)
+The active release tooling is intentionally pinned to public npmjs
+(`https://registry.npmjs.org/`) so a developer machine's `.npmrc` cannot
+redirect a release. Each package still carries `publishConfig.access: public` in
+its tarball; the release script supplies `--registry=https://registry.npmjs.org/`
+for npm availability checks, dry-runs, and real publishes.
 
 ## The release pipeline — `bun run release` (primary path)
 
@@ -40,10 +39,10 @@ In order, the script:
 
 1. **Preflight** — asserts the git working tree is **clean** and that all nine
    publishable packages share the **same `version`**, that the `v<version>` tag
-   does not already exist, and that none of the package versions already exist
-   on npm. In real `--publish` mode it also aborts unless the checkout is local
-   `main`, `HEAD` exactly matches `origin/main`, and `npm whoami` succeeds before
-   any tag is created or pushed.
+   does not already exist locally or on `origin`, and that none of the package
+   versions already exist on npmjs. In real `--publish` mode it also aborts
+   unless the checkout is local `main`, `HEAD` exactly matches `origin/main`, and
+   `npm whoami` succeeds before any tag is created or pushed.
 2. **Gate** — runs, in this order:
    `typecheck` · `lint` · `test` · `registry:check` · `tokens:check` ·
    `props:check` · `build`. Any failure aborts the release.
@@ -63,9 +62,9 @@ In order, the script:
    `create-cooud-app` → `create-cooud-stack` → `cooud-ui-mcp`**:
    - packs it with `bun pm pack` (this rewrites `workspace:*` ranges to the
      concrete version **and** carries each package's `publishConfig`),
-   - runs `npm publish <tarball>`, which honors the tarball's embedded
-     `publishConfig` — so all nine packages go to public npm (the scoped
-     packages as `access: public`) with no per-package flags.
+   - runs `npm publish <tarball> --registry=https://registry.npmjs.org/`, which
+     honors the tarball's embedded `publishConfig.access: public` while forcing
+     all nine packages to public npmjs regardless of local npm config.
 
    In a dry-run this step runs `npm publish --dry-run` (validates the tarball and
    prints the target registry) and leaves the packed tarballs in
@@ -74,9 +73,10 @@ In order, the script:
 > **Why `bun pm pack` and not a plain `npm publish` from each package dir?** In
 > this Bun workspace `npm pack`/`npm publish` ship `workspace:*` dependency
 > ranges **literally**, which is unresolvable for consumers. `bun pm pack`
-> rewrites them to the concrete version. `npm publish <tarball>` is then used so
-> the exact, correct bytes are what gets published — while still honoring each
-> package's `publishConfig` (the `access: public` on the scoped libs).
+> rewrites them to the concrete version. `npm publish <tarball>
+> --registry=https://registry.npmjs.org/` is then used so the exact, correct
+> bytes are what gets published to npmjs — while still honoring each package's
+> `publishConfig.access: public`.
 
 ### Authentication
 
@@ -136,8 +136,8 @@ published version will error — bump the version if needed).
 ## Publishing a single package by hand (fallback)
 
 If you need to (re)publish one package outside the script, pack it with Bun first
-so `workspace:*` is rewritten, then publish the tarball (it carries its own
-`publishConfig`):
+so `workspace:*` is rewritten, then publish the tarball to npmjs (it carries its
+own `publishConfig.access: public`):
 
 ```sh
 bun run build
@@ -145,15 +145,15 @@ bun run build
 # all nine go to public npm — be logged in with @cooud-ui scope and unscoped-name rights:
 npm login
 
-cd packages/tokens && bun pm pack && npm publish ./*.tgz && rm ./*.tgz && cd -
-cd packages/theme  && bun pm pack && npm publish ./*.tgz && rm ./*.tgz && cd -
-cd packages/ui     && bun pm pack && npm publish ./*.tgz && rm ./*.tgz && cd -
-cd packages/stack  && bun pm pack && npm publish ./*.tgz && rm ./*.tgz && cd -
-cd packages/ai-kit && bun pm pack && npm publish ./*.tgz && rm ./*.tgz && cd -
-cd packages/cli    && bun pm pack && npm publish ./*.tgz && rm ./*.tgz && cd -
-cd packages/create-cooud-app && bun pm pack && npm publish ./*.tgz && rm ./*.tgz && cd -
-cd packages/create-cooud-stack && bun pm pack && npm publish ./*.tgz && rm ./*.tgz && cd -
-cd packages/mcp    && bun pm pack && npm publish ./*.tgz && rm ./*.tgz && cd -
+cd packages/tokens && bun pm pack && npm publish ./*.tgz --registry=https://registry.npmjs.org/ && rm ./*.tgz && cd -
+cd packages/theme  && bun pm pack && npm publish ./*.tgz --registry=https://registry.npmjs.org/ && rm ./*.tgz && cd -
+cd packages/ui     && bun pm pack && npm publish ./*.tgz --registry=https://registry.npmjs.org/ && rm ./*.tgz && cd -
+cd packages/stack  && bun pm pack && npm publish ./*.tgz --registry=https://registry.npmjs.org/ && rm ./*.tgz && cd -
+cd packages/ai-kit && bun pm pack && npm publish ./*.tgz --registry=https://registry.npmjs.org/ && rm ./*.tgz && cd -
+cd packages/cli    && bun pm pack && npm publish ./*.tgz --registry=https://registry.npmjs.org/ && rm ./*.tgz && cd -
+cd packages/create-cooud-app && bun pm pack && npm publish ./*.tgz --registry=https://registry.npmjs.org/ && rm ./*.tgz && cd -
+cd packages/create-cooud-stack && bun pm pack && npm publish ./*.tgz --registry=https://registry.npmjs.org/ && rm ./*.tgz && cd -
+cd packages/mcp    && bun pm pack && npm publish ./*.tgz --registry=https://registry.npmjs.org/ && rm ./*.tgz && cd -
 ```
 
 Each package also runs `prepublishOnly` (`tsc -p tsconfig.json`) as a safety net,

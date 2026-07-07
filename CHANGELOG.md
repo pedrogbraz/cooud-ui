@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- No unreleased changes yet.
+
+## [0.2.0] — 2026-07-07
+
+### Added
+
 - **9 new components** — `Marquee`, `AvatarGroup`, `Banner`, `TagsInput`, `Sparkline`,
   `InputGroup`, `PasswordInput`, `ButtonGroup`, and `Masonry` (each CLI-installable
   via `npx cooud-ui add <slug>`).
@@ -149,5 +155,6 @@ as installable packages and as copy-paste registry items you own.
 - Added per-entry gzipped bundle budgets for the published `@cooud-ui/ui` so a
   dependency or code-size regression is caught at build time.
 
-[Unreleased]: https://github.com/pedrogbraz/cooud-ui/compare/v0.1.0...main
+[Unreleased]: https://github.com/pedrogbraz/cooud-ui/compare/v0.2.0...main
+[0.2.0]: https://github.com/pedrogbraz/cooud-ui/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/pedrogbraz/cooud-ui/releases/tag/v0.1.0

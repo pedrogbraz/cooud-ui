@@ -250,6 +250,16 @@ function selectedSingleName(
   return optName(optById, id);
 }
 
+function scriptCommand(pmBin: string, script: string): string {
+  return pmBin === "npm" ? `npm run ${script}` : `${pmBin} ${script}`;
+}
+
+function kickoffAppDir(config: StackConfig): "app" | "src/app" | "src" {
+  const web = singleId(config, "web");
+  if (web !== "web-next") return "src";
+  return singleId(config, "structure") === "structure-root" ? "app" : "src/app";
+}
+
 /**
  * Render the KICKOFF.md briefing. The resolved stack is the SINGLE SOURCE OF
  * TRUTH: mission, repo map, commands, configured AI capabilities, the Cooud UI
@@ -285,6 +295,25 @@ export function generateKickoff(
   const addons = multiIds(config, "addons").map((id) => optName(optById, id));
   const vibe = config.vibe === true;
   const isCooudUi = ui === "ui-cooud";
+  const appDir = kickoffAppDir(config);
+  const webId = singleId(config, "web");
+  const backendId = singleId(config, "backend");
+  const apiId = singleId(config, "api");
+  const databaseId = singleId(config, "database");
+  const authId = singleId(config, "auth");
+  const paymentsId = singleId(config, "payments");
+  const isNext = webId === "web-next";
+  const hasDatabase = databaseId !== undefined && databaseId !== "db-none";
+  const hasApi = apiId !== undefined && apiId !== "api-none";
+  const hasDedicatedBackend =
+    backendId !== undefined &&
+    backendId !== "backend-none" &&
+    backendId !== "backend-fullstack-next" &&
+    backendId !== "backend-fullstack-tanstack";
+  const hasAuth = authId !== undefined && authId !== "auth-none";
+  const hasPayments = paymentsId !== undefined && paymentsId !== "pay-none";
+  const hasEnv = hasDatabase || hasAuth || hasPayments;
+  const hasLint = multiIds(config, "addons").includes("addon-biome");
 
   const stackRows: [string, string | undefined][] = [
     ["Web", web],
@@ -345,25 +374,62 @@ export function generateKickoff(
   lines.push("");
   lines.push("```");
   lines.push(`${slug}/`);
-  if (web) lines.push("  apps/web/        # frontend application");
-  if (backend && !backend.startsWith("Fullstack"))
-    lines.push("  apps/server/     # backend service");
-  if (database) lines.push("  packages/db/     # schema, migrations, client");
-  if (api) lines.push("  packages/api/    # typed API contract");
+  lines.push("  package.json     # scripts and selected dependencies");
+  if (isNext) {
+    lines.push(`  ${appDir}/        # Next.js App Router starter`);
+  } else {
+    lines.push("  src/index.ts     # placeholder entry for the selected web framework");
+  }
+  if (isNext && isCooudUi)
+    lines.push("  cooud-ui.json    # Cooud UI registry paths and pinned registry URL");
+  if (hasEnv)
+    lines.push(
+      "  .env.example     # required environment variables to fill before wiring services",
+    );
   lines.push("  KICKOFF.md       # this briefing");
   lines.push("  stack.json       # machine-readable stack snapshot");
   lines.push("```");
   lines.push("");
+
+  const followUps: string[] = [];
+  if (!isNext && web) {
+    followUps.push(
+      "Wire the selected web framework; the generator wrote a placeholder entry only.",
+    );
+  }
+  if (hasDedicatedBackend && backend) {
+    followUps.push(`Add the dedicated backend service for **${backend}**.`);
+  }
+  if (hasApi && api) {
+    followUps.push(`Add the typed API contract for **${api}**.`);
+  }
+  if (hasDatabase && database) {
+    followUps.push(`Wire **${database}**${orm ? ` with **${orm}**` : ""} before syncing schema.`);
+  }
+  if (auth) followUps.push(`Implement **${auth}** and protect mutating routes.`);
+  if (payments) {
+    followUps.push(
+      `Implement **${payments}** webhooks server-side; never trust client-side amounts.`,
+    );
+  }
+  if (followUps.length > 0) {
+    lines.push("## Manual follow-up from selected stack");
+    lines.push("");
+    for (const item of followUps) lines.push(`- ${item}`);
+    lines.push("");
+  }
 
   // --- Commands ---
   lines.push("## Commands");
   lines.push("");
   lines.push("```bash");
   lines.push(`${pmBin} install`);
-  lines.push(`${pmBin === "npm" ? "npm run dev" : `${pmBin} dev`}`);
-  if (database)
-    lines.push(`${pmBin === "npm" ? "npm run db:push" : `${pmBin} db:push`}   # sync schema`);
-  lines.push(`${pmBin === "npm" ? "npm test" : `${pmBin} test`}`);
+  lines.push(scriptCommand(pmBin, "dev"));
+  lines.push(scriptCommand(pmBin, "typecheck"));
+  if (hasLint) lines.push(scriptCommand(pmBin, "lint"));
+  lines.push(scriptCommand(pmBin, "build"));
+  if (hasDatabase)
+    lines.push(`${scriptCommand(pmBin, "db:push")}   # sync schema after DB is wired`);
   lines.push("```");
   lines.push("");
 

@@ -63,7 +63,7 @@ export const DOC_NAV_SECTIONS: { heading: string; items: DocNavItem[] }[] = [
         label: "Stack Builder",
         href: "/docs/stack-builder",
         description:
-          "Full-stack picker with a scaffolding command, KICKOFF.md, and stack.json schema.",
+          "Stack picker with a runnable default scaffold command, KICKOFF.md, and stack.json schema.",
       },
       {
         label: "RTL",
@@ -149,7 +149,7 @@ export const INSTALL_OPTIONS = [
   {
     title: "Use Stack Builder",
     description:
-      "Compose a full-stack app and export a scaffolding command, KICKOFF.md, and stack.json.",
+      "Compose an app stack and export a runnable default scaffold command, KICKOFF.md, and stack.json.",
     href: "/stack",
     action: "Open Stack Builder",
   },
@@ -254,43 +254,16 @@ export const ACCESSIBILITY_CHECKS = [
 
 export const CHANGELOG_ENTRIES = [
   {
-    date: "2026-06-22",
-    version: "v0.2.2",
-    status: "In development",
-    title: "Stack Builder generator and schema docs",
-    summary:
-      "Added Stack Builder to the docs IA, schema metadata, and the create-cooud-stack package that backs the bun create command.",
-    items: [
-      "Stack Builder docs route with stable generator truth",
-      "Command palette entries for Stack Builder docs and the live builder",
-      "stack.json schema metadata for the current builder output",
-      "create-cooud-stack package for the builder's scaffold command",
-    ],
-  },
-  {
-    date: "2026-06-22",
+    date: "2026-07-07",
     version: "v0.2.0",
     status: "Released",
-    title: "Create studio and preset system",
+    title: "Stack Builder, generators, and release hardening",
     summary:
-      "Added the Create route with live preview, preset save/export, shuffle controls, framework setup output, and runtime token overrides.",
+      "Promoted Stack Builder into the publishable package set, added app and stack generators, refreshed the homepage, and hardened the local v0.2 release path.",
     items: [
-      "Nova, Aurora, Minimal, Brutalist, Editorial, and Terminal presets",
-      "Get Code dialog with install, provider, CSS vars, and JSON tabs",
-      "Chart, radius, font, and color overrides mapped to tokens",
-    ],
-  },
-  {
-    date: "2026-06-22",
-    version: "v0.2.1",
-    status: "In development",
-    title: "Documentation sections and changelog",
-    summary:
-      "Expanded the docs IA with installation, CLI, registry, framework, forms, RTL, accessibility, and release notes surfaces.",
-    items: [
-      "Package-manager tabs for npm, pnpm, yarn, and bun",
-      "Framework cards with setup commands and accessibility checks",
-      "Clean changelog timeline for released and upcoming work",
+      "Nine publishables in lockstep: tokens, theme, UI, stack, AI Kit, CLI, create-cooud-app, create-cooud-stack, and MCP",
+      "Stack Builder docs, schema metadata, KICKOFF.md, stack.json, and create-cooud-stack scaffold output",
+      "Full package smoke coverage for runtime installs, installed bins, scaffold checks, and tarball dependency pins",
     ],
   },
   {

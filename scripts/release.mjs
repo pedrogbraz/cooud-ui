@@ -3,7 +3,8 @@
  * release.mjs — LOCAL release pipeline for the Cooud UI monorepo.
  *
  * GitHub Actions was removed (account billing), so releases are cut from a
- * developer machine. This script is the single, channel-agnostic entry point.
+ * developer machine. This script is the single local entry point for the public
+ * npm release line.
  *
  * What it does, in order:
  *   (a) preflight   — assert a clean git working tree and that all publishable
@@ -20,12 +21,10 @@
  *                       1. `bun pm pack` the package (rewrites `workspace:*`
  *                          ranges to the concrete version and embeds each
  *                          package's own `publishConfig`),
- *                       2. `npm publish <tarball>` — npm reads the registry from
- *                          the tarball's embedded `publishConfig`, so scoped libs
- *                          go to their registry and the CLI to its own. The
- *                          pipeline is channel-agnostic: it never hard-codes a
- *                          registry, so the npm-vs-GitHub-Packages decision lives
- *                          entirely in each package.json.
+ *                       2. `npm publish <tarball> --registry=npmjs` — npm reads
+ *                          `access: public` from the tarball's embedded
+ *                          `publishConfig`, while the registry is pinned here so
+ *                          machine-level npm config cannot redirect a release.
  *
  * SAFETY: dry-run by DEFAULT. Without `--publish` it runs (a)-(c), then runs
  * the tag and publish plan plus `npm publish --dry-run` for (e).
@@ -121,9 +120,13 @@ function readPkg(dir) {
 
 function npmVersionExists(name, version) {
   try {
-    const out = run("npm", ["view", `${name}@${version}`, "version", "--json"], {
-      capture: true,
-    });
+    const out = run(
+      "npm",
+      ["view", `${name}@${version}`, "version", "--json", `--registry=${NPM_REGISTRY}`],
+      {
+        capture: true,
+      },
+    );
     return out.trim().length > 0;
   } catch (err) {
     const detail = String(err.stderr || err.stdout || err.message || "");
@@ -199,17 +202,30 @@ function preflight() {
 
   // Don't clobber an existing release tag.
   const tag = `v${version}`;
-  let tagExists = false;
+  let localTagExists = false;
   try {
     run("git", ["rev-parse", "--verify", "--quiet", `refs/tags/${tag}`], { capture: true });
-    tagExists = true;
+    localTagExists = true;
   } catch {
-    tagExists = false;
+    localTagExists = false;
   }
-  if (tagExists) {
+  if (localTagExists) {
     fatal(`git tag ${tag} already exists — bump the version or delete the stale tag first.`);
   }
-  ok(`tag ${c.bold(tag)} is free`);
+  ok(`local tag ${c.bold(tag)} is free`);
+
+  let remoteTag = "";
+  try {
+    remoteTag = run("git", ["ls-remote", "--tags", "origin", `refs/tags/${tag}`], {
+      capture: true,
+    }).trim();
+  } catch (err) {
+    fatal(`could not verify remote tag ${tag}.`, err);
+  }
+  if (remoteTag) {
+    fatal(`remote tag ${tag} already exists on origin — bump the version before releasing.`);
+  }
+  ok(`remote tag ${c.bold(tag)} is free`);
 
   publishSourcePreflight();
 
@@ -268,9 +284,9 @@ function smoke() {
  * npm/npm pack ships `workspace:*` ranges LITERALLY in this Bun monorepo (which
  * is unresolvable for consumers), so we always pack with `bun pm pack` first —
  * it rewrites `workspace:*` to the concrete version AND keeps each package's
- * `publishConfig`. `npm publish <tarball>` then reads the registry straight from
- * the tarball's embedded publishConfig, so the pipeline never hard-codes a
- * channel and the npm-vs-GitHub-Packages decision stays in each package.json.
+ * `publishConfig`. `npm publish <tarball> --registry=npmjs` then ships the
+ * exact packed bytes to public npm while preserving each package's embedded
+ * `access: public`.
  *
  * Tarball-naming footgun: `@cooud-ui/ui` and the CLI `cooud-ui` BOTH pack to
  * `cooud-ui-<version>.tgz`. We pack each package into its OWN subdir so the CLI
@@ -326,8 +342,7 @@ function publishAll(version) {
   try {
     for (const pkg of PACKAGES) {
       const absDir = join(ROOT, pkg.dir);
-      const pj = readPkg(pkg.dir);
-      const registry = pj.publishConfig?.registry || "https://registry.npmjs.org (npm default)";
+      const registry = NPM_REGISTRY;
 
       // Per-package subdir: @cooud-ui/ui and the CLI cooud-ui share a tarball name,
       // so isolate each so one can't clobber the other.
@@ -341,7 +356,7 @@ function publishAll(version) {
       }
       const tarballName = tarball.replace(/^.*\//, "");
 
-      const publishArgs = ["publish", tarball];
+      const publishArgs = ["publish", tarball, `--registry=${NPM_REGISTRY}`];
       if (!PUBLISH) publishArgs.push("--dry-run");
 
       if (PUBLISH) {

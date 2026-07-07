@@ -84,9 +84,9 @@ export function StackBuilder() {
             </h1>
 
             <p className="max-w-2xl text-pretty text-lg text-fg-secondary">
-              Compose your full-stack app, layer by layer — every choice is validated live, and your
-              naming, structure, and standards come baked in. Walk away with a scaffold command and
-              a KICKOFF.md your coding agent follows to the letter.
+              Compose your app stack, layer by layer — every choice is validated live, and your
+              naming, structure, and standards come baked in. Walk away with a runnable default
+              scaffold command and a KICKOFF.md your coding agent follows to the letter.
             </p>
 
             <div className="flex w-fit items-center gap-2 rounded-full border border-border bg-surface-raised/60 px-3 py-1.5 text-xs text-fg-secondary backdrop-blur">

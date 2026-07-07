@@ -6,7 +6,7 @@ Scaffold a production-ready **Next.js + Cooud UI** app in one command.
 npx create-cooud-app my-app
 ```
 
-That's it. You get a Next.js 15 (App Router) + React 19 + Tailwind v4 starter with
+That's it. You get a Next.js 16 (App Router) + React 19 + Tailwind v4 starter with
 [`@cooud-ui/ui`](https://www.npmjs.com/package/@cooud-ui/ui), `@cooud-ui/tokens`, and
 `@cooud-ui/theme` already wired — themeable, accessible components, an anti-flash theme
 script, and a polished landing page out of the box.

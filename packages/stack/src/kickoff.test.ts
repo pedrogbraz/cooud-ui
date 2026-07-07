@@ -54,4 +54,24 @@ describe("kickoff — conventions & standards", () => {
     expect(json.stack.commitStyle).toBe("commit-conventional");
     expect(json.stack.tsStrict).toBe("ts-strict");
   });
+
+  it("KICKOFF.md repo map and commands match the generated default scaffold", () => {
+    const md = generateKickoff(config, "acme", catalog);
+    expect(md).toContain("  package.json     # scripts and selected dependencies");
+    expect(md).toContain("  src/app/        # Next.js App Router starter");
+    expect(md).toContain("  cooud-ui.json    # Cooud UI registry paths and pinned registry URL");
+    expect(md).toContain("bun install");
+    expect(md).toContain("bun dev");
+    expect(md).toContain("bun typecheck");
+    expect(md).toContain("bun build");
+    expect(md).not.toContain("apps/web/");
+    expect(md).not.toContain("bun test");
+  });
+
+  it("KICKOFF.md reflects root app structure when selected", () => {
+    const rootStructure = { ...config, structure: "structure-root" };
+    const md = generateKickoff(rootStructure, "acme", catalog);
+    expect(md).toContain("  app/        # Next.js App Router starter");
+    expect(md).not.toContain("  src/app/        # Next.js App Router starter");
+  });
 });

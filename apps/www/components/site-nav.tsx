@@ -191,7 +191,7 @@ export function SiteNav() {
               Cooud UI
             </span>
             <Badge variant="secondary" className="hidden px-1.5 py-0 text-[10px] sm:inline-flex">
-              v0.1
+              v0.2.0
             </Badge>
           </span>
         </Link>
