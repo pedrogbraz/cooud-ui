@@ -23,7 +23,7 @@ Options
   -v, --version  Show the version
 
 Environment
-  COOUD_UI_REGISTRY_URL  Override the registry source
+  COOUD_UI_REGISTRY  Override the registry source
 `;
 
 /**

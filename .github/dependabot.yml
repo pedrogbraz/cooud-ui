@@ -18,6 +18,11 @@ updates:
       - /packages/tokens
       - /packages/theme
       - /packages/cli
+      - /packages/stack
+      - /packages/ai-kit
+      - /packages/create-cooud-app
+      - /packages/create-cooud-stack
+      - /packages/mcp
       - /apps/www
     schedule:
       interval: weekly

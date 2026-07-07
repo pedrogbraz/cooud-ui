@@ -36,10 +36,10 @@
  *   node scripts/release.mjs --publish  # really push tag + publish
  *   bun run release [--publish]
  *
- * Offline/auth notes: the scoped libs publish to the registry in their
- * `publishConfig` (reads `${NODE_AUTH_TOKEN}` via the repo-root .npmrc); the CLI
- * publishes to public npm (needs an npm login / `NPM_TOKEN`). `--publish` will
- * fail loudly at the first package whose registry rejects the credentials.
+ * Offline/auth notes: all packages publish to public npm and require a valid npm
+ * login / `NPM_TOKEN`. `--publish` only runs from a local `main` that exactly
+ * matches `origin/main`, checks npm auth before pushing the tag, and runs the
+ * full tarball smoke.
  */
 
 import { execFileSync } from "node:child_process";
@@ -110,6 +110,7 @@ const PACKAGES = [
 ];
 const PACKAGE_ORDER_LABEL = PACKAGES.map((pkg) => pkg.name).join(" → ");
 const PUBLISHABLE_PACKAGE_NAMES = new Set(PACKAGES.map((pkg) => pkg.name));
+const NPM_REGISTRY = "https://registry.npmjs.org/";
 
 /* ------------------------------------------------------------------ *
  * (a) preflight — clean tree + lockstep versions
@@ -128,6 +129,41 @@ function npmVersionExists(name, version) {
     const detail = String(err.stderr || err.stdout || err.message || "");
     if (detail.includes("E404") || detail.includes("404 Not Found")) return false;
     fatal(`could not verify npm availability for ${name}@${version}.`, err);
+  }
+}
+
+function publishSourcePreflight() {
+  if (!PUBLISH) return;
+
+  const branch = run("git", ["branch", "--show-current"], { capture: true }).trim();
+  if (branch !== "main") {
+    fatal(
+      `--publish must run from main after PR merge; current branch is ${branch || "(detached)"}.`,
+    );
+  }
+
+  const head = run("git", ["rev-parse", "HEAD"], { capture: true }).trim();
+  let remoteMain = "";
+  try {
+    remoteMain = run("git", ["ls-remote", "origin", "refs/heads/main"], { capture: true })
+      .trim()
+      .split(/\s+/)[0];
+  } catch (err) {
+    fatal("could not read origin/main before publish.", err);
+  }
+  if (!remoteMain) fatal("origin/main was not found; aborting publish.");
+  if (head !== remoteMain) {
+    fatal(
+      `--publish requires local HEAD to equal origin/main (${remoteMain}); current HEAD is ${head}.`,
+    );
+  }
+  ok("publish source is main and matches origin/main");
+
+  try {
+    const user = run("npm", ["whoami", `--registry=${NPM_REGISTRY}`], { capture: true }).trim();
+    ok(`npm auth is present for ${NPM_REGISTRY} as ${c.bold(user)}`);
+  } catch (err) {
+    fatal(`npm auth is required before --publish can push a tag or publish packages.`, err);
   }
 }
 
@@ -175,6 +211,8 @@ function preflight() {
   }
   ok(`tag ${c.bold(tag)} is free`);
 
+  publishSourcePreflight();
+
   for (const pkg of PACKAGES) {
     if (npmVersionExists(pkg.name, version)) {
       fatal(`${pkg.name}@${version} already exists on npm — bump the version before releasing.`);
@@ -213,9 +251,11 @@ function gate() {
 
 function smoke() {
   group("package:smoke");
-  info("bun run package:smoke");
+  info(PUBLISH ? "SMOKE_FULL=1 bun run package:smoke" : "bun run package:smoke");
   try {
-    run("bun", ["run", "package:smoke"]);
+    run("bun", ["run", "package:smoke"], {
+      env: PUBLISH ? { SMOKE_FULL: "1" } : {},
+    });
   } catch (err) {
     fatal("package:smoke failed.", err);
   }

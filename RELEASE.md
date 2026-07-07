@@ -41,13 +41,18 @@ In order, the script:
 1. **Preflight** — asserts the git working tree is **clean** and that all nine
    publishable packages share the **same `version`**, that the `v<version>` tag
    does not already exist, and that none of the package versions already exist
-   on npm.
+   on npm. In real `--publish` mode it also aborts unless the checkout is local
+   `main`, `HEAD` exactly matches `origin/main`, and `npm whoami` succeeds before
+   any tag is created or pushed.
 2. **Gate** — runs, in this order:
    `typecheck` · `lint` · `test` · `registry:check` · `tokens:check` ·
    `props:check` · `build`. Any failure aborts the release.
 3. **Smoke** — runs `package:smoke` (packs each package with `npm pack --dry-run`,
    validates tarball structure, validates `bun pm pack` internal dependency pins,
    and dynamically `import()`s every built JS entry offline to prove it loads).
+   Real `--publish` mode promotes this to `SMOKE_FULL=1 bun run package:smoke`,
+   which also installs tarballs into consumer fixtures and runs the installed
+   CLI/generator/MCP bins.
 4. **Tag** — creates an annotated git tag `v<version>` at `HEAD` and pushes it to
    `origin` before publishing, so the CLI/MCP registries that point at the raw
    GitHub tag are resolvable before any package is public (only with `--publish`;
@@ -82,10 +87,12 @@ the unscoped package names (`cooud-ui`, `create-cooud-app`,
 rights in your user `~/.npmrc`. No repo-level `.npmrc` and no GitHub Packages
 token are needed.
 
-`--publish` fails loudly at the first package the registry rejects; earlier
-packages in the order may already be published, so fix the auth and re-run (a
-re-publish of an already-published version will error — bump the version if
-needed).
+`--publish` checks `npm whoami --registry=https://registry.npmjs.org/` before it
+can create or push the git tag. That proves a credential is present, not that
+every package permission is correct. If npm later rejects a package publish,
+earlier packages in the order may already be published, so fix the permission
+and re-run only with an explicit recovery plan (a re-publish of an already
+published version will error — bump the version if needed).
 
 ## Exact release procedure
 
@@ -97,11 +104,15 @@ needed).
    the CLI unit tests fail if `CLI_VERSION` drifts from `package.json`.
 2. **Build:** `bun run build`.
 3. **Gate + smoke (dry-run preflight):** `bun run release` — this runs the full
-   gate, `package:smoke`, and a publish/tag dry-run. Confirm the printed plan
-   lists `vX.Y.Z` and the nine packages in the same order printed by
+   gate, light `package:smoke`, and a publish/tag dry-run. Confirm the printed
+   plan lists `vX.Y.Z` and the nine packages in the same order printed by
    `scripts/release.mjs`, with the expected registries.
-4. **Push tag + publish:** `bun run release --publish`. This pushes `vX.Y.Z`
-   first, then publishes
+4. **Merge and sync main:** merge the PR, check out local `main`, fetch `origin`,
+   and make sure local `HEAD` equals `origin/main`. The real publish path refuses
+   to run from a feature branch or stale local main.
+5. **Push tag + publish:** `bun run release --publish`. This first re-runs the
+   full gate, checks npm auth before any tag mutation, runs
+   `SMOKE_FULL=1 bun run package:smoke`, pushes `vX.Y.Z`, then publishes
    `@cooud-ui/tokens` → `@cooud-ui/theme` → `@cooud-ui/ui` →
    `@cooud-ui/stack` → `@cooud-ui/ai-kit` → `cooud-ui` →
    `create-cooud-app` → `create-cooud-stack` → `cooud-ui-mcp`.
@@ -110,7 +121,7 @@ needed).
    > `v0.2.0`: all nine publishable packages must share `0.2.0`, and the
    > release cuts `v0.2.0` before any future `0.x` bump.
 
-5. **Ensure the GitHub repo is public.** Before publishing, make
+6. **Ensure the GitHub repo is public.** Before publishing, make
    `pedrogbraz/cooud-ui` **public** so the CLI's pinned registry
    (`raw.githubusercontent.com/pedrogbraz/cooud-ui/vX.Y.Z/registry`) is reachable
    and `npx cooud-ui add <component>` resolves component sources from the tagged
