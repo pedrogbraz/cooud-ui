@@ -27,8 +27,9 @@ interface EyebrowProps {
 
 /**
  * A tasteful "aurora glass" accent for a section's top edge: a glowing hairline
- * that sits on the border plus a soft aurora glow bleeding downward. Drop it as
- * the first child of a `relative` section.
+ * that sits on the border plus a soft aurora glow bleeding downward — the same
+ * blue-glass shimmer the translucent nav catches on scroll. Drop it as the first
+ * child of a `relative` section (it's absolutely positioned + aria-hidden).
  */
 export function SectionGlow({ className }: { className?: string }) {
   return (
