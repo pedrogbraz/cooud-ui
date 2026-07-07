@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { RegistryClient, type RegistryIndex, type RegistryLoader } from "./registry.js";
 import {
@@ -9,6 +10,7 @@ import {
   listComponents,
   searchRegistry,
 } from "./tools.js";
+import { SERVER_VERSION } from "./version.js";
 
 const INDEX: RegistryIndex = [
   { name: "cn", type: "registry:lib", dependencies: ["clsx@^2.1.1"], registryDependencies: [] },
@@ -27,7 +29,7 @@ const INDEX: RegistryIndex = [
   {
     name: "pricing",
     type: "registry:block",
-    dependencies: ["@cooud-ui/ui@0.1.0", "lucide-react@^0.577.0"],
+    dependencies: ["@cooud-ui/ui@0.2.0", "lucide-react@^0.577.0"],
     registryDependencies: [],
   },
 ];
@@ -45,6 +47,16 @@ const BUTTON_ITEM = {
     },
   ],
 };
+
+const pkg = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8")) as {
+  version: string;
+};
+
+describe("MCP server release version", () => {
+  it("keeps the runtime version aligned with package.json", () => {
+    expect(SERVER_VERSION).toBe(pkg.version);
+  });
+});
 
 /** An in-memory loader so the tool logic is exercised without any network. */
 function fixtureLoader(): RegistryLoader {

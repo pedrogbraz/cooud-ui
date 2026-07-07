@@ -70,7 +70,7 @@ describe("writeItemFiles (registry:block)", () => {
     const item: RegistryItem = {
       name: "dashboard",
       type: "registry:block",
-      dependencies: ["@cooud-ui/ui@0.1.0", "lucide-react@^0.460.0"],
+      dependencies: ["@cooud-ui/ui@0.2.0", "lucide-react@^0.460.0"],
       registryDependencies: [],
       files: [{ path: "dashboard.tsx", content: source, target: "block" }],
     };

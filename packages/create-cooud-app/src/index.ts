@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { existsSync, readdirSync } from "node:fs";
+import { existsSync, readdirSync, realpathSync } from "node:fs";
 import { join } from "node:path";
 import { argv } from "node:process";
 import { fileURLToPath } from "node:url";
@@ -257,7 +257,7 @@ async function main(): Promise<void> {
 function isEntrypoint(): boolean {
   const entry = argv[1];
   if (!entry) return false;
-  return fileURLToPath(import.meta.url) === entry;
+  return existsSync(entry) && fileURLToPath(import.meta.url) === realpathSync(entry);
 }
 
 if (isEntrypoint()) {

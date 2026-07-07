@@ -257,13 +257,14 @@ export const CHANGELOG_ENTRIES = [
     date: "2026-06-22",
     version: "v0.2.2",
     status: "In development",
-    title: "Stack Builder beta preview and schema docs",
+    title: "Stack Builder generator and schema docs",
     summary:
-      "Added Stack Builder to the docs IA and clarified that generated commands are preview artifacts until a cooud-stack generator package exists.",
+      "Added Stack Builder to the docs IA, schema metadata, and the create-cooud-stack package that backs the bun create command.",
     items: [
-      "Stack Builder docs route with beta status and generator truth",
+      "Stack Builder docs route with stable generator truth",
       "Command palette entries for Stack Builder docs and the live builder",
       "stack.json schema metadata for the current builder output",
+      "create-cooud-stack package for the builder's scaffold command",
     ],
   },
   {

@@ -4,7 +4,7 @@ import { join } from "node:path";
 
 export const CONFIG_FILE = "cooud-ui.json";
 
-export const CLI_VERSION = "0.1.0";
+export const CLI_VERSION = "0.2.0";
 
 export const DEFAULT_REGISTRY = `https://raw.githubusercontent.com/pedrogbraz/cooud-ui/v${CLI_VERSION}/registry`;
 

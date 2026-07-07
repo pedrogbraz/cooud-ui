@@ -1,0 +1,58 @@
+{
+  "name": "create-cooud-stack",
+  "version": "0.2.0",
+  "description": "Scaffold a Cooud stack from the Cooud Stack Builder contract: app files, stack.json, KICKOFF.md, and optional AI Kit.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Cooud",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pedrogbraz/cooud-ui.git",
+    "directory": "packages/create-cooud-stack"
+  },
+  "homepage": "https://github.com/pedrogbraz/cooud-ui#readme",
+  "bugs": {
+    "url": "https://github.com/pedrogbraz/cooud-ui/issues"
+  },
+  "keywords": [
+    "cooud",
+    "create-cooud-stack",
+    "stack",
+    "scaffold",
+    "next",
+    "cooud-ui",
+    "ai"
+  ],
+  "bin": {
+    "create-cooud-stack": "./dist/index.js",
+    "cooud-stack": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md",
+    "!dist/**/*.map"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run --config vitest.config.ts",
+    "test:watch": "vitest --config vitest.config.ts",
+    "prepublishOnly": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@cooud-ui/ai-kit": "workspace:*",
+    "@cooud-ui/stack": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.9"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

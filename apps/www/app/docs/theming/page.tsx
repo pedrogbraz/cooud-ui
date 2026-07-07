@@ -100,7 +100,7 @@ export default function ThemingPage() {
         <PrimaryLink href="/create">Build a preset</PrimaryLink>
       </DocsHeader>
 
-      {/* Live Theme Builder callout — a quick path to the interactive home playground. */}
+      {/* Live Create Studio callout — a quick path to the interactive preset builder. */}
       <div className="relative mt-8 overflow-hidden rounded-xl border border-border bg-surface-raised p-5 shadow-xs sm:p-6">
         <div
           aria-hidden="true"
@@ -113,17 +113,17 @@ export default function ThemingPage() {
             </span>
             <div>
               <h2 className="font-display text-lg font-semibold text-fg">
-                Prefer to play? Try the live Theme Builder
+                Prefer to play? Try Create Studio
               </h2>
               <p className="mt-1 max-w-xl text-sm leading-6 text-fg-secondary">
-                Drag the sliders, pick colors, and watch the whole page re-theme in real time — then
-                copy the CSS overrides.
+                Pick a preset, tune colors and type, and watch the preview re-theme in real time —
+                then copy the CSS overrides.
               </p>
             </div>
           </div>
           <Button asChild className="shrink-0">
-            <Link href="/#playground">
-              Open Theme Builder
+            <Link href="/create">
+              Open Create Studio
               <ArrowRight aria-hidden="true" />
             </Link>
           </Button>

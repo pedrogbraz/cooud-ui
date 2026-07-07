@@ -1,0 +1,81 @@
+import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { catalog, defaultSelection, resolve } from "@cooud-ui/stack";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { scaffoldStack } from "./scaffold.js";
+import { CREATE_STACK_VERSION } from "./version.js";
+
+describe("scaffoldStack", () => {
+  let root: string;
+  let targetDir: string;
+
+  beforeEach(() => {
+    root = mkdtempSync(join(tmpdir(), "create-cooud-stack-"));
+    targetDir = join(root, "my-app");
+  });
+
+  afterEach(() => {
+    rmSync(root, { recursive: true, force: true });
+  });
+
+  it("creates a runnable Next + Cooud UI starter for the default stack", () => {
+    const config = resolve(catalog, { ...defaultSelection(catalog), install: false }).selection;
+    const result = scaffoldStack({ targetDir, projectName: "my-app", config, catalog });
+
+    expect(result.fileCount).toBeGreaterThan(8);
+    expect(existsSync(join(targetDir, "src", "app", "page.tsx"))).toBe(true);
+    expect(existsSync(join(targetDir, "KICKOFF.md"))).toBe(true);
+    expect(existsSync(join(targetDir, "stack.json"))).toBe(true);
+
+    const pkg = JSON.parse(readFileSync(join(targetDir, "package.json"), "utf8")) as {
+      dependencies: Record<string, string>;
+      scripts: Record<string, string>;
+    };
+    expect(pkg.dependencies["@cooud-ui/ui"]).toBe(`^${CREATE_STACK_VERSION}`);
+    expect(pkg.dependencies["@cooud-ui/tokens"]).toBe(`^${CREATE_STACK_VERSION}`);
+    expect(pkg.dependencies["@cooud-ui/theme"]).toBe(`^${CREATE_STACK_VERSION}`);
+    expect(pkg.scripts.dev).toBe("next dev");
+
+    const cooudUi = JSON.parse(readFileSync(join(targetDir, "cooud-ui.json"), "utf8")) as {
+      paths: Record<"ui" | "lib" | "blocks", string>;
+      registry: string;
+    };
+    expect(cooudUi.paths).toEqual({
+      ui: "src/components/ui",
+      lib: "src/lib",
+      blocks: "src/components/blocks",
+    });
+    expect(cooudUi.registry).toBe(
+      `https://raw.githubusercontent.com/pedrogbraz/cooud-ui/v${CREATE_STACK_VERSION}/registry`,
+    );
+
+    const stack = JSON.parse(readFileSync(join(targetDir, "stack.json"), "utf8")) as {
+      name: string;
+      stack: Record<string, unknown>;
+    };
+    expect(stack.name).toBe("my-app");
+    expect(stack.stack.web).toBe("web-next");
+  });
+
+  it("writes root app files when structure-root is selected", () => {
+    const config = resolve(catalog, {
+      ...defaultSelection(catalog),
+      structure: "structure-root",
+      install: false,
+    }).selection;
+    scaffoldStack({ targetDir, projectName: "my-app", config, catalog });
+    expect(existsSync(join(targetDir, "app", "page.tsx"))).toBe(true);
+    const tsconfig = readFileSync(join(targetDir, "tsconfig.json"), "utf8");
+    expect(tsconfig).toContain('"@/*"');
+    expect(tsconfig).toContain('"./*"');
+    const cooudUi = JSON.parse(readFileSync(join(targetDir, "cooud-ui.json"), "utf8")) as {
+      paths: Record<"ui" | "lib" | "blocks", string>;
+    };
+    expect(cooudUi.paths).toEqual({
+      ui: "components/ui",
+      lib: "lib",
+      blocks: "components/blocks",
+    });
+  });
+});

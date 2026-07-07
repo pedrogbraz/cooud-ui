@@ -14,7 +14,7 @@ Cooud color/typography/elevation scale in your own components.
 
 ## Install
 
-> Published on npm under the `@cooud` scope (available once `v0.1.0` is released).
+> Published on npm under the `@cooud-ui` scope.
 
 ```sh
 # npm

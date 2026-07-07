@@ -18,7 +18,7 @@ const navLinks = [
   { label: "Components", href: "/components" },
   { label: "Blocks", href: "/blocks" },
   { label: "Create", href: "/create" },
-  { label: "Playground", href: "/#playground" },
+  { label: "Theming", href: "/docs/theming" },
   { label: "Stack", href: "/stack" },
   { label: "Changelog", href: "/changelog" },
 ] as const;
@@ -124,7 +124,6 @@ function ThemeSelect() {
       </button>
       {open ? (
         <div
-          // biome-ignore lint/a11y/useSemanticElements: a role="menu" radio popover is the right pattern for a compact theme switcher.
           role="menu"
           aria-label="Theme"
           aria-orientation="vertical"

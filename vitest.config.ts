@@ -11,14 +11,25 @@ import { defineConfig } from "vitest/config";
  * tsconfig "include", so they never land in `dist`.
  */
 
-// Resolve the workspace `@cooud-ui/ai-kit` package to its SOURCE in tests, so the
-// CLI packages that consume it don't need a prior build to run their unit tests.
-const aiKitSrc = fileURLToPath(new URL("./packages/ai-kit/src/index.ts", import.meta.url));
+// Resolve workspace packages to SOURCE in tests, so consumers don't need a prior
+// build before Vitest can import them.
+const src = (path: string) => fileURLToPath(new URL(path, import.meta.url));
+const aiKitSrc = src("./packages/ai-kit/src/index.ts");
+const stackSrc = src("./packages/stack/src/index.ts");
+const stackSubpath = (name: string) => src(`./packages/stack/src/${name}.ts`);
 
 export default defineConfig({
   resolve: {
     alias: {
       "@cooud-ui/ai-kit": aiKitSrc,
+      "@cooud-ui/stack": stackSrc,
+      "@cooud-ui/stack/catalog": stackSubpath("catalog"),
+      "@cooud-ui/stack/cli": stackSubpath("cli"),
+      "@cooud-ui/stack/constants": stackSubpath("constants"),
+      "@cooud-ui/stack/engine": stackSubpath("engine"),
+      "@cooud-ui/stack/kickoff": stackSubpath("kickoff"),
+      "@cooud-ui/stack/schema": stackSubpath("schema"),
+      "@cooud-ui/stack/types": stackSubpath("types"),
     },
   },
   test: {
@@ -35,6 +46,22 @@ export default defineConfig({
         test: {
           name: "create-cooud-app",
           root: "./packages/create-cooud-app",
+          environment: "node",
+          include: ["src/**/*.test.ts"],
+        },
+      },
+      {
+        test: {
+          name: "stack",
+          root: "./packages/stack",
+          environment: "node",
+          include: ["src/**/*.test.ts"],
+        },
+      },
+      {
+        test: {
+          name: "create-cooud-stack",
+          root: "./packages/create-cooud-stack",
           environment: "node",
           include: ["src/**/*.test.ts"],
         },

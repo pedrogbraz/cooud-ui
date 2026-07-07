@@ -157,7 +157,7 @@ export default function CommandSearchDialog({
           >
             <span className="text-sm text-fg">Stack Builder</span>
             <span className="text-xs text-fg-tertiary">
-              Compose a full-stack app and export preview artifacts.
+              Compose a full-stack app and export generator-ready artifacts.
             </span>
           </CommandItem>
           <CommandItem

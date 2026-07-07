@@ -77,7 +77,7 @@ export function Hero() {
             aria-hidden="true"
             className="size-2 rounded-full bg-gradient-primary shadow-glow"
           />
-          {COMPONENT_COUNT} components · Aurora + Neutral themes
+          {COMPONENT_COUNT} components · 5 crafted themes
         </div>
 
         {/* Headline */}
@@ -138,10 +138,10 @@ export function Hero() {
             className="pointer-events-none absolute inset-x-8 top-8 -z-10 h-72 transform-gpu bg-gradient-aurora opacity-20 blur-3xl [contain:paint]"
           />
 
-          <div className="grid grid-cols-1 items-start gap-6 text-left md:grid-cols-12 md:gap-0">
+          <div className="grid grid-cols-1 items-start gap-6 text-left md:grid-cols-12">
             {/* Pricing-style card */}
-            <div className="md:col-span-5 md:translate-y-4 md:-rotate-1">
-              <Card className="border-border bg-surface-raised/80 shadow-lg backdrop-blur transition-transform duration-300 hover:rotate-0">
+            <div className="md:col-span-5">
+              <Card className="h-full border-border bg-surface-raised/80 shadow-lg backdrop-blur">
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <CardTitle>Pro</CardTitle>
@@ -168,7 +168,7 @@ export function Hero() {
             </div>
 
             {/* Center stack — controls & buttons */}
-            <div className="flex flex-col gap-6 md:col-span-4 md:-translate-y-6 md:translate-x-0 md:px-4">
+            <div className="flex flex-col gap-6 md:col-span-4">
               <div className="rounded-2xl border border-border bg-surface-raised/80 p-4 shadow-glow backdrop-blur">
                 <div className="flex flex-wrap items-center gap-2">
                   <Button size="sm" variant="gradient">
@@ -213,7 +213,7 @@ export function Hero() {
             </div>
 
             {/* Right stack — avatars & metric */}
-            <div className="flex flex-col gap-6 md:col-span-3 md:translate-y-10 md:rotate-1">
+            <div className="flex flex-col gap-6 md:col-span-3">
               <div className="rounded-2xl border border-border bg-surface-raised/80 p-4 shadow-lg backdrop-blur">
                 <p className="text-xs font-medium uppercase tracking-wider text-fg-tertiary">
                   Trusted by

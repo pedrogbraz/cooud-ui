@@ -96,7 +96,7 @@ export function StackBuilder() {
                 <code className="rounded bg-surface-overlay px-1 py-0.5 font-mono text-[11px] text-fg">
                   bun create
                 </code>{" "}
-                command + a KICKOFF.md — not a generated project.
+                command + KICKOFF.md + stack.json.
               </span>
             </div>
           </div>

@@ -25,7 +25,7 @@ npx cooud-ui diff                 # show which installed components drifted
   `packages/cli/scripts/build-registry.ts` — each item carries its source, its npm
   `dependencies`, and its `registryDependencies` (other components it imports),
   derived by parsing imports.
-- The default registry is pinned to the CLI package version (`v0.1.0` here), not
+- The default registry is pinned to the CLI package version (`v0.2.0` here), not
   mutable `main`, so a published CLI reads the registry snapshot it was released
   with. Use `-r, --registry ./registry` when testing local registry changes before
   a release tag exists.
@@ -45,7 +45,7 @@ npx cooud-ui diff                 # show which installed components drifted
 {
   "aliases": { "ui": "@/components/ui", "lib": "@/lib" },
   "paths": { "ui": "components/ui", "lib": "lib" },
-  "registry": "https://raw.githubusercontent.com/pedrogbraz/cooud-ui/v0.1.0/registry"
+  "registry": "https://raw.githubusercontent.com/pedrogbraz/cooud-ui/v0.2.0/registry"
 }
 ```
 

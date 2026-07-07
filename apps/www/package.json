@@ -1,6 +1,6 @@
 {
   "name": "@cooud-ui/www",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -12,6 +12,7 @@
     "props:check": "bun run scripts/check-props.ts"
   },
   "dependencies": {
+    "@cooud-ui/stack": "workspace:*",
     "@cooud-ui/theme": "workspace:*",
     "@cooud-ui/tokens": "workspace:*",
     "@cooud-ui/ui": "workspace:*",

@@ -6,13 +6,17 @@
  * developer machine. This script is the single, channel-agnostic entry point.
  *
  * What it does, in order:
- *   (a) preflight   — assert a clean git working tree and that all four
+ *   (a) preflight   — assert a clean git working tree and that all publishable
  *                     publishable packages share the same `version`;
  *   (b) gate        — typecheck · lint · test · registry:check · tokens:check ·
  *                     props:check · build (the same checks the old CI ran);
- *   (c) smoke       — package:smoke (pack --dry-run structure + offline import());
- *   (d) publish     — for each package in dependency order
- *                     tokens → theme → ui → cli:
+ *   (c) smoke       — package:smoke (pack structure, real pack dependency pins,
+ *                     offline import());
+ *   (d) tag         — create and push the annotated git tag `v<version>` before
+ *                     publishing packages that point at that raw GitHub tag;
+ *   (e) publish     — for each package in dependency order
+ *                     tokens → theme → ui → stack → ai-kit → cli →
+ *                     create-cooud-app → create-cooud-stack → mcp:
  *                       1. `bun pm pack` the package (rewrites `workspace:*`
  *                          ranges to the concrete version and embeds each
  *                          package's own `publishConfig`),
@@ -22,15 +26,14 @@
  *                          pipeline is channel-agnostic: it never hard-codes a
  *                          registry, so the npm-vs-GitHub-Packages decision lives
  *                          entirely in each package.json.
- *   (e) tag         — create and push the annotated git tag `v<version>`.
  *
  * SAFETY: dry-run by DEFAULT. Without `--publish` it runs (a)-(c), then runs
- * `npm publish --dry-run` for (d) and only PRINTS the tag it would cut for (e).
- * Pass `--publish` to actually publish the tarballs and push the tag.
+ * the tag and publish plan plus `npm publish --dry-run` for (e).
+ * Pass `--publish` to actually push the tag and publish the tarballs.
  *
  * Usage:
  *   node scripts/release.mjs            # dry-run (default) — safe preflight
- *   node scripts/release.mjs --publish  # really publish + tag
+ *   node scripts/release.mjs --publish  # really push tag + publish
  *   bun run release [--publish]
  *
  * Offline/auth notes: the scoped libs publish to the registry in their
@@ -90,20 +93,42 @@ function run(cmd, args, opts = {}) {
 }
 
 /* ------------------------------------------------------------------ *
- * package matrix — dependency order: tokens → theme → ui → cli
+ * package matrix — dependency order:
+ * tokens → theme → ui → stack → ai-kit → cli → create-cooud-app →
+ * create-cooud-stack → mcp
  * ------------------------------------------------------------------ */
 const PACKAGES = [
   { dir: "packages/tokens", name: "@cooud-ui/tokens" },
   { dir: "packages/theme", name: "@cooud-ui/theme" },
   { dir: "packages/ui", name: "@cooud-ui/ui" },
+  { dir: "packages/stack", name: "@cooud-ui/stack" },
+  { dir: "packages/ai-kit", name: "@cooud-ui/ai-kit" },
   { dir: "packages/cli", name: "cooud-ui" },
+  { dir: "packages/create-cooud-app", name: "create-cooud-app" },
+  { dir: "packages/create-cooud-stack", name: "create-cooud-stack" },
+  { dir: "packages/mcp", name: "cooud-ui-mcp" },
 ];
+const PACKAGE_ORDER_LABEL = PACKAGES.map((pkg) => pkg.name).join(" → ");
+const PUBLISHABLE_PACKAGE_NAMES = new Set(PACKAGES.map((pkg) => pkg.name));
 
 /* ------------------------------------------------------------------ *
  * (a) preflight — clean tree + lockstep versions
  * ------------------------------------------------------------------ */
 function readPkg(dir) {
   return JSON.parse(readFileSync(join(ROOT, dir, "package.json"), "utf8"));
+}
+
+function npmVersionExists(name, version) {
+  try {
+    const out = run("npm", ["view", `${name}@${version}`, "version", "--json"], {
+      capture: true,
+    });
+    return out.trim().length > 0;
+  } catch (err) {
+    const detail = String(err.stderr || err.stdout || err.message || "");
+    if (detail.includes("E404") || detail.includes("404 Not Found")) return false;
+    fatal(`could not verify npm availability for ${name}@${version}.`, err);
+  }
 }
 
 function preflight() {
@@ -124,7 +149,7 @@ function preflight() {
   }
   ok("git working tree is clean");
 
-  // All four publishable packages must share one version (lockstep 0.x).
+  // All publishable packages must share one version (lockstep 0.x).
   const versions = PACKAGES.map((p) => ({ name: p.name, version: readPkg(p.dir).version }));
   const distinct = [...new Set(versions.map((v) => v.version))];
   if (distinct.length !== 1) {
@@ -134,7 +159,7 @@ function preflight() {
   }
   const version = distinct[0];
   if (!version) fatal("could not read a version from the packages.");
-  ok(`all four packages are at version ${c.bold(version)}`);
+  ok(`all ${PACKAGES.length} packages are at version ${c.bold(version)}`);
 
   // Don't clobber an existing release tag.
   const tag = `v${version}`;
@@ -149,6 +174,13 @@ function preflight() {
     fatal(`git tag ${tag} already exists — bump the version or delete the stale tag first.`);
   }
   ok(`tag ${c.bold(tag)} is free`);
+
+  for (const pkg of PACKAGES) {
+    if (npmVersionExists(pkg.name, version)) {
+      fatal(`${pkg.name}@${version} already exists on npm — bump the version before releasing.`);
+    }
+    ok(`${pkg.name}@${version} is free on npm`);
+  }
 
   return { version, tag };
 }
@@ -191,7 +223,7 @@ function smoke() {
 }
 
 /* ------------------------------------------------------------------ *
- * (d) publish — bun pm pack (rewrites workspace:*) + npm publish <tarball>
+ * (e) publish — bun pm pack (rewrites workspace:*) + npm publish <tarball>
  * ------------------------------------------------------------------ *
  * npm/npm pack ships `workspace:*` ranges LITERALLY in this Bun monorepo (which
  * is unresolvable for consumers), so we always pack with `bun pm pack` first —
@@ -219,10 +251,30 @@ function packTarball(absDir, destDir) {
   return created[0];
 }
 
-function publishAll(version) {
-  group(
-    PUBLISH ? "publish (tokens → theme → ui → cli)" : "publish — DRY-RUN (no packages published)",
+function validatePackedInternalDeps(tarball, pkgName, version) {
+  const manifest = JSON.parse(
+    run("tar", ["-xOf", tarball, "package/package.json"], { capture: true }),
   );
+  const problems = [];
+
+  for (const field of ["dependencies", "peerDependencies", "optionalDependencies"]) {
+    for (const [name, range] of Object.entries(manifest[field] || {})) {
+      if (PUBLISHABLE_PACKAGE_NAMES.has(name) && range !== version) {
+        problems.push(`${field}.${name}=${range}`);
+      }
+    }
+  }
+
+  if (problems.length > 0) {
+    fatal(
+      `${pkgName} tarball has internal Cooud deps outside lockstep ${version}: ${problems.join(", ")}`,
+    );
+  }
+  ok(`${pkgName} tarball internal deps are pinned to ${version}`);
+}
+
+function publishAll(version) {
+  group(PUBLISH ? `publish (${PACKAGE_ORDER_LABEL})` : "publish — DRY-RUN (no packages published)");
 
   // Pack into a temp dir so workspace:* gets rewritten before we ever publish.
   const destDir = join(ROOT, ".release-tarballs");
@@ -243,6 +295,7 @@ function publishAll(version) {
       let tarball;
       try {
         tarball = packTarball(absDir, pkgDest);
+        validatePackedInternalDeps(tarball, pkg.name, version);
       } catch (err) {
         fatal(`could not pack ${pkg.name}.`, err);
       }
@@ -267,14 +320,12 @@ function publishAll(version) {
         plan(`would publish ${c.bold(`${pkg.name}@${version}`)}  →  ${registry}`);
         info(`(npm publish ${tarballName} --dry-run)`);
         try {
-          // A dry-run still validates the tarball + registry resolution offline-ish.
+          // A dry-run still validates the tarball + registry resolution.
           run("npm", publishArgs, { cwd: ROOT, capture: true });
         } catch (err) {
-          // Don't abort the dry-run on auth/login failures (expected without a
-          // token) — surface them as a note so the plan still prints.
-          const detail = String(err.stderr || err.stdout || err.message || "").trim();
-          info(`dry-run note for ${pkg.name}: ${detail.split("\n")[0] || "see npm output"}`);
+          fatal(`npm publish --dry-run failed for ${pkg.name}@${version}.`, err);
         }
+        ok(`npm dry-run accepted ${pkg.name}@${version}`);
       }
       published.push({ name: pkg.name, registry, tarball: tarballName });
     }
@@ -287,7 +338,7 @@ function publishAll(version) {
 }
 
 /* ------------------------------------------------------------------ *
- * (e) tag — annotated v<version>, pushed to origin
+ * (d) tag — annotated v<version>, pushed to origin
  * ------------------------------------------------------------------ */
 function tagAndPush(tag) {
   group(PUBLISH ? "tag" : "tag — DRY-RUN (no tag created or pushed)");
@@ -303,8 +354,8 @@ function tagAndPush(tag) {
     ok(`pushed ${tag} to origin`);
   } catch (err) {
     fatal(
-      `tagging/pushing ${tag} failed. The packages were already published — ` +
-        `create and push the tag manually: git tag -a ${tag} -m ${tag} && git push origin ${tag}`,
+      `tagging/pushing ${tag} failed. No packages were published by this run — ` +
+        `fix the tag push before retrying.`,
       err,
     );
   }
@@ -337,7 +388,7 @@ function summary({ version, tag, published }) {
 
   if (!PUBLISH) {
     log(
-      `\n${c.yellow(c.bold("This was a DRY-RUN."))} Re-run with ${c.bold("--publish")} to publish + tag.`,
+      `\n${c.yellow(c.bold("This was a DRY-RUN."))} Re-run with ${c.bold("--publish")} to push tag + publish.`,
     );
   } else {
     log(`\n${c.green(c.bold(`✓ released ${tag}`))}`);
@@ -351,7 +402,7 @@ function main() {
   log(c.bold("\nCooud UI — local release pipeline"));
   log(
     c.dim(
-      `mode: ${PUBLISH ? "PUBLISH (will publish tarballs + push tag)" : "DRY-RUN (default; prints the plan only)"}`,
+      `mode: ${PUBLISH ? "PUBLISH (will push tag + publish tarballs)" : "DRY-RUN (default; prints the plan only)"}`,
     ),
   );
   log(c.dim(`root: ${ROOT}`));
@@ -361,8 +412,8 @@ function main() {
   const { version, tag } = preflight();
   gate();
   smoke();
-  const published = publishAll(version);
   tagAndPush(tag);
+  const published = publishAll(version);
   summary({ version, tag, published });
 }
 

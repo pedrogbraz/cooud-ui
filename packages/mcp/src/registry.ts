@@ -8,7 +8,7 @@ import { isAbsolute, join, resolve } from "node:path";
  * URL or a local directory path).
  */
 export const DEFAULT_REGISTRY =
-  "https://raw.githubusercontent.com/pedrogbraz/cooud-ui/v0.1.0/registry";
+  "https://raw.githubusercontent.com/pedrogbraz/cooud-ui/v0.2.0/registry";
 
 /** Resolve the active registry source, honouring the env override. */
 export function resolveRegistrySource(env: NodeJS.ProcessEnv = process.env): string {

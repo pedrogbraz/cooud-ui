@@ -1,0 +1,84 @@
+{
+  "name": "@cooud-ui/stack",
+  "version": "0.2.0",
+  "description": "Cooud Stack Builder core — catalog, resolver, CLI flags, KICKOFF.md and stack.json artifacts.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Cooud",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pedrogbraz/cooud-ui.git",
+    "directory": "packages/stack"
+  },
+  "homepage": "https://github.com/pedrogbraz/cooud-ui#readme",
+  "bugs": {
+    "url": "https://github.com/pedrogbraz/cooud-ui/issues"
+  },
+  "keywords": [
+    "cooud",
+    "stack",
+    "scaffold",
+    "kickoff",
+    "design-system",
+    "typescript"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./catalog": {
+      "types": "./dist/catalog.d.ts",
+      "import": "./dist/catalog.js"
+    },
+    "./cli": {
+      "types": "./dist/cli.d.ts",
+      "import": "./dist/cli.js"
+    },
+    "./constants": {
+      "types": "./dist/constants.d.ts",
+      "import": "./dist/constants.js"
+    },
+    "./engine": {
+      "types": "./dist/engine.d.ts",
+      "import": "./dist/engine.js"
+    },
+    "./kickoff": {
+      "types": "./dist/kickoff.d.ts",
+      "import": "./dist/kickoff.js"
+    },
+    "./schema": {
+      "types": "./dist/schema.d.ts",
+      "import": "./dist/schema.js"
+    },
+    "./types": {
+      "types": "./dist/types.d.ts",
+      "import": "./dist/types.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md",
+    "!dist/**/*.map"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run --config vitest.config.ts",
+    "test:watch": "vitest --config vitest.config.ts",
+    "prepublishOnly": "tsc -p tsconfig.json"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.9"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
