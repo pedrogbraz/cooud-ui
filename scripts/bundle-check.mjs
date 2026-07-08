@@ -141,7 +141,7 @@ const SHARED_CHUNK_BUDGETS = /** @type {SharedChunkBudgets} */ ({
  * legitimately grows.
  *
  *   entry                     current gz   budget gz
- *   index.js (barrel)              2,222      2,820
+ *   index.js (barrel)              2,870      3,600   (re-measured 2026-07-08 after the batch-8 exports)
  *   data-table.js                  7,359      9,400
  *   chart.js                       3,340      4,300
  *   calendar.js                      977      1,260
@@ -168,7 +168,7 @@ const SHARED_CHUNK_BUDGETS = /** @type {SharedChunkBudgets} */ ({
  *   toolbar.js                     1,602      2,050
  */
 const PACKAGE_ENTRY_GZIP_BUDGETS = /** @type {Record<string, number>} */ ({
-  "index.js": 2_820,
+  "index.js": 3_600,
   "components/data-table.js": 9_400,
   "components/chart.js": 4_300,
   "components/calendar.js": 1_260,
