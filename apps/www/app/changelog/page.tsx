@@ -1,6 +1,7 @@
 import { Badge, cn } from "@cooud-ui/ui";
 import { CalendarDays, CircleDot, GitBranch, Sparkles } from "lucide-react";
 import { DocsHeader, DocsSection } from "../../components/docs/documentation";
+import { SectionGlow } from "../../components/showcase-ui";
 import { CHANGELOG_ENTRIES } from "../../lib/docs";
 
 const statusTone = {
@@ -11,7 +12,10 @@ const statusTone = {
 
 export default function ChangelogPage() {
   return (
-    <div className="py-10">
+    <div className="relative py-10">
+      {/* The same aurora top-edge shimmer the home sections carry — keeps the
+          changelog header consistent with the rest of the showcase. */}
+      <SectionGlow />
       <DocsHeader
         eyebrow="Changelog"
         title="A clean record of what shipped, what is in development, and what is next"
@@ -41,7 +45,7 @@ export default function ChangelogPage() {
                     >
                       {entry.status}
                     </span>
-                    <span className="inline-flex items-center gap-1.5 text-xs text-fg-tertiary">
+                    <span className="inline-flex items-center gap-1.5 text-xs tabular-nums text-fg-tertiary">
                       <CalendarDays className="size-3.5" aria-hidden="true" />
                       {entry.date}
                     </span>
