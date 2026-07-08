@@ -32,7 +32,10 @@
  *     examples/smoke-next and examples/smoke-vite, build each fixture, and assert
  *     the compiled CSS contains the component utility classes (bg-primary,
  *     rounded-lg, bg-surface-raised, …). It also installs all publishable
- *     tarballs into a clean temp project and runs the CLI/generator/MCP bins.
+ *     tarballs into a clean temp project and runs the CLI/generator/MCP bins,
+ *     including the default Cooud UI scaffold and a non-Cooud UI neutral
+ *     scaffold so unsupported UI choices cannot silently import missing Cooud
+ *     packages.
  *     This is the real proof-of-style and proof-of-bin-execution.
  *     Heavier and needs the npm registry reachable for peer deps, so it's behind
  *     the flag.
@@ -647,6 +650,48 @@ function fullSmokeBins(tarballsByName) {
         cooudUi.paths?.blocks === "src/components/blocks",
       "create-cooud-stack scaffold aligns cooud-ui.json paths with src alias",
     );
+
+    run(
+      "npx",
+      [
+        "--no-install",
+        "create-cooud-stack",
+        "smoke-neutral",
+        "--yes",
+        "--ui",
+        "shadcn",
+        "--no-install",
+        "--no-git",
+      ],
+      { cwd: fixtureAbs, inherit: true },
+    );
+    const neutralDir = join(fixtureAbs, "smoke-neutral");
+    check(
+      existsSync(join(neutralDir, "src", "app", "page.tsx")),
+      "create-cooud-stack non-Cooud UI scaffold writes src/app/page.tsx",
+    );
+    check(
+      !existsSync(join(neutralDir, "cooud-ui.json")),
+      "create-cooud-stack non-Cooud UI scaffold does not write cooud-ui.json",
+    );
+    const neutralSources = [
+      "package.json",
+      "src/app/layout.tsx",
+      "src/app/page.tsx",
+      "src/app/globals.css",
+    ].map((rel) => readFileSync(join(neutralDir, rel), "utf8"));
+    check(
+      neutralSources.every((content) => !content.includes("@cooud-ui")),
+      "create-cooud-stack non-Cooud UI scaffold has no @cooud-ui imports or deps",
+    );
+    info("[smoke-neutral] npm install");
+    run("npm", ["install", "--no-audit", "--no-fund", "--install-strategy=hoisted"], {
+      cwd: neutralDir,
+      inherit: true,
+    });
+    info("[smoke-neutral] npm run build");
+    run("npm", ["run", "build"], { cwd: neutralDir, inherit: true });
+    ok("create-cooud-stack non-Cooud UI scaffold builds");
 
     run(
       "npx",

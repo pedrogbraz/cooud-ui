@@ -24,7 +24,7 @@ export function stackFlagHelpLines(): string {
   return CLI_FLAGS.map(({ catId, flag, kind }) => {
     const category = catalog.find((candidate) => candidate.id === catId);
     const values = category?.options.map((option) => flagValue(option.id)).join("|") ?? "value";
-    const suffix = kind === "multi" ? " — comma-separated list" : "";
+    const suffix = kind === "multi" ? " — comma-separated list or none" : "";
     return `  --${flag} <${values}>${suffix}`;
   }).join("\n");
 }

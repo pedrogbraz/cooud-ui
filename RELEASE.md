@@ -104,10 +104,11 @@ needed.
 
 1. **Bump the version** in all nine publishable `package.json` files to the new
    `0.x` (they must match). Also bump `CLI_VERSION` in
-   [`packages/cli/src/config.ts`](packages/cli/src/config.ts) to the same value —
-   the CLI's default registry is pinned to its own tag
-   (`https://raw.githubusercontent.com/pedrogbraz/cooud-ui/vX.Y.Z/registry`) and
-   the CLI unit tests fail if `CLI_VERSION` drifts from `package.json`.
+   [`packages/cli/src/config.ts`](packages/cli/src/config.ts) and
+   `SERVER_VERSION` in [`packages/mcp/src/version.ts`](packages/mcp/src/version.ts)
+   to the same value — the CLI and MCP default registries are pinned to their own
+   tag (`https://raw.githubusercontent.com/pedrogbraz/cooud-ui/vX.Y.Z/registry`),
+   and tests fail if either runtime version drifts from `package.json`.
 2. **Build:** `bun run build`.
 3. **Gate + smoke (dry-run preflight):** `bun run release` — this runs the full
    gate, light `package:smoke`, and a publish/tag dry-run. Confirm the printed
@@ -117,7 +118,8 @@ needed.
    and make sure local `HEAD` equals `origin/main`. The real publish path refuses
    to run from a feature branch or stale local main.
 5. **Push tag + publish:** `bun run release --publish`. This first re-runs the
-   full gate, checks npm auth before any tag mutation, runs
+   full gate, checks npm auth and confirms the GitHub repo is public before any
+   tag mutation, runs
    `SMOKE_FULL=1 bun run package:smoke`, pushes `vX.Y.Z`, then publishes
    `@cooud-ui/tokens` → `@cooud-ui/theme` → `@cooud-ui/ui` →
    `@cooud-ui/stack` → `@cooud-ui/ai-kit` → `cooud-ui` →
@@ -127,17 +129,16 @@ needed.
    > `v0.2.0`: all nine publishable packages must share `0.2.0`, and the
    > release cuts `v0.2.0` before any future `0.x` bump.
 
-6. **Ensure the GitHub repo is public.** Before publishing, confirm
+6. **Repo visibility is a hard preflight.** Before publishing, confirm
    `pedrogbraz/cooud-ui` is **public** so the CLI's pinned registry
    (`raw.githubusercontent.com/pedrogbraz/cooud-ui/vX.Y.Z/registry`) is reachable
    and `npx cooud-ui add <component>` resolves component sources from the tagged
-   `vX.Y.Z` registry (not mutable `main`). The release script prints this as a
-   post-publish reminder — it does **not** do it for you.
+   `vX.Y.Z` registry (not mutable `main`). The release script verifies this in
+   preflight and aborts if it cannot prove public visibility.
 
 > The `release` script prints a final summary plus the post-publish steps it did
-> **not** do (confirm repo visibility, cut a GitHub Release, generate SBOM /
-> provenance). Keep this doc in sync with what `scripts/release.mjs` actually
-> does.
+> **not** do (cut a GitHub Release, generate SBOM / provenance). Keep this doc in
+> sync with what `scripts/release.mjs` actually does.
 
 ## Publishing a single package by hand (fallback)
 

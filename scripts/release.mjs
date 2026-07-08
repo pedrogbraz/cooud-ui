@@ -110,6 +110,7 @@ const PACKAGES = [
 const PACKAGE_ORDER_LABEL = PACKAGES.map((pkg) => pkg.name).join(" → ");
 const PUBLISHABLE_PACKAGE_NAMES = new Set(PACKAGES.map((pkg) => pkg.name));
 const NPM_REGISTRY = "https://registry.npmjs.org/";
+const GITHUB_REPO = "pedrogbraz/cooud-ui";
 
 /* ------------------------------------------------------------------ *
  * (a) preflight — clean tree + lockstep versions
@@ -167,6 +168,41 @@ function publishSourcePreflight() {
     ok(`npm auth is present for ${NPM_REGISTRY} as ${c.bold(user)}`);
   } catch (err) {
     fatal(`npm auth is required before --publish can push a tag or publish packages.`, err);
+  }
+}
+
+function verifyGithubRepoPublic() {
+  const script = `
+const repo = ${JSON.stringify(GITHUB_REPO)};
+const url = \`https://api.github.com/repos/\${repo}\`;
+const res = await fetch(url, {
+  headers: {
+    "accept": "application/vnd.github+json",
+    "user-agent": "cooud-ui-release-preflight",
+  },
+});
+if (!res.ok) {
+  console.error(\`GitHub repo visibility check failed: \${res.status} \${res.statusText} at \${url}\`);
+  process.exit(1);
+}
+const json = await res.json();
+if (json.private !== false) {
+  console.error(\`GitHub repo \${repo} is not public; private=\${json.private}\`);
+  process.exit(1);
+}
+process.stdout.write(json.full_name || repo);
+`;
+  try {
+    const repo = run(process.execPath, ["--input-type=module", "-e", script], {
+      capture: true,
+    }).trim();
+    ok(`GitHub repo ${c.bold(repo || GITHUB_REPO)} is public`);
+  } catch (err) {
+    fatal(
+      `could not confirm ${GITHUB_REPO} is public before release. ` +
+        `Published CLIs resolve raw.githubusercontent.com/${GITHUB_REPO}/vX.Y.Z/registry.`,
+      err,
+    );
   }
 }
 
@@ -228,6 +264,7 @@ function preflight() {
   ok(`remote tag ${c.bold(tag)} is free`);
 
   publishSourcePreflight();
+  verifyGithubRepoPublic();
 
   for (const pkg of PACKAGES) {
     if (npmVersionExists(pkg.name, version)) {
@@ -429,15 +466,17 @@ function summary({ version, tag, published }) {
     log(`    ${PUBLISH ? c.green("✓") : c.yellow("◦")} ${p.name}@${version}  →  ${p.registry}`);
   }
 
-  log(`\n${c.bold("Post-publish steps this script did NOT do:")}`);
+  log(`\n${c.bold("Preflight checks this script DID run:")}`);
   log(
-    `  ${c.dim("·")} Confirm the GitHub repo ${c.bold("pedrogbraz/cooud-ui")} is ${c.bold("public")} so the` +
-      ` published CLI's pinned registry`,
+    `  ${c.green("✓")} Confirmed the GitHub repo ${c.bold(GITHUB_REPO)} is ${c.bold("public")} so the` +
+      ` published CLI's pinned registry is reachable.`,
   );
   log(
-    `    ${c.dim("·")} (raw.githubusercontent.com/pedrogbraz/cooud-ui/${tag}/registry) resolves for` +
+    `    ${c.dim("·")} (raw.githubusercontent.com/${GITHUB_REPO}/${tag}/registry) resolves for` +
       ` \`npx cooud-ui add\`.`,
   );
+
+  log(`\n${c.bold("Post-publish steps this script did NOT do:")}`);
   log(`  ${c.dim("·")} Create a GitHub Release for ${tag} (notes / assets), if desired.`);
   log(`  ${c.dim("·")} SBOM / build-provenance attestation (was CI-only; CI is removed).`);
 

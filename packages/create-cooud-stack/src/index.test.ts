@@ -46,4 +46,9 @@ describe("create-cooud-stack CLI", () => {
     expect(parsed.values.deploy).toBe("vercel");
     expect(parsed.values.addons).toBe("biome,husky");
   });
+
+  it("accepts none for multi-select stack flags", () => {
+    const parsed = parseCli(["my-app", "--ai", "none"]);
+    expect(parsed.values.ai).toBe("none");
+  });
 });

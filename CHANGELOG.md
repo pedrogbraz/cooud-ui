@@ -140,7 +140,7 @@ as installable packages and as copy-paste registry items you own.
   spreadsheet application.
 - The CLI validates registry dependency names and suggests the closest match on
   an unknown `add`, preventing typo-driven resolution of unintended entries.
-- Added a published vulnerability disclosure policy (`SECURITY.md`).
+- Added a published vulnerability disclosure policy (`.github/SECURITY.md`).
 - Added Dependabot coverage and documented dependency audit as a release
   governance follow-up to surface vulnerable dependencies early.
 

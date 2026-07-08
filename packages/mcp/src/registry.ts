@@ -1,5 +1,6 @@
 import { readFile } from "node:fs/promises";
 import { isAbsolute, join, resolve } from "node:path";
+import { SERVER_VERSION } from "./version.js";
 
 /**
  * The default public registry base. Mirrors the `cooud-ui` CLI's
@@ -7,8 +8,7 @@ import { isAbsolute, join, resolve } from "node:path";
  * Overridable at runtime via the `COOUD_UI_REGISTRY` env var (http(s) base
  * URL or a local directory path).
  */
-export const DEFAULT_REGISTRY =
-  "https://raw.githubusercontent.com/pedrogbraz/cooud-ui/v0.2.0/registry";
+export const DEFAULT_REGISTRY = `https://raw.githubusercontent.com/pedrogbraz/cooud-ui/v${SERVER_VERSION}/registry`;
 
 /** Resolve the active registry source, honouring the env override. */
 export function resolveRegistrySource(env: NodeJS.ProcessEnv = process.env): string {

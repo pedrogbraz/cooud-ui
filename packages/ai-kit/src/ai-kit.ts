@@ -25,6 +25,7 @@ export const DEFAULT_PRESET: DoctrinePreset = "standard";
 export const SKILLS = ["ui-add", "theme", "code-review", "ship-pr", "evidence-check"] as const;
 export type Skill = (typeof SKILLS)[number];
 export const DEFAULT_SKILLS: readonly Skill[] = SKILLS;
+const COOUD_UI_SKILLS: ReadonlySet<Skill> = new Set(["ui-add", "theme"]);
 
 export interface AiKitOptions {
   /** Absolute path of the (already scaffolded) project. */
@@ -37,6 +38,13 @@ export interface AiKitOptions {
   preset?: DoctrinePreset;
   /** Which Claude Code skills to include. @default all */
   skills?: readonly Skill[];
+  /** Whether to emit Cooud UI-specific rules/skills. @default true */
+  includeCooudUi?: boolean;
+  /**
+   * Whether to emit the cooud-ui MCP config. Defaults to the legacy Claude
+   * behavior unless explicitly selected by a stack scaffold.
+   */
+  cooudUiMcp?: boolean;
 }
 
 export interface AiKitResult {
@@ -71,8 +79,10 @@ function templatesRoot(): string {
  *
  * When `preset` is `"none"`, no doctrine (`AGENTS.md`) is written, so the
  * artifacts that reference it — `CLAUDE.md`, the doctrine Cursor rule, the
- * Copilot digest — are skipped too; only the design-system rule and the Claude
- * tooling (settings, skills, subagent, MCP) ship.
+ * Copilot digest — are skipped too; only assistant-local tooling ships.
+ *
+ * When `includeCooudUi` is false, the generic doctrine/tooling remains, but
+ * Cooud UI-specific rules and skills are not emitted.
  */
 export function writeAiKit(options: AiKitOptions): AiKitResult {
   const {
@@ -81,6 +91,7 @@ export function writeAiKit(options: AiKitOptions): AiKitResult {
     assistants = DEFAULT_ASSISTANTS,
     preset = DEFAULT_PRESET,
     skills = DEFAULT_SKILLS,
+    includeCooudUi = true,
   } = options;
   const root = templatesRoot();
   const written: string[] = [];
@@ -88,6 +99,10 @@ export function writeAiKit(options: AiKitOptions): AiKitResult {
 
   const withDoctrine = preset !== "none";
   const wants = (a: Assistant) => assistants.includes(a);
+  const wantsCooudUiMcp = options.cooudUiMcp ?? (includeCooudUi && wants("claude"));
+  const enabledSkills = includeCooudUi
+    ? skills
+    : skills.filter((skill) => !COOUD_UI_SKILLS.has(skill));
 
   /** Write `content` to `rel` unless it already exists. Tokens are substituted. */
   const emit = (rel: string, content: string): void => {
@@ -116,22 +131,26 @@ export function writeAiKit(options: AiKitOptions): AiKitResult {
     emit("AGENTS.md", doctrine);
   }
 
+  if (wantsCooudUiMcp) {
+    emitTemplate("mcp.json", ".mcp.json");
+  }
+
   // Claude Code — the doctrine-referencing CLAUDE.md only ships with a doctrine.
   if (wants("claude")) {
     if (withDoctrine) emitTemplate("CLAUDE.md", "CLAUDE.md");
     emitTemplate("claude/settings.json", ".claude/settings.json");
     if (withDoctrine)
       emitTemplate("claude/agents/code-reviewer.md", ".claude/agents/code-reviewer.md");
-    emitTemplate("mcp.json", ".mcp.json");
-    for (const skill of skills) {
+    for (const skill of enabledSkills) {
       emitTemplate(`claude/skills/${skill}/SKILL.md`, `.claude/skills/${skill}/SKILL.md`);
     }
   }
 
-  // Cursor — the design-system rule always applies; the doctrine digest only with a preset.
+  // Cursor — the design-system rule applies only to Cooud UI stacks; doctrine is generic.
   if (wants("cursor")) {
     if (withDoctrine) emitTemplate("cursor/rules/00-doctrine.mdc", ".cursor/rules/00-doctrine.mdc");
-    emitTemplate("cursor/rules/10-cooud-ui.mdc", ".cursor/rules/10-cooud-ui.mdc");
+    if (includeCooudUi)
+      emitTemplate("cursor/rules/10-cooud-ui.mdc", ".cursor/rules/10-cooud-ui.mdc");
   }
 
   // GitHub Copilot — a digest of the doctrine.
@@ -154,23 +173,26 @@ export function writeAiKit(options: AiKitOptions): AiKitResult {
 
 /**
  * Parse a comma-separated `--assistants`/`--skills` value (or the literal
- * "all"). Returns the full set for "all"/empty, validates each token against
- * `valid`, and throws a friendly Error naming the bad token.
+ * "all" / "none"). Returns the full set for "all"/empty, an empty set for
+ * "none", validates each token against `valid`, and throws a friendly Error
+ * naming the bad token.
  */
 export function parseList<T extends string>(
   raw: string | undefined,
   valid: readonly T[],
   label: string,
 ): readonly T[] {
-  if (raw === undefined || raw.trim() === "" || raw.trim() === "all") return valid;
-  const picked = raw
+  const normalized = raw?.trim();
+  if (normalized === undefined || normalized === "" || normalized === "all") return valid;
+  if (normalized === "none") return [];
+  const picked = normalized
     .split(",")
     .map((s) => s.trim())
     .filter(Boolean);
   for (const item of picked) {
     if (!valid.includes(item as T)) {
       throw new Error(
-        `Unknown ${label} "${item}". Use one or more of: ${valid.join(", ")} (or "all").`,
+        `Unknown ${label} "${item}". Use one or more of: ${valid.join(", ")} (or "all"/"none").`,
       );
     }
   }

@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { catalog } from "./catalog.js";
 import { resolveStackFlags } from "./cli.js";
+import { defaultSelection } from "./engine.js";
+import { generateCommand } from "./kickoff.js";
 
 describe("resolveStackFlags", () => {
   it("maps short CLI values back to catalog option ids", () => {
@@ -30,5 +32,20 @@ describe("resolveStackFlags", () => {
 
   it("throws a useful error for unknown flag values", () => {
     expect(() => resolveStackFlags({ web: "wordpress" }, { catalog })).toThrow(/Unknown --web/);
+  });
+
+  it("maps the literal none to an empty multi-selection", () => {
+    const config = resolveStackFlags({ ai: "none" }, { catalog });
+    expect(config.assistants).toEqual([]);
+  });
+
+  it("round-trips an intentionally empty defaulted multi-selection", () => {
+    const selected = { ...defaultSelection(catalog), assistants: [] };
+    const command = generateCommand(selected, "acme");
+
+    expect(command).toContain("--ai none");
+
+    const config = resolveStackFlags({ ai: "none" }, { catalog });
+    expect(config.assistants).toEqual(selected.assistants);
   });
 });

@@ -1,6 +1,11 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { RegistryClient, type RegistryIndex, type RegistryLoader } from "./registry.js";
+import {
+  DEFAULT_REGISTRY,
+  RegistryClient,
+  type RegistryIndex,
+  type RegistryLoader,
+} from "./registry.js";
 import {
   buildInstallCommand,
   getComponent,
@@ -55,6 +60,12 @@ const pkg = JSON.parse(readFileSync(new URL("../package.json", import.meta.url),
 describe("MCP server release version", () => {
   it("keeps the runtime version aligned with package.json", () => {
     expect(SERVER_VERSION).toBe(pkg.version);
+  });
+
+  it("pins the default registry to the runtime version tag", () => {
+    expect(DEFAULT_REGISTRY).toBe(
+      `https://raw.githubusercontent.com/pedrogbraz/cooud-ui/v${pkg.version}/registry`,
+    );
   });
 });
 

@@ -111,6 +111,11 @@ describe("scaffoldStack", () => {
     expect(layout).not.toContain("@cooud-ui");
     expect(page).not.toContain("@cooud-ui");
     expect(globals).not.toContain("@cooud-ui");
+    expect(existsSync(join(targetDir, ".mcp.json"))).toBe(false);
+    expect(existsSync(join(targetDir, ".cursor/rules/10-cooud-ui.mdc"))).toBe(false);
+    expect(existsSync(join(targetDir, ".claude/skills/ui-add/SKILL.md"))).toBe(false);
+    expect(existsSync(join(targetDir, ".claude/skills/theme/SKILL.md"))).toBe(false);
+    expect(existsSync(join(targetDir, ".claude/skills/code-review/SKILL.md"))).toBe(true);
   });
 
   it("does not tell ui-none projects to install a selected UI library", () => {
@@ -124,5 +129,39 @@ describe("scaffoldStack", () => {
     const page = readFileSync(join(targetDir, "src", "app", "page.tsx"), "utf8");
     expect(page).toContain("No UI library was selected");
     expect(page).not.toContain("Install and configure the selected UI library");
+  });
+
+  it("emits cooud-ui MCP config when selected without Claude", () => {
+    const config = resolve(catalog, {
+      ...defaultSelection(catalog),
+      assistants: ["ai-cursor"],
+      mcp: ["mcp-cooud-ui"],
+      install: false,
+    }).selection;
+    scaffoldStack({ targetDir, projectName: "my-app", config, catalog });
+
+    expect(existsSync(join(targetDir, ".mcp.json"))).toBe(true);
+    expect(existsSync(join(targetDir, ".cursor/rules/10-cooud-ui.mdc"))).toBe(true);
+    expect(existsSync(join(targetDir, ".claude/settings.json"))).toBe(false);
+
+    const kickoff = readFileSync(join(targetDir, "KICKOFF.md"), "utf8");
+    expect(kickoff).toContain(
+      "Use it only after your assistant has loaded the generated `.mcp.json`",
+    );
+  });
+
+  it("does not generate cooud-ui MCP for non-Cooud UI stacks", () => {
+    const config = resolve(catalog, {
+      ...defaultSelection(catalog),
+      ui: "ui-none",
+      mcp: ["mcp-cooud-ui"],
+      install: false,
+    }).selection;
+    const result = scaffoldStack({ targetDir, projectName: "my-app", config, catalog });
+
+    expect(result.unsupported).toContain(
+      "The cooud-ui MCP server is not generated for stacks that do not use Cooud UI.",
+    );
+    expect(existsSync(join(targetDir, ".mcp.json"))).toBe(false);
   });
 });

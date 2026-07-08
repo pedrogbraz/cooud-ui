@@ -441,6 +441,9 @@ function unsupportedNotes(config: StackConfig): string[] {
       "Configure the selected non-Cooud MCP servers manually; the generated AI Kit template only ships the cooud-ui MCP entry today.",
     );
   }
+  if (mcpIds.includes("mcp-cooud-ui") && !usesCooudUi(config)) {
+    notes.push("The cooud-ui MCP server is not generated for stacks that do not use Cooud UI.");
+  }
   if (multi(config, "skills").length > 0) {
     notes.push(
       "Install the selected agent skill packs in your agent environment; KICKOFF.md records the choices but the scaffold does not install external skills.",
@@ -529,12 +532,16 @@ export function scaffoldStack(options: ScaffoldStackOptions): ScaffoldStackResul
   }
 
   const assistants = assistantIds(config);
-  if (assistants.length > 0) {
+  const isCooudUi = usesCooudUi(config);
+  const cooudUiMcp = isCooudUi && multi(config, "mcp").includes("mcp-cooud-ui");
+  if (assistants.length > 0 || cooudUiMcp) {
     const { written } = writeAiKit({
       targetDir,
       name: projectName,
       assistants,
       preset: "standard",
+      includeCooudUi: isCooudUi,
+      cooudUiMcp,
     });
     fileCount += written.length;
   }

@@ -29,6 +29,10 @@ function tokens(raw: string): string[] {
     .filter(Boolean);
 }
 
+function isNone(raw: string): boolean {
+  return raw.trim().toLowerCase() === "none";
+}
+
 function optionIdForFlag(category: Category, value: string, flag: string): string {
   const normalized = value.trim().toLowerCase();
   const match = category.options.find(
@@ -64,6 +68,10 @@ export function parseStackFlags(
     if (kind === "single") {
       selection[catId] = optionIdForFlag(category, raw, flag);
     } else {
+      if (isNone(raw)) {
+        selection[catId] = [];
+        continue;
+      }
       const ids = tokens(raw).map((value) => optionIdForFlag(category, value, flag));
       selection[catId] = [...new Set(ids)];
     }

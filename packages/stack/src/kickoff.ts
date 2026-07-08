@@ -13,7 +13,7 @@
  * `[a-z0-9-]` slug so it can never break out of the argument or inject flags.
  */
 
-import { catalog as defaultCatalog } from "./catalog.js";
+import { catalog as defaultCatalog, MULTI_DEFAULTS } from "./catalog.js";
 import { STACK_BUILDER_GENERATOR, STACK_CREATE_COMMAND } from "./constants.js";
 import type { Catalog, Category, Option, StackConfig } from "./types.js";
 
@@ -126,6 +126,7 @@ export function generateCommand(config: StackConfig, projectName = "my-cooud-app
     } else {
       const ids = multiIds(config, catId);
       if (ids.length > 0) parts.push(`--${flag} ${ids.map(flagValue).join(",")}`);
+      else if ((MULTI_DEFAULTS[catId]?.length ?? 0) > 0) parts.push(`--${flag} none`);
     }
   }
 
@@ -467,9 +468,9 @@ export function generateKickoff(
       "- Every interactive element must have a visible `focus-visible` ring and pass the axe a11y gate.",
     );
     lines.push("- Tag composite elements with `data-slot` for styling hooks.");
-    if (mcp.includes("cooud-ui")) {
+    if (multiIds(config, "mcp").includes("mcp-cooud-ui")) {
       lines.push(
-        "- The **cooud-ui MCP server** is available — query it for component APIs and tokens instead of guessing.",
+        "- The **cooud-ui MCP server** is selected. Use it only after your assistant has loaded the generated `.mcp.json` or an equivalent MCP config.",
       );
     }
     lines.push("");
