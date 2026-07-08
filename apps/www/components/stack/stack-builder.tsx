@@ -2,7 +2,7 @@
 
 import { cn, Input, Label, Reveal } from "@cooud-ui/ui";
 import { ListChecks, SlidersHorizontal, Terminal } from "lucide-react";
-import { useCallback, useId, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import { catalog, GROUP_ORDER } from "@/lib/stack/catalog";
 import { defaultSelection, randomize, resolve, select, toggleMulti } from "@/lib/stack/engine";
 import type { Selection } from "@/lib/stack/types";
@@ -11,6 +11,22 @@ import { SelectedSummary } from "./selected-summary";
 import { StackOutput } from "./stack-output";
 
 type MobileView = "configure" | "output";
+
+/**
+ * The single stagger step (seconds) shared by every `Reveal` on the page, so
+ * the hero, the builder sections, and the summary rail all enter on one rhythm
+ * instead of each picking its own timing.
+ */
+const REVEAL_STAGGER = 0.05;
+
+/**
+ * The shared one-shot enter for the mobile configure ↔ output swap: the newly
+ * shown column fades/rises from its `@starting-style` state. Tailwind v4 maps
+ * `translate-y-*` to the CSS `translate` property, so that is what we
+ * transition (never `transform`). Reduced motion pins both starting values.
+ */
+const MOBILE_SWAP_ENTER =
+  "transition-[opacity,translate] duration-300 ease-[var(--ease-out-quart)] starting:opacity-0 starting:translate-y-1 motion-reduce:transition-none motion-reduce:starting:opacity-100 motion-reduce:starting:translate-y-0";
 
 /**
  * The Cooud Stack Builder — a Better-T-Stack-class configurator.
@@ -55,6 +71,24 @@ export function StackBuilder() {
     const seed = (Date.now() ^ (rollRef.current * 0x9e3779b1)) >>> 0;
     setSelection(randomize(catalog, seed));
   }, []);
+
+  // --- Summary-rail scroll shadow ----------------------------------------
+  // The sticky rail scrolls independently on desktop; when it does, a soft top
+  // fade signals the clipped content. The scroll handler never re-renders —
+  // it writes a boolean data-attribute inside requestAnimationFrame and CSS
+  // owns the fade (same pattern as SpotlightCard's data-attribute hover).
+  const railRef = useRef<HTMLDivElement>(null);
+  const railRafRef = useRef(0);
+
+  const handleRailScroll = useCallback(() => {
+    cancelAnimationFrame(railRafRef.current);
+    railRafRef.current = requestAnimationFrame(() => {
+      const rail = railRef.current;
+      if (rail) rail.toggleAttribute("data-scrolled", rail.scrollTop > 8);
+    });
+  }, []);
+
+  useEffect(() => () => cancelAnimationFrame(railRafRef.current), []);
 
   return (
     <main id="main-content" className="min-h-[calc(100vh-4rem)] bg-surface-base text-fg">
@@ -160,14 +194,14 @@ export function StackBuilder() {
             className={cn(
               "flex-col gap-10 lg:flex",
               // Mobile: show only the active view; desktop always shows both.
-              // Soft enter on the mobile swap: a one-shot fade/slide from the
+              // Soft enter on the mobile swap: a one-shot fade/rise from the
               // `starting:` state (Tailwind v4 @starting-style). Reduced-motion
               // safe and never affects the always-visible desktop layout.
-              "transition-[opacity,transform] duration-300 ease-[var(--ease-out-quart)] starting:opacity-0 starting:translate-y-1 motion-reduce:transition-none motion-reduce:starting:opacity-100 motion-reduce:starting:translate-y-0",
+              MOBILE_SWAP_ENTER,
               mobileView === "configure" ? "flex" : "hidden",
             )}
           >
-            <div className="flex flex-col gap-2">
+            <Reveal className="flex flex-col gap-2">
               <Label htmlFor={projectNameId} className="text-sm font-semibold text-fg">
                 Project name
               </Label>
@@ -184,16 +218,17 @@ export function StackBuilder() {
               <p id={`${projectNameId}-hint`} className="text-xs text-fg-tertiary">
                 Used in the scaffolding command — sanitized to a safe slug.
               </p>
-            </div>
+            </Reveal>
 
             {GROUP_ORDER.map((group, gi) => {
               const cats = catalog.filter((c) => c.group === group && resolution.categories[c.id]);
               if (cats.length === 0) return null;
               return (
                 // Each builder section (Framework, Data, Conventions, …) fades up
-                // once as it enters. The stagger is capped so later sections don't
-                // feel delayed; `Reveal` is reduced-motion safe.
-                <Reveal key={group} delay={Math.min(gi, 5) * 0.04}>
+                // once as it enters, one shared stagger step after the project
+                // name. The stagger is capped so later sections don't feel
+                // delayed; `Reveal` is reduced-motion safe.
+                <Reveal key={group} delay={Math.min(gi + 1, 6) * REVEAL_STAGGER}>
                   <section aria-label={group} className="flex flex-col gap-5">
                     {/* Section header — a quiet uppercase label + a hairline. */}
                     <div className="flex items-center gap-3">
@@ -225,36 +260,58 @@ export function StackBuilder() {
 
           {/* Aside: summary + output. Sticky on desktop with a top offset that
               clears the 4rem sticky nav (top-20 = 5rem → 1rem breathing room).
-              max-h + overflow lets a long rail scroll independently of the page
-              without pushing the sticky context. */}
+              The inner rail carries max-h + overflow so a long rail scrolls
+              independently of the page, while the aside itself stays a plain
+              positioning context for the scroll-shadow overlay. */}
           <aside
             key={`output-${mobileView === "output"}`}
             data-active={mobileView === "output"}
             className={cn(
-              "min-w-0 flex-col gap-6 lg:sticky lg:top-20 lg:flex lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto lg:overflow-x-hidden lg:overscroll-contain lg:pr-1",
+              "relative min-w-0 flex-col lg:sticky lg:top-20 lg:flex",
               // Mobile: show only the active view; desktop always shows both.
-              "transition-[opacity,transform] duration-300 ease-[var(--ease-out-quart)] starting:opacity-0 starting:translate-y-1 motion-reduce:transition-none motion-reduce:starting:opacity-100 motion-reduce:starting:translate-y-0",
+              MOBILE_SWAP_ENTER,
               mobileView === "output" ? "flex" : "hidden",
             )}
             aria-label="Selected stack and output"
           >
-            {/* shrink-0: the rail is a flex column with a max-height + scroll, so
-                its children must keep their natural height instead of being
-                compressed to fit — otherwise the output frame's overflow-hidden
-                would clip the KICKOFF brief and the rail would have nothing to
-                scroll. With shrink-0 the content overflows and the rail scrolls. */}
-            <SelectedSummary
-              resolution={resolution}
-              catalog={catalog}
-              onReset={handleReset}
-              onRandomize={handleRandomize}
-              className="shrink-0"
-            />
-            <StackOutput
-              config={resolution.selection}
-              projectName={projectName}
-              catalog={catalog}
-              className="shrink-0"
+            <div
+              ref={railRef}
+              onScroll={handleRailScroll}
+              className="peer/rail flex min-w-0 flex-col gap-6 lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto lg:overflow-x-hidden lg:overscroll-contain lg:pr-1"
+            >
+              {/* shrink-0 (on the Reveal wrappers, the rail's flex children): the
+                  rail is a flex column with a max-height + scroll, so its children
+                  must keep their natural height instead of being compressed to fit
+                  — otherwise the output frame's overflow-hidden would clip the
+                  KICKOFF brief and the rail would have nothing to scroll. The
+                  Reveals enter on the same stagger rhythm as the left column. */}
+              <Reveal delay={REVEAL_STAGGER} className="shrink-0">
+                <SelectedSummary
+                  resolution={resolution}
+                  catalog={catalog}
+                  onReset={handleReset}
+                  onRandomize={handleRandomize}
+                />
+              </Reveal>
+              <Reveal delay={REVEAL_STAGGER * 2} className="shrink-0">
+                <StackOutput
+                  config={resolution.selection}
+                  projectName={projectName}
+                  catalog={catalog}
+                />
+              </Reveal>
+            </div>
+            {/* Top scroll shadow: a soft fade that appears once the rail has
+                scrolled (data-scrolled is toggled by the rAF handler above, so
+                showing it costs no re-render). Desktop-only — the rail only
+                scrolls independently at lg — and purely decorative. */}
+            <div
+              aria-hidden="true"
+              data-slot="rail-scroll-shadow"
+              className={cn(
+                "pointer-events-none absolute inset-x-0 top-0 z-10 hidden h-10 bg-gradient-to-b from-surface-base to-transparent lg:block",
+                "opacity-0 transition-opacity duration-200 peer-data-[scrolled]/rail:opacity-100 motion-reduce:transition-none",
+              )}
             />
           </aside>
         </div>
