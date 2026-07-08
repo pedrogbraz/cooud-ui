@@ -100,6 +100,10 @@
       "types": "./dist/components/code-block.d.ts",
       "import": "./dist/components/code-block.js"
     },
+    "./code-tabs": {
+      "types": "./dist/components/code-tabs.d.ts",
+      "import": "./dist/components/code-tabs.js"
+    },
     "./collapsible": {
       "types": "./dist/components/collapsible.d.ts",
       "import": "./dist/components/collapsible.js"
@@ -127,6 +131,10 @@
     "./copy-button": {
       "types": "./dist/components/copy-button.d.ts",
       "import": "./dist/components/copy-button.js"
+    },
+    "./countdown": {
+      "types": "./dist/components/countdown.d.ts",
+      "import": "./dist/components/countdown.js"
     },
     "./data-table": {
       "types": "./dist/components/data-table.d.ts",
@@ -212,6 +220,10 @@
       "types": "./dist/components/input-otp.d.ts",
       "import": "./dist/components/input-otp.js"
     },
+    "./json-viewer": {
+      "types": "./dist/components/json-viewer.d.ts",
+      "import": "./dist/components/json-viewer.js"
+    },
     "./kanban": {
       "types": "./dist/components/kanban.d.ts",
       "import": "./dist/components/kanban.js"
@@ -232,6 +244,10 @@
       "types": "./dist/components/logo-carousel.d.ts",
       "import": "./dist/components/logo-carousel.js"
     },
+    "./magnetic": {
+      "types": "./dist/components/magnetic.d.ts",
+      "import": "./dist/components/magnetic.js"
+    },
     "./marquee": {
       "types": "./dist/components/marquee.d.ts",
       "import": "./dist/components/marquee.js"
@@ -247,6 +263,10 @@
     "./metric": {
       "types": "./dist/components/metric.d.ts",
       "import": "./dist/components/metric.js"
+    },
+    "./mode-toggle": {
+      "types": "./dist/components/mode-toggle.d.ts",
+      "import": "./dist/components/mode-toggle.js"
     },
     "./motion-presets": {
       "types": "./dist/components/motion-presets.d.ts",
@@ -267,6 +287,10 @@
     "./number-input": {
       "types": "./dist/components/number-input.d.ts",
       "import": "./dist/components/number-input.js"
+    },
+    "./orbit": {
+      "types": "./dist/components/orbit.d.ts",
+      "import": "./dist/components/orbit.js"
     },
     "./pagination": {
       "types": "./dist/components/pagination.d.ts",
@@ -344,6 +368,10 @@
       "types": "./dist/components/sidebar.d.ts",
       "import": "./dist/components/sidebar.js"
     },
+    "./signature-pad": {
+      "types": "./dist/components/signature-pad.d.ts",
+      "import": "./dist/components/signature-pad.js"
+    },
     "./skeleton": {
       "types": "./dist/components/skeleton.d.ts",
       "import": "./dist/components/skeleton.js"
@@ -380,6 +408,10 @@
       "types": "./dist/components/table.d.ts",
       "import": "./dist/components/table.js"
     },
+    "./table-of-contents": {
+      "types": "./dist/components/table-of-contents.d.ts",
+      "import": "./dist/components/table-of-contents.js"
+    },
     "./tabs": {
       "types": "./dist/components/tabs.d.ts",
       "import": "./dist/components/tabs.js"
@@ -387,6 +419,10 @@
     "./tags-input": {
       "types": "./dist/components/tags-input.d.ts",
       "import": "./dist/components/tags-input.js"
+    },
+    "./terminal": {
+      "types": "./dist/components/terminal.d.ts",
+      "import": "./dist/components/terminal.js"
     },
     "./textarea": {
       "types": "./dist/components/textarea.d.ts",
