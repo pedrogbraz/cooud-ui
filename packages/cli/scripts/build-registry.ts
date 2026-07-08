@@ -83,6 +83,7 @@ const BLOCK_MANIFEST: ReadonlyArray<{ slug: string; file: string; constName: str
   { slug: "page-header", file: "page-sections.tsx", constName: "pageHeaderCode" },
   { slug: "filter-bar", file: "page-sections.tsx", constName: "filterBarCode" },
   { slug: "empty-state", file: "page-sections.tsx", constName: "emptyStateCode" },
+  { slug: "status-page", file: "status-page.tsx", constName: "statusPageCode" },
   { slug: "chat-thread", file: "ai.tsx", constName: "chatThreadCode" },
   { slug: "prompt-box", file: "ai.tsx", constName: "promptBoxCode" },
   { slug: "ai-response", file: "ai.tsx", constName: "aiResponseCode" },
@@ -102,6 +103,10 @@ const BLOCK_MANIFEST: ReadonlyArray<{ slug: string; file: string; constName: str
   { slug: "post-card", file: "social.tsx", constName: "postCardCode" },
   { slug: "comment-thread", file: "social.tsx", constName: "commentThreadCode" },
   { slug: "profile-card", file: "social.tsx", constName: "profileCardCode" },
+  { slug: "changelog", file: "changelog.tsx", constName: "changelogCode" },
+  { slug: "integrations", file: "integrations.tsx", constName: "integrationsCode" },
+  { slug: "waitlist", file: "waitlist.tsx", constName: "waitlistCode" },
+  { slug: "feature-matrix", file: "feature-matrix.tsx", constName: "featureMatrixCode" },
 ];
 
 /**
