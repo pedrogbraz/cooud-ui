@@ -3,9 +3,11 @@ import {
   Accessibility,
   AppWindow,
   Atom,
+  AtSign,
   BookOpen,
   Bot,
   Box,
+  CaseSensitive,
   CircleDollarSign,
   CircleSlash,
   Cloud,
@@ -18,6 +20,9 @@ import {
   Feather,
   Flame,
   FlaskConical,
+  Folder,
+  FolderTree,
+  GitCommitHorizontal,
   GitFork,
   Github,
   GitMerge,
@@ -65,7 +70,12 @@ const ICONS: Record<string, LucideIcon> = {
   accessibility: Accessibility,
   "app-window": AppWindow,
   atom: Atom,
+  "at-sign": AtSign,
   "book-open": BookOpen,
+  "case-sensitive": CaseSensitive,
+  folder: Folder,
+  "folder-tree": FolderTree,
+  "git-commit": GitCommitHorizontal,
   bot: Bot,
   box: Box,
   "circle-dollar-sign": CircleDollarSign,
@@ -127,13 +137,14 @@ export interface OptionIconProps {
 }
 
 /**
- * The rounded icon tile shown at the top-left of an {@link OptionCard}. A single
- * consistent surface that shifts from a neutral resting state to a primary-tinted
- * "selected" state, with the surrounding card driving the hover lift. Purely
- * presentational — colour/size live here so every card's tile stays identical.
+ * The rounded icon tile shown at the top-left of an {@link OptionCard}. The tile
+ * itself stays a single consistent neutral surface in every state — only the icon
+ * colour shifts (to `primary` when selected, warming on hover otherwise), so the
+ * grid reads calm and uniform. Purely presentational; size/colour live here so
+ * every card's tile is identical.
  *
- * All transitions are short colour/shadow tweens (no transform here — the card
- * owns the lift) so there is never layout shift inside the grid.
+ * Transitions are a short colour tween only (no transform, no glow) so there is
+ * never layout shift inside the grid.
  */
 export function OptionIcon({ name, selected }: OptionIconProps) {
   const Icon = optionIcon(name);
@@ -142,10 +153,8 @@ export function OptionIcon({ name, selected }: OptionIconProps) {
       data-slot="option-icon"
       data-selected={selected || undefined}
       className={cn(
-        "grid size-9 shrink-0 place-items-center rounded-lg border transition-[background,border-color,color,box-shadow] duration-200 ease-[var(--ease-out-quart)] [&_svg]:size-4.5 [&_svg]:transition-transform [&_svg]:duration-200 [&_svg]:ease-[var(--ease-out-quart)] motion-reduce:transition-none",
-        selected
-          ? "border-primary/40 bg-primary/15 text-primary shadow-[0_0_0_3px_color-mix(in_oklch,var(--color-primary)_12%,transparent)]"
-          : "border-border bg-surface-overlay text-fg-secondary group-hover/option:border-border-strong group-hover/option:text-fg group-hover/option:[&_svg]:scale-110",
+        "grid size-9 shrink-0 place-items-center rounded-lg border border-border bg-surface-overlay transition-colors duration-150 ease-[var(--ease-out-quart)] [&_svg]:size-4.5 motion-reduce:transition-none",
+        selected ? "text-primary" : "text-fg-secondary group-hover/option:text-fg",
       )}
     >
       <Icon aria-hidden="true" />

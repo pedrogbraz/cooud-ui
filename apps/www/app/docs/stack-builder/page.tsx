@@ -17,9 +17,8 @@ import {
 
 const outputCards = [
   {
-    title: "Preview command",
-    description:
-      "A deterministic command contract generated from the resolved stack. It is beta-only until the cooud-stack generator package ships.",
+    title: "Generator command",
+    description: "A deterministic create-cooud-stack command generated from the resolved stack.",
   },
   {
     title: "KICKOFF.md",
@@ -42,16 +41,16 @@ export default function StackBuilderDocsPage() {
       <DocsHeader
         eyebrow="Stack Builder"
         title="Compose a stack, then export the truth"
-        description="The Stack Builder is a beta preview for choosing web, backend, runtime, data, auth, UI, AI, MCP, deploy, and tooling layers with live compatibility checks."
+        description="The Stack Builder lets you choose web, backend, runtime, data, auth, UI, AI, MCP, deploy, and tooling layers with live compatibility checks."
       >
         <PrimaryLink href={STACK_BUILDER_METADATA.route}>Open Stack Builder</PrimaryLink>
       </DocsHeader>
 
       <div className="mt-8">
         <DocCallout title={STACK_BUILDER_METADATA.statusLabel}>
-          {STACK_BUILDER_METADATA.generatorTruth} Treat the generated command as a preview artifact;
-          the stable artifacts today are <InlineCode>KICKOFF.md</InlineCode> and{" "}
-          <InlineCode>stack.json</InlineCode>.
+          {STACK_BUILDER_METADATA.generatorTruth} The generated command,{" "}
+          <InlineCode>KICKOFF.md</InlineCode>, and <InlineCode>stack.json</InlineCode> are emitted
+          from the same resolved stack contract.
         </DocCallout>
       </div>
 
@@ -68,7 +67,7 @@ export default function StackBuilderDocsPage() {
 
       <DocsSection
         title="Generator truth"
-        description="The builder currently emits a command for the intended generator package, but this repository only contains the UI, token, theme, and registry CLI packages."
+        description="The builder emits commands for the generator package that lives in this monorepo and is released with the rest of Cooud UI."
       >
         <div className="rounded-xl border border-border bg-surface-raised p-5 text-sm leading-6 text-fg-secondary">
           <p>

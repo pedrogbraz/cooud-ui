@@ -14,7 +14,7 @@ Cooud color/typography/elevation scale in your own components.
 
 ## Install
 
-> Published on npm under the `@cooud` scope (available once `v0.1.0` is released).
+> Published on npm under the `@cooud-ui` scope.
 
 ```sh
 # npm
@@ -100,8 +100,8 @@ Exports: `themes`, `themeNames`, `modes`, `defaultTheme`, `defaultMode`,
   **Neutral** — each with `light` and `dark` modes.
 
 The generated `styles/tokens.css` and `preset/` are checked in. After editing
-`src/tokens.ts`, regenerate them with `tokens:generate`; CI verifies they are in
-sync with `tokens:check`.
+`src/tokens.ts`, regenerate them with `tokens:generate`; verify they are in sync
+with `tokens:check`.
 
 ## Related packages
 

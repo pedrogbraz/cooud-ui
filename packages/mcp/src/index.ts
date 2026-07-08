@@ -10,9 +10,21 @@ import {
   listComponents,
   searchRegistry,
 } from "./tools.js";
+import { SERVER_VERSION } from "./version.js";
 
 const SERVER_NAME = "cooud-ui";
-const SERVER_VERSION = "0.1.0";
+const HELP = `cooud-ui-mcp — expose the Cooud UI registry through MCP.
+
+Usage
+  cooud-ui-mcp [options]
+
+Options
+  -h, --help     Show this help
+  -v, --version  Show the version
+
+Environment
+  COOUD_UI_REGISTRY  Override the registry source
+`;
 
 /**
  * The shape returned by every tool handler in the SDK 1.x API. A `type` alias
@@ -179,6 +191,16 @@ export function createServer(client: RegistryClient, source: string): McpServer 
 }
 
 async function main(): Promise<void> {
+  const args = process.argv.slice(2);
+  if (args.includes("--help") || args.includes("-h")) {
+    process.stdout.write(HELP);
+    return;
+  }
+  if (args.includes("--version") || args.includes("-v")) {
+    process.stdout.write(`${SERVER_VERSION}\n`);
+    return;
+  }
+
   const source = resolveRegistrySource();
   const client = new RegistryClient(new SourceRegistryLoader(source));
   const server = createServer(client, source);

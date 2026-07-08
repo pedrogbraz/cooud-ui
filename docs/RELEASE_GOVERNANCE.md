@@ -1,28 +1,29 @@
 # Release & Supply-Chain Governance
 
-This document is the source of truth for the **repository settings** the CI/CD
-workflows assume. The workflows enforce what they can in YAML; the rest
-(branch protection, tag protection, required reviewers) must be configured in
-**GitHub repo settings** by an admin. Until those settings exist, the policies
-below are advisory.
+This document records the target repository governance for releases. The current
+release path is local and is documented in [`RELEASE.md`](../RELEASE.md);
+GitHub Actions release automation is **not active**. CI/CD workflow references
+below are retained as the posture to restore when hosted CI comes back.
 
 Related files:
 
-- `.github/workflows/ci.yml` — quality gates on every PR/push to `main`.
-- `.github/workflows/release.yml` — approval-gated publish on `v*` tags.
-- `.github/CODEOWNERS` — required reviewers per area.
+- `.github/workflows/ci.yml` — target quality gates on every PR/push to `main`
+  when hosted CI is restored.
+- `.github/workflows/release.yml` — future approval-gated publish on `v*` tags;
+  not active today.
+- `.github/CODEOWNERS` — target required reviewers per area.
 - `RELEASE.md` — what gets published, where, and how to publish manually.
 
 ---
 
-## 1. Supply-chain hardening (already enforced in YAML)
+## 1. Supply-chain hardening target
 
 ### Pinned, reproducible toolchain
 
-- **Bun is pinned** to `1.3.14` in both workflows — the same version as
+- **Bun must stay pinned** to `1.3.14` in workflows — the same version as
   `packageManager` in the root `package.json`. CI must never use `bun-version:
   latest` (non-reproducible).
-- **Every GitHub Action is pinned by full commit SHA**, not by a mutable tag.
+- **Every GitHub Action must be pinned by full commit SHA**, not by a mutable tag.
   A mutable tag (e.g. `@v4`) can be silently re-pointed at malicious code; a
   SHA cannot. Each pin carries a trailing `# vX.Y.Z` comment for readability.
 
@@ -44,29 +45,31 @@ Current action pins:
 
 ### Least-privilege permissions
 
-- Both workflows declare `permissions: contents: read` at the **workflow top
+- Future workflows should declare `permissions: contents: read` at the **workflow top
   level**, dropping the default broad token scope.
-- The `release.yml` `publish` job widens to exactly what it needs:
+- A restored `release.yml` `publish` job should widen to exactly what it needs:
   `packages: write` (publish), `id-token: write` (OIDC for attestation),
   `attestations: write` (store the attestation). Nothing more.
 
 ### Provenance & SBOM
 
-The release job **packs first, then attests, then publishes the same bytes**:
+A restored release job should **pack first, then attest, then publish the same bytes**:
 
-1. `bun pm pack` each scoped package into `dist-artifacts/scoped/*.tgz` and the
-   CLI into `dist-artifacts/cli/*.tgz` (kept apart only to avoid a tarball-name
-   collision — see below).
+1. `bun pm pack` each publishable package into a package-specific
+   `dist-artifacts/<package>/*.tgz` directory (kept apart to avoid tarball-name
+   collisions — see below).
 2. `anchore/sbom-action` writes a CycloneDX SBOM (`sbom.cyclonedx.json`).
 3. `actions/attest-build-provenance` signs a SLSA-style provenance attestation
    over each tarball via OIDC (no long-lived signing key).
-4. `npm publish <tarball>` ships the attested bytes: all four packages
-   (`@cooud-ui/tokens`, `@cooud-ui/theme`, `@cooud-ui/ui`, and `cooud-ui`) to public npm.
+4. `npm publish <tarball>` ships the attested bytes: all nine packages
+   (`@cooud-ui/tokens`, `@cooud-ui/theme`, `@cooud-ui/ui`, `@cooud-ui/stack`,
+   `@cooud-ui/ai-kit`, `cooud-ui`, `create-cooud-app`, `create-cooud-stack`, and
+   `cooud-ui-mcp`) to public npm.
 
-The separate `scoped/` and `cli/` artifact directories are intentional:
-`@cooud-ui/ui` and `cooud-ui` both pack to `cooud-ui-<version>.tgz`.
+The separate per-package artifact directories are intentional: `@cooud-ui/ui`
+and `cooud-ui` both pack to `cooud-ui-<version>.tgz`.
 
-Consumers can verify provenance with:
+When attestation is restored, consumers can verify provenance with:
 
 ```sh
 gh attestation verify <tarball-or-oci-ref> --owner cooud
@@ -74,10 +77,10 @@ gh attestation verify <tarball-or-oci-ref> --owner cooud
 
 ---
 
-## 2. CI quality gates (`ci.yml`)
+## 2. Target CI quality gates (`ci.yml`)
 
-On every PR and every push to `main`, the `build` job runs these steps **in
-order**; any failure (except `audit`) blocks the merge:
+When hosted CI is restored, every PR and every push to `main` should run these
+steps **in order**; any failure (except `audit`) blocks the merge:
 
 1. `typecheck`
 2. `lint`
@@ -86,9 +89,11 @@ order**; any failure (except `audit`) blocks the merge:
 5. `tokens:check` — generated tokens match their source of truth.
 6. `check:example-sections` — docs TOC metadata is in sync.
 7. `build`
-8. `package:smoke` with `SMOKE_FULL=1` — validates tarball structure, installs
-   packed local tarballs into the consumer fixtures (`examples/smoke-next/`,
-   `examples/smoke-vite/`), builds them, and asserts styled CSS is emitted.
+8. `package:smoke` with `SMOKE_FULL=1` — validates tarball structure for all
+   publishables, packs all publishables, installs the runtime UI tarballs into
+   the consumer fixtures (`examples/smoke-next/`, `examples/smoke-vite/`), builds
+   them, asserts styled CSS is emitted, and runs the installed CLI/generator/MCP
+   bins from tarballs.
 9. `bundle:check` with strict budgets.
 10. `test:a11y`
 11. `test:e2e`
@@ -134,8 +139,9 @@ Configure in **Settings → Branches → Branch protection rules** for `main`:
 
 ## 4. Tag protection — `v*`
 
-Tags are the **only** trigger for `release.yml`, so they are a privileged,
-publish-causing surface and must be locked down.
+Tags are a privileged release surface. Today the local release script creates and
+pushes `v*` tags only in `--publish` mode; if hosted release automation is
+restored, tags also become the publish trigger and must be locked down.
 
 Configure in **Settings → Tags → Tag protection rules**:
 
@@ -143,15 +149,16 @@ Configure in **Settings → Tags → Tag protection rules**:
   designated release team) may create/push/delete `v*` tags. This prevents an
   arbitrary contributor from triggering a publish by pushing a tag.
 
-Combined with the `release` environment (below), this gives **two independent
-gates** before any package is published: who can create the tag, and who must
-approve the deployment.
+Combined with the future `release` environment (below), this gives **two
+independent gates** before any package is published: who can create the tag, and
+who must approve the deployment.
 
 ---
 
-## 5. The `release` environment (manual approval gate)
+## 5. Future `release` environment (manual approval gate)
 
-The `publish` job runs in `environment: name: release`. Configure in
+When hosted release automation is restored, the `publish` job should run in
+`environment: name: release`. Configure in
 **Settings → Environments → `release`**:
 
 - **Required reviewers:** add the release approver(s) / team. The publish job
@@ -163,9 +170,10 @@ The `publish` job runs in `environment: name: release`. Configure in
   run from an arbitrary branch.
 - **Environment secrets:** store publish secrets here so they are only exposed
   to the approved `release` deployment, never to PR/CI runs:
-  - `NPM_TOKEN` — for all four packages on public npm (the scoped `@cooud-ui/*`
-    libs and the unscoped CLI `cooud-ui`). The release workflow validates this
-    secret before any package publish step runs.
+  - `NPM_TOKEN` — for all nine packages on public npm (the scoped
+    `@cooud-ui/*` packages and the unscoped `cooud-ui`, `create-cooud-app`,
+    `create-cooud-stack`, and `cooud-ui-mcp` packages). The release workflow
+    validates this secret before any package publish step runs.
 - **Wait timer (optional):** a short delay gives a window to cancel a bad release.
 
 ---
@@ -175,17 +183,20 @@ The `publish` job runs in `environment: name: release`. Configure in
 These are **not** code changes — they are account/settings actions that must
 exist for releases to be reproducible **and** approved:
 
-1. **Create the `@cooud` org on npmjs** (and be a member with publish rights) so
-   the scoped `@cooud-ui/*` libs can publish with `access: public`; otherwise the
-   scoped publishes are rejected.
-2. **Own the unscoped npm name `cooud-ui`** on npmjs for the CLI, and add an
-   `NPM_TOKEN` as a `release`-environment secret.
-3. **Enable** the branch protection (§3), tag protection (§4), and `release`
-   environment with required reviewers (§5) described above.
+1. **Own the `@cooud-ui` scope on npmjs** (and have publish rights) so the
+   scoped `@cooud-ui/*` packages can publish with `access: public`; otherwise
+   the scoped publishes are rejected.
+2. **Own the unscoped npm names `cooud-ui`, `create-cooud-app`,
+   `create-cooud-stack`, and `cooud-ui-mcp`** on npmjs, and add an `NPM_TOKEN`
+   as a `release`-environment secret.
+3. **Enable** branch protection (§3) and tag protection (§4). Enable the future
+   `release` environment with required reviewers (§5) only when hosted release
+   automation is restored.
 4. **Replace the placeholder owners** in `.github/CODEOWNERS` (`@pedrogbraz`)
    with the real `cooud` org teams/handles once the org exists.
 5. **Clear the remaining dev-only `vite`/`esbuild` advisories** (bump `vitest`
    when upstream ships a fix), then make `audit` a blocking gate in `ci.yml` (§2).
 
-Until §1–§3 are done, the workflows are correct but a real publish will not
-succeed end-to-end; this is an ops gap, not a workflow bug.
+Until §1–§2 are done, a local real publish will not succeed end-to-end. Until
+§3–§5 are done, repository governance is advisory rather than enforced by
+GitHub settings.

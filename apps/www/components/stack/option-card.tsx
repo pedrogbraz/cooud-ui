@@ -79,24 +79,20 @@ export function OptionCard({ resolved, kind, tabIndex, onSelect, onKeyNav }: Opt
         onKeyNav?.(event);
       }}
       className={cn(
-        // The base card. We transition border/background/shadow/opacity/filter +
-        // a tiny translate so BOTH hover (lift) and the availability flip
-        // (dim/undim) animate smoothly. `will-change-transform` keeps the lift on
-        // the compositor. `motion-reduce` parks every animated property.
-        "group/option relative flex h-full w-full flex-col items-start gap-2 rounded-xl border bg-surface-raised p-3 text-left outline-none [will-change:transform]",
-        "transition-[border-color,background-color,box-shadow,transform,opacity,filter] duration-200 ease-[var(--ease-out-quart)] motion-reduce:transition-[opacity,filter] motion-reduce:duration-150",
+        // A calm, flat card: a crisp 1px border on a raised surface — no lift, no
+        // colored glow, no ring. State reads through the border and a quiet
+        // surface shift only; the restraint is the point. Transitions stay to
+        // color so there is never a layout shift inside the grid.
+        "group/option relative flex h-full w-full flex-col items-start gap-2.5 rounded-xl border bg-surface-raised p-3.5 text-left outline-none",
+        "transition-[border-color,background-color] duration-150 ease-[var(--ease-out-quart)] motion-reduce:transition-none",
         "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base",
         disabled
-          ? // Elegant disabled: dimmed + slightly desaturated so it visually
-            // recedes, but the transition above means it fades in/out gracefully
-            // when a constraint toggles availability — never a hard flicker.
-            "cursor-not-allowed border-border/60 opacity-45 saturate-[0.85]"
-          : // Interactive: hover lifts the card 2px and warms the border toward
-            // primary with a soft glow; active settles it back down.
-            "cursor-pointer hover:-translate-y-0.5 hover:border-primary/40 hover:bg-surface-overlay hover:shadow-[0_8px_24px_-12px_color-mix(in_oklch,var(--color-primary)_45%,transparent)] active:translate-y-0 active:scale-[0.99] motion-reduce:hover:translate-y-0 motion-reduce:active:scale-100",
-        selected
-          ? "border-primary bg-primary/5 shadow-[0_0_0_1px_var(--color-primary)] hover:shadow-[0_0_0_1px_var(--color-primary),0_8px_24px_-12px_color-mix(in_oklch,var(--color-primary)_55%,transparent)]"
-          : "border-border",
+          ? // Dimmed so it recedes; the color transition keeps the availability
+            // flip graceful rather than a hard flicker.
+            "cursor-not-allowed border-border/60 opacity-45"
+          : // Hover just firms the border and lifts the surface a step — quiet.
+            "cursor-pointer hover:border-border-strong hover:bg-surface-overlay",
+        selected ? "border-primary bg-surface-overlay" : "border-border",
       )}
     >
       <div className="flex w-full items-start justify-between gap-2">
@@ -113,24 +109,20 @@ export function OptionCard({ resolved, kind, tabIndex, onSelect, onKeyNav }: Opt
       </div>
 
       {/*
-        The selected check, pinned to the card's BOTTOM-right corner so it never
-        reserves layout space (no gap / shift when unselected) and never collides
-        with a top-right badge. Always mounted so it can transition on BOTH edges:
-        on select it springs in (scale 0 → 1 + a tiny rotate settle) via the
-        `--ease-spring` overshoot easing — the satisfying "pop"; on deselect it
-        shrinks back out. `motion-reduce` collapses it to a plain instant toggle to
-        stay accessible. Pure CSS — no per-card JS, no layout shift.
+        The selected check: a bare checkmark pinned to the bottom-right corner so
+        it never reserves layout space or collides with a top-right badge. It just
+        fades in/out — no filled pill, no pop — so selection reads calmly, in step
+        with the border. `motion-reduce` keeps it an instant toggle.
       */}
       <span
         data-slot="option-card-check"
         aria-hidden="true"
         className={cn(
-          "pointer-events-none absolute right-3 bottom-3 grid size-5 origin-center place-items-center rounded-full bg-primary text-primary-foreground shadow-[0_2px_8px_-2px_color-mix(in_oklch,var(--color-primary)_60%,transparent)]",
-          "transition-[transform,opacity] duration-300 ease-[var(--ease-spring)] motion-reduce:transition-none motion-reduce:duration-0",
-          selected ? "scale-100 rotate-0 opacity-100" : "-rotate-45 scale-0 opacity-0",
+          "pointer-events-none absolute right-3 bottom-3 text-primary transition-opacity duration-150 motion-reduce:transition-none",
+          selected ? "opacity-100" : "opacity-0",
         )}
       >
-        <Check className="size-3.5" />
+        <Check className="size-4" strokeWidth={2.5} />
       </span>
 
       {/* Right padding clears the bottom-right corner check so text never runs under it. */}

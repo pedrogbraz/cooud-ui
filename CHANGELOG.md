@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- No unreleased changes yet.
+
+## [0.2.0] — 2026-07-07
+
+### Added
+
 - **9 new components** — `Marquee`, `AvatarGroup`, `Banner`, `TagsInput`, `Sparkline`,
   `InputGroup`, `PasswordInput`, `ButtonGroup`, and `Masonry` (each CLI-installable
   via `npx cooud-ui add <slug>`).
@@ -134,9 +140,9 @@ as installable packages and as copy-paste registry items you own.
   spreadsheet application.
 - The CLI validates registry dependency names and suggests the closest match on
   an unknown `add`, preventing typo-driven resolution of unintended entries.
-- Added a published vulnerability disclosure policy (`SECURITY.md`).
-- Added Dependabot coverage and made the dependency audit a blocking gate to
-  surface vulnerable dependencies early.
+- Added a published vulnerability disclosure policy (`.github/SECURITY.md`).
+- Added Dependabot coverage and documented dependency audit as a release
+  governance follow-up to surface vulnerable dependencies early.
 
 ### Quality & tooling
 
@@ -149,5 +155,6 @@ as installable packages and as copy-paste registry items you own.
 - Added per-entry gzipped bundle budgets for the published `@cooud-ui/ui` so a
   dependency or code-size regression is caught at build time.
 
-[Unreleased]: https://github.com/pedrogbraz/cooud-ui/compare/v0.1.0...main
+[Unreleased]: https://github.com/pedrogbraz/cooud-ui/compare/v0.2.0...main
+[0.2.0]: https://github.com/pedrogbraz/cooud-ui/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/pedrogbraz/cooud-ui/releases/tag/v0.1.0

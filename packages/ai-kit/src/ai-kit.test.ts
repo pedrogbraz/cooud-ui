@@ -79,6 +79,43 @@ describe("writeAiKit", () => {
     expect(existsSync(join(dir, ".cursor/rules/10-cooud-ui.mdc"))).toBe(true);
   });
 
+  it("can emit generic assistant tooling without Cooud UI rules or skills", () => {
+    writeAiKit({
+      targetDir: dir,
+      name: "acme",
+      assistants: ["claude", "cursor", "copilot"],
+      includeCooudUi: false,
+    });
+
+    expect(existsSync(join(dir, "AGENTS.md"))).toBe(true);
+    expect(existsSync(join(dir, "CLAUDE.md"))).toBe(true);
+    expect(existsSync(join(dir, ".mcp.json"))).toBe(false);
+    expect(existsSync(join(dir, ".claude/settings.json"))).toBe(true);
+    expect(existsSync(join(dir, ".claude/agents/code-reviewer.md"))).toBe(true);
+    expect(existsSync(join(dir, ".claude/skills/code-review/SKILL.md"))).toBe(true);
+    expect(existsSync(join(dir, ".claude/skills/ui-add/SKILL.md"))).toBe(false);
+    expect(existsSync(join(dir, ".claude/skills/theme/SKILL.md"))).toBe(false);
+    expect(existsSync(join(dir, ".cursor/rules/00-doctrine.mdc"))).toBe(true);
+    expect(existsSync(join(dir, ".cursor/rules/10-cooud-ui.mdc"))).toBe(false);
+    expect(existsSync(join(dir, ".github/copilot-instructions.md"))).toBe(true);
+
+    const claude = readFileSync(join(dir, "CLAUDE.md"), "utf8");
+    expect(claude).toContain("If `.mcp.json` registers");
+  });
+
+  it("decouples the cooud-ui MCP config from the Claude assistant", () => {
+    writeAiKit({
+      targetDir: dir,
+      name: "acme",
+      assistants: ["cursor"],
+      cooudUiMcp: true,
+    });
+
+    expect(existsSync(join(dir, ".mcp.json"))).toBe(true);
+    expect(existsSync(join(dir, ".cursor/rules/10-cooud-ui.mdc"))).toBe(true);
+    expect(existsSync(join(dir, ".claude/settings.json"))).toBe(false);
+  });
+
   it("is idempotent: a second run writes nothing and skips the existing files", () => {
     writeAiKit({ targetDir: dir, name: "acme" });
     const second = writeAiKit({ targetDir: dir, name: "acme" });
@@ -92,6 +129,10 @@ describe("parseList", () => {
     expect(parseList(undefined, ASSISTANTS, "assistant")).toEqual([...ASSISTANTS]);
     expect(parseList("all", ASSISTANTS, "assistant")).toEqual([...ASSISTANTS]);
     expect(parseList("", ASSISTANTS, "assistant")).toEqual([...ASSISTANTS]);
+  });
+
+  it("maps 'none' to an empty list", () => {
+    expect(parseList("none", ASSISTANTS, "assistant")).toEqual([]);
   });
 
   it("parses a comma list and trims whitespace", () => {

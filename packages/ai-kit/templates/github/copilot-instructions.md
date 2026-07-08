@@ -15,4 +15,4 @@ These are the core rules for suggesting code in this repository. The full engine
 
 ## UI work
 
-Use `@cooud-ui/ui` components and theme through `@cooud-ui/tokens` / `useTheme`. Never inline raw colors, respect `prefers-reduced-motion`, and prefer `npx cooud-ui add <slug>` over hand-rolling a component.
+Follow the UI library selected in `KICKOFF.md` / `stack.json`. If Cooud UI is selected, use `@cooud-ui/ui` components, theme through `@cooud-ui/tokens` / `useTheme`, and prefer `npx cooud-ui add <slug>` over hand-rolling a component. If another UI library or no UI library is selected, do not import Cooud UI packages unless the project explicitly adds them. Never inline raw colors and respect `prefers-reduced-motion`.

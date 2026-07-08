@@ -66,30 +66,42 @@ function PropsInterfaceTable({ doc }: { doc: PropsDoc }) {
           No own props — see the extended type above for available props.
         </p>
       ) : (
-        <div className="mt-3 overflow-x-auto rounded-xl border border-border">
-          <table className="w-full min-w-[40rem] border-collapse text-left text-sm">
-            <thead>
-              <tr className="border-b border-border bg-surface-inset/60 text-xs uppercase tracking-wider text-fg-tertiary">
-                <th className="px-4 py-2.5 font-medium">Prop</th>
-                <th className="px-4 py-2.5 font-medium">Type</th>
-                <th className="px-4 py-2.5 font-medium">Default</th>
-                <th className="px-4 py-2.5 font-medium">Description</th>
-              </tr>
-            </thead>
-            <tbody className="[&_td:first-child]:pl-4 [&_td:last-child]:pr-4">
-              {doc.props.map((prop) => (
-                <PropRow
-                  key={prop.name}
-                  name={prop.name}
-                  type={prop.type}
-                  required={prop.required}
-                  description={prop.description}
-                  defaultValue={prop.default}
-                />
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <>
+          <section
+            aria-label={`${doc.interfaceName} props`}
+            className="mt-3 overflow-x-auto rounded-xl border border-border outline-none focus-within:ring-2 focus-within:ring-ring"
+          >
+            <a
+              href={`#${doc.interfaceName}-props-end`}
+              className="sr-only focus:not-sr-only focus:absolute focus:z-10 focus:m-2 focus:rounded-md focus:bg-surface-raised focus:px-3 focus:py-2 focus:text-sm focus:text-fg focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-ring"
+            >
+              Skip {doc.interfaceName} props table
+            </a>
+            <table className="w-full min-w-[40rem] border-collapse text-left text-sm">
+              <thead>
+                <tr className="border-b border-border bg-surface-inset/60 text-xs uppercase tracking-wider text-fg-tertiary">
+                  <th className="px-4 py-2.5 font-medium">Prop</th>
+                  <th className="px-4 py-2.5 font-medium">Type</th>
+                  <th className="px-4 py-2.5 font-medium">Default</th>
+                  <th className="px-4 py-2.5 font-medium">Description</th>
+                </tr>
+              </thead>
+              <tbody className="[&_td:first-child]:pl-4 [&_td:last-child]:pr-4">
+                {doc.props.map((prop) => (
+                  <PropRow
+                    key={prop.name}
+                    name={prop.name}
+                    type={prop.type}
+                    required={prop.required}
+                    description={prop.description}
+                    defaultValue={prop.default}
+                  />
+                ))}
+              </tbody>
+            </table>
+          </section>
+          <span id={`${doc.interfaceName}-props-end`} className="sr-only" />
+        </>
       )}
     </div>
   );

@@ -2,7 +2,7 @@
   "name": "contact-form",
   "type": "registry:block",
   "dependencies": [
-    "@cooud-ui/ui@0.1.0",
+    "@cooud-ui/ui@0.2.0",
     "lucide-react@^0.577.0"
   ],
   "registryDependencies": [],

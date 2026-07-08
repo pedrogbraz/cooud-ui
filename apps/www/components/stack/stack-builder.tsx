@@ -1,9 +1,9 @@
 "use client";
 
-import { Badge, cn, Input, Label, Reveal } from "@cooud-ui/ui";
-import { FlaskConical, ListChecks, SlidersHorizontal } from "lucide-react";
+import { cn, Input, Label, Reveal } from "@cooud-ui/ui";
+import { ListChecks, SlidersHorizontal, Terminal } from "lucide-react";
 import { useCallback, useId, useMemo, useRef, useState } from "react";
-import { catalog } from "@/lib/stack/catalog";
+import { catalog, GROUP_ORDER } from "@/lib/stack/catalog";
 import { defaultSelection, randomize, resolve, select, toggleMulti } from "@/lib/stack/engine";
 import type { Selection } from "@/lib/stack/types";
 import { CategorySection } from "./category-section";
@@ -13,7 +13,7 @@ import { StackOutput } from "./stack-output";
 type MobileView = "configure" | "output";
 
 /**
- * The Cooud Stack Builder (BETA) — a Better-T-Stack-class configurator.
+ * The Cooud Stack Builder — a Better-T-Stack-class configurator.
  *
  * Owns the raw {@link Selection} and runs every mutation through the pure engine
  * (`select` / `toggleMulti` / `randomize`), then re-resolves on render so the UI
@@ -58,7 +58,7 @@ export function StackBuilder() {
 
   return (
     <main id="main-content" className="min-h-[calc(100vh-4rem)] bg-surface-base text-fg">
-      {/* --- BETA hero header ---------------------------------------------
+      {/* --- Hero header --------------------------------------------------
           A clean, premium intro. A single aurora accent + a faint dotted grid
           (coherent with the site hero) sit behind the copy with parsimony — an
           accent, not decoration. Both are aria-hidden and reduced-motion safe
@@ -79,40 +79,24 @@ export function StackBuilder() {
         />
         <Reveal className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
           <div className="flex max-w-3xl flex-col gap-5">
-            {/* Eyebrow pill — frames the page + makes the BETA status prominent. */}
-            <div className="inline-flex w-fit items-center gap-2 rounded-full border border-border bg-surface-raised/60 py-1 pr-3 pl-1.5 text-xs font-medium text-fg-secondary backdrop-blur">
-              <Badge
-                variant="warning"
-                className="gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold tracking-wide uppercase"
-              >
-                <FlaskConical className="size-3" aria-hidden="true" />
-                Beta
-              </Badge>
-              <span>Experimental — generates a command, not a project</span>
-            </div>
-
             <h1 className="text-balance font-display text-4xl font-semibold leading-[1.05] tracking-tight text-fg sm:text-5xl">
               Stack Builder
             </h1>
 
             <p className="max-w-2xl text-pretty text-lg text-fg-secondary">
-              Compose your full-stack app, layer by layer — every choice is validated live, so
-              incompatible options disable themselves with a reason. Walk away with a scaffolding
-              command and a Kickoff prompt for your coding agent.
+              Compose your app stack, layer by layer — every choice is validated live, and your
+              naming, structure, and standards come baked in. Walk away with a runnable default
+              scaffold command and a KICKOFF.md your coding agent follows to the letter.
             </p>
 
-            <div
-              role="note"
-              className="flex w-fit items-start gap-2.5 rounded-xl border border-border bg-surface-raised/70 px-3.5 py-2.5 text-sm text-fg-secondary backdrop-blur"
-            >
-              <FlaskConical className="mt-0.5 size-4 shrink-0 text-warning" aria-hidden="true" />
+            <div className="flex w-fit items-center gap-2 rounded-full border border-border bg-surface-raised/60 px-3 py-1.5 text-xs text-fg-secondary backdrop-blur">
+              <Terminal className="size-3.5 shrink-0 text-fg-tertiary" aria-hidden="true" />
               <span>
-                <span className="font-medium text-fg">No project is generated yet.</span> The
-                builder produces a{" "}
-                <code className="rounded bg-surface-overlay px-1 py-0.5 font-mono text-xs text-fg">
+                Outputs a{" "}
+                <code className="rounded bg-surface-overlay px-1 py-0.5 font-mono text-[11px] text-fg">
                   bun create
                 </code>{" "}
-                command plus a Kickoff prompt you hand to your agent.
+                command + KICKOFF.md + stack.json.
               </span>
             </div>
           </div>
@@ -202,20 +186,38 @@ export function StackBuilder() {
               </p>
             </div>
 
-            {catalog.map((cat, index) => {
-              const rc = resolution.categories[cat.id];
-              if (!rc) return null;
+            {GROUP_ORDER.map((group, gi) => {
+              const cats = catalog.filter((c) => c.group === group && resolution.categories[c.id]);
+              if (cats.length === 0) return null;
               return (
-                // Subtle staggered reveal as each category scrolls into view.
-                // `Reveal` fires once, fades up 16px, and is reduced-motion safe.
-                // Cap the stagger so later sections don't feel delayed.
-                <Reveal key={cat.id} delay={Math.min(index, 5) * 0.04}>
-                  <CategorySection
-                    resolved={rc}
-                    onSelectSingle={handleSelectSingle}
-                    onToggleMulti={handleToggleMulti}
-                    onToggleBoolean={handleToggleBoolean}
-                  />
+                // Each builder section (Framework, Data, Conventions, …) fades up
+                // once as it enters. The stagger is capped so later sections don't
+                // feel delayed; `Reveal` is reduced-motion safe.
+                <Reveal key={group} delay={Math.min(gi, 5) * 0.04}>
+                  <section aria-label={group} className="flex flex-col gap-5">
+                    {/* Section header — a quiet uppercase label + a hairline. */}
+                    <div className="flex items-center gap-3">
+                      <h2 className="text-xs font-semibold uppercase tracking-wider text-fg-tertiary">
+                        {group}
+                      </h2>
+                      <span aria-hidden="true" className="h-px flex-1 bg-border/60" />
+                    </div>
+                    <div className="flex flex-col gap-8">
+                      {cats.map((cat) => {
+                        const rc = resolution.categories[cat.id];
+                        if (!rc) return null;
+                        return (
+                          <CategorySection
+                            key={cat.id}
+                            resolved={rc}
+                            onSelectSingle={handleSelectSingle}
+                            onToggleMulti={handleToggleMulti}
+                            onToggleBoolean={handleToggleBoolean}
+                          />
+                        );
+                      })}
+                    </div>
+                  </section>
                 </Reveal>
               );
             })}
@@ -236,16 +238,23 @@ export function StackBuilder() {
             )}
             aria-label="Selected stack and output"
           >
+            {/* shrink-0: the rail is a flex column with a max-height + scroll, so
+                its children must keep their natural height instead of being
+                compressed to fit — otherwise the output frame's overflow-hidden
+                would clip the KICKOFF brief and the rail would have nothing to
+                scroll. With shrink-0 the content overflows and the rail scrolls. */}
             <SelectedSummary
               resolution={resolution}
               catalog={catalog}
               onReset={handleReset}
               onRandomize={handleRandomize}
+              className="shrink-0"
             />
             <StackOutput
               config={resolution.selection}
               projectName={projectName}
               catalog={catalog}
+              className="shrink-0"
             />
           </aside>
         </div>

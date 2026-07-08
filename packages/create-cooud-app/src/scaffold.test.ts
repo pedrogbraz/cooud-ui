@@ -3,6 +3,17 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { applyTokens, scaffold } from "./scaffold.js";
+import { CREATE_VERSION } from "./version.js";
+
+const pkg = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8")) as {
+  version: string;
+};
+
+describe("create-cooud-app release version", () => {
+  it("keeps the runtime version aligned with package.json", () => {
+    expect(CREATE_VERSION).toBe(pkg.version);
+  });
+});
 
 describe("applyTokens", () => {
   it("replaces every __APP_NAME__ occurrence", () => {
@@ -44,9 +55,9 @@ describe("scaffold (into a temp dir, no install)", () => {
       dependencies: Record<string, string>;
     };
     expect(pkg.name).toBe(name);
-    expect(pkg.dependencies).toHaveProperty("@cooud-ui/ui");
-    expect(pkg.dependencies).toHaveProperty("@cooud-ui/tokens");
-    expect(pkg.dependencies).toHaveProperty("@cooud-ui/theme");
+    expect(pkg.dependencies["@cooud-ui/ui"]).toBe(`^${CREATE_VERSION}`);
+    expect(pkg.dependencies["@cooud-ui/tokens"]).toBe(`^${CREATE_VERSION}`);
+    expect(pkg.dependencies["@cooud-ui/theme"]).toBe(`^${CREATE_VERSION}`);
   });
 
   it("renames gitignore → .gitignore (and does not leave the undotted file)", () => {
@@ -73,7 +84,12 @@ describe("scaffold (into a temp dir, no install)", () => {
 
   it("ships a cooud-ui.json so `npx cooud-ui add` works in the app", () => {
     scaffold({ targetDir, name });
-    expect(existsSync(join(targetDir, "cooud-ui.json"))).toBe(true);
+    const configPath = join(targetDir, "cooud-ui.json");
+    expect(existsSync(configPath)).toBe(true);
+    const config = JSON.parse(readFileSync(configPath, "utf8")) as { registry: string };
+    expect(config.registry).toBe(
+      `https://raw.githubusercontent.com/pedrogbraz/cooud-ui/v${CREATE_VERSION}/registry`,
+    );
   });
 
   it("defaults to the aurora/dark theme when none is given (no tokens left behind)", () => {

@@ -375,14 +375,17 @@ export function CreateStudio() {
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
                     <h1 className="truncate font-display text-xl font-semibold tracking-tight text-fg sm:text-2xl">
-                      {config.style}
+                      Create a design system
                     </h1>
-                    <Badge variant="secondary">{selectedBrand.name}</Badge>
+                    <Badge variant="secondary">{config.style}</Badge>
+                    <Badge variant="outline" className="hidden sm:inline-flex">
+                      {selectedBrand.name}
+                    </Badge>
                     <Badge variant="outline" className="hidden sm:inline-flex">
                       {selectedChart.name} charts
                     </Badge>
                   </div>
-                  <p className="mt-0.5 truncate text-sm text-fg-tertiary">
+                  <p className="mt-0.5 truncate text-sm text-fg-secondary">
                     {findFontChoice(config.headingFont).name} headings ·{" "}
                     {findFontChoice(config.bodyFont).name} body · {config.radius}px radius
                   </p>
@@ -867,7 +870,7 @@ function CreateControls({
                 <Save aria-hidden="true" />
               </Button>
             </div>
-            <p className="px-0.5 text-xs text-fg-muted">
+            <p className="px-0.5 text-xs text-fg-secondary">
               Stored in this browser. Share the link to send it.
             </p>
           </div>
@@ -922,7 +925,7 @@ function IconAction({
  *  the control stack rhythm (Color / Typography / Icons / Shape) without cards. */
 function SectionLabel({ children }: { children: ReactNode }) {
   return (
-    <p className="px-0.5 font-display text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-fg-muted">
+    <p className="px-0.5 font-display text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-fg-secondary">
       {children}
     </p>
   );
@@ -963,7 +966,7 @@ function ControlRow({
             {title}
           </Label>
           {hint ? (
-            <span className="hidden min-w-0 truncate text-xs text-fg-muted opacity-0 transition-opacity duration-200 ease-[var(--ease-out-quart)] group-focus-within/row:opacity-100 group-hover/row:opacity-100 sm:block">
+            <span className="hidden min-w-0 truncate text-xs text-fg-secondary opacity-0 transition-opacity duration-200 ease-[var(--ease-out-quart)] group-focus-within/row:opacity-100 group-hover/row:opacity-100 sm:block">
               {hint}
             </span>
           ) : null}
@@ -997,7 +1000,7 @@ function LockToggle({
         "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface-inset",
         active
           ? "bg-primary/12 text-primary"
-          : "text-fg-muted opacity-60 hover:bg-surface-overlay hover:text-fg-secondary hover:opacity-100",
+          : "text-fg-secondary hover:bg-surface-overlay hover:text-fg",
       )}
     >
       <Icon
@@ -1410,7 +1413,7 @@ function TokenSummary({ config }: { config: DesignConfig }) {
         ))}
       </dl>
       <div className="mt-3 flex items-center justify-between gap-2">
-        <p className="font-display text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-fg-muted">
+        <p className="font-display text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-fg-secondary">
           Chart ramp
         </p>
         <Badge variant="outline">{findChartPalette(config.chart).name}</Badge>

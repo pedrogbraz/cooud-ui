@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { existsSync, readdirSync } from "node:fs";
+import { existsSync, readdirSync, realpathSync } from "node:fs";
 import { join } from "node:path";
 import { argv } from "node:process";
 import { fileURLToPath } from "node:url";
@@ -45,12 +45,13 @@ ${c.bold("Options")}
                              Theme preset to bake in (default: ${DEFAULT_THEME})
   --mode <${MODES.join("|")}>            Default color mode (default: ${DEFAULT_MODE})
   --ai / --no-ai             Include (or skip) the AI Kit: skills, rules & doctrine
-  --assistants <${ASSISTANTS.join(",")}|all>
+  --assistants <${ASSISTANTS.join(",")}|all|none>
                              Which assistants to configure (default: all).
                              Codex CLI and Zed read the root AGENTS.md natively.
   --preset <${DOCTRINE_PRESETS.join("|")}>
                              Which engineering doctrine to ship (default: standard)
-  --skills <name,...|all>    Which Claude Code skills to include (default: all)
+  --skills <name,...|all|none>
+                             Which Claude Code skills to include (default: all)
   --pm <bun|npm|pnpm|yarn>   Package manager to install with (auto-detected otherwise)
   --no-install               Skip installing dependencies
   -y, --yes                  Accept defaults; skip interactive prompts
@@ -257,7 +258,7 @@ async function main(): Promise<void> {
 function isEntrypoint(): boolean {
   const entry = argv[1];
   if (!entry) return false;
-  return fileURLToPath(import.meta.url) === entry;
+  return existsSync(entry) && fileURLToPath(import.meta.url) === realpathSync(entry);
 }
 
 if (isEntrypoint()) {

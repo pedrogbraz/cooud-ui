@@ -29,5 +29,5 @@ every session. This file adds only what is specific to Claude Code.
 
 ## Tools
 
-- The `cooud-ui` MCP server (registered in `.mcp.json`) exposes component and
-  block metadata. Use it to look up available UI primitives instead of guessing.
+- If `.mcp.json` registers the `cooud-ui` MCP server, use it to look up component
+  and block metadata instead of guessing.

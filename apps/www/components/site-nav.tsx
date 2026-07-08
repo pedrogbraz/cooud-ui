@@ -18,8 +18,8 @@ const navLinks = [
   { label: "Components", href: "/components" },
   { label: "Blocks", href: "/blocks" },
   { label: "Create", href: "/create" },
-  { label: "Playground", href: "/#playground" },
-  { label: "Stack", href: "/stack", badge: "BETA" },
+  { label: "Theming", href: "/docs/theming" },
+  { label: "Stack", href: "/stack" },
   { label: "Changelog", href: "/changelog" },
 ] as const;
 
@@ -124,7 +124,6 @@ function ThemeSelect() {
       </button>
       {open ? (
         <div
-          // biome-ignore lint/a11y/useSemanticElements: a role="menu" radio popover is the right pattern for a compact theme switcher.
           role="menu"
           aria-label="Theme"
           aria-orientation="vertical"
@@ -177,8 +176,12 @@ export function SiteNav() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/70 bg-surface-base/70 backdrop-blur-xl">
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute inset-x-0 inset-y-0 bg-gradient-aurora opacity-[0.08] blur-2xl" />
+        <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
+      </div>
       <nav
-        className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8"
+        className="relative z-10 mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8"
         aria-label="Primary"
       >
         {/* Left — logo + wordmark + version */}
@@ -192,7 +195,7 @@ export function SiteNav() {
               Cooud UI
             </span>
             <Badge variant="secondary" className="hidden px-1.5 py-0 text-[10px] sm:inline-flex">
-              v0.1
+              v0.2.0
             </Badge>
           </span>
         </Link>
@@ -206,14 +209,6 @@ export function SiteNav() {
                 className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm text-fg-secondary outline-none transition-colors hover:text-fg focus-visible:ring-2 focus-visible:ring-ring"
               >
                 {link.label}
-                {"badge" in link && (
-                  <Badge
-                    variant="secondary"
-                    className="px-1 py-0 text-[9px] font-semibold uppercase tracking-wide"
-                  >
-                    {link.badge}
-                  </Badge>
-                )}
               </Link>
             </li>
           ))}
@@ -270,14 +265,6 @@ export function SiteNav() {
                       className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-fg-secondary outline-none transition-colors hover:bg-surface-overlay hover:text-fg focus-visible:ring-2 focus-visible:ring-ring"
                     >
                       {link.label}
-                      {"badge" in link && (
-                        <Badge
-                          variant="secondary"
-                          className="px-1 py-0 text-[9px] font-semibold uppercase tracking-wide"
-                        >
-                          {link.badge}
-                        </Badge>
-                      )}
                     </Link>
                   </li>
                 ))}

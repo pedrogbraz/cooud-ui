@@ -15,7 +15,7 @@ with `npx cooud-ui add` (see [Copy-in option](#copy-in-option-cli)).
 
 ## Install
 
-> Published on npm under the `@cooud` scope (available once `v0.1.0` is released).
+> Published on npm under the `@cooud-ui` scope.
 > Install all three packages:
 
 ```sh

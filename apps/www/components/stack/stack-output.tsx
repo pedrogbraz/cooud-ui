@@ -1,12 +1,10 @@
 "use client";
 
 import {
-  Badge,
   CodeBlock,
   type CodeBlockProps,
   CopyButton,
   cn,
-  GradientBorder,
   Tabs,
   TabsContent,
   TabsList,
@@ -102,12 +100,13 @@ export function StackOutput({
   };
 
   return (
-    // A whisper-thin gradient border frames the finished artifact — the single
-    // place we spend the brand gradient in this panel, marking it as the payoff.
-    // The inner surface carries all real chrome so tokens stay semantic.
-    <GradientBorder
-      className={cn("rounded-2xl", className)}
-      innerClassName="overflow-hidden bg-surface-base"
+    // A single restrained accent border marks the finished artifact as the payoff
+    // — a quiet primary tint, no gradient and no glow, so it stays clean and modern.
+    <div
+      className={cn(
+        "overflow-hidden rounded-2xl border border-primary/25 bg-surface-base",
+        className,
+      )}
       data-slot="stack-output-frame"
     >
       <section
@@ -128,7 +127,6 @@ export function StackOutput({
             <h2 id={titleId} className="text-base font-semibold text-fg">
               Your stack is ready
             </h2>
-            <Badge variant="warning">Beta</Badge>
           </div>
         </header>
 
@@ -200,12 +198,14 @@ export function StackOutput({
                 copiedLabel="Copied to clipboard"
               />
             </div>
+            {/* No inner height cap: the code flows full-height and the sticky
+                rail (the `aside`) is the single scroll region, so there is never
+                a nested-scroll trap on the KICKOFF brief. */}
             <CodeBlock
               {...codeBlockBase}
               code={kickoff}
               language="markdown"
               filename="KICKOFF.md"
-              className="w-full min-w-0 border-border [&_[data-slot=code-block-scroll]]:max-h-[28rem] [&_[data-slot=code-block-scroll]]:overflow-auto"
             />
           </TabsContent>
 
@@ -220,16 +220,10 @@ export function StackOutput({
               value={stackJson}
               copyLabel="Copy stack JSON"
             />
-            <CodeBlock
-              {...codeBlockBase}
-              code={stackJson}
-              language="json"
-              filename="stack.json"
-              className="w-full min-w-0 border-border [&_[data-slot=code-block-scroll]]:max-h-[28rem] [&_[data-slot=code-block-scroll]]:overflow-auto"
-            />
+            <CodeBlock {...codeBlockBase} code={stackJson} language="json" filename="stack.json" />
           </TabsContent>
         </Tabs>
       </section>
-    </GradientBorder>
+    </div>
   );
 }

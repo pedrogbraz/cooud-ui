@@ -14,7 +14,7 @@ inject the `--cooud-*` variables when running on Tailwind v3.)
 
 ## Install
 
-> Published on npm under the `@cooud` scope (available once `v0.1.0` is released).
+> Published on npm under the `@cooud-ui` scope.
 
 ```sh
 # npm

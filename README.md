@@ -9,8 +9,8 @@ The Cooud design system — a themeable, accessible, shadcn-class React componen
 library that **is** the Cooud design language. Default theme **Aurora** (premium
 sky/cyan), with **Neutral** as a first-class preset and arbitrary brand override.
 
-> **v0.1.0** — published on npm under the `@cooud-ui` scope. Install the packages,
-> or copy components in with `npx cooud-ui add`.
+> **v0.2.0 working release** — expands the published `v0.1.0` package set with
+> Stack Builder, AI Kit, app/stack generators, and MCP release coverage.
 
 ## Monorepo layout
 
@@ -19,6 +19,12 @@ packages/
   tokens/   @cooud-ui/tokens   — source-of-truth tokens (TS) + CSS-var bridge + Tailwind v4 @theme
   theme/    @cooud-ui/theme    — <CooudUIProvider> + useTheme (runtime theming, CSS-var only, no re-render)
   ui/       @cooud-ui/ui       — components (Radix + CVA + cn)
+  stack/    @cooud-ui/stack    — Stack Builder catalog, resolver, schema, KICKOFF artifacts
+  ai-kit/   @cooud-ui/ai-kit   — assistant doctrine, skills, and config templates
+  cli/      cooud-ui           — shadcn-style component installer
+  create-cooud-app/ create-cooud-app      — Next.js + Cooud UI app scaffold
+  create-cooud-stack/ create-cooud-stack  — Stack Builder scaffold generator
+  mcp/      cooud-ui-mcp       — MCP server for registry discovery
 apps/
   www/      @cooud-ui/www      — HeroUI-style showcase + ThemeBuilder (Next.js 16)
 ```
@@ -30,7 +36,12 @@ apps/
 | Ready-made Cooud components                        | `@cooud-ui/ui` (+ `tokens` + `theme`)     | [packages/ui](packages/ui/README.md)    |
 | Runtime theming — switch theme/mode, override tokens | `@cooud-ui/theme` (+ `tokens`)          | [packages/theme](packages/theme/README.md) |
 | Just the design tokens / Tailwind preset           | `@cooud-ui/tokens`                        | [packages/tokens](packages/tokens/README.md) |
+| Stack Builder core artifacts                       | `@cooud-ui/stack`                         | [packages/stack](packages/stack/README.md) |
+| AI assistant doctrine, skills, and rules           | `@cooud-ui/ai-kit`                        | [packages/ai-kit](packages/ai-kit/README.md) |
 | To own the component source (copy-in, shadcn-style) | `npx cooud-ui add <component>`        | [packages/cli](packages/cli/README.md)  |
+| To scaffold a new app                              | `npx create-cooud-app my-app`             | [packages/create-cooud-app](packages/create-cooud-app/README.md) |
+| To scaffold a runnable default stack + KICKOFF     | `bun create cooud-stack@latest my-app`    | [packages/create-cooud-stack](packages/create-cooud-stack/README.md) |
+| To expose the registry through MCP                 | `npx cooud-ui-mcp`                        | [packages/mcp](packages/mcp/README.md) |
 
 Most apps install all three library packages — `@cooud-ui/ui` renders against the
 `@cooud-ui/tokens` bridge and the `@cooud-ui/theme` provider.
@@ -39,15 +50,15 @@ Most apps install all three library packages — `@cooud-ui/ui` renders against 
 
 ```sh
 bun install
-bun run build       # turbo: tokens → theme → ui → www (next build, typechecked)
+bun run build       # turbo: builds all packages and the docs app
 bun run www         # dev the showcase at http://localhost:4747
 bun run lint        # biome
 ```
 
 ## Install (external consumer)
 
-Install the three library packages from public npm (published under the `@cooud`
-scope once `v0.1.0` is released — see [RELEASE.md](RELEASE.md)):
+Install the three runtime library packages from public npm (published under the
+`@cooud-ui` scope — see [RELEASE.md](RELEASE.md)):
 
 ```sh
 npm i @cooud-ui/ui @cooud-ui/tokens @cooud-ui/theme
@@ -139,9 +150,11 @@ setOverrides({ radius: "20px", primary: "#7c3aed", border: "..." }); // re-theme
 
 Two end-to-end consumer fixtures live under [`examples/`](examples/): a Next.js App
 Router app (`examples/smoke-next`) and a Vite + React app (`examples/smoke-vite`).
-`scripts/package-smoke.mjs` packs the real tarballs, installs them into those
-fixtures, builds them, and asserts the component utility classes show up in the
-compiled CSS — proof that an external install renders *styled*.
+`bun run package:smoke` validates package shape, built imports, and the real
+release packer's internal dependency pins. `SMOKE_FULL=1 bun run package:smoke`
+also packs tarballs, installs the runtime UI packages into those fixtures, builds
+them, and asserts the component utility classes show up in the compiled CSS —
+proof that an external install renders *styled*.
 
 ## Or copy-paste, shadcn-style (you own the code)
 
@@ -158,11 +171,14 @@ distribution modes (npm package + CLI registry) share one source of truth.
 
 ## Publishing
 
-The three library packages (`@cooud-ui/tokens`, `@cooud-ui/theme`, `@cooud-ui/ui`) are
-publish-ready for public npm under the `@cooud` scope (with `access: public`) — see
-[RELEASE.md](RELEASE.md). Nothing is published yet; tag `vX.Y.Z` to cut the release
-via `bun run release --publish`. (Note: a real publish needs the `@cooud` org on
-npmjs and the publisher logged in to it with `npm login`.)
+Nine packages publish to public npm in lockstep from `v0.2.0` onward:
+`@cooud-ui/tokens`,
+`@cooud-ui/theme`, `@cooud-ui/ui`, `@cooud-ui/stack`, `@cooud-ui/ai-kit`,
+`cooud-ui`, `create-cooud-app`, `create-cooud-stack`, and `cooud-ui-mcp` (all
+with `access: public`) — see [RELEASE.md](RELEASE.md). Run `bun run release` for
+the default dry-run, and only run `bun run release --publish` when you intend to
+publish and tag. A real publish needs npm rights for the `@cooud-ui` scope and
+the unscoped package names.
 
 ## Components
 
@@ -192,5 +208,5 @@ See `CONTRACT.md` — semantic tokens only, CVA variants, `forwardRef`, `data-sl
 
 ## Roadmap
 ~~Wave 1 (forms)~~ ✅ → ~~Wave 2 (overlays/nav)~~ ✅ → ~~Wave 3 (data)~~ ✅ → ~~Wave 4 (premium/brand)~~ ✅ →
-`cooud-ui` CLI registry (`npx cooud-ui add`) → publish to public npm under `@cooud`
+`cooud-ui` CLI registry (`npx cooud-ui add`) + `create-cooud-stack` generator → publish the scoped and unscoped packages to public npm
 → migrate `dashboard` first. Full plan in the SDD.

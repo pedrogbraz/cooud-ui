@@ -38,16 +38,10 @@ export function CategorySection({
 
   const labelledBy = category.description ? `${headingId} ${descId}` : headingId;
 
-  // Quiet right-aligned counter for the header: how many options are picked.
-  // (single → 0/1, multi → n). Purely informational; the live region in the
-  // summary owns the announced state, so this is hidden from AT.
+  // Quiet right-aligned counter for multi categories only (single categories
+  // read their state off the selected card). Purely informational; the summary's
+  // live region owns the announced state, so this is hidden from AT.
   const selectedCount = options.filter((o) => o.selected).length;
-  const counterLabel =
-    category.kind === "multi"
-      ? `${selectedCount} selected`
-      : selectedCount > 0
-        ? "Selected"
-        : "Choose one";
 
   // --- Roving focus for the single radiogroup ----------------------------
   // The tab stop is the selected option when it's available, otherwise the
@@ -126,6 +120,66 @@ export function CategorySection({
     );
   }
 
+  // --- Segmented single categories (compact conventions) ----------------
+  // Simple, self-evident single choices render as an inline segmented control
+  // (a pill row) instead of icon cards, with the picked option's example shown
+  // beneath. Reuses the radiogroup roving-focus machinery below.
+  if (category.layout === "segmented" && category.kind === "single") {
+    const selectedOpt = options.find((o) => o.selected);
+    return (
+      <section data-slot="category-section" aria-labelledby={headingId} className="scroll-mt-24">
+        <header className="mb-2.5 flex min-w-0 flex-col gap-0.5">
+          <h3 id={headingId} className="text-sm font-semibold tracking-tight text-fg">
+            {category.title}
+          </h3>
+          {category.description ? (
+            <p id={descId} className="text-pretty text-xs text-fg-secondary">
+              {category.description}
+            </p>
+          ) : null}
+        </header>
+        <div
+          ref={groupRef}
+          role="radiogroup"
+          aria-labelledby={labelledBy}
+          className="inline-flex max-w-full flex-wrap gap-1 rounded-xl border border-border bg-surface-raised p-1"
+        >
+          {options.map((opt, index) => (
+            <button
+              key={opt.option.id}
+              type="button"
+              data-slot="option-card"
+              // Radio semantics via spread (mirrors OptionCard): a styled radiogroup
+              // button, not a native input, so the semantic-element rule doesn't apply.
+              {...({ role: "radio", "aria-checked": opt.selected } as const)}
+              tabIndex={index === tabStopIdx ? 0 : -1}
+              onClick={() => onSelectSingle(category.id, opt.option.id)}
+              onKeyDown={(event) => {
+                if (event.key === " " || event.key === "Enter") {
+                  event.preventDefault();
+                  onSelectSingle(category.id, opt.option.id);
+                }
+                handleRadioKeyNav(index, event);
+              }}
+              className={cn(
+                "relative inline-flex items-center justify-center rounded-lg px-3 py-1.5 text-xs font-medium outline-none transition-colors duration-150 ease-[var(--ease-out-quart)] motion-reduce:transition-none",
+                "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface-raised",
+                opt.selected
+                  ? "bg-surface-overlay text-fg shadow-xs"
+                  : "text-fg-secondary hover:text-fg",
+              )}
+            >
+              {opt.option.name}
+            </button>
+          ))}
+        </div>
+        {selectedOpt?.option.description ? (
+          <p className="mt-2 text-xs text-fg-tertiary">{selectedOpt.option.description}</p>
+        ) : null}
+      </section>
+    );
+  }
+
   // --- Single / multi categories ----------------------------------------
   return (
     <section data-slot="category-section" aria-labelledby={headingId} className="scroll-mt-24">
@@ -140,17 +194,14 @@ export function CategorySection({
             </p>
           ) : null}
         </div>
-        <span
-          aria-hidden="true"
-          className={cn(
-            "mt-0.5 shrink-0 rounded-full border px-2 py-0.5 text-[11px] font-medium tabular-nums transition-colors duration-200",
-            selectedCount > 0
-              ? "border-primary/30 bg-primary/10 text-primary"
-              : "border-border bg-surface-overlay/60 text-fg-tertiary",
-          )}
-        >
-          {counterLabel}
-        </span>
+        {category.kind === "multi" ? (
+          <span
+            aria-hidden="true"
+            className="mt-0.5 shrink-0 text-[11px] font-medium text-fg-tertiary tabular-nums"
+          >
+            {selectedCount} selected
+          </span>
+        ) : null}
       </header>
 
       <div

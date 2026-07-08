@@ -9,13 +9,17 @@
  * Two modes:
  *
  *   LIGHT (default) — `node scripts/package-smoke.mjs`
- *     For every publishable package (@cooud-ui/ui, @cooud-ui/tokens, @cooud-ui/theme,
- *     cooud-ui) run `npm pack --dry-run --json` and validate the tarball:
+ *     For every publishable package (@cooud-ui/tokens, @cooud-ui/theme,
+ *     @cooud-ui/ui, @cooud-ui/stack, @cooud-ui/ai-kit, cooud-ui,
+ *     create-cooud-app, create-cooud-stack, cooud-ui-mcp) run
+ *     `npm pack --dry-run --json` and validate the tarball:
  *       - it contains every file referenced by package.json `main`/`types`/`bin`
  *         and each `exports` target,
  *       - it ships the expected top-level dirs (dist, styles, preset, …),
  *       - it does NOT leak junk (node_modules, src maps where unwanted, tsbuildinfo).
- *     Then, for every package, it dynamically `import()`s the built main entry
+ *     It also packs each package with the real release packer (`bun pm pack`) and
+ *     asserts any internal Cooud dependencies are pinned to the package version.
+ *     Then, for every package, it dynamically `import()`s the built JS entry
  *     (the `exports["."]` / `main` JS file) in a short, offline Node subprocess
  *     and fails if the module THROWS on load — catching a `dist/index.js` whose
  *     internal import is unresolvable (which the tarball-structure checks above,
@@ -23,12 +27,18 @@
  *     No install, no network, fast — safe for CI gates.
  *
  *   FULL  (`SMOKE_FULL=1 node scripts/package-smoke.mjs`)
- *     Additionally: `npm pack` real tarballs for @cooud-ui/ui + @cooud-ui/tokens +
- *     @cooud-ui/theme, install them (plus peers) into examples/smoke-next and
- *     examples/smoke-vite, build each fixture, and assert the compiled CSS
- *     contains the component utility classes (bg-primary, rounded-lg,
- *     bg-surface-raised, …). This is the real proof-of-style. Heavier and needs
- *     the npm registry reachable for peer deps, so it's behind the flag.
+ *     Additionally: `bun pm pack` real tarballs for every publishable package,
+ *     install the runtime UI tarballs (ui + tokens + theme) into
+ *     examples/smoke-next and examples/smoke-vite, build each fixture, and assert
+ *     the compiled CSS contains the component utility classes (bg-primary,
+ *     rounded-lg, bg-surface-raised, …). It also installs all publishable
+ *     tarballs into a clean temp project and runs the CLI/generator/MCP bins,
+ *     including the default Cooud UI scaffold and a non-Cooud UI neutral
+ *     scaffold so unsupported UI choices cannot silently import missing Cooud
+ *     packages.
+ *     This is the real proof-of-style and proof-of-bin-execution.
+ *     Heavier and needs the npm registry reachable for peer deps, so it's behind
+ *     the flag.
  *
  * Exit code is non-zero on ANY failure. Logs are explicit about what failed.
  */
@@ -117,11 +127,18 @@ function run(cmd, args, opts = {}) {
  * package matrix
  * ------------------------------------------------------------------ */
 const PACKAGES = [
-  { dir: "packages/ui", name: "@cooud-ui/ui" },
   { dir: "packages/tokens", name: "@cooud-ui/tokens" },
   { dir: "packages/theme", name: "@cooud-ui/theme" },
+  { dir: "packages/ui", name: "@cooud-ui/ui" },
+  { dir: "packages/stack", name: "@cooud-ui/stack" },
+  { dir: "packages/ai-kit", name: "@cooud-ui/ai-kit" },
   { dir: "packages/cli", name: "cooud-ui" },
+  { dir: "packages/create-cooud-app", name: "create-cooud-app" },
+  { dir: "packages/create-cooud-stack", name: "create-cooud-stack" },
+  { dir: "packages/mcp", name: "cooud-ui-mcp" },
 ];
+const FIXTURE_PACKAGE_NAMES = ["@cooud-ui/ui", "@cooud-ui/tokens", "@cooud-ui/theme"];
+const PUBLISHABLE_PACKAGE_NAMES = new Set(PACKAGES.map((pkg) => pkg.name));
 
 // Utility classes that MUST appear in a consumer's compiled CSS once the
 // component markup is scanned. Drawn straight from the built Button + Card
@@ -164,6 +181,30 @@ function collectExpectedFiles(pkgJson) {
   // artifact worth special-casing; it's always present in the tarball.
   expected.delete("package.json");
   return expected;
+}
+
+function readTarballManifest(tgz) {
+  return JSON.parse(run("tar", ["-xOf", tgz, "package/package.json"]));
+}
+
+function validatePackedInternalDeps(tgz, pkgName, version) {
+  const manifest = readTarballManifest(tgz);
+  const problems = [];
+
+  for (const field of ["dependencies", "peerDependencies", "optionalDependencies"]) {
+    for (const [name, range] of Object.entries(manifest[field] || {})) {
+      if (PUBLISHABLE_PACKAGE_NAMES.has(name) && range !== version) {
+        problems.push(`${field}.${name}=${range}`);
+      }
+    }
+  }
+
+  check(
+    problems.length === 0,
+    `${pkgName} packed internal deps are pinned to ${version}${
+      problems.length ? ` (found: ${problems.join(", ")})` : ""
+    }`,
+  );
 }
 
 /* ------------------------------------------------------------------ *
@@ -253,12 +294,13 @@ function lightCheckPackage(pkg) {
 }
 
 /* ------------------------------------------------------------------ *
- * LIGHT path: dynamically import() each built main entry (offline)
+ * LIGHT path: dynamically import() each built JS entry (offline)
  * ------------------------------------------------------------------ *
  * The tarball-structure checks above only assert that the `exports` *targets*
  * exist on disk — they would NOT notice that a built `dist/index.js` references
  * an internal/transitive module that can't actually be resolved at runtime.
- * Here we resolve each package's main JS entry and import() it inside a short
+ * Here we resolve each package's main JS entry (or first bin for bin-only
+ * packages) and import() it inside a short
  * Node subprocess. A non-zero exit (the module threw on load) is a hard failure.
  *
  * Why a subprocess (and not an in-process import()):
@@ -272,7 +314,8 @@ function lightCheckPackage(pkg) {
  * `--registry`/network access is involved.
  */
 function resolveMainEntry(pkgJson) {
-  // Prefer the `import` condition of the "." export, then top-level `main`.
+  // Prefer the `import` condition of the "." export, then top-level `main`,
+  // then the first `bin` target for bin-only packages.
   const dot = pkgJson.exports?.["."];
   let target;
   if (typeof dot === "string") {
@@ -281,6 +324,9 @@ function resolveMainEntry(pkgJson) {
     target = dot.import ?? dot.default ?? dot.node;
   }
   target = target ?? pkgJson.main;
+  if (!target && pkgJson.bin) {
+    target = typeof pkgJson.bin === "string" ? pkgJson.bin : Object.values(pkgJson.bin)[0];
+  }
   if (typeof target !== "string") return undefined;
   return target.replace(/^\.\//, "");
 }
@@ -292,14 +338,14 @@ function importCheckPackage(pkg) {
   const pkgJson = JSON.parse(readFileSync(join(absDir, "package.json"), "utf8"));
   const rel = resolveMainEntry(pkgJson);
   if (!rel) {
-    info("no main JS entry declared — nothing to import");
+    info("no main/bin JS entry declared — nothing to import");
     return;
   }
 
   const entryAbs = join(absDir, rel);
   if (!existsSync(entryAbs)) {
     // The structural pass already reports the missing target; don't double-fail.
-    info(`main entry not on disk yet (${rel}) — skipping import (see structural check)`);
+    info(`built entry not on disk yet (${rel}) — skipping import (see structural check)`);
     return;
   }
 
@@ -328,9 +374,9 @@ function importCheckPackage(pkg) {
     // Capture (not inherit) stdout/stderr so a CLI's top-level help print stays
     // out of the smoke log; we only surface output if the import actually fails.
     run(process.execPath, loader, { cwd: absDir });
-    check(true, `built main entry import()s cleanly: ${rel}`);
+    check(true, `built entry import()s cleanly: ${rel}`);
   } catch (err) {
-    check(false, `built main entry import()s cleanly: ${rel}`);
+    check(false, `built entry import()s cleanly: ${rel}`);
     const detail = String(err.stderr || err.stdout || err.message || err).trim();
     if (detail)
       log(
@@ -367,14 +413,30 @@ function realPack(absDir, destDir) {
   return created[0];
 }
 
+function packedDependencyCheckPackage(pkg) {
+  const absDir = join(ROOT, pkg.dir);
+  group(`bun pm pack deps · ${pkg.name}`);
+  const tmp = mkdtempSync(join(tmpdir(), "cooud-pack-"));
+
+  try {
+    const pkgTmp = join(tmp, pkg.dir.replace(/^packages\//, ""));
+    run("mkdir", ["-p", pkgTmp]);
+    const tgz = realPack(absDir, pkgTmp);
+    const version = JSON.parse(readFileSync(join(absDir, "package.json"), "utf8")).version;
+    validatePackedInternalDeps(tgz, pkg.name, version);
+  } finally {
+    rmSync(tmp, { recursive: true, force: true });
+  }
+}
+
 /**
  * Rewrite `workspace:` protocol deps in a packed tarball to a concrete version so
  * `npm install <tarball>` can resolve them from the sibling local tarballs
  * instead of choking on `workspace:*` (EUNSUPPORTEDPROTOCOL).
  *
- * NOTE: this only sanitizes the SMOKE install — the real publish pipeline must
- * replace `workspace:*` with a real range itself (a packages/** concern). We log
- * a warning whenever we have to do this so the underlying issue stays visible.
+ * NOTE: this is a compatibility fallback for the fixture install only. The
+ * packed-dependency guard above already records a hard failure if a release
+ * tarball contains a workspace protocol or any non-lockstep internal range.
  *
  * Returns the path of a fresh, sanitized tarball (same basename, in `destDir`).
  */
@@ -530,6 +592,121 @@ function fullSmokeFixture({ name, dir, tarballs, buildOutDirs, restoreFiles = []
   }
 }
 
+function fullSmokeBins(tarballsByName) {
+  group("full smoke · installed bins");
+  const fixtureAbs = mkdtempSync(join(tmpdir(), "cooud-bin-smoke-"));
+  const allTarballs = PACKAGES.map((pkg) => tarballsByName[pkg.name]);
+
+  try {
+    writeFileSync(
+      join(fixtureAbs, "package.json"),
+      `${JSON.stringify({ name: "cooud-bin-smoke", private: true, type: "module" }, null, 2)}\n`,
+    );
+    info(`npm install (tarballs: ${allTarballs.map((t) => t.replace(/^.*\//, "")).join(", ")})`);
+    run(
+      "npm",
+      ["install", "--no-audit", "--no-fund", "--install-strategy=hoisted", ...allTarballs],
+      { cwd: fixtureAbs, inherit: true },
+    );
+
+    const binChecks = [
+      { bin: "cooud-ui", args: ["--help"], contains: "Usage:" },
+      { bin: "create-cooud-app", args: ["--help"], contains: "create-cooud-app" },
+      { bin: "create-cooud-stack", args: ["--help"], contains: "create-cooud-stack" },
+      { bin: "cooud-ui-mcp", args: ["--help"], contains: "cooud-ui-mcp" },
+    ];
+
+    for (const checkSpec of binChecks) {
+      const out = run("npx", ["--no-install", checkSpec.bin, ...checkSpec.args], {
+        cwd: fixtureAbs,
+      });
+      check(
+        out.includes(checkSpec.contains),
+        `${checkSpec.bin} ${checkSpec.args.join(" ")} runs from installed tarball`,
+      );
+    }
+
+    const version = readTarballManifest(tarballsByName["@cooud-ui/stack"]).version;
+    for (const bin of ["create-cooud-app", "create-cooud-stack", "cooud-ui-mcp"]) {
+      const out = run("npx", ["--no-install", bin, "--version"], { cwd: fixtureAbs });
+      check(out.trim() === version, `${bin} --version reports ${version}`);
+    }
+
+    run(
+      "npx",
+      ["--no-install", "create-cooud-stack", "smoke-stack", "--yes", "--no-install", "--no-git"],
+      { cwd: fixtureAbs, inherit: true },
+    );
+    check(
+      existsSync(join(fixtureAbs, "smoke-stack", "src", "app", "page.tsx")),
+      "create-cooud-stack scaffold writes src/app/page.tsx",
+    );
+    const cooudUi = JSON.parse(
+      readFileSync(join(fixtureAbs, "smoke-stack", "cooud-ui.json"), "utf8"),
+    );
+    check(
+      cooudUi.paths?.ui === "src/components/ui" &&
+        cooudUi.paths?.lib === "src/lib" &&
+        cooudUi.paths?.blocks === "src/components/blocks",
+      "create-cooud-stack scaffold aligns cooud-ui.json paths with src alias",
+    );
+
+    run(
+      "npx",
+      [
+        "--no-install",
+        "create-cooud-stack",
+        "smoke-neutral",
+        "--yes",
+        "--ui",
+        "shadcn",
+        "--no-install",
+        "--no-git",
+      ],
+      { cwd: fixtureAbs, inherit: true },
+    );
+    const neutralDir = join(fixtureAbs, "smoke-neutral");
+    check(
+      existsSync(join(neutralDir, "src", "app", "page.tsx")),
+      "create-cooud-stack non-Cooud UI scaffold writes src/app/page.tsx",
+    );
+    check(
+      !existsSync(join(neutralDir, "cooud-ui.json")),
+      "create-cooud-stack non-Cooud UI scaffold does not write cooud-ui.json",
+    );
+    const neutralSources = [
+      "package.json",
+      "src/app/layout.tsx",
+      "src/app/page.tsx",
+      "src/app/globals.css",
+    ].map((rel) => readFileSync(join(neutralDir, rel), "utf8"));
+    check(
+      neutralSources.every((content) => !content.includes("@cooud-ui")),
+      "create-cooud-stack non-Cooud UI scaffold has no @cooud-ui imports or deps",
+    );
+    info("[smoke-neutral] npm install");
+    run("npm", ["install", "--no-audit", "--no-fund", "--install-strategy=hoisted"], {
+      cwd: neutralDir,
+      inherit: true,
+    });
+    info("[smoke-neutral] npm run build");
+    run("npm", ["run", "build"], { cwd: neutralDir, inherit: true });
+    ok("create-cooud-stack non-Cooud UI scaffold builds");
+
+    run(
+      "npx",
+      ["--no-install", "create-cooud-app", "smoke-app", "--yes", "--no-install", "--no-ai"],
+      { cwd: fixtureAbs, inherit: true },
+    );
+    check(
+      existsSync(join(fixtureAbs, "smoke-app", "app", "page.tsx")),
+      "create-cooud-app scaffold writes app/page.tsx",
+    );
+  } finally {
+    rmSync(fixtureAbs, { recursive: true, force: true });
+  }
+}
+
 /* ------------------------------------------------------------------ *
  * main
  * ------------------------------------------------------------------ */
@@ -557,7 +734,7 @@ function main() {
   log(c.bold("\nCooud UI — package smoke runner"));
   log(
     c.dim(
-      `mode: ${FULL ? "FULL (pack + install + build + style-assert)" : "LIGHT (pack --dry-run + structure)"}`,
+      `mode: ${FULL ? "FULL (pack + install + build + style-assert + bins)" : "LIGHT (pack --dry-run + structure + deps)"}`,
     ),
   );
   log(c.dim(`root: ${ROOT}`));
@@ -566,7 +743,10 @@ function main() {
 
   // --- LIGHT (always) ---
   for (const pkg of PACKAGES) lightCheckPackage(pkg);
-  // Prove every built main entry actually loads (offline) — catches dist files
+  // Prove the real release packer pins internal workspace deps to the release
+  // version. `npm pack --dry-run` above cannot catch stale Bun workspace metadata.
+  for (const pkg of PACKAGES) packedDependencyCheckPackage(pkg);
+  // Prove every built JS entry actually loads (offline) — catches dist files
   // whose internal imports are unresolvable, which the structural pass misses.
   for (const pkg of PACKAGES) importCheckPackage(pkg);
 
@@ -577,21 +757,23 @@ function main() {
       tmp = mkdtempSync(join(tmpdir(), "cooud-smoke-"));
       group("packing real tarballs");
       const tarballs = {};
-      for (const name of ["@cooud-ui/ui", "@cooud-ui/tokens", "@cooud-ui/theme"]) {
-        const pkg = PACKAGES.find((p) => p.name === name);
+      for (const pkg of PACKAGES) {
         const pj = JSON.parse(readFileSync(join(ROOT, pkg.dir, "package.json"), "utf8"));
-        const raw = realPack(join(ROOT, pkg.dir), tmp);
+        const pkgTmp = join(tmp, pkg.dir.replace(/^packages\//, ""));
+        run("mkdir", ["-p", pkgTmp]);
+        const raw = realPack(join(ROOT, pkg.dir), pkgTmp);
+        validatePackedInternalDeps(raw, pkg.name, pj.version);
         // Sanitize workspace: protocol deps so npm can install the tarball offline.
-        const tgz = sanitizeTarball(raw, pj.version, tmp);
-        tarballs[name] = tgz;
-        ok(`packed ${name} → ${tgz.replace(/^.*\//, "")}`);
+        const tgz = sanitizeTarball(raw, pj.version, pkgTmp);
+        tarballs[pkg.name] = tgz;
+        ok(`packed ${pkg.name} → ${tgz.replace(/^.*\//, "")}`);
       }
-      const allTarballs = Object.values(tarballs);
+      const fixtureTarballs = FIXTURE_PACKAGE_NAMES.map((name) => tarballs[name]);
 
       fullSmokeFixture({
         name: "smoke-next",
         dir: "examples/smoke-next",
-        tarballs: allTarballs,
+        tarballs: fixtureTarballs,
         buildOutDirs: [".next"],
         // `next build` rewrites these in place; restore them after.
         restoreFiles: ["next-env.d.ts", "tsconfig.json"],
@@ -599,9 +781,10 @@ function main() {
       fullSmokeFixture({
         name: "smoke-vite",
         dir: "examples/smoke-vite",
-        tarballs: allTarballs,
+        tarballs: fixtureTarballs,
         buildOutDirs: ["dist"],
       });
+      fullSmokeBins(tarballs);
     } catch (err) {
       fatal("full smoke crashed", err);
     } finally {
@@ -610,7 +793,7 @@ function main() {
   } else {
     group("full smoke");
     info(
-      "skipped — set SMOKE_FULL=1 to pack, install into the fixtures, build, and assert styled CSS",
+      "skipped — set SMOKE_FULL=1 to install tarballs, build fixtures, assert CSS, and run installed bins",
     );
   }
 

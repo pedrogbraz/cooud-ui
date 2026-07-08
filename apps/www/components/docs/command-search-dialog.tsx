@@ -151,13 +151,13 @@ export default function CommandSearchDialog({
             </span>
           </CommandItem>
           <CommandItem
-            value="Stack Builder beta preview full-stack generator command kickoff stack json"
+            value="Stack Builder full-stack generator command kickoff stack json"
             onSelect={() => onSelectRoute("/stack")}
             className="flex flex-col items-start gap-0.5"
           >
             <span className="text-sm text-fg">Stack Builder</span>
             <span className="text-xs text-fg-tertiary">
-              Compose a full-stack app and export preview artifacts.
+              Compose a full-stack app and export generator-ready artifacts.
             </span>
           </CommandItem>
           <CommandItem

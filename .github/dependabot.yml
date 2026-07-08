@@ -2,7 +2,7 @@
 # Docs: https://docs.github.com/code-security/dependabot/dependabot-version-updates
 version: 2
 updates:
-  # Keep the SHA-pinned GitHub Actions (see .github/workflows/ci.yml) from rotting.
+  # Keep future GitHub Actions dependencies visible; this repo currently has no active workflows.
   - package-ecosystem: github-actions
     directory: /
     schedule:
@@ -18,6 +18,11 @@ updates:
       - /packages/tokens
       - /packages/theme
       - /packages/cli
+      - /packages/stack
+      - /packages/ai-kit
+      - /packages/create-cooud-app
+      - /packages/create-cooud-stack
+      - /packages/mcp
       - /apps/www
     schedule:
       interval: weekly

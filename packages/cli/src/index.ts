@@ -81,14 +81,14 @@ program
   .option("-c, --cwd <dir>", "working directory", process.cwd())
   .option(
     "-a, --assistants <list>",
-    "comma-separated: claude, cursor, copilot, windsurf, gemini (or 'all')",
+    "comma-separated: claude, cursor, copilot, windsurf, gemini (or 'all'/'none')",
   )
   .option(
     "-p, --preset <name>",
     "doctrine preset: standard, fintech, saas, oss, agency, or none",
     "standard",
   )
-  .option("-s, --skills <list>", "comma-separated Claude Code skills (or 'all')")
+  .option("-s, --skills <list>", "comma-separated Claude Code skills (or 'all'/'none')")
   .action((opts) =>
     aiAdd({
       cwd: opts.cwd,
