@@ -48,6 +48,7 @@ import {
   SelectSeparator,
   SelectTrigger,
   SelectValue,
+  SignaturePad,
   Slider,
   Stepper,
   StepperDescription,
@@ -284,6 +285,48 @@ function ColorPickerDemo() {
           style={{ background: color }}
         />
         <span className="font-mono text-xs tabular-nums">{color}</span>
+      </div>
+    </div>
+  );
+}`;
+
+// ── SignaturePad ───────────────────────────────────────────────────
+function SignaturePadDemo() {
+  const [signature, setSignature] = useState<string | null>(null);
+
+  return (
+    <div className="flex w-full max-w-sm flex-col gap-3">
+      <SignaturePad onChange={setSignature} aria-label="Contract signature" />
+      <div className="flex h-9 items-center justify-between gap-3 text-xs text-fg-tertiary">
+        <span>{signature ? "Signature captured" : "Awaiting signature"}</span>
+        {signature ? (
+          // biome-ignore lint/performance/noImgElement: docs example renders a live data-URL preview, which next/image cannot optimize
+          <img
+            src={signature}
+            alt="Captured signature preview"
+            className="h-full rounded-md border border-border bg-surface-base"
+          />
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
+const signaturePadDemoCode = `function SignaturePadDemo() {
+  const [signature, setSignature] = useState<string | null>(null);
+
+  return (
+    <div className="flex w-full max-w-sm flex-col gap-3">
+      <SignaturePad onChange={setSignature} aria-label="Contract signature" />
+      <div className="flex h-9 items-center justify-between gap-3 text-xs text-fg-tertiary">
+        <span>{signature ? "Signature captured" : "Awaiting signature"}</span>
+        {signature ? (
+          <img
+            src={signature}
+            alt="Captured signature preview"
+            className="h-full rounded-md border border-border bg-surface-base"
+          />
+        ) : null}
       </div>
     </div>
   );
@@ -2035,6 +2078,24 @@ function StepperDemo() {
           className="max-w-sm"
         />
       ),
+    },
+  ],
+  "signature-pad": [
+    {
+      id: "capture",
+      title: "Capture a signature",
+      description:
+        "Draw with mouse, touch, or pen — samples become midpoint-smoothed quadratic curves, and the ink follows the surrounding text color token. `onChange` reports a PNG data URL after every committed stroke (or `null` once emptied); the overlaid ghost actions undo the last stroke or clear the pad.",
+      code: signaturePadDemoCode,
+      preview: <SignaturePadDemo />,
+    },
+    {
+      id: "disabled",
+      title: "Disabled",
+      description:
+        "Freeze the pad while a document loads or is already countersigned — pointer input is ignored and the overlay actions disable.",
+      code: `<SignaturePad disabled aria-label="Signature" />`,
+      preview: <SignaturePad disabled aria-label="Signature" className="max-w-sm" />,
     },
   ],
 };

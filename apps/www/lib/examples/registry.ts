@@ -32,6 +32,7 @@ export const EXAMPLE_FAMILY_BY_SLUG: Record<string, ExampleFamily> = {
   "button-group": "buttons",
   fab: "buttons",
   "split-button": "buttons",
+  "mode-toggle": "buttons",
   // forms
   input: "forms",
   "input-group": "forms",
@@ -60,6 +61,7 @@ export const EXAMPLE_FAMILY_BY_SLUG: Record<string, ExampleFamily> = {
   "phone-input": "forms",
   "credit-card-input": "forms",
   "floating-label-input": "forms",
+  "signature-pad": "forms",
   // data-display
   avatar: "data-display",
   "avatar-group": "data-display",
@@ -78,11 +80,13 @@ export const EXAMPLE_FAMILY_BY_SLUG: Record<string, ExampleFamily> = {
   skeleton: "data-display",
   "scroll-area": "data-display",
   "code-block": "data-display",
+  "code-tabs": "data-display",
   collapsible: "data-display",
   "aspect-ratio": "data-display",
   kanban: "data-display",
   timeline: "data-display",
   "tree-view": "data-display",
+  "json-viewer": "data-display",
   // feedback
   banner: "feedback",
   spinner: "feedback",
@@ -115,8 +119,10 @@ export const EXAMPLE_FAMILY_BY_SLUG: Record<string, ExampleFamily> = {
   "app-shell": "navigation",
   resizable: "navigation",
   toolbar: "navigation",
+  "table-of-contents": "navigation",
   // date-time
   calendar: "date-time",
+  countdown: "date-time",
   "date-picker": "date-time",
   "date-range-picker": "date-time",
   scheduler: "date-time",
@@ -144,6 +150,9 @@ export const EXAMPLE_FAMILY_BY_SLUG: Record<string, ExampleFamily> = {
   "border-beam": "premium",
   "flip-card": "premium",
   "tilt-card": "premium",
+  magnetic: "premium",
+  orbit: "premium",
+  terminal: "premium",
 };
 
 export function getExampleFamily(slug: string): ExampleFamily | undefined {

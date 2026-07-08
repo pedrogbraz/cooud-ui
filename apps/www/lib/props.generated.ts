@@ -267,6 +267,36 @@ export const COMPONENT_PROPS: Record<string, PropsDoc[]> = {
       ],
     },
   ],
+  "mode-toggle": [
+    {
+      interfaceName: "ModeToggleProps",
+      extends: 'Extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "children">',
+      props: [
+        {
+          name: "mode",
+          type: "ModeToggleMode",
+          required: true,
+          description:
+            "The current color mode. The component is fully controlled — it never stores mode itself.",
+        },
+        {
+          name: "onModeChange",
+          type: "(next: ModeToggleMode) => void",
+          required: true,
+          description:
+            "Called with the opposite mode when the button is activated (click, Enter or Space).",
+        },
+        {
+          name: "size",
+          type: "ModeToggleSize",
+          required: false,
+          description:
+            "Button footprint: `sm` (32px, 16px glyph) or `md` (36px, 20px glyph). Defaults to `md`.",
+          default: '"md"',
+        },
+      ],
+    },
+  ],
   input: [
     {
       interfaceName: "InputProps",
@@ -1480,6 +1510,28 @@ export const COMPONENT_PROPS: Record<string, PropsDoc[]> = {
       ],
     },
   ],
+  "signature-pad": [
+    {
+      interfaceName: "SignaturePadProps",
+      extends: 'Extends Omit<HTMLAttributes<HTMLDivElement>, "onChange">',
+      props: [
+        {
+          name: "onChange",
+          type: "(dataUrl: string | null) => void",
+          required: false,
+          description:
+            "Fired when a stroke is committed, undone, or the pad is cleared. Receives a PNG data URL of the drawing, or `null` once the pad is empty again.",
+        },
+        {
+          name: "disabled",
+          type: "boolean",
+          required: false,
+          description: "Freezes the pad: pointer input is ignored and the overlay actions disable.",
+          default: "false",
+        },
+      ],
+    },
+  ],
   "avatar-group": [
     {
       interfaceName: "AvatarGroupProps",
@@ -2018,6 +2070,41 @@ export const COMPONENT_PROPS: Record<string, PropsDoc[]> = {
       ],
     },
   ],
+  "code-tabs": [
+    {
+      interfaceName: "CodeTabsProps",
+      extends:
+        'Extends Omit<HTMLAttributes<HTMLDivElement>, "children" | "defaultValue" | "dir" | "onChange">',
+      props: [
+        {
+          name: "items",
+          type: "CodeTabsItem[]",
+          required: true,
+          description: "The snippets to switch between — one tab + one panel per item.",
+        },
+        {
+          name: "defaultLabel",
+          type: "string",
+          required: false,
+          description:
+            "Label selected on first render. Falls back to the first item when omitted or unknown. When is set, a stored choice (applied after mount) wins over this.",
+        },
+        {
+          name: "storageKey",
+          type: "string",
+          required: false,
+          description:
+            "Persist the chosen label to `localStorage` under this key and keep every `CodeTabs` sharing the key in sync — across the page *and* across browser tabs. The stored value is only read after mount, so server-rendered HTML and the first client render always agree (no hydration mismatch).",
+        },
+        {
+          name: "onLabelChange",
+          type: "(label: string) => void",
+          required: false,
+          description: "Called with the newly selected label on user-initiated changes.",
+        },
+      ],
+    },
+  ],
   "aspect-ratio": [
     {
       interfaceName: "AspectRatioProps",
@@ -2144,6 +2231,28 @@ export const COMPONENT_PROPS: Record<string, PropsDoc[]> = {
           required: false,
           description:
             "Render a card's body. Defaults to the item's title + description in a Card-like tile. The drag handle and tile chrome are always provided.",
+        },
+      ],
+    },
+  ],
+  "json-viewer": [
+    {
+      interfaceName: "JsonViewerProps",
+      extends: "Extends HTMLAttributes<HTMLDivElement>",
+      props: [
+        {
+          name: "data",
+          type: "unknown",
+          required: true,
+          description: "The value to render. Objects and arrays become collapsible branches.",
+        },
+        {
+          name: "defaultExpandedDepth",
+          type: "number",
+          required: false,
+          description:
+            "How many levels start expanded. The root value is depth 0, so the default of 1 shows the root's entries with every nested branch collapsed. Pass `Number.POSITIVE_INFINITY` to expand everything.",
+          default: "1",
         },
       ],
     },
@@ -2878,6 +2987,79 @@ export const COMPONENT_PROPS: Record<string, PropsDoc[]> = {
           type: "boolean",
           required: false,
           description: "Toggle-button pressed state; reflected as aria-pressed.",
+        },
+      ],
+    },
+  ],
+  "table-of-contents": [
+    {
+      interfaceName: "TableOfContentsProps",
+      extends: 'Extends Omit<HTMLAttributes<HTMLElement>, "children">',
+      props: [
+        {
+          name: "items",
+          type: "TableOfContentsItem[]",
+          required: false,
+          description:
+            "The entries to render, in document order. When omitted, headings are auto-discovered from the DOM via .",
+        },
+        {
+          name: "selector",
+          type: "string",
+          required: false,
+          description:
+            'CSS selector used to auto-discover headings when is omitted. Only elements with an `id` participate; depth is derived from the heading level (the shallowest level found becomes depth 0). Defaults to `"h2, h3"`.',
+          default: "DEFAULT_SELECTOR",
+        },
+        {
+          name: "containerId",
+          type: "string",
+          required: false,
+          description:
+            "`id` of the element that scopes heading discovery. When that element is itself a scroll container (`overflow-y: auto | scroll`), it also becomes the scrollspy root and the target of click-to-scroll — otherwise the window scrolls. Defaults to the whole document.",
+        },
+        {
+          name: "offset",
+          type: "number",
+          required: false,
+          description:
+            "Pixels between the top of the scroll root and the activation line — match your sticky-header height. Also subtracted when scrolling to a section on click. Defaults to `0`.",
+          default: "0",
+        },
+      ],
+    },
+  ],
+  countdown: [
+    {
+      interfaceName: "CountdownProps",
+      extends: 'Extends Omit<HTMLAttributes<HTMLDivElement>, "children">',
+      props: [
+        {
+          name: "target",
+          type: "Date | string | number",
+          required: true,
+          description:
+            "The moment the countdown reaches zero: a `Date`, an ISO-8601 string, or an epoch-ms number. An unparsable target keeps the `--` placeholder and never ticks or completes.",
+        },
+        {
+          name: "onComplete",
+          type: "() => void",
+          required: false,
+          description:
+            "Fired exactly once when the countdown reaches zero (immediately after mount when the target is already in the past). Re-arms if `target` later changes to a new future moment.",
+        },
+        {
+          name: "compact",
+          type: "boolean",
+          required: false,
+          description: "Smaller tiles + type for tight spots (toolbars, banners, table cells).",
+          default: "false",
+        },
+        {
+          name: "labels",
+          type: "Partial<CountdownLabels>",
+          required: false,
+          description: 'Override any subset of the unit captions, e.g. `{ days: "dias" }`.',
         },
       ],
     },
@@ -4027,6 +4209,158 @@ export const COMPONENT_PROPS: Record<string, PropsDoc[]> = {
           description:
             "Lift the content toward the viewer on hover for a layered parallax depth effect.",
           default: "false",
+        },
+      ],
+    },
+  ],
+  magnetic: [
+    {
+      interfaceName: "MagneticProps",
+      extends: "Extends HTMLAttributes<HTMLDivElement>",
+      props: [
+        {
+          name: "strength",
+          type: "number",
+          required: false,
+          description:
+            "How strongly the content is pulled toward the pointer, as a fraction of the pointer's offset from the wrapper's center. `0` is inert, `1` glues the content to the cursor. Values outside `0–1` are clamped.",
+          default: "DEFAULT_STRENGTH",
+        },
+        {
+          name: "radius",
+          type: "number",
+          required: false,
+          description:
+            "Radius of the magnetic field in pixels, measured from the wrapper's center. The pull is strongest near the center and eases back to zero at this distance, so crossing the field's edge never pops. Pad the wrapper (e.g. `className=\"p-10\"`) to give the field room beyond the content's own box — the attraction can only be felt where the wrapper is hovered.",
+          default: "DEFAULT_RADIUS",
+        },
+      ],
+    },
+  ],
+  orbit: [
+    {
+      interfaceName: "OrbitProps",
+      extends: "Extends HTMLAttributes<HTMLDivElement>",
+      props: [],
+    },
+    {
+      interfaceName: "OrbitRingProps",
+      extends: "Extends HTMLAttributes<HTMLDivElement>",
+      props: [
+        {
+          name: "radius",
+          type: "number",
+          required: true,
+          description:
+            "Radius of the ring in pixels — the distance from the nucleus' centre to the centre of each orbiting item. The ring renders as a `2 × radius` circle absolutely centred on the stage.",
+        },
+        {
+          name: "duration",
+          type: "number",
+          required: false,
+          description:
+            "Seconds for one full revolution. Larger is calmer; concentric rings look best with distinct durations so their items never sync up. Defaults to `24`.",
+          default: "DEFAULT_DURATION",
+        },
+        {
+          name: "reverse",
+          type: "boolean",
+          required: false,
+          description: "Revolve counter-clockwise instead of clockwise. Defaults to `false`.",
+          default: "false",
+        },
+        {
+          name: "startAngle",
+          type: "number",
+          required: false,
+          description:
+            "Angle of the first item's slot in degrees, measured clockwise from 12 o'clock. Remaining items stay evenly distributed after the offset. Use it to de-align concentric rings' starting positions. Defaults to `0`.",
+          default: "0",
+        },
+        {
+          name: "guide",
+          type: "boolean",
+          required: false,
+          description: "Draw the faint circular guide (`border-border/40`). Defaults to `true`.",
+          default: "true",
+        },
+      ],
+    },
+    {
+      interfaceName: "OrbitItemProps",
+      extends: "Extends HTMLAttributes<HTMLDivElement>",
+      props: [],
+    },
+  ],
+  terminal: [
+    {
+      interfaceName: "TerminalProps",
+      extends: 'Extends Omit<HTMLAttributes<HTMLDivElement>, "children">',
+      props: [
+        {
+          name: "lines",
+          type: "TerminalLine[]",
+          required: true,
+          description: "The scripted session, played from first to last.",
+        },
+        {
+          name: "title",
+          type: "string",
+          required: false,
+          description: 'Title shown centered in the chrome bar (e.g. `"zsh"` or a file path).',
+        },
+        {
+          name: "chrome",
+          type: "boolean",
+          required: false,
+          description:
+            "Render the macOS-style chrome bar (three dots + title). Defaults to `true`.",
+          default: "true",
+        },
+        {
+          name: "prompt",
+          type: "string",
+          required: false,
+          description: 'Prompt glyph rendered before each input line. Defaults to `"$"`.',
+          default: '"$"',
+        },
+        {
+          name: "typingSpeed",
+          type: "number",
+          required: false,
+          description: "Milliseconds per typed character. Defaults to `30`.",
+          default: "DEFAULT_TYPING_SPEED",
+        },
+        {
+          name: "loop",
+          type: "boolean",
+          required: false,
+          description: "Restart the script from the top after it finishes. Defaults to `false`.",
+          default: "false",
+        },
+        {
+          name: "loopDelay",
+          type: "number",
+          required: false,
+          description:
+            "Milliseconds the finished transcript rests before a loop restarts. Defaults to `2000`.",
+          default: "DEFAULT_LOOP_DELAY",
+        },
+        {
+          name: "copyButton",
+          type: "boolean",
+          required: false,
+          description:
+            "Show a copy button that copies the joined `input` commands (one per line, without the prompt) — the exact text a reader wants to paste into their own shell. Defaults to `true`; hidden automatically when the script has no input lines.",
+          default: "true",
+        },
+        {
+          name: "motionPreference",
+          type: "TerminalMotionPreference",
+          required: false,
+          description:
+            'Whether the typing animation plays vs. honours `prefers-reduced-motion`: `"respect"` (default), `"always"` (force motion), or `"never"` (always static).',
+          default: '"respect"',
         },
       ],
     },

@@ -1,11 +1,13 @@
 "use client";
 
+import { useTheme } from "@cooud-ui/theme";
 import {
   AnimatedButton,
   Button,
   ButtonGroup,
   CopyButton,
   Fab,
+  ModeToggle,
   Spinner,
   SplitButton,
   Toggle,
@@ -188,6 +190,33 @@ function SplitButtonPublishDemo() {
       </p>
     </div>
   );
+}
+
+function ModeToggleDemo() {
+  const [mode, setMode] = useState<"light" | "dark">("light");
+  return (
+    <div className="flex items-center gap-4">
+      <ModeToggle mode={mode} onModeChange={setMode} />
+      <span className="text-sm text-fg-secondary">
+        Current mode: <span className="font-medium text-fg">{mode}</span>
+      </span>
+    </div>
+  );
+}
+
+function ModeToggleSizesDemo() {
+  const [mode, setMode] = useState<"light" | "dark">("dark");
+  return (
+    <div className="flex items-center gap-3">
+      <ModeToggle size="sm" mode={mode} onModeChange={setMode} />
+      <ModeToggle size="md" mode={mode} onModeChange={setMode} />
+    </div>
+  );
+}
+
+function ModeToggleThemeDemo() {
+  const { mode, setMode } = useTheme();
+  return <ModeToggle mode={mode} onModeChange={setMode} />;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -775,6 +804,42 @@ return (
   </div>
 );`,
       preview: <SplitButtonPublishDemo />,
+    },
+  ],
+  "mode-toggle": [
+    {
+      id: "morph",
+      title: "Sun ⇄ moon morph",
+      description:
+        "Fully controlled: the button reports the opposite mode via `onModeChange` while the sun scales into a crescent moon with pure CSS transitions (instant under reduced motion).",
+      code: `const [mode, setMode] = useState<"light" | "dark">("light");
+
+return <ModeToggle mode={mode} onModeChange={setMode} />;`,
+      preview: <ModeToggleDemo />,
+    },
+    {
+      id: "sizes",
+      title: "Sizes",
+      description: "Two square footprints — `sm` for dense toolbars, `md` for headers.",
+      code: `const [mode, setMode] = useState<"light" | "dark">("dark");
+
+return (
+  <div className="flex items-center gap-3">
+    <ModeToggle size="sm" mode={mode} onModeChange={setMode} />
+    <ModeToggle size="md" mode={mode} onModeChange={setMode} />
+  </div>
+);`,
+      preview: <ModeToggleSizesDemo />,
+    },
+    {
+      id: "theme-provider",
+      title: "Wired to a theme provider",
+      description:
+        "The component never touches the DOM root — hand it your provider's mode. This one is live: it drives the whole docs site through `useTheme` from `@cooud-ui/theme`.",
+      code: `const { mode, setMode } = useTheme();
+
+return <ModeToggle mode={mode} onModeChange={setMode} />;`,
+      preview: <ModeToggleThemeDemo />,
     },
   ],
 };

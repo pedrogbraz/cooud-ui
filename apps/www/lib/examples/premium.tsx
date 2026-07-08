@@ -25,6 +25,7 @@ import {
   GradientBorder,
   GradientText,
   LogoCarousel,
+  Magnetic,
   Marquee,
   MorphingPopover,
   MorphingPopoverBody,
@@ -33,12 +34,16 @@ import {
   MorphingPopoverContent,
   MorphingPopoverFooter,
   MorphingPopoverTrigger,
+  Orbit,
+  OrbitItem,
+  OrbitRing,
   Reveal,
   ScrollProgress,
   SegmentedControl,
   SegmentedControlItem,
   Shimmer,
   SpotlightCard,
+  Terminal,
   TextEffect,
   TiltCard,
 } from "@cooud-ui/ui";
@@ -381,6 +386,27 @@ const testimonials = [
     role: "Founder, Brava",
     initials: "TC",
   },
+];
+
+const orbitInnerTools = [
+  { label: "Search", icon: Search },
+  { label: "Alerts", icon: Bell },
+  { label: "Settings", icon: Settings },
+];
+
+const orbitOuterTools = [
+  { label: "GitHub", icon: Github },
+  { label: "Security", icon: ShieldCheck },
+  { label: "Chat", icon: MessageSquarePlus },
+  { label: "Uptime", icon: Wifi },
+  { label: "Favorites", icon: Star },
+];
+
+const orbitOnCall = [
+  { name: "Ana Ribeiro", initials: "AR" },
+  { name: "Marcus Lee", initials: "ML" },
+  { name: "Priya Nair", initials: "PN" },
+  { name: "Tom Costa", initials: "TC" },
 ];
 
 /**
@@ -1772,6 +1798,286 @@ export const premiumExamples: ExampleMap = {
             <ArrowRight className="ml-auto size-4 shrink-0 text-fg-tertiary" aria-hidden="true" />
           </div>
         </TiltCard>
+      ),
+    },
+  ],
+  magnetic: [
+    {
+      id: "magnetic-cta",
+      title: "Magnetic call-to-action",
+      description:
+        "Wrap a hero CTA so it leans into the cursor before the pointer even lands. Pad the wrapper (`p-10`) to give the field room beyond the button — the attraction only acts where the wrapper is hovered. The pull is lerped straight onto the child's transform inside one rAF (zero re-renders) and the whole effect switches off under prefers-reduced-motion and on touch.",
+      install: { registryItem: "magnetic" },
+      code: `<Magnetic className="p-10">
+  <Button size="lg" className="rounded-full px-8 shadow-glow">
+    Começar agora
+    <ArrowRight className="size-4" aria-hidden="true" />
+  </Button>
+</Magnetic>`,
+      preview: (
+        <Magnetic className="p-10">
+          <Button size="lg" className="rounded-full px-8 shadow-glow">
+            Começar agora
+            <ArrowRight className="size-4" aria-hidden="true" />
+          </Button>
+        </Magnetic>
+      ),
+    },
+    {
+      id: "icon-row",
+      title: "Icon row",
+      description:
+        "A row of independently magnetic icon buttons — each has its own small field, so only the nearest icon drifts toward the pointer while its neighbours stay at rest. Keep `strength` low for chrome that should feel alive but not needy.",
+      code: `<div className="flex items-center gap-1">
+  {[
+    { label: "GitHub", icon: Github },
+    { label: "LinkedIn", icon: Linkedin },
+    { label: "Compartilhar", icon: Share2 },
+  ].map(({ label, icon: Icon }) => (
+    <Magnetic key={label} strength={0.25} radius={60} className="p-3">
+      <Button variant="ghost" size="icon" aria-label={label} className="rounded-full">
+        <Icon className="size-4" aria-hidden="true" />
+      </Button>
+    </Magnetic>
+  ))}
+</div>`,
+      preview: (
+        <div className="flex items-center gap-1">
+          {[
+            { label: "GitHub", icon: Github },
+            { label: "LinkedIn", icon: Linkedin },
+            { label: "Compartilhar", icon: Share2 },
+          ].map(({ label, icon: Icon }) => (
+            <Magnetic key={label} strength={0.25} radius={60} className="p-3">
+              <Button variant="ghost" size="icon" aria-label={label} className="rounded-full">
+                <Icon className="size-4" aria-hidden="true" />
+              </Button>
+            </Magnetic>
+          ))}
+        </div>
+      ),
+    },
+    {
+      id: "field-tuning",
+      title: "Strength & radius",
+      description:
+        "`strength` (0–1) scales how far the content chases the pointer; `radius` sets where the field dissolves back to zero — the falloff eases to nothing at the edge, so there is never a pop. Tune both per surface: subtle for dense UI, sticky for hero moments.",
+      code: `<div className="flex flex-wrap items-end justify-center gap-8">
+  <div className="flex flex-col items-center gap-2">
+    <Magnetic strength={0.15} radius={80} className="p-8">
+      <Button variant="outline" className="rounded-full">Sutil</Button>
+    </Magnetic>
+    <span className="font-mono text-xs text-fg-tertiary tabular-nums">strength 0.15 · radius 80</span>
+  </div>
+  <div className="flex flex-col items-center gap-2">
+    <Magnetic strength={0.6} radius={160} className="p-8">
+      <Button variant="outline" className="rounded-full">Grudento</Button>
+    </Magnetic>
+    <span className="font-mono text-xs text-fg-tertiary tabular-nums">strength 0.6 · radius 160</span>
+  </div>
+</div>`,
+      preview: (
+        <div className="flex flex-wrap items-end justify-center gap-8">
+          <div className="flex flex-col items-center gap-2">
+            <Magnetic strength={0.15} radius={80} className="p-8">
+              <Button variant="outline" className="rounded-full">
+                Sutil
+              </Button>
+            </Magnetic>
+            <span className="font-mono text-xs text-fg-tertiary tabular-nums">
+              strength 0.15 · radius 80
+            </span>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <Magnetic strength={0.6} radius={160} className="p-8">
+              <Button variant="outline" className="rounded-full">
+                Grudento
+              </Button>
+            </Magnetic>
+            <span className="font-mono text-xs text-fg-tertiary tabular-nums">
+              strength 0.6 · radius 160
+            </span>
+          </div>
+        </div>
+      ),
+    },
+  ],
+  orbit: [
+    {
+      id: "constellation",
+      title: "Integration constellation",
+      description:
+        "Two counter-rotating rings of tool chips around a product core — the classic integrations hero. One shared CSS keyframe drives everything (zero JS per frame): hovering the stage pauses both rings so any chip can be clicked, and reduced-motion visitors get the same layout statically placed, every chip upright.",
+      install: {
+        registryItem: "orbit",
+      },
+      code: `<Orbit aria-label="Tools orbiting the product core" className="size-80">
+  <span className="grid size-14 place-items-center rounded-2xl bg-gradient-primary text-primary-foreground shadow-glow">
+    <Zap className="size-6" />
+  </span>
+  <OrbitRing radius={72} duration={22}>
+    {innerTools.map(({ label, icon: Icon }) => (
+      <OrbitItem key={label}>
+        <span
+          role="img"
+          aria-label={label}
+          className="grid size-10 place-items-center rounded-full border border-border bg-surface-raised text-fg-secondary shadow-sm"
+        >
+          <Icon className="size-4" />
+        </span>
+      </OrbitItem>
+    ))}
+  </OrbitRing>
+  <OrbitRing radius={128} duration={36} reverse startAngle={36}>
+    {outerTools.map(({ label, icon: Icon }) => ( /* …same chip… */ ))}
+  </OrbitRing>
+</Orbit>`,
+      preview: (
+        <Orbit aria-label="Tools orbiting the product core" className="size-80">
+          <span className="grid size-14 place-items-center rounded-2xl bg-gradient-primary text-primary-foreground shadow-glow">
+            <Zap className="size-6" />
+          </span>
+          <OrbitRing radius={72} duration={22}>
+            {orbitInnerTools.map(({ label, icon: Icon }) => (
+              <OrbitItem key={label}>
+                <span
+                  role="img"
+                  aria-label={label}
+                  className="grid size-10 place-items-center rounded-full border border-border bg-surface-raised text-fg-secondary shadow-sm"
+                >
+                  <Icon className="size-4" />
+                </span>
+              </OrbitItem>
+            ))}
+          </OrbitRing>
+          <OrbitRing radius={128} duration={36} reverse startAngle={36}>
+            {orbitOuterTools.map(({ label, icon: Icon }) => (
+              <OrbitItem key={label}>
+                <span
+                  role="img"
+                  aria-label={label}
+                  className="grid size-10 place-items-center rounded-full border border-border bg-surface-raised text-fg-secondary shadow-sm"
+                >
+                  <Icon className="size-4" />
+                </span>
+              </OrbitItem>
+            ))}
+          </OrbitRing>
+        </Orbit>
+      ),
+    },
+    {
+      id: "team-halo",
+      title: "Team halo",
+      description:
+        "A single guide-less ring puts faces around a live metric. `startAngle` rotates the whole formation off the 12 o'clock axis, and the built-in counter-rotation keeps every avatar upright for the full lap.",
+      install: {
+        registryItem: "orbit",
+      },
+      code: `<Orbit aria-label="Teammates on call" className="size-64">
+  <div className="flex flex-col items-center">
+    <span className="font-display text-3xl font-semibold tabular-nums text-fg">04</span>
+    <span className="text-xs text-fg-tertiary">on call</span>
+  </div>
+  <OrbitRing radius={96} duration={30} guide={false} startAngle={45}>
+    {team.map((member) => (
+      <OrbitItem key={member.name}>
+        <span
+          title={member.name}
+          className="grid size-9 place-items-center rounded-full border border-border bg-surface-overlay text-xs font-medium text-fg-secondary shadow-xs"
+        >
+          {member.initials}
+        </span>
+      </OrbitItem>
+    ))}
+  </OrbitRing>
+</Orbit>`,
+      preview: (
+        <Orbit aria-label="Teammates on call" className="size-64">
+          <div className="flex flex-col items-center">
+            <span className="font-display text-3xl font-semibold tabular-nums text-fg">04</span>
+            <span className="text-xs text-fg-tertiary">on call</span>
+          </div>
+          <OrbitRing radius={96} duration={30} guide={false} startAngle={45}>
+            {orbitOnCall.map((member) => (
+              <OrbitItem key={member.name}>
+                <span
+                  title={member.name}
+                  className="grid size-9 place-items-center rounded-full border border-border bg-surface-overlay text-xs font-medium text-fg-secondary shadow-xs"
+                >
+                  {member.initials}
+                </span>
+              </OrbitItem>
+            ))}
+          </OrbitRing>
+        </Orbit>
+      ),
+    },
+  ],
+  terminal: [
+    {
+      id: "install-session",
+      title: "Install session",
+      description:
+        "A scripted install session: commands type in char-by-char behind the prompt with a blinking block cursor, outputs fade in after a beat of execution time, and loop replays it. The copy button copies just the joined commands. Reduced-motion visitors get the finished transcript instantly.",
+      install: {
+        registryItem: "terminal",
+      },
+      code: `<Terminal
+  title="zsh"
+  loop
+  lines={[
+    { type: "input", text: "npx cooud-ui add terminal" },
+    { type: "output", text: "✔ 1 component installed" },
+    { type: "output", text: "  src/components/ui/terminal.tsx" },
+    { type: "input", text: "bun run dev" },
+    { type: "output", text: "ready in 312 ms" },
+  ]}
+/>`,
+      preview: (
+        <Terminal
+          title="zsh"
+          loop
+          motionPreference="always"
+          className="w-full max-w-xl"
+          lines={[
+            { type: "input", text: "npx cooud-ui add terminal" },
+            { type: "output", text: "✔ 1 component installed" },
+            { type: "output", text: "  src/components/ui/terminal.tsx" },
+            { type: "input", text: "bun run dev" },
+            { type: "output", text: "ready in 312 ms" },
+          ]}
+        />
+      ),
+    },
+    {
+      id: "static-log",
+      title: "Static, chrome-less log",
+      description:
+        "Without the traffic-light bar the copy button floats over the corner, and motionPreference of never renders the finished transcript with no animation — exactly what reduced-motion visitors see.",
+      install: {
+        registryItem: "terminal",
+      },
+      code: `<Terminal
+  chrome={false}
+  motionPreference="never"
+  lines={[
+    { type: "input", text: "cooud deploy --prod" },
+    { type: "output", text: "Build completed in 8.2s" },
+    { type: "output", text: "Deployed to https://app.cooud.com" },
+  ]}
+/>`,
+      preview: (
+        <Terminal
+          chrome={false}
+          motionPreference="never"
+          className="w-full max-w-xl"
+          lines={[
+            { type: "input", text: "cooud deploy --prod" },
+            { type: "output", text: "Build completed in 8.2s" },
+            { type: "output", text: "Deployed to https://app.cooud.com" },
+          ]}
+        />
       ),
     },
   ],
