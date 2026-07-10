@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { ptBR } from "date-fns/locale";
 import { describe, expect, it, vi } from "vitest";
@@ -7,6 +7,11 @@ import { Calendar } from "./calendar.js";
 
 // A fixed month keeps the grid deterministic regardless of "today".
 const JUNE_2026 = new Date(2026, 5, 15);
+
+/** react-day-picker v9+ nests the interactive day button inside the gridcell. */
+function dayButton(name: string): HTMLElement {
+  return within(screen.getByRole("gridcell", { name })).getByRole("button");
+}
 
 describe("Calendar", () => {
   it("renders a month grid", () => {
@@ -23,7 +28,7 @@ describe("Calendar", () => {
   it("calls onSelect with the chosen day", async () => {
     const onSelect = vi.fn();
     render(<Calendar mode="single" defaultMonth={JUNE_2026} onSelect={onSelect} />);
-    await userEvent.click(screen.getByRole("gridcell", { name: "12" }));
+    await userEvent.click(dayButton("12"));
     expect(onSelect).toHaveBeenCalledTimes(1);
     const [selectedDate] = onSelect.mock.calls[0] as [Date];
     expect(selectedDate.getDate()).toBe(12);
