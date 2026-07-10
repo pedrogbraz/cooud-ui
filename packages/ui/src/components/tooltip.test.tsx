@@ -1,6 +1,6 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { axe } from "vitest-axe";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./tooltip.js";
 
@@ -82,6 +82,74 @@ describe("Tooltip", () => {
     await user.hover(screen.getByText("Second"));
     const tooltip = await screen.findByRole("tooltip");
     expect(tooltip).toHaveTextContent("Second tip");
+  });
+
+  describe("delay config (fake timers)", () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    // userEvent hangs under Vitest fake timers (Testing Library's asyncWrapper
+    // drains "next tick" via a faked setTimeout and only auto-advances jest
+    // clocks), so these tests dispatch Radix's real open trigger directly:
+    // a non-touch pointermove on the trigger starts the delay timer.
+    function hoverTrigger() {
+      fireEvent.pointerMove(screen.getByText("More info"));
+    }
+
+    it("honors an app-level TooltipProvider delayDuration", () => {
+      render(
+        <TooltipProvider delayDuration={500}>
+          <Tooltip>
+            <TooltipTrigger>More info</TooltipTrigger>
+            <TooltipContent>Helpful hint</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>,
+      );
+
+      hoverTrigger();
+      // Regression guard: the old inner per-tooltip provider (200ms) would
+      // have opened here already, silently overriding the app-level 500ms.
+      act(() => vi.advanceTimersByTime(450));
+      expect(screen.queryByRole("tooltip")).not.toBeInTheDocument();
+      act(() => vi.advanceTimersByTime(50));
+      expect(screen.getByRole("tooltip")).toBeInTheDocument();
+    });
+
+    it("lets a per-tooltip delayDuration override the provider config", () => {
+      render(
+        <TooltipProvider delayDuration={500}>
+          <Tooltip delayDuration={100}>
+            <TooltipTrigger>More info</TooltipTrigger>
+            <TooltipContent>Helpful hint</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>,
+      );
+
+      hoverTrigger();
+      act(() => vi.advanceTimersByTime(50));
+      expect(screen.queryByRole("tooltip")).not.toBeInTheDocument();
+      act(() => vi.advanceTimersByTime(50));
+      expect(screen.getByRole("tooltip")).toBeInTheDocument();
+    });
+
+    it("falls back to the 200ms house default without any provider", () => {
+      render(
+        <Tooltip>
+          <TooltipTrigger>More info</TooltipTrigger>
+          <TooltipContent>Helpful hint</TooltipContent>
+        </Tooltip>,
+      );
+
+      hoverTrigger();
+      act(() => vi.advanceTimersByTime(150));
+      expect(screen.queryByRole("tooltip")).not.toBeInTheDocument();
+      act(() => vi.advanceTimersByTime(50));
+      expect(screen.getByRole("tooltip")).toBeInTheDocument();
+    });
   });
 
   it("has no axe violations while open", async () => {
