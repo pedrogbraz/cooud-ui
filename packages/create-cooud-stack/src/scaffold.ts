@@ -73,7 +73,7 @@ function packageJson(projectName: string, config: StackConfig): string {
   const isCooudUi = usesCooudUi(config);
   const deps: Record<string, string> = {};
   const devDeps: Record<string, string> = {
-    typescript: "^5.9.3",
+    typescript: "^6.0.3",
   };
 
   if (isNext) {

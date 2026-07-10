@@ -14,7 +14,7 @@
         "@vitest/coverage-v8": "^4.1.9",
         "jsdom": "^29.1.1",
         "turbo": "^2.3.3",
-        "typescript": "^5.9.3",
+        "typescript": "^6.0.3",
         "vitest": "^4.1.9",
         "vitest-axe": "^0.1.0",
       },
@@ -50,7 +50,7 @@
         "@types/react": "^19.0.0",
         "@types/react-dom": "^19.0.0",
         "tailwindcss": "^4.3.0",
-        "typescript": "^5.9.3",
+        "typescript": "^6.0.3",
       },
     },
     "packages/ai-kit": {
@@ -58,7 +58,7 @@
       "version": "0.2.0",
       "devDependencies": {
         "@types/node": "^22.10.0",
-        "typescript": "^5.9.3",
+        "typescript": "^6.0.3",
       },
     },
     "packages/cli": {
@@ -74,7 +74,7 @@
       },
       "devDependencies": {
         "@types/node": "^22.10.0",
-        "typescript": "^5.9.3",
+        "typescript": "^6.0.3",
       },
     },
     "packages/create-cooud-app": {
@@ -88,7 +88,7 @@
       },
       "devDependencies": {
         "@types/node": "^22.10.0",
-        "typescript": "^5.9.3",
+        "typescript": "^6.0.3",
       },
     },
     "packages/create-cooud-stack": {
@@ -104,7 +104,7 @@
       },
       "devDependencies": {
         "@types/node": "^22.10.0",
-        "typescript": "^5.9.3",
+        "typescript": "^6.0.3",
         "vitest": "^4.1.9",
       },
     },
@@ -120,7 +120,7 @@
       },
       "devDependencies": {
         "@types/node": "^22.10.0",
-        "typescript": "^5.9.3",
+        "typescript": "^6.0.3",
         "vitest": "^4.1.9",
       },
     },
@@ -128,7 +128,7 @@
       "name": "@cooud-ui/stack",
       "version": "0.2.0",
       "devDependencies": {
-        "typescript": "^5.9.3",
+        "typescript": "^6.0.3",
         "vitest": "^4.1.9",
       },
     },
@@ -143,7 +143,7 @@
         "@types/react-dom": "^19.0.0",
         "react": "^19.2.0",
         "react-dom": "^19.2.0",
-        "typescript": "^5.9.3",
+        "typescript": "^6.0.3",
         "vitest": "^4.1.9",
       },
       "peerDependencies": {
@@ -155,7 +155,7 @@
       "name": "@cooud-ui/tokens",
       "version": "0.2.0",
       "devDependencies": {
-        "typescript": "^5.9.3",
+        "typescript": "^6.0.3",
       },
     },
     "packages/ui": {
@@ -216,7 +216,7 @@
         "react": "^19.2.0",
         "react-dom": "^19.2.0",
         "react-hook-form": "^7.54.2",
-        "typescript": "^5.9.3",
+        "typescript": "^6.0.3",
         "vitest": "^4.1.9",
         "zod": "^3.24.1",
       },
@@ -1244,7 +1244,7 @@
 
     "type-is": ["type-is@2.1.0", "", { "dependencies": { "content-type": "^2.0.0", "media-typer": "^1.1.0", "mime-types": "^3.0.0" } }, "sha512-faYHw0anBbc/kWF3zFTEnxSFOAGUX9GFbOBthvDdLsIlEoWOFOtS0zgCiQYwIskL9iGXZL3kAXD8OoZ4GmMATA=="],
 
-    "typescript": ["typescript@5.9.3", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw=="],
+    "typescript": ["typescript@6.0.3", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-y2TvuxSZPDyQakkFRPZHKFm+KKVqIisdg9/CZwm9ftvKXLP8NRWj38/ODjNbr43SsoXqNuAisEf1GdCxqWcdBw=="],
 
     "undici": ["undici@7.28.0", "", {}, "sha512-cRZYrTDwWznlnRiPjggAGxZXanty6M8RV1ff8Wm4LWXBp7/IG8v5DnOm74DtUBp9OONpK75YlPnIjQqX0dBDtA=="],
 
