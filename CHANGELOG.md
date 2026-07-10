@@ -7,9 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
+### Breaking
 
-- No unreleased changes yet.
+- **`@cooud-ui/ui`: heavy leaf-only libraries are now optional peer dependencies.**
+  `recharts` (`Chart`), `@tiptap/react` / `@tiptap/pm` / `@tiptap/starter-kit`
+  (`RichTextEditor`), `@dnd-kit/core` / `@dnd-kit/sortable` / `@dnd-kit/utilities`
+  (`Kanban`), `@tanstack/react-table` (`DataTable`), `react-day-picker`
+  (`Calendar`, `DatePicker`, `DateRangePicker`), and `date-fns` (`DatePicker`,
+  `DateRangePicker`, `Scheduler`) moved from `dependencies` to optional
+  `peerDependencies`, so they are no longer installed automatically with the
+  package. **npm-package consumers** importing those components must now install
+  the matching peer(s) themselves (see "Optional peer dependencies" in the
+  `@cooud-ui/ui` README for the component → package table). All other components
+  are unaffected. **CLI/registry users are unaffected** — `npx cooud-ui add <slug>`
+  derives each item's npm dependencies from its real imports and installs them.
 
 ## [0.2.0] — 2026-07-07
 

@@ -144,7 +144,7 @@ const SHARED_CHUNK_BUDGETS = /** @type {SharedChunkBudgets} */ ({
  *   index.js (barrel)              2,870      3,600   (re-measured 2026-07-08 after the batch-8 exports)
  *   data-table.js                  7,359      9,400
  *   chart.js                       3,340      4,300
- *   calendar.js                      977      1,260
+ *   calendar.js                    1,540      1,950   (re-measured 2026-07-10: the rdp v10 DayButton wrapper + classNames map)
  *   command.js                     1,294      1,660
  *   carousel.js                    5,021      6,450
  *   sidebar.js                     4,992      6,400
@@ -171,7 +171,7 @@ const PACKAGE_ENTRY_GZIP_BUDGETS = /** @type {Record<string, number>} */ ({
   "index.js": 3_600,
   "components/data-table.js": 9_400,
   "components/chart.js": 4_300,
-  "components/calendar.js": 1_260,
+  "components/calendar.js": 1_950,
   "components/command.js": 1_660,
   "components/carousel.js": 6_450,
   "components/sidebar.js": 6_400,

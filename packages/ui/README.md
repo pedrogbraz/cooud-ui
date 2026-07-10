@@ -34,8 +34,35 @@ bun add @cooud-ui/ui @cooud-ui/tokens @cooud-ui/theme
 
 - **React 19** (also works with React 18.3+) — `react` and `react-dom` are peers.
 - **Tailwind v4** (or v3) configured with the `@cooud-ui/tokens` bridge or preset.
-- `react-hook-form`, `zod`, and `@hookform/resolvers` are **optional** peers —
-  install them only if you use the `Form` components.
+- A few heavy, component-specific packages are **optional** peers — install them
+  only for the components you use. See
+  [Optional peer dependencies](#optional-peer-dependencies).
+
+### Optional peer dependencies
+
+Most components work out of the box. A handful sit on top of a heavy
+third-party library that is only needed by that component, so those libraries
+are declared as **optional peer dependencies** and are *not* installed with
+`@cooud-ui/ui`. Install the matching package(s) only when you import the
+component:
+
+| Component(s)                     | Package(s)                                              | Install                                                 |
+| -------------------------------- | ------------------------------------------------------- | ------------------------------------------------------- |
+| `Chart`                          | `recharts`                                              | `npm i recharts`                                        |
+| `RichTextEditor`                 | `@tiptap/react`, `@tiptap/pm`, `@tiptap/starter-kit`    | `npm i @tiptap/react @tiptap/pm @tiptap/starter-kit`    |
+| `Kanban`                         | `@dnd-kit/core`, `@dnd-kit/sortable`, `@dnd-kit/utilities` | `npm i @dnd-kit/core @dnd-kit/sortable @dnd-kit/utilities` |
+| `DataTable`                      | `@tanstack/react-table`                                 | `npm i @tanstack/react-table`                           |
+| `Calendar`                       | `react-day-picker`                                      | `npm i react-day-picker`                                |
+| `DatePicker`, `DateRangePicker`  | `react-day-picker`, `date-fns`                          | `npm i react-day-picker date-fns`                       |
+| `Scheduler`                      | `date-fns`                                              | `npm i date-fns`                                        |
+| `Form`                           | `react-hook-form`, `zod`, `@hookform/resolvers`         | `npm i react-hook-form zod @hookform/resolvers`         |
+
+Importing one of these components without its peer installed fails at
+build/bundle time with a module-not-found error for the missing package —
+installing the package(s) from the table fixes it.
+
+> Using the CLI instead (`npx cooud-ui add <slug>`)? Nothing changes for you:
+> the registry tracks each component's real imports and `add` installs them.
 
 ### Wire up styling
 
