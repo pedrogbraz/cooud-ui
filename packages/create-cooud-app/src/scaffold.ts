@@ -12,27 +12,32 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   DEFAULT_MODE,
+  DEFAULT_TEMPLATE,
   DEFAULT_THEME,
   type ModeName,
   type PackageManager,
+  type TemplateName,
   type Theme,
 } from "./utils.js";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 
 /**
- * Locate the bundled `templates/` dir. In the published package, sources live
- * in `dist/` and templates are a sibling (`../templates`). When running from
- * source (tests/ts-node), they're one level up from `src/` as well.
+ * Locate the bundled dir for `template` under `templates/`. In the published
+ * package, sources live in `dist/` and templates are a sibling (`../templates`).
+ * When running from source (tests/ts-node), they're one level up from `src/` as
+ * well.
  */
-function templateRoot(): string {
+function templateRoot(template: TemplateName): string {
   const candidates = [
-    join(HERE, "..", "templates", "default"),
-    join(HERE, "..", "..", "templates", "default"),
+    join(HERE, "..", "templates", template),
+    join(HERE, "..", "..", "templates", template),
   ];
   const found = candidates.find((p) => existsSync(p));
   if (!found) {
-    throw new Error(`Could not locate bundled templates (looked in: ${candidates.join(", ")}).`);
+    throw new Error(
+      `Could not locate the bundled "${template}" template (looked in: ${candidates.join(", ")}).`,
+    );
   }
   return found;
 }
@@ -100,6 +105,8 @@ export interface ScaffoldOptions {
   theme?: Theme;
   /** Default color mode baked into the app. @default "dark" */
   mode?: ModeName;
+  /** Starter template to copy. @default "default" */
+  template?: TemplateName;
 }
 
 export interface ScaffoldResult {
@@ -107,11 +114,11 @@ export interface ScaffoldResult {
 }
 
 /**
- * Recursively copy the default template into `targetDir`, replacing tokens in
+ * Recursively copy the chosen template into `targetDir`, replacing tokens in
  * text files and restoring stripped dotfile names. Returns the file count.
  */
 export function scaffold(options: ScaffoldOptions): ScaffoldResult {
-  const src = templateRoot();
+  const src = templateRoot(options.template ?? DEFAULT_TEMPLATE);
   const { targetDir, name, theme = DEFAULT_THEME, mode = DEFAULT_MODE } = options;
   mkdirSync(targetDir, { recursive: true });
   const fileCount = copyDir(src, targetDir, name, theme, mode);

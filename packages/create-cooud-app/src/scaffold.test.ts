@@ -115,4 +115,89 @@ describe("scaffold (into a temp dir, no install)", () => {
     };
     expect(config.theme).toEqual({ name: "sunset", mode: "light" });
   });
+
+  it('scaffolds the default single-page starter for template: "default"', () => {
+    scaffold({ targetDir, name, template: "default" });
+    expect(existsSync(join(targetDir, "app", "page.tsx"))).toBe(true);
+    // The default template has no extra routes or components dir.
+    expect(existsSync(join(targetDir, "app", "settings"))).toBe(false);
+    expect(existsSync(join(targetDir, "components"))).toBe(false);
+  });
+
+  it("scaffolds the dashboard template (shell, pages, chart, table, settings)", () => {
+    scaffold({ targetDir, name, template: "dashboard" });
+
+    for (const file of [
+      ["app", "page.tsx"],
+      ["app", "settings", "page.tsx"],
+      ["components", "dashboard-shell.tsx"],
+      ["components", "revenue-chart.tsx"],
+      ["components", "orders-table.tsx"],
+      ["components", "settings-form.tsx"],
+      ["cooud-ui.json"],
+      [".gitignore"],
+    ]) {
+      expect(existsSync(join(targetDir, ...file)), file.join("/")).toBe(true);
+    }
+
+    const pkg = JSON.parse(readFileSync(join(targetDir, "package.json"), "utf8")) as {
+      name: string;
+      dependencies: Record<string, string>;
+    };
+    expect(pkg.name).toBe(name);
+    expect(pkg.dependencies["@cooud-ui/ui"]).toBe(`^${CREATE_VERSION}`);
+    expect(pkg.dependencies.recharts).toBeDefined();
+    expect(pkg.dependencies["lucide-react"]).toBeDefined();
+
+    // Tokens replaced everywhere, incl. the shell brand + baked theme/mode.
+    const shell = readFileSync(join(targetDir, "components", "dashboard-shell.tsx"), "utf8");
+    expect(shell).toContain(name);
+    expect(shell).not.toContain("__APP_NAME__");
+    const layout = readFileSync(join(targetDir, "app", "layout.tsx"), "utf8");
+    expect(layout).toContain('defaultThemeName="aurora"');
+    expect(layout).not.toContain("__THEME__");
+  });
+
+  it("scaffolds the marketing template (landing sections + waitlist)", () => {
+    scaffold({ targetDir, name, template: "marketing", theme: "emerald", mode: "light" });
+
+    for (const file of [
+      ["app", "page.tsx"],
+      ["components", "site-header.tsx"],
+      ["components", "hero.tsx"],
+      ["components", "feature-grid.tsx"],
+      ["components", "pricing.tsx"],
+      ["components", "testimonials.tsx"],
+      ["components", "faq.tsx"],
+      ["components", "waitlist-cta.tsx"],
+      ["components", "site-footer.tsx"],
+      ["cooud-ui.json"],
+      [".gitignore"],
+    ]) {
+      expect(existsSync(join(targetDir, ...file)), file.join("/")).toBe(true);
+    }
+
+    const pkg = JSON.parse(readFileSync(join(targetDir, "package.json"), "utf8")) as {
+      name: string;
+      dependencies: Record<string, string>;
+    };
+    expect(pkg.name).toBe(name);
+    expect(pkg.dependencies["@cooud-ui/theme"]).toBe(`^${CREATE_VERSION}`);
+
+    // Tokens replaced + the chosen theme/mode baked in.
+    for (const file of ["README.md", join("components", "site-footer.tsx")]) {
+      const content = readFileSync(join(targetDir, file), "utf8");
+      expect(content).not.toContain("__APP_NAME__");
+      expect(content).toContain(name);
+    }
+    const layout = readFileSync(join(targetDir, "app", "layout.tsx"), "utf8");
+    expect(layout).toContain('defaultThemeName="emerald"');
+    expect(layout).toContain('defaultModeName="light"');
+  });
+
+  it("throws a friendly error when a template directory cannot be found", () => {
+    expect(() =>
+      scaffold({ targetDir, name, template: "missing" as unknown as "default" }),
+    ).toThrow(/Could not locate the bundled "missing" template/);
+  });
 });

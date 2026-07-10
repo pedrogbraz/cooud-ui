@@ -55,6 +55,18 @@ export const log = {
   },
 };
 
+/** The shipped starter templates (each is a directory under `templates/`). */
+export const TEMPLATES = ["default", "dashboard", "marketing"] as const;
+export type TemplateName = (typeof TEMPLATES)[number];
+export const DEFAULT_TEMPLATE: TemplateName = "default";
+
+/** One-line summary per template, shown in the picker. */
+export const TEMPLATE_HINTS: Record<TemplateName, string> = {
+  default: "single-page starter — metrics, table & cards (default)",
+  dashboard: "multi-page app — sidebar shell, KPIs, chart, data table, settings",
+  marketing: "landing site — hero, features, pricing, testimonials, FAQ, waitlist",
+};
+
 /** The five shipped theme presets (must match @cooud-ui/tokens `ThemeName`). */
 export const THEMES = ["aurora", "neutral", "midnight", "sunset", "emerald"] as const;
 export type Theme = (typeof THEMES)[number];
