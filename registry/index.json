@@ -188,7 +188,7 @@
     "type": "registry:ui",
     "dependencies": [
       "lucide-react@^0.577.0",
-      "react-day-picker@^8.10.1"
+      "react-day-picker@^10.0.1"
     ],
     "registryDependencies": [
       "button",
@@ -399,9 +399,9 @@
     "name": "date-picker",
     "type": "registry:ui",
     "dependencies": [
-      "date-fns@^3.6.0",
+      "date-fns@^4.4.0",
       "lucide-react@^0.577.0",
-      "react-day-picker@^8.10.1"
+      "react-day-picker@^10.0.1"
     ],
     "registryDependencies": [
       "button",
@@ -414,9 +414,9 @@
     "name": "date-range-picker",
     "type": "registry:ui",
     "dependencies": [
-      "date-fns@^3.6.0",
+      "date-fns@^4.4.0",
       "lucide-react@^0.577.0",
-      "react-day-picker@^8.10.1"
+      "react-day-picker@^10.0.1"
     ],
     "registryDependencies": [
       "button",
@@ -928,7 +928,7 @@
     "name": "scheduler",
     "type": "registry:ui",
     "dependencies": [
-      "date-fns@^3.6.0",
+      "date-fns@^4.4.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": [

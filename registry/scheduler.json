@@ -2,7 +2,7 @@
   "name": "scheduler",
   "type": "registry:ui",
   "dependencies": [
-    "date-fns@^3.6.0",
+    "date-fns@^4.4.0",
     "lucide-react@^0.577.0"
   ],
   "registryDependencies": [
