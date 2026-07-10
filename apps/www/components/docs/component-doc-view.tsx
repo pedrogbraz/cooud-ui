@@ -1,3 +1,4 @@
+import { Badge } from "@cooud-ui/ui";
 import { getComponentDisplayName, getComponentMeta } from "../../lib/components-index";
 import { getExampleSections } from "../../lib/examples/sections";
 import { COMPONENT_PROPS } from "../../lib/props.generated";
@@ -34,9 +35,20 @@ export function ComponentDocView({ slug }: { slug: string }) {
     <div className="grid gap-10 xl:grid-cols-[minmax(0,1fr)_13rem]">
       <article className="min-w-0 py-10">
         <Eyebrow>{meta.category}</Eyebrow>
-        <h1 className="mt-3 font-display text-4xl font-semibold tracking-tight text-fg">
-          {displayName}
-        </h1>
+        <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2">
+          <h1 className="font-display text-4xl font-semibold tracking-tight text-fg">
+            {displayName}
+          </h1>
+          {meta.rsc ? (
+            <Badge
+              variant="outline"
+              title="Zero client JS — renders in React Server Components"
+              className="text-fg-secondary"
+            >
+              Server Component
+            </Badge>
+          ) : null}
+        </div>
         <p className="mt-3 max-w-2xl text-lg text-fg-secondary">{meta.description}</p>
 
         <section id="import" className="mt-10 scroll-mt-24">

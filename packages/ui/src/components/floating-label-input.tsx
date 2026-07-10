@@ -1,5 +1,3 @@
-"use client";
-
 import { forwardRef, type InputHTMLAttributes, type ReactNode, useId } from "react";
 import { cn } from "../lib/cn.js";
 import { Input } from "./input.js";

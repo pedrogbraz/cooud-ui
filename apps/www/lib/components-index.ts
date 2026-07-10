@@ -10,6 +10,12 @@ export interface ComponentMeta {
   description: string;
   /** Override the named imports shown in the docs when they differ from `name`. */
   importName?: string;
+  /**
+   * `true` when the component's source module carries no `"use client"`
+   * directive, so it can render inside React Server Components (any
+   * interactive parts it composes stay client components underneath).
+   */
+  rsc?: boolean;
 }
 
 export interface ComponentCategory {
@@ -27,13 +33,14 @@ export const CATEGORIES: ComponentCategory[] = [
         slug: "button",
         name: "Button",
         description: "Clickable action with variants, sizes and asChild.",
+        rsc: true,
       },
       {
         slug: "animated-button",
         name: "AnimatedButton",
         description: "Motion-powered button with spring feedback.",
       },
-      { slug: "toggle", name: "Toggle", description: "A two-state on/off button." },
+      { slug: "toggle", name: "Toggle", description: "A two-state on/off button.", rsc: true },
       {
         slug: "toggle-group",
         name: "ToggleGroup",
@@ -49,6 +56,7 @@ export const CATEGORIES: ComponentCategory[] = [
         name: "ButtonGroup",
         description: "Attaches a row or column of buttons into one segmented unit.",
         importName: "ButtonGroup",
+        rsc: true,
       },
       {
         slug: "fab",
@@ -61,6 +69,7 @@ export const CATEGORIES: ComponentCategory[] = [
         name: "SplitButton",
         description: "Primary action fused to a dropdown of secondary actions.",
         importName: "SplitButton",
+        rsc: true,
       },
       {
         slug: "mode-toggle",
@@ -74,13 +83,19 @@ export const CATEGORIES: ComponentCategory[] = [
     slug: "forms",
     name: "Forms",
     items: [
-      { slug: "input", name: "Input", description: "Single-line text field with invalid state." },
+      {
+        slug: "input",
+        name: "Input",
+        description: "Single-line text field with invalid state.",
+        rsc: true,
+      },
       {
         slug: "input-group",
         name: "InputGroup",
         description:
           "A composable wrapper that fuses prefix/suffix addons to an Input into one bordered field.",
         importName: "InputGroup, InputGroupAddon",
+        rsc: true,
       },
       {
         slug: "password-input",
@@ -88,8 +103,18 @@ export const CATEGORIES: ComponentCategory[] = [
         description: "A password field with a show/hide toggle and an optional strength meter.",
         importName: "PasswordInput",
       },
-      { slug: "textarea", name: "Textarea", description: "Multi-line auto-sizing text field." },
-      { slug: "label", name: "Label", description: "Accessible label tied to a control." },
+      {
+        slug: "textarea",
+        name: "Textarea",
+        description: "Multi-line auto-sizing text field.",
+        rsc: true,
+      },
+      {
+        slug: "label",
+        name: "Label",
+        description: "Accessible label tied to a control.",
+        rsc: true,
+      },
       { slug: "checkbox", name: "Checkbox", description: "Binary choice with an indicator." },
       { slug: "radio-group", name: "RadioGroup", description: "Single choice among options." },
       { slug: "switch", name: "Switch", description: "Toggle a setting on or off." },
@@ -111,7 +136,12 @@ export const CATEGORIES: ComponentCategory[] = [
         importName: "TagsInput",
       },
       { slug: "slider", name: "Slider", description: "Pick a value or a range." },
-      { slug: "field", name: "Field", description: "Label + description + error layout." },
+      {
+        slug: "field",
+        name: "Field",
+        description: "Label + description + error layout.",
+        rsc: true,
+      },
       { slug: "form", name: "Form", description: "react-hook-form + zod integration." },
       { slug: "input-otp", name: "InputOTP", description: "One-time-code input with slots." },
       {
@@ -176,6 +206,7 @@ export const CATEGORIES: ComponentCategory[] = [
         name: "FloatingLabelInput",
         description: "Text field whose label floats above on focus or when filled.",
         importName: "FloatingLabelInput",
+        rsc: true,
       },
       {
         slug: "signature-pad",
@@ -190,33 +221,41 @@ export const CATEGORIES: ComponentCategory[] = [
     slug: "data-display",
     name: "Data Display",
     items: [
-      { slug: "avatar", name: "Avatar", description: "User image with a fallback." },
+      { slug: "avatar", name: "Avatar", description: "User image with a fallback.", rsc: true },
       {
         slug: "avatar-group",
         name: "AvatarGroup",
         description: 'Overlapping avatar stack with a "+N" overflow chip.',
         importName: "AvatarGroup",
+        rsc: true,
       },
-      { slug: "badge", name: "Badge", description: "Small status / category label." },
-      { slug: "card", name: "Card", description: "Surface that groups related content." },
-      { slug: "table", name: "Table", description: "Styled semantic table primitives." },
+      { slug: "badge", name: "Badge", description: "Small status / category label.", rsc: true },
+      {
+        slug: "card",
+        name: "Card",
+        description: "Surface that groups related content.",
+        rsc: true,
+      },
+      { slug: "table", name: "Table", description: "Styled semantic table primitives.", rsc: true },
       {
         slug: "data-table",
         name: "DataTable",
         description:
           "TanStack table with sorting, search & faceted filters, pagination, row selection with bulk actions, column visibility, density, and loading/empty/error states.",
       },
-      { slug: "metric", name: "Metric", description: "KPI value with trend delta." },
+      { slug: "metric", name: "Metric", description: "KPI value with trend delta.", rsc: true },
       {
         slug: "sparkline",
         name: "Sparkline",
         description: "Tiny inline line, area, or bar trend chart for stat tiles.",
+        rsc: true,
       },
       {
         slug: "masonry",
         name: "Masonry",
         description: "A responsive CSS multi-column masonry layout for cards and images.",
         importName: "Masonry",
+        rsc: true,
       },
       {
         slug: "comparison-slider",
@@ -230,16 +269,28 @@ export const CATEGORIES: ComponentCategory[] = [
         description:
           "A calendar-style contribution heatmap that buckets daily activity into levels.",
         importName: "Heatmap",
+        rsc: true,
       },
-      { slug: "kbd", name: "Kbd", description: "Keyboard key hint." },
-      { slug: "empty", name: "Empty", description: "Empty-state placeholder." },
-      { slug: "separator", name: "Separator", description: "Visual divider between content." },
-      { slug: "skeleton", name: "Skeleton", description: "Loading placeholder shimmer." },
+      { slug: "kbd", name: "Kbd", description: "Keyboard key hint.", rsc: true },
+      { slug: "empty", name: "Empty", description: "Empty-state placeholder.", rsc: true },
+      {
+        slug: "separator",
+        name: "Separator",
+        description: "Visual divider between content.",
+        rsc: true,
+      },
+      {
+        slug: "skeleton",
+        name: "Skeleton",
+        description: "Loading placeholder shimmer.",
+        rsc: true,
+      },
       { slug: "scroll-area", name: "ScrollArea", description: "Custom-styled scroll container." },
       {
         slug: "code-block",
         name: "CodeBlock",
         description: "Source snippet with header, line numbers and copy.",
+        rsc: true,
       },
       {
         slug: "code-tabs",
@@ -257,6 +308,7 @@ export const CATEGORIES: ComponentCategory[] = [
         slug: "aspect-ratio",
         name: "AspectRatio",
         description: "Constrain content to a fixed width-to-height ratio.",
+        rsc: true,
       },
       {
         slug: "tree-view",
@@ -269,6 +321,7 @@ export const CATEGORIES: ComponentCategory[] = [
         description: "Vertical activity feed with dots, connectors, timestamps and descriptions.",
         importName:
           "Timeline, TimelineItem, TimelineDot, TimelineContent, TimelineTitle, TimelineTime, TimelineDescription",
+        rsc: true,
       },
       {
         slug: "kanban",
@@ -292,6 +345,7 @@ export const CATEGORIES: ComponentCategory[] = [
         name: "Alert",
         description: "Inline callout banner with semantic variants.",
         importName: "Alert, AlertTitle, AlertDescription",
+        rsc: true,
       },
       {
         slug: "banner",
@@ -299,13 +353,19 @@ export const CATEGORIES: ComponentCategory[] = [
         description: "Dismissible full-width announcement / promo bar with a CTA.",
         importName: "Banner",
       },
-      { slug: "spinner", name: "Spinner", description: "Indeterminate loading indicator." },
-      { slug: "progress", name: "Progress", description: "Determinate progress bar." },
+      {
+        slug: "spinner",
+        name: "Spinner",
+        description: "Indeterminate loading indicator.",
+        rsc: true,
+      },
+      { slug: "progress", name: "Progress", description: "Determinate progress bar.", rsc: true },
       {
         slug: "usage-meter",
         name: "UsageMeter",
         description: "Linear or circular quota / billing usage indicator with severity tones.",
         importName: "UsageMeter, UsageMeterLinear, UsageMeterCircular",
+        rsc: true,
       },
       {
         slug: "sonner",
@@ -361,8 +421,13 @@ export const CATEGORIES: ComponentCategory[] = [
     items: [
       { slug: "tabs", name: "Tabs", description: "Switch between panels." },
       { slug: "accordion", name: "Accordion", description: "Collapsible content sections." },
-      { slug: "breadcrumb", name: "Breadcrumb", description: "Hierarchical page trail." },
-      { slug: "pagination", name: "Pagination", description: "Navigate between pages." },
+      {
+        slug: "breadcrumb",
+        name: "Breadcrumb",
+        description: "Hierarchical page trail.",
+        rsc: true,
+      },
+      { slug: "pagination", name: "Pagination", description: "Navigate between pages.", rsc: true },
       {
         slug: "navigation-menu",
         name: "NavigationMenu",
@@ -389,6 +454,7 @@ export const CATEGORIES: ComponentCategory[] = [
         name: "AppShell",
         description: "Sidebar + header + content layout in one step.",
         importName: "AppShell",
+        rsc: true,
       },
       {
         slug: "resizable",
@@ -456,9 +522,19 @@ export const CATEGORIES: ComponentCategory[] = [
     slug: "premium",
     name: "Premium & Brand",
     items: [
-      { slug: "glass-card", name: "GlassCard", description: "Frosted-glass surface." },
-      { slug: "gradient-border", name: "GradientBorder", description: "Aurora gradient border." },
-      { slug: "gradient-text", name: "GradientText", description: "Gradient-clipped text." },
+      { slug: "glass-card", name: "GlassCard", description: "Frosted-glass surface.", rsc: true },
+      {
+        slug: "gradient-border",
+        name: "GradientBorder",
+        description: "Aurora gradient border.",
+        rsc: true,
+      },
+      {
+        slug: "gradient-text",
+        name: "GradientText",
+        description: "Gradient-clipped text.",
+        rsc: true,
+      },
       { slug: "spotlight-card", name: "SpotlightCard", description: "Cursor-following spotlight." },
       {
         slug: "scroll-progress",
@@ -470,6 +546,7 @@ export const CATEGORIES: ComponentCategory[] = [
         slug: "aurora-background",
         name: "AuroraBackground",
         description: "Animated aurora backdrop.",
+        rsc: true,
       },
       {
         slug: "logo-carousel",
@@ -489,7 +566,7 @@ export const CATEGORIES: ComponentCategory[] = [
         importName:
           "MorphingPopover, MorphingPopoverTrigger, MorphingPopoverContent, MorphingPopoverClose, MorphingPopoverHeader, MorphingPopoverBody, MorphingPopoverFooter, MorphingPopoverButton",
       },
-      { slug: "shimmer", name: "Shimmer", description: "Premium shimmer surface." },
+      { slug: "shimmer", name: "Shimmer", description: "Premium shimmer surface.", rsc: true },
       { slug: "reveal", name: "Reveal", description: "Scroll-into-view reveal wrapper." },
       {
         slug: "animated-number",
@@ -519,6 +596,7 @@ export const CATEGORIES: ComponentCategory[] = [
         name: "Frame",
         description: "Browser/window chrome that frames a screenshot or product mockup.",
         importName: "Frame",
+        rsc: true,
       },
       {
         slug: "dock",
@@ -531,6 +609,7 @@ export const CATEGORIES: ComponentCategory[] = [
         name: "BorderBeam",
         description: "An animated light beam that travels around an element's border.",
         importName: "BorderBeam",
+        rsc: true,
       },
       {
         slug: "flip-card",
@@ -555,6 +634,7 @@ export const CATEGORIES: ComponentCategory[] = [
         name: "Orbit",
         description: "Icons or avatars revolving around a nucleus on pure-CSS rings.",
         importName: "Orbit, OrbitRing, OrbitItem",
+        rsc: true,
       },
       {
         slug: "terminal",

@@ -1,5 +1,3 @@
-"use client";
-
 import type { VariantProps } from "class-variance-authority";
 import { ChevronDown } from "lucide-react";
 import { forwardRef, type HTMLAttributes, type MouseEventHandler, type ReactNode } from "react";
