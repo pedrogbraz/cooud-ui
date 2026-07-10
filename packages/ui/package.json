@@ -564,7 +564,7 @@
     }
   },
   "devDependencies": {
-    "@hookform/resolvers": "^3.10.0",
+    "@hookform/resolvers": "^5.4.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "react": "^19.2.0",
@@ -572,6 +572,6 @@
     "react-hook-form": "^7.54.2",
     "typescript": "^6.0.3",
     "vitest": "^4.1.9",
-    "zod": "^3.24.1"
+    "zod": "^4.4.3"
   }
 }

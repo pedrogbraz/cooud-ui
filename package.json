@@ -46,7 +46,8 @@
   },
   "overrides": {
     "esbuild": "^0.28.1",
-    "postcss": ">=8.5.10"
+    "postcss": ">=8.5.10",
+    "zod": "^4.4.3"
   },
   "engines": {
     "node": ">=20"
