@@ -5,7 +5,14 @@
  * From the TS token objects this script can EMIT:
  *   1. styles/tokens.json   — a structured, machine-readable dump of every
  *                             theme/mode token set + the css-var name map.
- *   2. preset/index.js|.d.ts — a Tailwind v3-style preset (`theme.extend`) that
+ *   2. styles/tokens.dtcg.json — the same tokens in the W3C DTCG format,
+ *                             grouped `cooud.{theme}.{mode}.{token}`, for
+ *                             design-token tooling (Style Dictionary, Tokens
+ *                             Studio, …).
+ *   3. styles/figma-variables.json — a pragmatic Figma Variables import shape
+ *                             (one collection, one mode per theme×mode pair,
+ *                             oklch → sRGB-hex colors).
+ *   4. preset/index.js|.d.ts — a Tailwind v3-style preset (`theme.extend`) that
  *                             maps semantic utilities to the runtime --cooud-*
  *                             vars, so config-based consumers get the same
  *                             utilities the v4 `@theme inline` block provides.
@@ -43,6 +50,8 @@ import {
 const scriptDir = dirname(fileURLToPath(import.meta.url));
 const pkgRoot = resolve(scriptDir, "..");
 const jsonPath = join(pkgRoot, "styles/tokens.json");
+const dtcgPath = join(pkgRoot, "styles/tokens.dtcg.json");
+const figmaPath = join(pkgRoot, "styles/figma-variables.json");
 const presetJsPath = join(pkgRoot, "preset/index.js");
 const presetDtsPath = join(pkgRoot, "preset/index.d.ts");
 const cssPath = join(pkgRoot, "styles/tokens.css");
@@ -201,9 +210,450 @@ function emitPresetDts(): string {
   ].join("\n");
 }
 
+// ------------------------------------------------------------------ //
+// Design-tool artifacts — W3C DTCG + Figma Variables                  //
+// ------------------------------------------------------------------ //
+
+/**
+ * Both design-tool emitters classify tokens off the ThemeTokens key shape:
+ * `radius` is the only dimension, `font*` are family stacks, `shadow*` are
+ * box-shadows, and everything else (brand/surface/fg/border/semantic/chart)
+ * is a color. Gradients are intentionally absent: the `bg-gradient-*`
+ * utilities in tokens.css derive from primary/accent at runtime and are not
+ * tokens.
+ */
+type TokenKind = "color" | "dimension" | "fontFamily" | "shadow";
+
+function tokenKind(key: keyof ThemeTokens): TokenKind {
+  if (key === "radius") return "dimension";
+  if (key.startsWith("font")) return "fontFamily";
+  if (key.startsWith("shadow")) return "shadow";
+  return "color";
+}
+
+/** `'"SF Pro Text", Geist, system-ui'` → `["SF Pro Text", "Geist", "system-ui"]`. */
+function parseFontStack(stack: string): string[] {
+  return stack.split(",").map((family) => family.trim().replace(/^["']|["']$/g, ""));
+}
+
+/** Split on commas that sit OUTSIDE parentheses (rgba()/oklch() arguments). */
+function splitTopLevelCommas(value: string): string[] {
+  const parts: string[] = [];
+  let depth = 0;
+  let current = "";
+  for (const ch of value) {
+    if (ch === "(") depth += 1;
+    else if (ch === ")") depth -= 1;
+    if (ch === "," && depth === 0) {
+      parts.push(current);
+      current = "";
+    } else {
+      current += ch;
+    }
+  }
+  parts.push(current);
+  return parts.map((part) => part.trim()).filter((part) => part.length > 0);
+}
+
+/**
+ * Serialize JSON the way Biome's JSON formatter (lineWidth 100) prints it, so
+ * the emitted artifacts are a formatter fixed point and a repo-wide
+ * `biome format` can never induce artifact drift. Biome preserves expanded
+ * objects/arrays but COLLAPSES an array of primitives onto one line when the
+ * whole line — indent, `"key": ` prefix, array, trailing comma — fits within
+ * the line width (relevant here: the shorter fontFamily stacks).
+ */
+function printBiomeJson(value: unknown, indentLevel: number, reserved: number): string {
+  const pad = "  ".repeat(indentLevel);
+  const childPad = "  ".repeat(indentLevel + 1);
+  if (Array.isArray(value)) {
+    if (value.length === 0) return "[]";
+    if (value.every((item) => typeof item !== "object" || item === null)) {
+      const flat = `[${value.map((item) => JSON.stringify(item)).join(", ")}]`;
+      if (indentLevel * 2 + reserved + flat.length <= 100) return flat;
+    }
+    const items = value.map((item) => `${childPad}${printBiomeJson(item, indentLevel + 1, 1)}`);
+    return `[\n${items.join(",\n")}\n${pad}]`;
+  }
+  if (typeof value === "object" && value !== null) {
+    const entries = Object.entries(value).filter(([, val]) => val !== undefined);
+    if (entries.length === 0) return "{}";
+    const lines = entries.map(([key, val]) => {
+      const prefix = `${JSON.stringify(key)}: `;
+      // Reserve the prefix + 1 for the comma that follows every non-last entry.
+      return `${childPad}${prefix}${printBiomeJson(val, indentLevel + 1, prefix.length + 1)}`;
+    });
+    return `{\n${lines.join(",\n")}\n${pad}}`;
+  }
+  return JSON.stringify(value);
+}
+
+interface DtcgShadowLayer {
+  color: string;
+  offsetX: string;
+  offsetY: string;
+  blur: string;
+  spread: string;
+}
+
+/**
+ * Parse one `<x> <y> <blur>? <spread>? <color>` box-shadow layer into the DTCG
+ * shadow object, or return null when the layer doesn't fit that shape (e.g.
+ * `inset`, keyword colors) so the caller can fall back to a raw string.
+ */
+function parseShadowLayer(layer: string): DtcgShadowLayer | null {
+  const m = layer.match(
+    /^(.+?)\s*((?:rgba?|hsla?|oklch|oklab|color)\([^()]*\)|#[0-9a-fA-F]{3,8})$/,
+  );
+  if (!m || m[1] === undefined || m[2] === undefined) return null;
+  const lengths = m[1]
+    .trim()
+    .split(/\s+/)
+    .map((len) => (len === "0" ? "0px" : len));
+  if (lengths.length < 2 || lengths.length > 4) return null;
+  if (!lengths.every((len) => /^-?\d+(?:\.\d+)?px$/.test(len))) return null;
+  const [offsetX, offsetY, blur = "0px", spread = "0px"] = lengths;
+  if (offsetX === undefined || offsetY === undefined) return null;
+  return { color: m[2], offsetX, offsetY, blur, spread };
+}
+
+// --- oklch → sRGB hex (for Figma, which has no oklch support) --- //
+
+interface ParsedOklch {
+  l: number;
+  c: number;
+  h: number;
+  alpha: number;
+}
+
+function parseOklch(raw: string): ParsedOklch | null {
+  const m = raw.match(
+    /^oklch\(\s*([\d.]+%?)\s+([\d.]+)\s+(-?[\d.]+)(?:deg)?\s*(?:\/\s*([\d.]+%?)\s*)?\)$/i,
+  );
+  if (!m || m[1] === undefined || m[2] === undefined || m[3] === undefined) return null;
+  const num = (s: string): number =>
+    s.endsWith("%") ? Number.parseFloat(s) / 100 : Number.parseFloat(s);
+  return {
+    l: num(m[1]),
+    c: Number.parseFloat(m[2]),
+    h: Number.parseFloat(m[3]),
+    alpha: m[4] === undefined ? 1 : num(m[4]),
+  };
+}
+
+/**
+ * oklch → gamma-encoded sRGB channels in [0, 1], using the CSS Color 4 /
+ * Björn Ottosson reference matrices (oklch → oklab → LMS³ → linear sRGB →
+ * gamma). Out-of-gamut channels are clamped to [0, 1] before encoding — the
+ * pragmatic sRGB projection, matching what browsers show on sRGB screens.
+ */
+function oklchToSrgb(l: number, c: number, h: number): [number, number, number] {
+  const hRad = (h * Math.PI) / 180;
+  const a = c * Math.cos(hRad);
+  const b = c * Math.sin(hRad);
+  const lm = (l + 0.3963377774 * a + 0.2158037573 * b) ** 3;
+  const mm = (l - 0.1055613458 * a - 0.0638541728 * b) ** 3;
+  const sm = (l - 0.0894841775 * a - 1.291485548 * b) ** 3;
+  const linear = [
+    4.0767416621 * lm - 3.3077115913 * mm + 0.2309699292 * sm,
+    -1.2684380046 * lm + 2.6097574011 * mm - 0.3413193965 * sm,
+    -0.0041960863 * lm - 0.7034186147 * mm + 1.707614701 * sm,
+  ];
+  return linear.map((channel) => {
+    const clamped = Math.min(1, Math.max(0, channel));
+    return clamped <= 0.0031308 ? 12.92 * clamped : 1.055 * clamped ** (1 / 2.4) - 0.055;
+  }) as [number, number, number];
+}
+
+function channelHex(value01: number): string {
+  return Math.round(value01 * 255)
+    .toString(16)
+    .padStart(2, "0");
+}
+
+function expandHexDigits(digits: string): string {
+  const d = digits.toLowerCase();
+  if (d.length === 6 || d.length === 8) return `#${d}`;
+  if (d.length === 3 || d.length === 4) return `#${[...d].map((ch) => ch + ch).join("")}`;
+  throw new Error(`figma-variables: malformed hex color "#${digits}"`);
+}
+
+/** Any token color string → sRGB hex: `#rrggbb`, or `#rrggbbaa` when alpha < 1. */
+function cssColorToHex(raw: string): string {
+  const value = raw.trim();
+  const hexMatch = value.match(/^#([0-9a-fA-F]{3,8})$/);
+  if (hexMatch?.[1] !== undefined) return expandHexDigits(hexMatch[1]);
+  const ok = parseOklch(value);
+  if (ok) {
+    const [r, g, b] = oklchToSrgb(ok.l, ok.c, ok.h);
+    const base = `#${channelHex(r)}${channelHex(g)}${channelHex(b)}`;
+    return ok.alpha < 1 ? `${base}${channelHex(ok.alpha)}` : base;
+  }
+  const rgb = value.match(/^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([\d.]+)\s*)?\)$/i);
+  if (rgb && rgb[1] !== undefined && rgb[2] !== undefined && rgb[3] !== undefined) {
+    const base = `#${[rgb[1], rgb[2], rgb[3]]
+      .map((ch) => Number.parseInt(ch, 10).toString(16).padStart(2, "0"))
+      .join("")}`;
+    const alpha = rgb[4] === undefined ? 1 : Number.parseFloat(rgb[4]);
+    return alpha < 1 ? `${base}${channelHex(alpha)}` : base;
+  }
+  throw new Error(`figma-variables: unsupported color syntax "${raw}"`);
+}
+
+/**
+ * Known-good conversion pairs, asserted on every emit so a math regression can
+ * never silently ship wrong colors. White/black are exact by construction; the
+ * indigo pair is converter-verified (culori/oklch.com agree byte-for-byte and
+ * it is the documented hex of the midnight `primary` token). The sky pair is
+ * Tailwind v4's sky-500 — its oklch sits slightly OUTSIDE the sRGB gamut (red
+ * clamps to 0), so the correct sRGB projection is #00a6f4, not the Tailwind v3
+ * mnemonic #0ea5e9; ±2/channel absorbs rounding differences between tools.
+ */
+const COLOR_CONVERSION_FIXTURES: readonly {
+  input: string;
+  expected: string;
+  tolerance: number;
+}[] = [
+  { input: "oklch(1 0 0)", expected: "#ffffff", tolerance: 0 },
+  { input: "oklch(0 0 0)", expected: "#000000", tolerance: 0 },
+  { input: "oklch(0.55 0.205 280)", expected: "#6158e4", tolerance: 0 },
+  { input: "oklch(0.685 0.169 237.3)", expected: "#00a6f4", tolerance: 2 },
+  { input: "oklch(1 0 0 / 0.1)", expected: "#ffffff1a", tolerance: 0 },
+];
+
+function hexWithinTolerance(a: string, b: string, tolerance: number): boolean {
+  if (a.length !== b.length) return false;
+  for (let i = 1; i < a.length; i += 2) {
+    const ca = Number.parseInt(a.slice(i, i + 2), 16);
+    const cb = Number.parseInt(b.slice(i, i + 2), 16);
+    if (Number.isNaN(ca) || Number.isNaN(cb) || Math.abs(ca - cb) > tolerance) return false;
+  }
+  return true;
+}
+
+function assertColorConversion(): void {
+  for (const { input, expected, tolerance } of COLOR_CONVERSION_FIXTURES) {
+    const actual = cssColorToHex(input);
+    if (!hexWithinTolerance(actual, expected, tolerance)) {
+      throw new Error(
+        `oklch→sRGB self-check failed: ${input} → ${actual}, expected ${expected} (±${tolerance}/channel)`,
+      );
+    }
+  }
+}
+
+// --- W3C DTCG emitter --- //
+
+interface DtcgToken {
+  $value: unknown;
+  $type: string;
+  $description?: string;
+}
+
+/** DTCG token name for a ThemeTokens key: the css-var name minus the prefix. */
+function dtcgName(key: keyof ThemeTokens): string {
+  return utilityKey(cssVarMap[key]);
+}
+
+function dtcgToken(key: keyof ThemeTokens, raw: string): DtcgToken {
+  switch (tokenKind(key)) {
+    case "color":
+      return { $value: raw, $type: "color" };
+    case "dimension":
+      return { $value: raw, $type: "dimension" };
+    case "fontFamily":
+      return { $value: parseFontStack(raw), $type: "fontFamily" };
+    case "shadow": {
+      const layers = splitTopLevelCommas(raw).map(parseShadowLayer);
+      if (layers.length > 0 && layers.every((layer): layer is DtcgShadowLayer => layer !== null)) {
+        return { $value: layers.length === 1 ? layers[0] : layers, $type: "shadow" };
+      }
+      return {
+        $value: raw,
+        $type: "other",
+        $description: "Raw CSS box-shadow string — not representable as a DTCG shadow object.",
+      };
+    }
+  }
+}
+
+const DTCG_FILE_DESCRIPTION =
+  "Cooud UI design tokens in the W3C DTCG format, grouped cooud.{theme}.{mode}.{token}. " +
+  "GENERATED by packages/tokens/scripts/build-tokens.ts from src/tokens.ts — do not edit by hand. " +
+  "Color $values are the source-of-truth CSS color strings (mostly oklch(), some with a ' / <alpha>' channel), " +
+  "kept verbatim rather than converted so nothing is lost; use figma-variables.json (or convert downstream) " +
+  "if a tool needs sRGB hex. Gradients are not tokens — the bg-gradient-* utilities derive from " +
+  "primary/accent at runtime.";
+
+type DtcgModeGroup = Record<string, DtcgToken>;
+type DtcgTree = Record<string, Record<string, DtcgModeGroup>>;
+
+/** Structural self-check: every group present, every token carries $value + $type. */
+function assertDtcgStructure(cooud: DtcgTree): void {
+  const perMode = Object.keys(cssVarMap).length;
+  let count = 0;
+  for (const theme of themeNames) {
+    for (const mode of modes) {
+      const group = cooud[theme]?.[mode];
+      if (group === undefined) {
+        throw new Error(`tokens.dtcg.json: missing group cooud.${theme}.${mode}`);
+      }
+      const names = Object.keys(group);
+      if (names.length !== perMode) {
+        throw new Error(
+          `tokens.dtcg.json: cooud.${theme}.${mode} has ${names.length} tokens, expected ${perMode}`,
+        );
+      }
+      for (const name of names) {
+        const token = group[name];
+        const valueOk = token !== undefined && token.$value !== undefined && token.$value !== "";
+        const typeOk =
+          token !== undefined && typeof token.$type === "string" && token.$type.length > 0;
+        if (!valueOk || !typeOk) {
+          throw new Error(`tokens.dtcg.json: cooud.${theme}.${mode}.${name} lacks $value/$type`);
+        }
+        count += 1;
+      }
+    }
+  }
+  const expected = themeNames.length * modes.length * perMode;
+  if (count !== expected) {
+    throw new Error(`tokens.dtcg.json: emitted ${count} tokens, expected ${expected}`);
+  }
+}
+
+function emitDtcgJson(): string {
+  const cooud: DtcgTree = {};
+  for (const theme of themeNames) {
+    const themeGroup: Record<string, DtcgModeGroup> = {};
+    for (const mode of modes) {
+      const group: DtcgModeGroup = {};
+      for (const key of Object.keys(cssVarMap) as (keyof ThemeTokens)[]) {
+        group[dtcgName(key)] = dtcgToken(key, themes[theme][mode][key]);
+      }
+      themeGroup[mode] = group;
+    }
+    cooud[theme] = themeGroup;
+  }
+  assertDtcgStructure(cooud);
+  const payload = { $description: DTCG_FILE_DESCRIPTION, cooud };
+  return `${printBiomeJson(payload, 0, 0)}\n`;
+}
+
+// --- Figma Variables emitter --- //
+
+type FigmaResolvedType = "COLOR" | "FLOAT" | "STRING";
+
+interface FigmaVariable {
+  name: string;
+  resolvedType: FigmaResolvedType;
+  valuesByMode: Record<string, string | number>;
+}
+
+interface FigmaCollection {
+  name: string;
+  modes: string[];
+  variables: FigmaVariable[];
+}
+
+function figmaResolvedType(kind: TokenKind): FigmaResolvedType {
+  if (kind === "color") return "COLOR";
+  if (kind === "dimension") return "FLOAT";
+  return "STRING";
+}
+
+/** Slash-grouped Figma variable name, e.g. color/primary, font/sans, shadow/xs. */
+function figmaVariableName(key: keyof ThemeTokens): string {
+  const kind = tokenKind(key);
+  const util = utilityKey(cssVarMap[key]);
+  if (kind === "dimension") return util; // "radius"
+  if (kind === "fontFamily") return `font/${util.replace(/^font-/, "")}`;
+  if (kind === "shadow") return `shadow/${util.replace(/^shadow-/, "")}`;
+  return `color/${util}`;
+}
+
+function figmaValue(kind: TokenKind, raw: string): string | number {
+  if (kind === "color") return cssColorToHex(raw);
+  if (kind === "dimension") {
+    const m = raw.trim().match(/^(-?\d+(?:\.\d+)?)px$/);
+    if (!m || m[1] === undefined) {
+      throw new Error(`figma-variables: dimension "${raw}" is not a px length`);
+    }
+    return Number.parseFloat(m[1]);
+  }
+  // Font stacks and box-shadows stay raw CSS strings — Figma has no such types.
+  return raw;
+}
+
+function isValidFigmaValue(resolvedType: FigmaResolvedType, value: string | number): boolean {
+  if (resolvedType === "COLOR") {
+    return typeof value === "string" && /^#[0-9a-f]{6}(?:[0-9a-f]{2})?$/.test(value);
+  }
+  if (resolvedType === "FLOAT") {
+    return typeof value === "number" && Number.isFinite(value);
+  }
+  return typeof value === "string" && value.length > 0;
+}
+
+/** Structural self-check: 10 modes, one variable per token, valid typed values. */
+function assertFigmaStructure(collection: FigmaCollection): void {
+  const modeCount = themeNames.length * modes.length;
+  if (collection.modes.length !== modeCount) {
+    throw new Error(`figma-variables: ${collection.modes.length} modes, expected ${modeCount}`);
+  }
+  const tokenCount = Object.keys(cssVarMap).length;
+  if (collection.variables.length !== tokenCount) {
+    throw new Error(
+      `figma-variables: ${collection.variables.length} variables, expected ${tokenCount}`,
+    );
+  }
+  for (const variable of collection.variables) {
+    const entries = Object.entries(variable.valuesByMode);
+    if (entries.length !== modeCount) {
+      throw new Error(`figma-variables: ${variable.name} misses per-mode values`);
+    }
+    for (const [modeId, value] of entries) {
+      if (!isValidFigmaValue(variable.resolvedType, value)) {
+        throw new Error(
+          `figma-variables: ${variable.name} has an invalid ${variable.resolvedType} value for mode ${modeId}`,
+        );
+      }
+    }
+  }
+}
+
+const FIGMA_FILE_COMMENT =
+  "GENERATED by packages/tokens/scripts/build-tokens.ts from src/tokens.ts — do not edit by hand. " +
+  "Pragmatic import shape for Figma Variables plugins and the Figma Variables REST API: one collection " +
+  "with one mode per theme×mode pair. COLOR values are sRGB hex (#rrggbb, #rrggbbaa when the token " +
+  "carries alpha), converted from the oklch source and clamped to the sRGB gamut. radius is a px " +
+  "number (FLOAT); font stacks and box-shadows are raw CSS strings (STRING) because Figma variables " +
+  "have no font-stack or shadow type.";
+
+function emitFigmaVariablesJson(): string {
+  assertColorConversion();
+  const modeIds = themeNames.flatMap((theme) => modes.map((mode) => `${theme}-${mode}`));
+  const variables = (Object.keys(cssVarMap) as (keyof ThemeTokens)[]).map((key): FigmaVariable => {
+    const kind = tokenKind(key);
+    const valuesByMode: Record<string, string | number> = {};
+    for (const theme of themeNames) {
+      for (const mode of modes) {
+        valuesByMode[`${theme}-${mode}`] = figmaValue(kind, themes[theme][mode][key]);
+      }
+    }
+    return { name: figmaVariableName(key), resolvedType: figmaResolvedType(kind), valuesByMode };
+  });
+  const collection: FigmaCollection = { name: "Cooud UI", modes: modeIds, variables };
+  assertFigmaStructure(collection);
+  const payload = { $comment: FIGMA_FILE_COMMENT, collection };
+  return `${printBiomeJson(payload, 0, 0)}\n`;
+}
+
 function generatedFiles(): Generated[] {
   return [
     { path: jsonPath, content: emitJson() },
+    { path: dtcgPath, content: emitDtcgJson() },
+    { path: figmaPath, content: emitFigmaVariablesJson() },
     { path: presetJsPath, content: emitPresetJs() },
     { path: presetDtsPath, content: emitPresetDts() },
   ];
@@ -346,7 +796,8 @@ function checkCssAgainstTokens(rawCss: string): string[] {
 // ------------------------------------------------------------------ //
 
 async function write(): Promise<void> {
-  for (const f of generatedFiles()) {
+  const files = generatedFiles();
+  for (const f of files) {
     await writeFile(f.path, f.content, "utf8");
   }
   // Sanity: the freshly written artifacts must agree with the committed CSS.
@@ -357,11 +808,8 @@ async function write(): Promise<void> {
     for (const p of cssProblems) console.error(`  - ${p}`);
     process.exit(1);
   }
-  console.log(
-    `tokens: wrote ${jsonPath.replace(`${pkgRoot}/`, "")}, ` +
-      `${presetJsPath.replace(`${pkgRoot}/`, "")}, ` +
-      `${presetDtsPath.replace(`${pkgRoot}/`, "")} (CSS verified)`,
-  );
+  const written = files.map((f) => f.path.replace(`${pkgRoot}/`, "")).join(", ");
+  console.log(`tokens: wrote ${written} (CSS verified)`);
 }
 
 async function check(): Promise<void> {
@@ -400,7 +848,7 @@ async function check(): Promise<void> {
     console.error("\nRun `bun run tokens:generate` (and reconcile tokens.css) then re-check.");
     process.exit(1);
   }
-  console.log("tokens: no drift — json + preset + CSS all match src/tokens.ts");
+  console.log("tokens: no drift — json + dtcg + figma + preset + CSS all match src/tokens.ts");
 }
 
 async function main(): Promise<void> {

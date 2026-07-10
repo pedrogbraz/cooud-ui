@@ -10,6 +10,8 @@
     },
     "./styles.css": "./styles/tokens.css",
     "./tokens.json": "./styles/tokens.json",
+    "./tokens.dtcg.json": "./styles/tokens.dtcg.json",
+    "./figma-variables.json": "./styles/figma-variables.json",
     "./preset": {
       "types": "./preset/index.d.ts",
       "import": "./preset/index.js"
