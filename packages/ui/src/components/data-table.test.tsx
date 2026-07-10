@@ -86,6 +86,54 @@ describe("DataTable — sorting", () => {
     expect(nameColumnOrder()).toEqual(["Charlie", "Bob", "Alice"]);
     expect(screen.getByRole("button", { name: /sorted by name descending/i })).toBeInTheDocument();
   });
+
+  it("cycles aria-sort through none → ascending → descending → ascending", async () => {
+    render(<DataTable columns={columns} data={DATA} />);
+    const header = () => screen.getByRole("columnheader", { name: /name/i });
+    const sortButton = () => within(header()).getByRole("button");
+
+    expect(header()).toHaveAttribute("aria-sort", "none");
+    await userEvent.click(sortButton());
+    expect(header()).toHaveAttribute("aria-sort", "ascending");
+    await userEvent.click(sortButton());
+    expect(header()).toHaveAttribute("aria-sort", "descending");
+    await userEvent.click(sortButton());
+    expect(header()).toHaveAttribute("aria-sort", "ascending");
+  });
+
+  it("marks header cells with scope=col and omits aria-sort on non-sortable columns", () => {
+    render(<DataTable columns={columns} data={DATA} enableRowSelection />);
+    const selectionHeader = screen.getByRole("columnheader", { name: /select all rows/i });
+    expect(selectionHeader).toHaveAttribute("scope", "col");
+    expect(selectionHeader).not.toHaveAttribute("aria-sort");
+    expect(screen.getByRole("columnheader", { name: /name/i })).toHaveAttribute("scope", "col");
+  });
+
+  it("advertises the true next action for every sort state", async () => {
+    render(<DataTable columns={columns} data={DATA} />);
+    // Unsorted: activation sorts ascending.
+    const unsorted = screen.getByRole("button", {
+      name: "Sort by Name. Activate to sort ascending.",
+    });
+    await userEvent.click(unsorted);
+    // Ascending: activation sorts descending.
+    const asc = screen.getByRole("button", {
+      name: "Sorted by Name ascending. Activate to sort descending.",
+    });
+    await userEvent.click(asc);
+    // Descending: activation re-sorts ascending (toggleSorting with an explicit
+    // direction never clears the sort), and the label must say so.
+    const desc = screen.getByRole("button", {
+      name: "Sorted by Name descending. Activate to sort ascending.",
+    });
+    await userEvent.click(desc);
+    expect(nameColumnOrder()).toEqual(["Alice", "Bob", "Charlie"]);
+    expect(
+      screen.getByRole("button", {
+        name: "Sorted by Name ascending. Activate to sort descending.",
+      }),
+    ).toBeInTheDocument();
+  });
 });
 
 describe("DataTable — search / filter", () => {
@@ -172,6 +220,97 @@ describe("DataTable — pagination", () => {
   });
 });
 
+describe("DataTable — loading", () => {
+  it("announces loading politely and marks the table region busy", () => {
+    const { container } = render(<DataTable columns={columns} data={[]} loading />);
+    expect(screen.getByRole("status")).toHaveTextContent("Loading rows…");
+    expect(container.querySelector('[data-slot="data-table-container"]')).toHaveAttribute(
+      "aria-busy",
+      "true",
+    );
+  });
+
+  it("clears the announcement and busy state once loading finishes", () => {
+    const { container, rerender } = render(<DataTable columns={columns} data={DATA} loading />);
+    rerender(<DataTable columns={columns} data={DATA} />);
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
+    expect(container.querySelector('[data-slot="data-table-container"]')).not.toHaveAttribute(
+      "aria-busy",
+    );
+  });
+});
+
+describe("DataTable — labels", () => {
+  it("names row checkboxes by index so they are distinguishable", () => {
+    render(<DataTable columns={columns} data={DATA} enableRowSelection />);
+    expect(screen.getByRole("checkbox", { name: "Select row 1" })).toBeInTheDocument();
+    expect(screen.getByRole("checkbox", { name: "Select row 3" })).toBeInTheDocument();
+  });
+
+  it("getRowLabel names row checkboxes from the row data", () => {
+    render(
+      <DataTable
+        columns={columns}
+        data={DATA}
+        enableRowSelection
+        getRowLabel={(row) => `Select ${row.original.name}`}
+      />,
+    );
+    expect(screen.getByRole("checkbox", { name: "Select Alice" })).toBeInTheDocument();
+    expect(screen.getByRole("checkbox", { name: "Select Charlie" })).toBeInTheDocument();
+  });
+
+  it("labels prop overrides the built-in strings", () => {
+    render(
+      <DataTable
+        columns={columns}
+        data={[]}
+        pagination
+        enableRowSelection
+        labels={{
+          noResults: "Nada encontrado.",
+          rowsPerPage: "Linhas por página",
+          pagination: "Paginação",
+          nextPage: "Próxima página",
+          pageOf: (page, pageCount) => `Página ${page} de ${pageCount}`,
+          selectedOfTotal: (selected, total) => `${selected} de ${total} linha(s) selecionada(s).`,
+        }}
+      />,
+    );
+    expect(screen.getByText("Nada encontrado.")).toBeInTheDocument();
+    expect(screen.getByText("Linhas por página")).toBeInTheDocument();
+    expect(screen.getByRole("navigation", { name: "Paginação" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Próxima página" })).toBeInTheDocument();
+    expect(screen.getByText("Página 0 de 0")).toBeInTheDocument();
+    expect(screen.getByText("0 de 0 linha(s) selecionada(s).")).toBeInTheDocument();
+  });
+
+  it("labels prop localizes the selection checkboxes", () => {
+    render(
+      <DataTable
+        columns={columns}
+        data={DATA}
+        enableRowSelection
+        labels={{
+          selectAllRows: "Selecionar todas as linhas",
+          selectRow: (rowIndex) => `Selecionar linha ${rowIndex + 1}`,
+        }}
+      />,
+    );
+    expect(
+      screen.getByRole("checkbox", { name: "Selecionar todas as linhas" }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("checkbox", { name: "Selecionar linha 2" })).toBeInTheDocument();
+  });
+
+  it("labels prop localizes the loading announcement", () => {
+    render(
+      <DataTable columns={columns} data={[]} loading labels={{ loadingRows: "Carregando…" }} />,
+    );
+    expect(screen.getByRole("status")).toHaveTextContent("Carregando…");
+  });
+});
+
 describe("DataTable — helpers", () => {
   it("fuzzyTextFilter matches case-insensitively", () => {
     const row = { getValue: () => "Cooud Checkout" } as never;
@@ -198,6 +337,11 @@ describe("DataTable — a11y", () => {
     const { container } = render(
       <DataTable columns={columns} data={DATA} searchable enableRowSelection />,
     );
+    expect(await axe(container)).toHaveNoViolations();
+  });
+
+  it("has no axe violations while loading", async () => {
+    const { container } = render(<DataTable columns={columns} data={[]} loading />);
     expect(await axe(container)).toHaveNoViolations();
   });
 });
