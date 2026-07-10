@@ -42,7 +42,7 @@ export default function RadarChartDemo() {
     >
       <div aria-hidden="true" className="h-full w-full">
         <ChartContainer config={chartConfig} className="h-full w-full">
-          <RadarChart data={chartData}>
+          <RadarChart accessibilityLayer={false} data={chartData}>
             <ChartTooltip content={<ChartTooltipContent />} />
             <PolarGrid />
             <PolarAngleAxis dataKey="metric" />

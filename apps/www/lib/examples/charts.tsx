@@ -117,7 +117,7 @@ return (
   >
     <div aria-hidden="true" className="h-full w-full">
       <ChartContainer config={chartConfig} className="h-full w-full">
-        <PieChart>
+        <PieChart accessibilityLayer={false}>
           <ChartTooltip content={<ChartTooltipContent hideLabel />} />
           <Pie
             data={chartData}
@@ -185,7 +185,7 @@ return (
   >
     <div aria-hidden="true" className="h-full w-full">
       <ChartContainer config={chartConfig} className="h-full w-full">
-        <RadarChart data={chartData}>
+        <RadarChart accessibilityLayer={false} data={chartData}>
           <ChartTooltip content={<ChartTooltipContent />} />
           <PolarGrid />
           <PolarAngleAxis dataKey="metric" />
@@ -227,7 +227,7 @@ return (
   >
     <div aria-hidden="true" className="h-full w-full">
       <ChartContainer config={chartConfig} className="h-full w-full">
-        <RadialBarChart data={chartData} innerRadius={32} outerRadius={110}>
+        <RadialBarChart accessibilityLayer={false} data={chartData} innerRadius={32} outerRadius={110}>
           <ChartTooltip content={<ChartTooltipContent hideLabel nameKey="device" />} />
           <PolarGrid gridType="circle" radialLines={false} stroke="none" />
           <RadialBar dataKey="visitors" background cornerRadius={8} />

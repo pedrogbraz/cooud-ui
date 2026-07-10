@@ -46,7 +46,7 @@ export default function PieChartDemo() {
     >
       <div aria-hidden="true" className="h-full w-full">
         <ChartContainer config={chartConfig} className="h-full w-full">
-          <PieChart>
+          <PieChart accessibilityLayer={false}>
             <ChartTooltip content={<ChartTooltipContent hideLabel />} />
             <Pie
               data={chartData}
