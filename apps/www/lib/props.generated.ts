@@ -984,6 +984,12 @@ export const COMPONENT_PROPS: Record<string, PropsDoc[]> = {
           description: 'Layout axis. Defaults to `"horizontal"`.',
           default: '"horizontal"',
         },
+        {
+          name: "labels",
+          type: "Partial<StepperLabels>",
+          required: false,
+          description: "Localize the sr-only step-state announcements. See .",
+        },
       ],
     },
     {
@@ -1846,6 +1852,20 @@ export const COMPONENT_PROPS: Record<string, PropsDoc[]> = {
           required: false,
           description: 'Accessible label for the toolbar region. Defaults to "Table controls".',
         },
+        {
+          name: "labels",
+          type: "Partial<DataTableLabels>",
+          required: false,
+          description:
+            "Override any subset of the built-in UI strings (selection checkbox labels, pagination, empty/loading/retry states…) for localization. Defaults are English; see .",
+        },
+        {
+          name: "getRowLabel",
+          type: "(row: Row<TData>) => string",
+          required: false,
+          description:
+            'Accessible name for each row-selection checkbox, built from the row data (e.g. `(row) => "Select " + row.original.name`). Takes precedence over `labels.selectRow`. Only applies to the selection column injected by `enableRowSelection`.',
+        },
       ],
     },
     {
@@ -1865,6 +1885,12 @@ export const COMPONENT_PROPS: Record<string, PropsDoc[]> = {
           name: "className",
           type: "string",
           required: false,
+        },
+        {
+          name: "labels",
+          type: "Partial<DataTableColumnHeaderLabels>",
+          required: false,
+          description: "Localize the sort-button `aria-label`s. See .",
         },
       ],
     },
@@ -3255,11 +3281,23 @@ export const COMPONENT_PROPS: Record<string, PropsDoc[]> = {
           description: "Extra non-selectable days, merged with `min`/`max`.",
         },
         {
+          name: "locale",
+          type: "Locale",
+          required: false,
+          description: "`date-fns` locale used for both the trigger label and the calendar.",
+        },
+        {
           name: "dateFormat",
           type: "string",
           required: false,
           description: "`date-fns` format token for each end of the range.",
           default: '"LLL dd, y"',
+        },
+        {
+          name: "formatValue",
+          type: "(range: DateRange) => string",
+          required: false,
+          description: "Full override for the trigger label. Wins over `dateFormat`/`locale`.",
         },
         {
           name: "align",
