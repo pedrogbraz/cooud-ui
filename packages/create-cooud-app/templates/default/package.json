@@ -13,7 +13,7 @@
     "@cooud-ui/theme": "^0.2.0",
     "@cooud-ui/tokens": "^0.2.0",
     "@cooud-ui/ui": "^0.2.0",
-    "next": "16.2.6",
+    "next": "16.2.10",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },
