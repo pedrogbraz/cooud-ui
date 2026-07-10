@@ -77,6 +77,20 @@ const GALLERY_VIEWS: Record<BlockFamily, GalleryView> = {
   social: dynamic(() => import("../../lib/blocks/social").then((m) => m.SocialGallery), {
     loading: GallerySkeleton,
   }),
+  changelog: dynamic(() => import("../../lib/blocks/changelog").then((m) => m.ChangelogGallery), {
+    loading: GallerySkeleton,
+  }),
+  integrations: dynamic(
+    () => import("../../lib/blocks/integrations").then((m) => m.IntegrationsGallery),
+    { loading: GallerySkeleton },
+  ),
+  waitlist: dynamic(() => import("../../lib/blocks/waitlist").then((m) => m.WaitlistGallery), {
+    loading: GallerySkeleton,
+  }),
+  "feature-matrix": dynamic(
+    () => import("../../lib/blocks/feature-matrix").then((m) => m.FeatureMatrixGallery),
+    { loading: GallerySkeleton },
+  ),
 };
 
 export function BlockVariantsGallery({ slug }: { slug: string }) {

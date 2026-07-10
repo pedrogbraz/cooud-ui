@@ -90,7 +90,7 @@ export function ComponentsCatalog() {
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder="Search components..."
-              className="h-10 w-full rounded-xl border border-border bg-surface-inset pl-9 pr-3 text-sm text-fg outline-none placeholder:text-fg-tertiary focus:border-border-strong focus:ring-2 focus:ring-ring"
+              className="h-10 w-full rounded-xl border border-border bg-surface-inset pl-9 pr-3 text-sm text-fg outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-fg-tertiary focus:border-border-strong focus:ring-2 focus:ring-ring motion-reduce:transition-none"
             />
           </label>
 
@@ -99,21 +99,29 @@ export function ComponentsCatalog() {
               const active = category === filter.slug;
 
               return (
+                // Mirrors the Stack Builder pill treatment: selected reads through
+                // a primary border + overlay surface; hover firms the border and
+                // lifts the surface a step. Color-only tweens — no layout shift.
                 <button
                   key={filter.slug}
                   type="button"
                   aria-pressed={active}
                   onClick={() => setCategory(filter.slug)}
                   className={cn(
-                    "inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring",
+                    "inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm outline-none",
+                    "transition-colors duration-150 ease-[var(--ease-out-quart)] motion-reduce:transition-none",
+                    "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base",
                     active
-                      ? "border-border-strong bg-surface-raised text-fg"
-                      : "border-border bg-surface-inset text-fg-secondary hover:border-border-strong hover:text-fg",
+                      ? "border-primary bg-surface-overlay text-fg shadow-xs"
+                      : "border-border bg-surface-inset text-fg-secondary hover:border-border-strong hover:bg-surface-overlay hover:text-fg",
                   )}
                 >
                   <span>{filter.name}</span>
                   <span
-                    className={cn("text-xs", active ? "text-fg-secondary" : "text-fg-tertiary")}
+                    className={cn(
+                      "text-xs tabular-nums transition-colors duration-150 motion-reduce:transition-none",
+                      active ? "text-fg-secondary" : "text-fg-tertiary",
+                    )}
                   >
                     {filter.count}
                   </span>
@@ -125,7 +133,7 @@ export function ComponentsCatalog() {
       </div>
 
       <div className="py-8">
-        <p className="text-sm text-fg-tertiary" aria-live="polite">
+        <p className="text-sm tabular-nums text-fg-tertiary" aria-live="polite">
           {filtered.length} {filtered.length === 1 ? "component" : "components"}
         </p>
 
@@ -153,13 +161,14 @@ export function ComponentsCatalog() {
                   {cat.name}
                 </h2>
                 <div className="mt-6 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-                  {cat.items.map((item) => (
+                  {cat.items.map((item, index) => (
                     <ComponentCard
                       key={item.slug}
                       slug={item.slug}
                       displayName={getComponentDisplayName(item.name)}
                       description={item.description}
                       category={cat.name}
+                      index={index}
                     />
                   ))}
                 </div>
@@ -168,13 +177,14 @@ export function ComponentsCatalog() {
           </div>
         ) : (
           <div className="mt-6 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-            {filtered.map((component) => (
+            {filtered.map((component, index) => (
               <ComponentCard
                 key={component.slug}
                 slug={component.slug}
                 displayName={component.displayName}
                 description={component.description}
                 category={component.category}
+                index={index}
                 showTag
               />
             ))}
@@ -190,45 +200,61 @@ function ComponentCard({
   displayName,
   description,
   category,
+  index = 0,
   showTag = false,
 }: {
   slug: string;
   displayName: string;
   description: string;
   category: string;
+  /** Position in its grid — drives the (capped) entrance stagger delay. */
+  index?: number;
   showTag?: boolean;
 }) {
   return (
-    <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-surface-raised transition-colors hover:border-border-strong focus-within:ring-2 focus-within:ring-ring">
-      {/* Lightweight thumbnail — a dotted-grid card with the component name. No
-          live preview here (that lives on the /components/[slug] route). */}
-      <div className="relative flex h-40 items-center justify-center overflow-hidden border-b border-border/60 bg-surface-inset/50 p-6">
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 bg-[radial-gradient(var(--cooud-border)_1px,transparent_1px)] opacity-50 [background-size:16px_16px]"
-        />
-        <span className="relative px-4 text-center font-display text-lg text-fg-tertiary transition-colors group-hover:text-fg">
-          {displayName}
-        </span>
-      </div>
-      <div className="flex flex-col gap-1 px-5 py-4">
-        <div className="flex items-center justify-between gap-2">
-          <span className="font-medium text-fg transition-colors group-hover:text-primary">
-            {displayName}
-          </span>
-          {showTag ? (
-            <span className="shrink-0 rounded-full border border-border bg-surface-inset px-2 py-0.5 text-xs font-medium text-fg-tertiary">
-              {category}
+    // Entrance lives on this wrapper (not the card) so the per-item
+    // transition-delay never lags the card's own hover tweens. Cards fade/slide
+    // up from the `starting:` state (CSS @starting-style) as they mount; the
+    // stagger is capped so deep grids never feel slow. Reduced-motion safe.
+    <div
+      className="transition-[opacity,transform] duration-300 ease-[var(--ease-out-quart)] starting:translate-y-2 starting:opacity-0 motion-reduce:transition-none motion-reduce:starting:translate-y-0 motion-reduce:starting:opacity-100"
+      style={{ transitionDelay: `${Math.min(index, 8) * 40}ms` }}
+    >
+      <div className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-surface-raised transition-[border-color,box-shadow] duration-200 hover:border-border-strong hover:shadow-sm focus-within:border-border-strong focus-within:ring-2 focus-within:ring-ring motion-reduce:transition-none">
+        {/* Lightweight thumbnail — a dotted-grid card with the component name. No
+            live preview here (that lives on the /components/[slug] route). */}
+        <div className="relative flex h-40 items-center justify-center overflow-hidden border-b border-border/60 bg-surface-inset/50">
+          {/* The preview content (grid + name) lifts a hair on hover — a GPU
+              transform inside the overflow-hidden frame, so no layout shift. */}
+          <div className="absolute inset-0 flex items-center justify-center p-6 transition-transform duration-200 ease-[var(--ease-out-quart)] group-hover:scale-[1.01] motion-reduce:transition-none motion-reduce:group-hover:scale-100">
+            <div
+              aria-hidden="true"
+              className="absolute inset-0 bg-[radial-gradient(var(--cooud-border)_1px,transparent_1px)] opacity-50 [background-size:16px_16px]"
+            />
+            <span className="relative px-4 text-center font-display text-lg text-fg-tertiary transition-colors duration-200 group-hover:text-fg motion-reduce:transition-none">
+              {displayName}
             </span>
-          ) : null}
+          </div>
         </div>
-        <span className="line-clamp-1 text-sm text-fg-tertiary">{description}</span>
+        <div className="flex flex-col gap-1 px-5 py-4">
+          <div className="flex items-center justify-between gap-2">
+            <span className="font-medium text-fg transition-colors duration-200 group-hover:text-primary motion-reduce:transition-none">
+              {displayName}
+            </span>
+            {showTag ? (
+              <span className="shrink-0 rounded-full border border-border bg-surface-inset px-2 py-0.5 text-xs font-medium text-fg-tertiary">
+                {category}
+              </span>
+            ) : null}
+          </div>
+          <span className="line-clamp-1 text-sm text-fg-tertiary">{description}</span>
+        </div>
+        <Link
+          href={`/components/${slug}`}
+          aria-label={displayName}
+          className="absolute inset-0 z-20 rounded-2xl outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        />
       </div>
-      <Link
-        href={`/components/${slug}`}
-        aria-label={displayName}
-        className="absolute inset-0 z-20 rounded-2xl outline-none focus-visible:ring-2 focus-visible:ring-ring"
-      />
     </div>
   );
 }
@@ -236,7 +262,7 @@ function ComponentCard({
 function StatPill({ label, value }: { label: string; value: number }) {
   return (
     <div className="inline-flex items-center gap-2 rounded-full border border-border bg-surface-raised px-3 py-1.5 text-sm">
-      <span className="font-semibold text-fg">{value}</span>
+      <span className="font-semibold tabular-nums text-fg">{value}</span>
       <span className="text-fg-tertiary">{label}</span>
     </div>
   );

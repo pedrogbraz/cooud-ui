@@ -1,7 +1,9 @@
 "use client";
 
 import {
+  Button,
   Calendar,
+  Countdown,
   DatePicker,
   type DateRange,
   DateRangePicker,
@@ -43,6 +45,43 @@ function CalendarDemo() {
   // Fixed initial date so server and client render identically (no hydration drift).
   const [date, setDate] = useState<Date | undefined>(() => new Date(2026, 5, 21));
   return <Calendar mode="single" selected={date} onSelect={setDate} className="rounded-md" />;
+}
+
+function CountdownDemo() {
+  // Target computed once per mount. Countdown is SSR-safe on its own — it
+  // renders a stable "--" placeholder until mounted, so a live relative
+  // target causes no hydration drift.
+  const [target] = useState(() => Date.now() + (2 * 86_400 + 14 * 3_600 + 25 * 60 + 9) * 1_000);
+  return <Countdown target={target} aria-label="Launch countdown" />;
+}
+
+function CountdownCompleteDemo() {
+  const [target, setTarget] = useState(() => Date.now() + 15_000);
+  const [done, setDone] = useState(false);
+  return (
+    <div className="flex items-center gap-4">
+      <Countdown
+        compact
+        target={target}
+        onComplete={() => setDone(true)}
+        aria-label="Offer ends in"
+      />
+      {done ? (
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() => {
+            setDone(false);
+            setTarget(Date.now() + 15_000);
+          }}
+        >
+          Restart
+        </Button>
+      ) : (
+        <span className="text-sm text-fg-tertiary">Offer ends soon…</span>
+      )}
+    </div>
+  );
 }
 
 function DatePickerDemo() {
@@ -156,6 +195,50 @@ return (
   <Calendar mode="single" selected={date} onSelect={setDate} className="rounded-md" />
 );`,
       preview: <CalendarDemo />,
+    },
+  ],
+  countdown: [
+    {
+      id: "launch",
+      title: "Launch countdown",
+      description:
+        "Days / hours / minutes / seconds tiles ticking toward a target `Date`, ISO string, or epoch-ms number. SSR-safe: a stable `--` placeholder renders until mount, then changed digits slide in (instant under reduced motion).",
+      code: `// Target computed once per mount. Countdown is SSR-safe on its own — it
+// renders a stable "--" placeholder until mounted, so a live relative
+// target causes no hydration drift.
+const [target] = useState(() => Date.now() + (2 * 86_400 + 14 * 3_600 + 25 * 60 + 9) * 1_000);
+
+return <Countdown target={target} aria-label="Launch countdown" />;`,
+      preview: <CountdownDemo />,
+    },
+    {
+      id: "compact-complete",
+      title: "Compact with completion",
+      description:
+        '`compact` shrinks the tiles for banners and toolbars, and `onComplete` fires exactly once at zero (re-arming if the target moves back into the future). Localize the captions with `labels`, e.g. `labels={{ days: "dias", hours: "horas" }}`.',
+      code: `const [target, setTarget] = useState(() => Date.now() + 15_000);
+const [done, setDone] = useState(false);
+
+return (
+  <div className="flex items-center gap-4">
+    <Countdown compact target={target} onComplete={() => setDone(true)} aria-label="Offer ends in" />
+    {done ? (
+      <Button
+        size="sm"
+        variant="outline"
+        onClick={() => {
+          setDone(false);
+          setTarget(Date.now() + 15_000);
+        }}
+      >
+        Restart
+      </Button>
+    ) : (
+      <span className="text-sm text-fg-tertiary">Offer ends soon…</span>
+    )}
+  </div>
+);`,
+      preview: <CountdownCompleteDemo />,
     },
   ],
   "date-picker": [

@@ -17,6 +17,7 @@ import {
   CardHeader,
   CardTitle,
   CodeBlock,
+  CodeTabs,
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
@@ -31,6 +32,7 @@ import {
   EmptyTitle,
   Heatmap,
   type HeatmapDay,
+  JsonViewer,
   Kanban,
   type KanbanColumn,
   Kbd,
@@ -625,6 +627,20 @@ const data = Array.from({ length: 119 }, (_, i) => {
 });
 
 return <Heatmap data={data} aria-label="Contributions" />;`;
+
+const jsonViewerOrder = {
+  order: {
+    id: "ord_8kX2",
+    total: 248.9,
+    currency: "BRL",
+    paid: true,
+    coupon: null,
+    items: [
+      { sku: "tee-black-m", qty: 2 },
+      { sku: "sticker-pack", qty: 1 },
+    ],
+  },
+};
 
 export const dataDisplayExamples: ExampleMap = {
   avatar: [
@@ -1579,6 +1595,108 @@ export function Save() {
     },
   ],
 
+  "code-tabs": [
+    {
+      id: "package-manager",
+      title: "Package manager installer",
+      description:
+        "The classic bun/npm/pnpm/yarn switcher. Give every instance the same `storageKey` and the visitor's choice is persisted to localStorage and mirrored across the whole page (and across browser tabs) — flip one below and watch the other follow.",
+      install: {
+        registryItem: "code-tabs",
+      },
+      code: `<CodeTabs
+  storageKey="pkg-manager"
+  items={[
+    { label: "bun", code: "bunx cooud-ui add code-tabs", language: "bash" },
+    { label: "npm", code: "npx cooud-ui add code-tabs", language: "bash" },
+    { label: "pnpm", code: "pnpm dlx cooud-ui add code-tabs", language: "bash" },
+    { label: "yarn", code: "yarn dlx cooud-ui add code-tabs", language: "bash" },
+  ]}
+/>`,
+      preview: (
+        <div className="flex w-full max-w-xl flex-col gap-4">
+          <CodeTabs
+            storageKey="www-demo-pkg-manager"
+            items={[
+              { label: "bun", code: "bunx cooud-ui add code-tabs", language: "bash" },
+              { label: "npm", code: "npx cooud-ui add code-tabs", language: "bash" },
+              { label: "pnpm", code: "pnpm dlx cooud-ui add code-tabs", language: "bash" },
+              { label: "yarn", code: "yarn dlx cooud-ui add code-tabs", language: "bash" },
+            ]}
+          />
+          <CodeTabs
+            storageKey="www-demo-pkg-manager"
+            items={[
+              { label: "bun", code: "bun add @cooud-ui/ui", language: "bash" },
+              { label: "npm", code: "npm install @cooud-ui/ui", language: "bash" },
+              { label: "pnpm", code: "pnpm add @cooud-ui/ui", language: "bash" },
+              { label: "yarn", code: "yarn add @cooud-ui/ui", language: "bash" },
+            ]}
+          />
+        </div>
+      ),
+    },
+    {
+      id: "multi-language",
+      title: "Multi-language snippet",
+      description:
+        "General code tabs — one panel per label, each with its own copy button and a `language` hint in the header. `defaultLabel` picks the starting tab; `onLabelChange` reports user switches.",
+      code: `<CodeTabs
+  defaultLabel="TypeScript"
+  items={[
+    {
+      label: "TypeScript",
+      language: "ts",
+      code: \`export function formatBRL(value: number): string {
+  return new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  }).format(value);
+}\`,
+    },
+    {
+      label: "JavaScript",
+      language: "js",
+      code: \`export function formatBRL(value) {
+  return new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  }).format(value);
+}\`,
+    },
+  ]}
+/>`,
+      preview: (
+        <CodeTabs
+          className="w-full max-w-xl"
+          defaultLabel="TypeScript"
+          items={[
+            {
+              label: "TypeScript",
+              language: "ts",
+              code: `export function formatBRL(value: number): string {
+  return new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  }).format(value);
+}`,
+            },
+            {
+              label: "JavaScript",
+              language: "js",
+              code: `export function formatBRL(value) {
+  return new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  }).format(value);
+}`,
+            },
+          ]}
+        />
+      ),
+    },
+  ],
+
   collapsible: [
     {
       id: "default",
@@ -1675,6 +1793,50 @@ return (
   />
 );`,
       preview: <FileTreeDemo />,
+    },
+  ],
+
+  "json-viewer": [
+    {
+      id: "api-response",
+      title: "API response",
+      description:
+        "Any JSON value rendered as a collapsible tree. Objects and arrays get a chevron with a muted child-count summary while collapsed; primitives are colored by type (string, number, boolean, null) and every row reveals a copy-value button on hover or focus.",
+      install: {
+        registryItem: "json-viewer",
+      },
+      code: `const payload = {
+  order: {
+    id: "ord_8kX2",
+    total: 248.9,
+    currency: "BRL",
+    paid: true,
+    coupon: null,
+    items: [
+      { sku: "tee-black-m", qty: 2 },
+      { sku: "sticker-pack", qty: 1 },
+    ],
+  },
+};
+
+return <JsonViewer data={payload} defaultExpandedDepth={2} />;`,
+      preview: (
+        <JsonViewer data={jsonViewerOrder} defaultExpandedDepth={2} className="w-full max-w-md" />
+      ),
+    },
+    {
+      id: "expanded-depth",
+      title: "Expanded depth",
+      description:
+        "`defaultExpandedDepth` sets how many levels start open — the root value is depth 0, so the default of 1 shows the root's entries with nested branches collapsed. Pass `Number.POSITIVE_INFINITY` to expand everything.",
+      code: `<JsonViewer data={payload} defaultExpandedDepth={Number.POSITIVE_INFINITY} />`,
+      preview: (
+        <JsonViewer
+          data={jsonViewerOrder}
+          defaultExpandedDepth={Number.POSITIVE_INFINITY}
+          className="w-full max-w-md"
+        />
+      ),
     },
   ],
 

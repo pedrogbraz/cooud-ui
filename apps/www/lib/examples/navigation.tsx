@@ -54,6 +54,7 @@ import {
   SidebarMenuItem,
   SidebarProvider,
   SidebarTrigger,
+  TableOfContents,
   Tabs,
   TabsContent,
   TabsList,
@@ -191,6 +192,69 @@ function ToolbarDemo() {
         </ToolbarButton>
       </ToolbarGroup>
     </Toolbar>
+  );
+}
+
+const TOC_DEMO_SECTIONS = [
+  {
+    id: "toc-demo-overview",
+    label: "Overview",
+    body: "A scrollspy table of contents keeps the link for the section you are reading highlighted, with an indicator bar that glides to the active row.",
+  },
+  {
+    id: "toc-demo-install",
+    label: "Installation",
+    body: "Install the package from npm, or copy the component straight into your project with the CLI.",
+  },
+  {
+    id: "toc-demo-cli",
+    label: "With the CLI",
+    depth: 1,
+    body: "npx cooud-ui add table-of-contents drops the source file into your components directory.",
+  },
+  {
+    id: "toc-demo-manual",
+    label: "Manual setup",
+    depth: 1,
+    body: "Prefer vendoring? Copy the file and keep full ownership — it has zero extra dependencies.",
+  },
+  {
+    id: "toc-demo-theming",
+    label: "Theming",
+    body: "Every color flows from semantic tokens, so the nav follows your theme in light and dark mode.",
+  },
+  {
+    id: "toc-demo-api",
+    label: "API reference",
+    body: "Pass items for full control, or point selector and containerId at your article to auto-discover headings.",
+  },
+];
+
+function TableOfContentsDemo() {
+  return (
+    <div className="flex w-full max-w-2xl gap-6">
+      <TableOfContents
+        items={TOC_DEMO_SECTIONS}
+        containerId="toc-demo-article"
+        offset={12}
+        className="w-44 shrink-0 self-start"
+      />
+      <div
+        id="toc-demo-article"
+        className="h-64 flex-1 overflow-y-auto rounded-xl border border-border bg-surface-inset p-5"
+      >
+        {TOC_DEMO_SECTIONS.map((section) => (
+          <section key={section.id} className="mb-6 last:mb-0 last:min-h-56">
+            <h3 id={section.id} className="text-sm font-semibold text-fg">
+              {section.label}
+            </h3>
+            <p className="mt-1.5 max-w-prose text-sm leading-relaxed text-fg-secondary">
+              {section.body}
+            </p>
+          </section>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -839,6 +903,45 @@ export const navigationExamples: ExampleMap = {
   );
 }`,
       preview: <ToolbarDemo />,
+    },
+  ],
+  "table-of-contents": [
+    {
+      id: "scrollspy",
+      title: "Scrollspy article",
+      description:
+        "An IntersectionObserver tracks the section being read — the active link gains aria-current and the indicator bar glides to its row. Clicking a link smooth-scrolls the container (instant under reduced motion).",
+      code: `const sections = [
+  { id: "overview", label: "Overview" },
+  { id: "install", label: "Installation" },
+  { id: "cli", label: "With the CLI", depth: 1 },
+  { id: "manual", label: "Manual setup", depth: 1 },
+  { id: "theming", label: "Theming" },
+  { id: "api", label: "API reference" },
+];
+
+<div className="flex gap-6">
+  <TableOfContents
+    items={sections}
+    containerId="article"
+    offset={12}
+    className="w-44 shrink-0 self-start"
+  />
+  <div
+    id="article"
+    className="h-64 flex-1 overflow-y-auto rounded-xl border border-border p-5"
+  >
+    {sections.map((section) => (
+      <section key={section.id} className="mb-6 last:mb-0 last:min-h-56">
+        <h3 id={section.id} className="text-sm font-semibold text-fg">
+          {section.label}
+        </h3>
+        <p className="mt-1.5 text-sm leading-relaxed text-fg-secondary">…</p>
+      </section>
+    ))}
+  </div>
+</div>`,
+      preview: <TableOfContentsDemo />,
     },
   ],
 };

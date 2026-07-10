@@ -11,7 +11,7 @@ import {
   TabsTrigger,
 } from "@cooud-ui/ui";
 import { Check, FileCode2, Sparkles, Terminal } from "lucide-react";
-import { type HTMLAttributes, useId, useMemo } from "react";
+import { type HTMLAttributes, useId, useMemo, useState } from "react";
 import { generateCommand, generateKickoff, generateStackJson } from "@/lib/stack/kickoff";
 import type { Catalog, StackConfig } from "@/lib/stack/types";
 
@@ -44,6 +44,18 @@ const TABS = [
   { value: "kickoff", label: "Kickoff", icon: Sparkles },
   { value: "json", label: "JSON", icon: FileCode2 },
 ] as const;
+
+type TabValue = (typeof TABS)[number]["value"];
+
+/**
+ * Panel enter for a newly activated tab: Radix keeps inactive `TabsContent`
+ * mounted but `hidden`, so flipping to visible re-runs `@starting-style` and
+ * the panel gently fades/rises in. Tailwind v4 maps `translate-y-*` to the CSS
+ * `translate` property, so that (not `transform`) is what we transition.
+ * Reduced motion pins both starting values for an instant swap.
+ */
+const TAB_PANEL_ENTER =
+  "transition-[opacity,translate] duration-300 ease-[var(--ease-out-quart)] starting:opacity-0 starting:translate-y-1 motion-reduce:transition-none motion-reduce:starting:opacity-100 motion-reduce:starting:translate-y-0";
 
 /** Shared chrome for a secondary tab: a description row + a copy action. */
 function CopyRow({
@@ -93,6 +105,14 @@ export function StackOutput({
 
   const titleId = useId();
 
+  // Controlled so the sliding tab indicator below can be derived (pure CSS
+  // transform from the active index — no measurement, no layout shift).
+  const [tab, setTab] = useState<TabValue>("kickoff");
+  const activeIndex = Math.max(
+    0,
+    TABS.findIndex((t) => t.value === tab),
+  );
+
   // CodeBlock already exposes its own header copy button + a keyboard-reachable
   // scroll region; we share one set of styling props across the tabs.
   const codeBlockBase: Partial<CodeBlockProps> = {
@@ -130,18 +150,38 @@ export function StackOutput({
           </div>
         </header>
 
-        <Tabs defaultValue="kickoff" className="gap-4">
-          <TabsList aria-label="Stack output artifacts" className="w-full">
+        <Tabs value={tab} onValueChange={(v) => setTab(v as TabValue)} className="gap-4">
+          <TabsList aria-label="Stack output artifacts" className="relative w-full">
+            {/* Sliding active-tab thumb: the three triggers are equal thirds
+                (flex-1), so the thumb's position is a pure transform of the
+                active index — one trigger width (its own 100%) + the 0.25rem
+                list gap per step. Width = (100% − 0.5rem padding − 0.5rem gaps)
+                ÷ 3. Transform-only, so switching tabs never shifts layout; the
+                thumb also warms to the primary wash on the signature Kickoff
+                tab. Decorative — Radix keeps the real active state on the
+                triggers, which paint above it (they are positioned). */}
+            <span
+              aria-hidden="true"
+              data-slot="tabs-thumb"
+              className={cn(
+                "pointer-events-none absolute inset-y-1 left-1 w-[calc((100%-1rem)/3)] rounded-md shadow-xs",
+                "transition-[transform,background-color] duration-300 ease-[var(--ease-out-quart)] motion-reduce:transition-none",
+                tab === "kickoff" ? "bg-primary/10" : "bg-surface-floating",
+              )}
+              style={{ transform: `translateX(calc(${activeIndex} * (100% + 0.25rem)))` }}
+            />
             {TABS.map(({ value, label, icon: Icon }) => (
               <TabsTrigger
                 key={value}
                 value={value}
                 className={cn(
-                  "min-w-0 flex-1",
+                  // The thumb below carries the active surface, so the trigger
+                  // itself stays transparent (relative → it paints above the
+                  // thumb) and only its text color changes.
+                  "relative min-w-0 flex-1 data-[state=active]:bg-transparent data-[state=active]:shadow-none",
                   // The Kickoff Prompt is the signature artifact: when it is the
-                  // active tab it gets a faint primary wash so the eye lands there.
-                  value === "kickoff" &&
-                    "data-[state=active]:bg-primary/10 data-[state=active]:text-primary",
+                  // active tab its label takes the primary tint so the eye lands there.
+                  value === "kickoff" && "data-[state=active]:text-primary",
                 )}
               >
                 <Icon aria-hidden="true" className="shrink-0" />
@@ -153,7 +193,7 @@ export function StackOutput({
           {/* 1) CLI command — the scaffolding command. */}
           <TabsContent
             value="cli"
-            className="flex min-w-0 flex-col gap-3 outline-none data-[state=active]:motion-safe:animate-in data-[state=active]:motion-safe:fade-in-0 data-[state=active]:motion-safe:duration-200"
+            className={cn("flex min-w-0 flex-col gap-3 outline-none", TAB_PANEL_ENTER)}
             data-slot="stack-output-cli"
           >
             <CopyRow
@@ -167,7 +207,7 @@ export function StackOutput({
           {/* 2) Kickoff Prompt — the signature artifact (the hero tab). */}
           <TabsContent
             value="kickoff"
-            className="flex min-w-0 flex-col gap-3 outline-none data-[state=active]:motion-safe:animate-in data-[state=active]:motion-safe:fade-in-0 data-[state=active]:motion-safe:duration-200"
+            className={cn("flex min-w-0 flex-col gap-3 outline-none", TAB_PANEL_ENTER)}
             data-slot="stack-output-kickoff"
           >
             {/* The hero call-to-action: a primary-tinted banner with the Sparkles
@@ -212,7 +252,7 @@ export function StackOutput({
           {/* 3) Stack (JSON) — machine-readable snapshot. */}
           <TabsContent
             value="json"
-            className="flex min-w-0 flex-col gap-3 outline-none data-[state=active]:motion-safe:animate-in data-[state=active]:motion-safe:fade-in-0 data-[state=active]:motion-safe:duration-200"
+            className={cn("flex min-w-0 flex-col gap-3 outline-none", TAB_PANEL_ENTER)}
             data-slot="stack-output-json"
           >
             <CopyRow

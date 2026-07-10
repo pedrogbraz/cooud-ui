@@ -62,6 +62,12 @@ export const CATEGORIES: ComponentCategory[] = [
         description: "Primary action fused to a dropdown of secondary actions.",
         importName: "SplitButton",
       },
+      {
+        slug: "mode-toggle",
+        name: "ModeToggle",
+        description: "Animated sun ⇄ moon light/dark toggle icon-button.",
+        importName: "ModeToggle",
+      },
     ],
   },
   {
@@ -171,6 +177,13 @@ export const CATEGORIES: ComponentCategory[] = [
         description: "Text field whose label floats above on focus or when filled.",
         importName: "FloatingLabelInput",
       },
+      {
+        slug: "signature-pad",
+        name: "SignaturePad",
+        description:
+          "Canvas signature input with smoothed strokes, undo/clear, and data-URL output.",
+        importName: "SignaturePad",
+      },
     ],
   },
   {
@@ -229,6 +242,12 @@ export const CATEGORIES: ComponentCategory[] = [
         description: "Source snippet with header, line numbers and copy.",
       },
       {
+        slug: "code-tabs",
+        name: "CodeTabs",
+        description: "Tabbed code snippets with per-tab copy and a localStorage-synced tab choice.",
+        importName: "CodeTabs",
+      },
+      {
         slug: "collapsible",
         name: "Collapsible",
         description: "Animated show/hide for a single section.",
@@ -255,6 +274,12 @@ export const CATEGORIES: ComponentCategory[] = [
         slug: "kanban",
         name: "Kanban",
         description: "Drag-and-drop board with cards that reorder and move across columns.",
+      },
+      {
+        slug: "json-viewer",
+        name: "JsonViewer",
+        description: "Collapsible JSON tree with type-colored values and per-row copy.",
+        importName: "JsonViewer",
       },
     ],
   },
@@ -377,6 +402,12 @@ export const CATEGORIES: ComponentCategory[] = [
         description: "An accessible button toolbar with roving focus and grouped controls.",
         importName: "Toolbar, ToolbarButton, ToolbarSeparator, ToolbarGroup",
       },
+      {
+        slug: "table-of-contents",
+        name: "TableOfContents",
+        description: "Scrollspy on-this-page nav with an animated active indicator.",
+        importName: "TableOfContents",
+      },
     ],
   },
   {
@@ -384,6 +415,12 @@ export const CATEGORIES: ComponentCategory[] = [
     name: "Date & Time",
     items: [
       { slug: "calendar", name: "Calendar", description: "Date grid (react-day-picker)." },
+      {
+        slug: "countdown",
+        name: "Countdown",
+        description: "Ticking day/hour/minute/second tiles counting down to a target.",
+        importName: "Countdown",
+      },
       { slug: "date-picker", name: "DatePicker", description: "Popover-based date selection." },
       {
         slug: "date-range-picker",
@@ -506,6 +543,24 @@ export const CATEGORIES: ComponentCategory[] = [
         name: "TiltCard",
         description: "A card that tilts in 3D toward the pointer, with an optional glare.",
         importName: "TiltCard",
+      },
+      {
+        slug: "magnetic",
+        name: "Magnetic",
+        description: "Wrapper whose content is gently pulled toward the cursor.",
+        importName: "Magnetic",
+      },
+      {
+        slug: "orbit",
+        name: "Orbit",
+        description: "Icons or avatars revolving around a nucleus on pure-CSS rings.",
+        importName: "Orbit, OrbitRing, OrbitItem",
+      },
+      {
+        slug: "terminal",
+        name: "Terminal",
+        description: "Animated terminal window that types a scripted shell session.",
+        importName: "Terminal",
       },
     ],
   },

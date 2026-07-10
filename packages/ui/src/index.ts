@@ -104,6 +104,8 @@ export {
 export { Checkbox } from "./components/checkbox.js";
 export type { CodeBlockProps } from "./components/code-block.js";
 export { CodeBlock } from "./components/code-block.js";
+export type { CodeTabsItem, CodeTabsProps } from "./components/code-tabs.js";
+export { CodeTabs } from "./components/code-tabs.js";
 export {
   Collapsible,
   CollapsibleContent,
@@ -147,6 +149,8 @@ export {
 } from "./components/context-menu.js";
 export type { CopyButtonProps } from "./components/copy-button.js";
 export { CopyButton } from "./components/copy-button.js";
+export type { CountdownLabels, CountdownProps } from "./components/countdown.js";
+export { Countdown } from "./components/countdown.js";
 export type {
   CardBrand,
   CreditCardInputProps,
@@ -273,6 +277,8 @@ export {
   InputOTPSeparator,
   InputOTPSlot,
 } from "./components/input-otp.js";
+export type { JsonViewerProps } from "./components/json-viewer.js";
+export { JsonViewer } from "./components/json-viewer.js";
 export type { KanbanColumn, KanbanItem, KanbanProps } from "./components/kanban.js";
 export { Kanban } from "./components/kanban.js";
 export { Kbd } from "./components/kbd.js";
@@ -287,6 +293,8 @@ export type {
   LogoCarouselVariant,
 } from "./components/logo-carousel.js";
 export { LogoCarousel } from "./components/logo-carousel.js";
+export type { MagneticProps } from "./components/magnetic.js";
+export { Magnetic } from "./components/magnetic.js";
 export type { MarqueeMotionPreference, MarqueeProps } from "./components/marquee.js";
 export { Marquee } from "./components/marquee.js";
 export type { MasonryColumns, MasonryProps } from "./components/masonry.js";
@@ -310,6 +318,8 @@ export {
 } from "./components/menubar.js";
 export type { MetricDeltaProps } from "./components/metric.js";
 export { Metric, MetricDelta, MetricLabel, MetricValue } from "./components/metric.js";
+export type { ModeToggleMode, ModeToggleProps, ModeToggleSize } from "./components/mode-toggle.js";
+export { ModeToggle } from "./components/mode-toggle.js";
 export type {
   MorphingPopoverBodyProps,
   MorphingPopoverButtonProps,
@@ -365,6 +375,8 @@ export {
 } from "./components/notification-center.js";
 export type { NumberInputProps } from "./components/number-input.js";
 export { NumberInput } from "./components/number-input.js";
+export type { OrbitItemProps, OrbitProps, OrbitRingProps } from "./components/orbit.js";
+export { Orbit, OrbitItem, OrbitRing } from "./components/orbit.js";
 export type { PaginationLinkProps } from "./components/pagination.js";
 export {
   Pagination,
@@ -465,6 +477,8 @@ export {
   sidebarMenuButtonVariants,
   useSidebar,
 } from "./components/sidebar.js";
+export type { SignaturePadHandle, SignaturePadProps } from "./components/signature-pad.js";
+export { SignaturePad } from "./components/signature-pad.js";
 export { Skeleton } from "./components/skeleton.js";
 export { Slider } from "./components/slider.js";
 export type { ToasterProps } from "./components/sonner.js";
@@ -504,9 +518,20 @@ export {
   TableHeader,
   TableRow,
 } from "./components/table.js";
+export type {
+  TableOfContentsItem,
+  TableOfContentsProps,
+} from "./components/table-of-contents.js";
+export { TableOfContents } from "./components/table-of-contents.js";
 export { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/tabs.js";
 export type { TagsInputProps } from "./components/tags-input.js";
 export { TagsInput } from "./components/tags-input.js";
+export type {
+  TerminalLine,
+  TerminalMotionPreference,
+  TerminalProps,
+} from "./components/terminal.js";
+export { Terminal } from "./components/terminal.js";
 export type {
   TextEffectPer,
   TextEffectPreset,

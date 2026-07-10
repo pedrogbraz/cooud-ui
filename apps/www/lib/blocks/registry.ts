@@ -22,7 +22,11 @@ export type BlockFamily =
   | "email"
   | "notifications"
   | "survey"
-  | "social";
+  | "social"
+  | "changelog"
+  | "integrations"
+  | "waitlist"
+  | "feature-matrix";
 
 /** slug → the family module that owns its content. */
 export const BLOCK_FAMILY_BY_SLUG: Record<string, BlockFamily> = {
@@ -66,6 +70,7 @@ export const BLOCK_FAMILY_BY_SLUG: Record<string, BlockFamily> = {
   "page-header": "page",
   "filter-bar": "page",
   "empty-state": "page",
+  "status-page": "page",
   // ai
   "chat-thread": "ai",
   "prompt-box": "ai",
@@ -91,6 +96,14 @@ export const BLOCK_FAMILY_BY_SLUG: Record<string, BlockFamily> = {
   "post-card": "social",
   "comment-thread": "social",
   "profile-card": "social",
+  // changelog
+  changelog: "changelog",
+  // integrations
+  integrations: "integrations",
+  // waitlist
+  waitlist: "waitlist",
+  // feature matrix
+  "feature-matrix": "feature-matrix",
 };
 
 export function getBlockFamily(slug: string): BlockFamily | undefined {

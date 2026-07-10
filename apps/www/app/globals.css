@@ -23,6 +23,40 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+/* Text selection tinted with the primary token — theme-aware, so it follows
+   live token overrides just like every other surface. Base rule = readable
+   solid-primary fallback for engines without color-mix; modern engines get the
+   low-alpha tint and keep the element's own text color. */
+::selection {
+  background-color: var(--cooud-primary);
+  color: var(--cooud-primary-foreground);
+}
+
+@supports (background-color: color-mix(in oklab, red 24%, transparent)) {
+  ::selection {
+    background-color: color-mix(in oklab, var(--cooud-primary) 24%, transparent);
+    color: currentcolor;
+  }
+}
+
+/* Smooth in-page scrolling for anchor links (e.g. /components#forms) — gated
+   behind the motion preference so reduced-motion users jump instantly. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Refined keyboard-focus default for anything that slips through without an
+   explicit `focus-visible:ring-*` utility. Declared in @layer base so
+   component-level `outline-none` + ring utilities still take precedence. */
+@layer base {
+  :focus-visible {
+    outline: 2px solid var(--cooud-ring);
+    outline-offset: 2px;
+  }
+}
+
 /* Thin, subtle gray scrollbars (HeroUI-style) across the app. */
 * {
   scrollbar-width: thin;

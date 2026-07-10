@@ -63,7 +63,7 @@ import { LiftCard } from "./lift-card";
 function ChartCardSkeleton({ aspect }: { aspect: string }) {
   return (
     <div
-      className="rounded-2xl border border-border-soft bg-surface-raised p-6 shadow-sm"
+      className={`rounded-2xl border border-border-soft bg-surface-raised p-6 shadow-sm ${liquid}`}
       aria-hidden="true"
     >
       <div className="mb-1.5 h-5 w-40 animate-pulse rounded-md bg-surface-inset" />
@@ -118,7 +118,15 @@ const usdCents = new Intl.NumberFormat("en-US", {
  * ────────────────────────────────────────────────────────────────────────── */
 
 const surfaceCard =
-  "rounded-2xl border-border-soft bg-surface-raised shadow-sm transition-[border-color,box-shadow] duration-[350ms] ease-[var(--ease-out-quart)] hover:border-border hover:shadow-lg";
+  "rounded-2xl border-border-soft bg-surface-raised shadow-sm transition-[background-color,border-color,color,box-shadow] duration-[350ms] ease-[var(--ease-out-quart)] hover:border-border hover:shadow-lg motion-reduce:transition-none";
+
+/**
+ * The studio re-themes the live tokens on every control change; preview
+ * surfaces tween their colors (300ms, house ease) so re-theming feels liquid
+ * instead of snapping. Colors only — hover lift/shadow keep their own motion.
+ */
+const liquid =
+  "transition-colors duration-300 ease-[var(--ease-out-quart)] motion-reduce:transition-none";
 
 /* ──────────────────────────────────────────────────────────────────────────
  * 0. Brand spotlight — a large, brand-filled hero so swapping the brand color
@@ -217,11 +225,17 @@ function PayoutCard() {
             </Select>
           </div>
 
-          <div className="flex flex-col gap-3">
+          {/* `group/payout`: while the slider is engaged (drag focuses the
+              thumb; keyboard focus too) the live value tints brand-primary as
+              direct feedback, then settles back. Color tween only — no layout
+              shift, reduced-motion safe. */}
+          <div className="group/payout flex flex-col gap-3">
             <div className="flex items-end justify-between">
               <Label htmlFor="payout-amount">Trigger at</Label>
               <Metric className="items-end gap-0">
-                <MetricValue className="text-2xl">{usd.format(amount)}</MetricValue>
+                <MetricValue className="text-2xl transition-colors duration-200 ease-[var(--ease-out-quart)] group-focus-within/payout:text-primary motion-reduce:transition-none">
+                  {usd.format(amount)}
+                </MetricValue>
               </Metric>
             </div>
             <Slider
@@ -297,7 +311,7 @@ function SavingsCard() {
             return (
               <div
                 key={goal.id}
-                className="flex flex-col gap-3 rounded-xl border border-border-soft bg-surface-inset/50 p-3.5"
+                className={`flex flex-col gap-3 rounded-xl border border-border-soft bg-surface-inset/50 p-3.5 ${liquid}`}
               >
                 <div className="flex items-center gap-3">
                   <span className="inline-flex size-9 items-center justify-center rounded-xl bg-surface-overlay text-fg-secondary ring-1 ring-inset ring-border-soft">
@@ -394,7 +408,9 @@ function InvestCard() {
             Executes immediately at the best available price. Settlement in 2 business days.
           </p>
 
-          <div className="flex items-center justify-between rounded-xl border border-border-soft bg-surface-inset/50 px-3.5 py-3">
+          <div
+            className={`flex items-center justify-between rounded-xl border border-border-soft bg-surface-inset/50 px-3.5 py-3 ${liquid}`}
+          >
             <span className="text-sm text-fg-secondary">Estimated shares</span>
             <span className="font-display text-sm font-semibold text-fg tabular-nums">
               {estimatedShares.toFixed(4)} @ {usdCents.format(SHARE_PRICE)}
@@ -559,7 +575,7 @@ function StatRow() {
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
       {stats.map(({ label, value, delta, trend, icon: Icon }) => (
         <LiftCard key={label} className="h-full">
-          <Card className="group h-full gap-0 border-border-soft py-0 shadow-sm transition-[border-color,box-shadow] duration-[350ms] ease-[var(--ease-out-quart)] hover:border-border hover:shadow-lg">
+          <Card className={`group h-full gap-0 py-0 ${surfaceCard}`}>
             <CardContent className="flex flex-col gap-4 p-5">
               <div className="flex items-center justify-between gap-2">
                 <span className="inline-flex size-9 items-center justify-center rounded-xl bg-surface-overlay text-fg-secondary ring-1 ring-inset ring-border-soft transition-colors duration-300 ease-[var(--ease-out-quart)] group-hover:text-primary">

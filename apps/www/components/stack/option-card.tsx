@@ -90,8 +90,14 @@ export function OptionCard({ resolved, kind, tabIndex, onSelect, onKeyNav }: Opt
           ? // Dimmed so it recedes; the color transition keeps the availability
             // flip graceful rather than a hard flicker.
             "cursor-not-allowed border-border/60 opacity-45"
-          : // Hover just firms the border and lifts the surface a step — quiet.
-            "cursor-pointer hover:border-border-strong hover:bg-surface-overlay",
+          : "cursor-pointer",
+        // Hover firms the border and warms the surface a barely-there half step;
+        // pressing deepens it toward the full selected surface, so the click
+        // feels acknowledged before the border flips. Selected cards keep their
+        // steady style — no hover restyle (it would downgrade the primary border).
+        !disabled &&
+          !selected &&
+          "hover:border-border-strong hover:bg-surface-overlay/60 active:bg-surface-overlay",
         selected ? "border-primary bg-surface-overlay" : "border-border",
       )}
     >
@@ -110,16 +116,19 @@ export function OptionCard({ resolved, kind, tabIndex, onSelect, onKeyNav }: Opt
 
       {/*
         The selected check: a bare checkmark pinned to the bottom-right corner so
-        it never reserves layout space or collides with a top-right badge. It just
-        fades in/out — no filled pill, no pop — so selection reads calmly, in step
-        with the border. `motion-reduce` keeps it an instant toggle.
+        it never reserves layout space or collides with a top-right badge. It
+        fades in with a soft settle from 75% scale (Tailwind v4's `scale-*` maps
+        to the CSS `scale` property, hence `transition-[opacity,scale]`) — no
+        filled pill, no overshoot — so selection reads calmly, in step with the
+        border. `motion-reduce` keeps it an instant toggle.
       */}
       <span
         data-slot="option-card-check"
         aria-hidden="true"
         className={cn(
-          "pointer-events-none absolute right-3 bottom-3 text-primary transition-opacity duration-150 motion-reduce:transition-none",
-          selected ? "opacity-100" : "opacity-0",
+          "pointer-events-none absolute right-3 bottom-3 text-primary",
+          "transition-[opacity,scale] duration-200 ease-[var(--ease-out-quart)] motion-reduce:transition-none",
+          selected ? "scale-100 opacity-100" : "scale-75 opacity-0",
         )}
       >
         <Check className="size-4" strokeWidth={2.5} />

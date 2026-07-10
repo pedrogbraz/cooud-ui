@@ -70,6 +70,20 @@ const VIEW_VIEWS: Record<BlockFamily, BlockDetailView> = {
   social: dynamic(() => import("../../lib/blocks/social").then((m) => m.SocialView), {
     loading: BlockViewSkeleton,
   }),
+  changelog: dynamic(() => import("../../lib/blocks/changelog").then((m) => m.ChangelogView), {
+    loading: BlockViewSkeleton,
+  }),
+  integrations: dynamic(
+    () => import("../../lib/blocks/integrations").then((m) => m.IntegrationsView),
+    { loading: BlockViewSkeleton },
+  ),
+  waitlist: dynamic(() => import("../../lib/blocks/waitlist").then((m) => m.WaitlistView), {
+    loading: BlockViewSkeleton,
+  }),
+  "feature-matrix": dynamic(
+    () => import("../../lib/blocks/feature-matrix").then((m) => m.FeatureMatrixView),
+    { loading: BlockViewSkeleton },
+  ),
 };
 
 export function BlockView({ slug, variant }: { slug: string; variant: string }) {

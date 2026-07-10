@@ -111,6 +111,7 @@ import type {
   Mode,
   StylePreset,
 } from "../../lib/create/types";
+import { SectionGlow } from "../showcase-ui";
 import { LiftTile } from "./lift-card";
 import { PreviewDashboard } from "./preview-dashboard";
 
@@ -143,6 +144,42 @@ const defaultLocks: Record<LockKey, boolean> = {
   icon: false,
   radius: false,
 };
+
+/**
+ * One-shot, CSS-only entrance (Tailwind v4 `@starting-style`): the column
+ * fades and rises into place on first paint. Stagger it with a `delay-*`
+ * utility on the same element — during the delay the column simply holds its
+ * starting (hidden) state, so the controls, preview, and rail land in
+ * sequence. Pure CSS (zero JS, no hydration coupling — this route's
+ * first-load budget is tight) and reduced-motion safe: the offsets collapse
+ * and the transition is disabled.
+ */
+const ENTER =
+  "transition-[opacity,translate] duration-500 ease-[var(--ease-out-quart)] starting:translate-y-2 starting:opacity-0 motion-reduce:transition-none motion-reduce:starting:translate-y-0 motion-reduce:starting:opacity-100";
+
+/**
+ * The studio re-themes the live tokens on every control change; the chrome
+ * and preview surfaces tween their colors so re-theming feels liquid instead
+ * of snapping. Colors only — hover lifts/shadows keep their own transitions.
+ */
+const LIQUID =
+  "transition-colors duration-300 ease-[var(--ease-out-quart)] motion-reduce:transition-none";
+
+/**
+ * Stable positional keys for the 5-step chart ramps so a palette change
+ * recolors the same elements in place — letting each swatch tween via
+ * {@link LIQUID} — instead of remounting them (palettes always carry exactly
+ * five series colors; see `CHART_PALETTES`).
+ */
+const RAMP_STEPS = ["ramp-1", "ramp-2", "ramp-3", "ramp-4", "ramp-5"] as const;
+
+/**
+ * Micro pop-in for a freshly selected swatch dot: key the dot by its color and
+ * this `@starting-style` scale/fade runs whenever the selection changes.
+ * Reduced-motion safe (starting state collapses, transition disabled).
+ */
+const SWATCH_POP =
+  "transition-[opacity,scale] duration-200 ease-[var(--ease-out-quart)] starting:scale-50 starting:opacity-0 motion-reduce:transition-none motion-reduce:starting:scale-100 motion-reduce:starting:opacity-100";
 
 export function CreateStudio() {
   const { mode: ambientMode, overrides: ambientOverrides, setMode, setOverrides } = useTheme();
@@ -337,31 +374,54 @@ export function CreateStudio() {
   }
 
   return (
-    <main id="main-content" className="min-h-[calc(100vh-4rem)] bg-surface-base text-fg">
+    <main
+      id="main-content"
+      className={cn("relative isolate min-h-[calc(100vh-4rem)] bg-surface-base text-fg", LIQUID)}
+    >
+      {/* Aurora-glass accent: a glowing hairline on the page's top edge + a
+          soft aurora bloom bleeding down. It sits behind the translucent
+          controls/toolbar chrome, so the backdrop-blur surfaces catch the same
+          blue-glass shimmer as the site nav. `isolate` keeps the bloom's
+          negative z-index above this page's own background. */}
+      <SectionGlow />
       <span className="sr-only" aria-live="polite">
         {liveMessage}
       </span>
       <div className="grid min-h-[calc(100vh-4rem)] xl:grid-cols-[20rem_minmax(0,1fr)]">
-        <aside className="hidden border-border/70 bg-surface-inset/80 p-5 backdrop-blur-xl xl:sticky xl:top-16 xl:block xl:h-[calc(100vh-4rem)] xl:overflow-y-auto xl:border-r">
-          <CreateControls
-            idPrefix="create-desktop"
-            config={config}
-            allPresets={allPresets}
-            selectedBrand={selectedBrand}
-            locks={locks}
-            presetName={presetName}
-            onApplyPreset={applyPreset}
-            onPatchConfig={patchConfig}
-            onToggleLock={toggleLock}
-            onPresetNameChange={setPresetName}
-            onSavePreset={savePreset}
-            onShuffle={shuffle}
-            onGetCode={() => setCodeOpen(true)}
-          />
+        <aside
+          className={cn(
+            "hidden border-border/70 bg-surface-inset/80 p-5 backdrop-blur-xl xl:sticky xl:top-16 xl:block xl:h-[calc(100vh-4rem)] xl:overflow-y-auto xl:border-r",
+            LIQUID,
+          )}
+        >
+          {/* Entrance wrapper (not the aside itself) so the stagger's
+              opacity/transform transition never fights the aside's color tween. */}
+          <div className={ENTER}>
+            <CreateControls
+              idPrefix="create-desktop"
+              config={config}
+              allPresets={allPresets}
+              selectedBrand={selectedBrand}
+              locks={locks}
+              presetName={presetName}
+              onApplyPreset={applyPreset}
+              onPatchConfig={patchConfig}
+              onToggleLock={toggleLock}
+              onPresetNameChange={setPresetName}
+              onSavePreset={savePreset}
+              onShuffle={shuffle}
+              onGetCode={() => setCodeOpen(true)}
+            />
+          </div>
         </aside>
 
         <section className="min-w-0">
-          <div className="sticky top-16 z-30 border-border/70 border-b bg-surface-base/82 px-4 py-3.5 backdrop-blur-xl sm:px-6">
+          <div
+            className={cn(
+              "sticky top-16 z-30 border-border/70 border-b bg-surface-base/82 px-4 py-3.5 backdrop-blur-xl sm:px-6",
+              LIQUID,
+            )}
+          >
             <div className="mx-auto flex max-w-[100rem] flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
               <div className="flex min-w-0 items-center gap-3">
                 <span
@@ -373,6 +433,15 @@ export function CreateStudio() {
                   aria-hidden="true"
                 />
                 <div className="min-w-0">
+                  {/* Rail-scale echo of the site-wide Eyebrow, completing the
+                      eyebrow → title → lede rhythm the rest of the site uses. */}
+                  <p className="mb-0.5 hidden items-center gap-2 text-[0.6875rem] font-medium uppercase tracking-widest text-fg-tertiary sm:flex">
+                    <span
+                      aria-hidden="true"
+                      className="size-1.5 rounded-full bg-gradient-primary shadow-glow"
+                    />
+                    Create studio
+                  </p>
                   <div className="flex flex-wrap items-center gap-2">
                     <h1 className="truncate font-display text-xl font-semibold tracking-tight text-fg sm:text-2xl">
                       Create a design system
@@ -441,15 +510,26 @@ export function CreateStudio() {
               focusMode ? "2xl:grid-cols-1" : "2xl:grid-cols-[minmax(0,1fr)_22rem]",
             )}
           >
-            <div className="min-w-0">
-              <div className="overflow-hidden rounded-3xl border border-border-soft bg-surface-inset p-4 shadow-lg sm:p-6">
+            <div className={cn("min-w-0", ENTER, "delay-100")}>
+              <div
+                className={cn(
+                  "overflow-hidden rounded-3xl border border-border-soft bg-surface-inset p-4 shadow-lg sm:p-6",
+                  LIQUID,
+                )}
+              >
                 <PreviewDashboard />
                 <ComponentSampler config={config} />
               </div>
             </div>
 
             {focusMode ? null : (
-              <div className="grid gap-5 2xl:sticky 2xl:top-36 2xl:self-start">
+              <div
+                className={cn(
+                  "grid gap-5 2xl:sticky 2xl:top-36 2xl:self-start",
+                  ENTER,
+                  "delay-200",
+                )}
+              >
                 <TokenSummary config={config} />
                 <IconLibraryShowcase iconLibrary={config.iconLibrary} />
                 <PresetExchange
@@ -465,8 +545,13 @@ export function CreateStudio() {
         </section>
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 z-40 border-border/70 border-t bg-surface-base/90 px-4 py-3 backdrop-blur-xl xl:hidden">
-        <div className="mx-auto flex max-w-[100rem] items-center gap-2">
+      <div
+        className={cn(
+          "fixed inset-x-0 bottom-0 z-40 border-border/70 border-t bg-surface-base/90 px-4 py-3 backdrop-blur-xl xl:hidden",
+          LIQUID,
+        )}
+      >
+        <div className={cn("mx-auto flex max-w-[100rem] items-center gap-2", ENTER, "delay-150")}>
           <Button
             variant="outline"
             className="flex-1"
@@ -573,7 +658,7 @@ function CreateControls({
         )}
       >
         <span
-          className="pointer-events-none absolute -right-10 -top-12 -z-10 size-32 rounded-full opacity-25 blur-2xl transition-opacity duration-500 ease-[var(--ease-out-quart)]"
+          className="pointer-events-none absolute -right-10 -top-12 -z-10 size-32 rounded-full opacity-25 blur-2xl transition-[opacity,background-color] duration-500 ease-[var(--ease-out-quart)] motion-reduce:transition-none"
           style={{ backgroundColor: selectedBrand.swatch }}
           aria-hidden="true"
         />
@@ -921,11 +1006,14 @@ function IconAction({
   );
 }
 
-/** A thin section caption — `font-display`, hushed and uppercase — used to give
- *  the control stack rhythm (Color / Typography / Icons / Shape) without cards. */
+/** A thin section caption — hushed and uppercase — used to give the control
+ *  stack rhythm (Color / Typography / Icons / Shape) without cards. Mirrors
+ *  the site-wide `Eyebrow` (gradient dot + widest tracking) at rail scale so
+ *  the studio reads in the same eyebrow → title → lede register as the home. */
 function SectionLabel({ children }: { children: ReactNode }) {
   return (
-    <p className="px-0.5 font-display text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-fg-secondary">
+    <p className="flex items-center gap-2 px-0.5 text-[0.6875rem] font-medium uppercase tracking-widest text-fg-tertiary">
+      <span aria-hidden="true" className="size-1.5 rounded-full bg-gradient-primary shadow-glow" />
       {children}
     </p>
   );
@@ -996,7 +1084,7 @@ function LockToggle({
       onClick={onClick}
       className={cn(
         "grid size-7 place-items-center rounded-md outline-none",
-        "transition-[color,background-color,opacity,transform] duration-200 ease-[var(--ease-out-quart)]",
+        "transition-[color,background-color,opacity,scale] duration-200 ease-[var(--ease-out-quart)] active:scale-90 motion-reduce:active:scale-100",
         "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface-inset",
         active
           ? "bg-primary/12 text-primary"
@@ -1027,12 +1115,16 @@ function radiusLabel(value: number): string {
   return `${value}px · Round`;
 }
 
-/** A swatch dot + label, shared by the trigger value and the list items. */
+/** A swatch dot + label, shared by the trigger value and the list items. The
+ *  dot is keyed by its color so picking a new swatch remounts it and the
+ *  {@link SWATCH_POP} `@starting-style` scale-in runs — a small "it took"
+ *  confirmation in the trigger. */
 function SwatchOption({ swatch, label }: { swatch: string; label: string }) {
   return (
     <span className="flex min-w-0 items-center gap-2">
       <span
-        className="size-4 shrink-0 rounded-full border border-border-soft"
+        key={swatch}
+        className={cn("size-4 shrink-0 rounded-full border border-border-soft", SWATCH_POP)}
         style={{ backgroundColor: swatch }}
         aria-hidden="true"
       />
@@ -1058,7 +1150,9 @@ function IconLibraryOption({ library, name }: { library: IconLibraryId; name?: s
   );
 }
 
-/** The chart palette's five-dot ramp + name. */
+/** The chart palette's five-dot ramp + name. The dots share the swatch pop-in
+ *  (keyed by color), so choosing a palette lands with the same micro-feedback
+ *  as the base/brand swatches. */
 function PaletteOption({ palette }: { palette: ChartPalette }) {
   return (
     <span className="flex min-w-0 flex-1 items-center justify-between gap-3">
@@ -1067,7 +1161,7 @@ function PaletteOption({ palette }: { palette: ChartPalette }) {
         {palette.colors.map((color) => (
           <span
             key={color}
-            className="size-3.5 rounded-full border border-surface-floating"
+            className={cn("size-3.5 rounded-full border border-surface-floating", SWATCH_POP)}
             style={{ backgroundColor: color }}
             aria-hidden="true"
           />
@@ -1186,7 +1280,7 @@ function FontSelect({
 function ComponentSampler({ config }: { config: DesignConfig }) {
   return (
     <div className="mt-6 grid gap-5 xl:grid-cols-3">
-      <Card>
+      <Card className={LIQUID}>
         <CardHeader>
           <CardTitle className="text-base">Controls</CardTitle>
           <CardDescription>Inputs, toggles, radios, and button states.</CardDescription>
@@ -1196,11 +1290,21 @@ function ComponentSampler({ config }: { config: DesignConfig }) {
             <Label htmlFor="sampler-name">Workspace</Label>
             <Input id="sampler-name" defaultValue="Cooud Growth" />
           </div>
-          <div className="flex items-center justify-between rounded-lg border border-border bg-surface-inset px-3 py-2.5">
+          <div
+            className={cn(
+              "flex items-center justify-between rounded-lg border border-border bg-surface-inset px-3 py-2.5",
+              LIQUID,
+            )}
+          >
             <Label htmlFor="sampler-switch">Auto-save</Label>
             <Switch id="sampler-switch" defaultChecked />
           </div>
-          <div className="flex items-center gap-2 rounded-lg border border-border bg-surface-inset px-3 py-2.5 text-sm">
+          <div
+            className={cn(
+              "flex items-center gap-2 rounded-lg border border-border bg-surface-inset px-3 py-2.5 text-sm",
+              LIQUID,
+            )}
+          >
             <Checkbox id="sampler-emails" defaultChecked />
             <Label htmlFor="sampler-emails" className="text-sm">
               Email weekly reports
@@ -1210,7 +1314,10 @@ function ComponentSampler({ config }: { config: DesignConfig }) {
             {["fast", "balanced", "safe"].map((value) => (
               <div
                 key={value}
-                className="flex items-center justify-center gap-2 rounded-lg border border-border bg-surface-inset px-2 py-2 text-xs capitalize"
+                className={cn(
+                  "flex items-center justify-center gap-2 rounded-lg border border-border bg-surface-inset px-2 py-2 text-xs capitalize",
+                  LIQUID,
+                )}
               >
                 <RadioGroupItem id={`sampler-${value}`} value={value} />
                 <Label htmlFor={`sampler-${value}`} className="text-xs capitalize">
@@ -1230,7 +1337,7 @@ function ComponentSampler({ config }: { config: DesignConfig }) {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className={LIQUID}>
         <CardHeader>
           <CardTitle className="text-base">Data surface</CardTitle>
           <CardDescription>Tables, progress, and status colors.</CardDescription>
@@ -1239,11 +1346,11 @@ function ComponentSampler({ config }: { config: DesignConfig }) {
           <div className="grid gap-2">
             <div className="flex justify-between text-sm">
               <span className="text-fg-secondary">Migration progress</span>
-              <span className="font-mono text-fg">72%</span>
+              <span className="font-mono text-fg tabular-nums">72%</span>
             </div>
             <Progress value={72} aria-label="Migration progress" />
           </div>
-          <div className="overflow-hidden rounded-lg border border-border">
+          <div className={cn("overflow-hidden rounded-lg border border-border", LIQUID)}>
             <Table>
               <TableHeader>
                 <TableRow>
@@ -1272,7 +1379,7 @@ function ComponentSampler({ config }: { config: DesignConfig }) {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className={LIQUID}>
         <CardHeader>
           <CardTitle className="text-base">Navigation & type</CardTitle>
           <CardDescription>Tabs, disclosure, and typography scale.</CardDescription>
@@ -1285,7 +1392,7 @@ function ComponentSampler({ config }: { config: DesignConfig }) {
             </TabsList>
             <TabsContent
               value="preview"
-              className="rounded-lg border border-border bg-surface-inset p-3"
+              className={cn("rounded-lg border border-border bg-surface-inset p-3", LIQUID)}
             >
               <p className="font-display text-2xl font-semibold text-fg">Aa</p>
               <p className="text-sm text-fg-secondary">
@@ -1294,17 +1401,19 @@ function ComponentSampler({ config }: { config: DesignConfig }) {
             </TabsContent>
             <TabsContent
               value="tokens"
-              className="rounded-lg border border-border bg-surface-inset p-3"
+              className={cn("rounded-lg border border-border bg-surface-inset p-3", LIQUID)}
             >
               <div className="flex gap-2">
-                {findChartPalette(config.chart).colors.map((color) => (
-                  <span
-                    key={color}
-                    className="h-10 flex-1 rounded-md"
-                    style={{ backgroundColor: color }}
-                    aria-hidden="true"
-                  />
-                ))}
+                {RAMP_STEPS.slice(0, findChartPalette(config.chart).colors.length).map(
+                  (step, index) => (
+                    <span
+                      key={step}
+                      className={cn("h-10 flex-1 rounded-md", LIQUID)}
+                      style={{ backgroundColor: findChartPalette(config.chart).colors[index] }}
+                      aria-hidden="true"
+                    />
+                  ),
+                )}
               </div>
             </TabsContent>
           </Tabs>
@@ -1330,7 +1439,7 @@ function RailCard({ className, children }: { className?: string; children: React
     <section
       className={cn(
         "rounded-2xl border border-border-soft bg-surface-raised p-4 shadow-sm",
-        "transition-[border-color,box-shadow] duration-300 ease-[var(--ease-out-quart)]",
+        "transition-[background-color,border-color,color,box-shadow] duration-300 ease-[var(--ease-out-quart)] motion-reduce:transition-none",
         className,
       )}
     >
@@ -1413,17 +1522,21 @@ function TokenSummary({ config }: { config: DesignConfig }) {
         ))}
       </dl>
       <div className="mt-3 flex items-center justify-between gap-2">
-        <p className="font-display text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-fg-secondary">
+        <p className="flex items-center gap-2 text-[0.6875rem] font-medium uppercase tracking-widest text-fg-tertiary">
+          <span
+            aria-hidden="true"
+            className="size-1.5 rounded-full bg-gradient-primary shadow-glow"
+          />
           Chart ramp
         </p>
         <Badge variant="outline">{findChartPalette(config.chart).name}</Badge>
       </div>
       <div className="mt-2 flex gap-1.5">
-        {colors.map((color) => (
+        {RAMP_STEPS.slice(0, colors.length).map((step, index) => (
           <span
-            key={color}
-            className="h-9 flex-1 rounded-lg ring-1 ring-inset ring-border-soft transition-colors duration-300 ease-[var(--ease-out-quart)]"
-            style={{ backgroundColor: color }}
+            key={step}
+            className={cn("h-9 flex-1 rounded-lg ring-1 ring-inset ring-border-soft", LIQUID)}
+            style={{ backgroundColor: colors[index] }}
             aria-hidden="true"
           />
         ))}
@@ -1434,7 +1547,12 @@ function TokenSummary({ config }: { config: DesignConfig }) {
 
 function SummaryRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center justify-between gap-3 bg-surface-inset/40 px-3 py-2.5 text-sm">
+    <div
+      className={cn(
+        "flex items-center justify-between gap-3 bg-surface-inset/40 px-3 py-2.5 text-sm",
+        LIQUID,
+      )}
+    >
       <dt className="text-fg-tertiary">{label}</dt>
       <dd className="truncate font-medium capitalize text-fg">{value}</dd>
     </div>

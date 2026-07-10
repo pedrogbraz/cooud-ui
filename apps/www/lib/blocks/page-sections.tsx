@@ -43,6 +43,7 @@ import { BlockGalleryBody } from "../../components/blocks/block-gallery-body";
 import { BlockViewBody } from "../../components/blocks/block-view-body";
 import { getBlockMeta } from "../blocks-index";
 import { getBlockContentVariantsFrom, resolveBlockVariationFrom } from "./resolve";
+import { StatusPageBlock, statusPageCode } from "./status-page";
 import type { BlockContentMap } from "./types";
 
 /* ──────────────────────────────────────────────────────────────────────────
@@ -670,6 +671,10 @@ export const pageBlocks: BlockContentMap = {
         code: emptyStateErrorCode,
       },
     ],
+  },
+  "status-page": {
+    preview: <StatusPageBlock />,
+    code: statusPageCode,
   },
 };
 

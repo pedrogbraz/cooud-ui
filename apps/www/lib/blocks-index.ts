@@ -128,6 +128,12 @@ export const BLOCK_CATEGORIES: BlockCategory[] = [
         ],
       },
       {
+        slug: "feature-matrix",
+        name: "Feature Matrix",
+        description:
+          "A plan-comparison matrix with grouped feature rows, per-plan checks and limits, and an elevated popular column that stacks into cards on mobile.",
+      },
+      {
         slug: "feature-grid",
         name: "Feature Grid",
         description: "A responsive grid of product features with icons.",
@@ -193,6 +199,18 @@ export const BLOCK_CATEGORIES: BlockCategory[] = [
         slug: "navbar",
         name: "Navbar",
         description: "A contained, rounded marketing navigation bar with brand mark and CTAs.",
+      },
+      {
+        slug: "changelog",
+        name: "Changelog",
+        description:
+          "A product release feed on a vertical timeline with version badges, dates, and typed Feature/Fix/Perf change rows.",
+      },
+      {
+        slug: "waitlist",
+        name: "Waitlist Hero",
+        description:
+          "A waitlist capture hero with an early-access pill, a gradient headline, an inline email form that swaps to a joined state, and avatar social proof.",
       },
     ],
   },
@@ -445,6 +463,12 @@ export const BLOCK_CATEGORIES: BlockCategory[] = [
           },
         ],
       },
+      {
+        slug: "status-page",
+        name: "Status Page",
+        description:
+          "A service-status section with an operational banner, per-service 45-day uptime bars, and an incident-history link.",
+      },
     ],
   },
   {
@@ -567,6 +591,18 @@ export const BLOCK_CATEGORIES: BlockCategory[] = [
         name: "Contact Form",
         description:
           "A two-column contact section pairing contact methods with a name, email, and message form.",
+      },
+    ],
+  },
+  {
+    slug: "integrations",
+    name: "Integrations",
+    items: [
+      {
+        slug: "integrations",
+        name: "Integrations Grid",
+        description:
+          "A marketing integrations section with an eyebrow header and a responsive grid of connectable service tiles.",
       },
     ],
   },

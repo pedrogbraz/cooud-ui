@@ -47,6 +47,11 @@ export const EXAMPLE_SECTIONS: Record<string, ExampleSectionMeta[]> = {
     { id: "variants", title: "Variants" },
     { id: "loading", title: "Loading" },
   ],
+  "mode-toggle": [
+    { id: "morph", title: "Sun ⇄ moon morph" },
+    { id: "sizes", title: "Sizes" },
+    { id: "theme-provider", title: "Wired to a theme provider" },
+  ],
   input: [
     { id: "default", title: "Default" },
     { id: "invalid-state", title: "Invalid state" },
@@ -124,6 +129,10 @@ export const EXAMPLE_SECTIONS: Record<string, ExampleSectionMeta[]> = {
     { id: "adornments", title: "With adornments" },
     { id: "invalid", title: "Invalid" },
   ],
+  "signature-pad": [
+    { id: "capture", title: "Capture a signature" },
+    { id: "disabled", title: "Disabled" },
+  ],
   avatar: [
     { id: "image-fallback", title: "Image & fallback" },
     { id: "group", title: "Group" },
@@ -164,12 +173,20 @@ export const EXAMPLE_SECTIONS: Record<string, ExampleSectionMeta[]> = {
     { id: "default", title: "Default" },
     { id: "line-numbers", title: "Line numbers" },
   ],
+  "code-tabs": [
+    { id: "package-manager", title: "Package manager installer" },
+    { id: "multi-language", title: "Multi-language snippet" },
+  ],
   collapsible: [{ id: "default", title: "Default" }],
   "aspect-ratio": [
     { id: "default", title: "Default" },
     { id: "square", title: "Square" },
   ],
   "tree-view": [{ id: "file-tree", title: "File tree" }],
+  "json-viewer": [
+    { id: "api-response", title: "API response" },
+    { id: "expanded-depth", title: "Expanded depth" },
+  ],
   timeline: [{ id: "activity", title: "Activity" }],
   kanban: [{ id: "board", title: "Board" }],
   masonry: [{ id: "responsive-cards", title: "Responsive cards" }],
@@ -218,7 +235,12 @@ export const EXAMPLE_SECTIONS: Record<string, ExampleSectionMeta[]> = {
   "app-shell": [{ id: "shell-layout", title: "Shell layout" }],
   resizable: [{ id: "split-panes", title: "Split panes" }],
   toolbar: [{ id: "formatting", title: "Formatting" }],
+  "table-of-contents": [{ id: "scrollspy", title: "Scrollspy article" }],
   calendar: [{ id: "single-date", title: "Single date" }],
+  countdown: [
+    { id: "launch", title: "Launch countdown" },
+    { id: "compact-complete", title: "Compact with completion" },
+  ],
   "date-picker": [{ id: "pick-a-date", title: "Pick a date" }],
   "date-range-picker": [
     { id: "range", title: "Date range" },
@@ -279,6 +301,19 @@ export const EXAMPLE_SECTIONS: Record<string, ExampleSectionMeta[]> = {
     { id: "glare-parallax", title: "Glare & parallax" },
     { id: "payment-card", title: "Payment card" },
     { id: "subtle", title: "Subtle" },
+  ],
+  magnetic: [
+    { id: "magnetic-cta", title: "Magnetic call-to-action" },
+    { id: "icon-row", title: "Icon row" },
+    { id: "field-tuning", title: "Strength & radius" },
+  ],
+  orbit: [
+    { id: "constellation", title: "Integration constellation" },
+    { id: "team-halo", title: "Team halo" },
+  ],
+  terminal: [
+    { id: "install-session", title: "Install session" },
+    { id: "static-log", title: "Static, chrome-less log" },
   ],
 };
 

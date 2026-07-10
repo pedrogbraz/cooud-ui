@@ -1,7 +1,7 @@
 "use client";
 
 import { cn, Label, Switch } from "@cooud-ui/ui";
-import { type KeyboardEvent, useId, useRef } from "react";
+import { type KeyboardEvent, useEffect, useId, useRef, useState } from "react";
 import type { ResolvedCategory } from "@/lib/stack/types";
 import { OptionCard } from "./option-card";
 
@@ -37,6 +37,49 @@ export function CategorySection({
   const groupRef = useRef<HTMLDivElement>(null);
 
   const labelledBy = category.description ? `${headingId} ${descId}` : headingId;
+
+  // --- Segmented sliding thumb -------------------------------------------
+  // Segmented pickers get a thumb that glides under the active pill. Pills are
+  // intrinsically sized and can wrap, so the thumb is measured: whenever the
+  // selection (or the group's size) changes, the active pill's offset box is
+  // written as CSS custom properties on the group inside requestAnimationFrame
+  // — the slide is then a pure CSS transition, never a per-frame React render.
+  // Until the first client-side measurement lands (`thumbReady`), the selected
+  // pill paints its own identical surface, so SSR/no-JS renders stay correct
+  // and the hand-off is seamless.
+  const isSegmented = category.layout === "segmented" && category.kind === "single";
+  const [thumbReady, setThumbReady] = useState(false);
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: `value` is the intended re-measure trigger — the active pill is read from the DOM at effect time.
+  useEffect(() => {
+    if (!isSegmented) return;
+    const group = groupRef.current;
+    if (!group) return;
+    let raf = 0;
+    const measure = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const active = group.querySelector<HTMLButtonElement>(
+          '[data-slot="option-card"][aria-checked="true"]',
+        );
+        if (!active) return;
+        group.style.setProperty("--seg-x", `${active.offsetLeft}px`);
+        group.style.setProperty("--seg-y", `${active.offsetTop}px`);
+        group.style.setProperty("--seg-w", `${active.offsetWidth}px`);
+        group.style.setProperty("--seg-h", `${active.offsetHeight}px`);
+        setThumbReady(true);
+      });
+    };
+    measure();
+    // Re-measure when the group resizes (wrap changes, font load, container
+    // queries) so the thumb never drifts off its pill.
+    const observer = new ResizeObserver(measure);
+    observer.observe(group);
+    return () => {
+      observer.disconnect();
+      cancelAnimationFrame(raf);
+    };
+  }, [isSegmented, value]);
 
   // Quiet right-aligned counter for multi categories only (single categories
   // read their state off the selected card). Purely informational; the summary's
@@ -95,7 +138,7 @@ export function CategorySection({
       <section data-slot="category-section" aria-labelledby={headingId} className="scroll-mt-24">
         <div
           className={cn(
-            "flex items-center justify-between gap-4 rounded-xl border bg-surface-raised p-4 transition-colors duration-200 ease-[var(--ease-out-quart)]",
+            "flex items-center justify-between gap-4 rounded-xl border bg-surface-raised p-4 transition-colors duration-200 ease-[var(--ease-out-quart)] motion-reduce:transition-none",
             on ? "border-primary/40 bg-primary/5" : "border-border hover:border-border-strong",
           )}
         >
@@ -124,7 +167,7 @@ export function CategorySection({
   // Simple, self-evident single choices render as an inline segmented control
   // (a pill row) instead of icon cards, with the picked option's example shown
   // beneath. Reuses the radiogroup roving-focus machinery below.
-  if (category.layout === "segmented" && category.kind === "single") {
+  if (isSegmented) {
     const selectedOpt = options.find((o) => o.selected);
     return (
       <section data-slot="category-section" aria-labelledby={headingId} className="scroll-mt-24">
@@ -142,8 +185,25 @@ export function CategorySection({
           ref={groupRef}
           role="radiogroup"
           aria-labelledby={labelledBy}
-          className="inline-flex max-w-full flex-wrap gap-1 rounded-xl border border-border bg-surface-raised p-1"
+          className="relative inline-flex max-w-full flex-wrap gap-1 rounded-xl border border-border bg-surface-raised p-1"
         >
+          {/* The sliding thumb (see the measurement effect above). It glides —
+              and resizes — between pills via the CSS `translate`/size vars;
+              decorative only, the pills keep the real radio semantics and paint
+              above it (they are positioned). Rendered only once measured, so
+              there is never a misplaced flash. */}
+          {thumbReady ? (
+            <span
+              aria-hidden="true"
+              data-slot="segmented-thumb"
+              className="pointer-events-none absolute top-0 left-0 rounded-lg bg-surface-overlay shadow-xs transition-[translate,width,height] duration-300 ease-[var(--ease-out-quart)] motion-reduce:transition-none"
+              style={{
+                translate: "var(--seg-x) var(--seg-y)",
+                width: "var(--seg-w)",
+                height: "var(--seg-h)",
+              }}
+            />
+          ) : null}
           {options.map((opt, index) => (
             <button
               key={opt.option.id}
@@ -162,11 +222,14 @@ export function CategorySection({
                 handleRadioKeyNav(index, event);
               }}
               className={cn(
-                "relative inline-flex items-center justify-center rounded-lg px-3 py-1.5 text-xs font-medium outline-none transition-colors duration-150 ease-[var(--ease-out-quart)] motion-reduce:transition-none",
+                "relative inline-flex items-center justify-center rounded-lg px-3 py-1.5 text-xs font-medium outline-none transition-colors duration-200 ease-[var(--ease-out-quart)] motion-reduce:transition-none",
                 "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface-raised",
                 opt.selected
-                  ? "bg-surface-overlay text-fg shadow-xs"
-                  : "text-fg-secondary hover:text-fg",
+                  ? // Until the thumb has measured itself, the pill carries the
+                    // active surface directly (SSR/no-JS parity); after that the
+                    // thumb owns it and the pill only tints its label.
+                    cn("text-fg", !thumbReady && "bg-surface-overlay shadow-xs")
+                  : "text-fg-secondary hover:bg-surface-overlay/40 hover:text-fg",
               )}
             >
               {opt.option.name}
@@ -174,7 +237,15 @@ export function CategorySection({
           ))}
         </div>
         {selectedOpt?.option.description ? (
-          <p className="mt-2 text-xs text-fg-tertiary">{selectedOpt.option.description}</p>
+          // Keyed on the option so a new pick swaps in a fresh element and the
+          // `@starting-style` fade replays — a gentle crossfade-feel without
+          // animating layout.
+          <p
+            key={selectedOpt.option.id}
+            className="mt-2 text-xs text-fg-tertiary transition-opacity duration-300 ease-[var(--ease-out-quart)] starting:opacity-0 motion-reduce:transition-none motion-reduce:starting:opacity-100"
+          >
+            {selectedOpt.option.description}
+          </p>
         ) : null}
       </section>
     );

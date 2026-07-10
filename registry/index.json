@@ -246,6 +246,16 @@
     ]
   },
   {
+    "name": "code-tabs",
+    "type": "registry:ui",
+    "dependencies": [],
+    "registryDependencies": [
+      "cn",
+      "copy-button",
+      "tabs"
+    ]
+  },
+  {
     "name": "collapsible",
     "type": "registry:ui",
     "dependencies": [
@@ -334,6 +344,14 @@
     ],
     "registryDependencies": [
       "button",
+      "cn"
+    ]
+  },
+  {
+    "name": "countdown",
+    "type": "registry:ui",
+    "dependencies": [],
+    "registryDependencies": [
       "cn"
     ]
   },
@@ -595,6 +613,17 @@
     ]
   },
   {
+    "name": "json-viewer",
+    "type": "registry:ui",
+    "dependencies": [
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": [
+      "cn",
+      "copy-button"
+    ]
+  },
+  {
     "name": "kanban",
     "type": "registry:ui",
     "dependencies": [
@@ -649,6 +678,14 @@
     ]
   },
   {
+    "name": "magnetic",
+    "type": "registry:ui",
+    "dependencies": [],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
     "name": "marquee",
     "type": "registry:ui",
     "dependencies": [
@@ -683,6 +720,14 @@
     "dependencies": [
       "lucide-react@^0.577.0"
     ],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "mode-toggle",
+    "type": "registry:ui",
+    "dependencies": [],
     "registryDependencies": [
       "cn"
     ]
@@ -756,6 +801,14 @@
       "button",
       "cn",
       "input"
+    ]
+  },
+  {
+    "name": "orbit",
+    "type": "registry:ui",
+    "dependencies": [],
+    "registryDependencies": [
+      "cn"
     ]
   },
   {
@@ -967,6 +1020,17 @@
     ]
   },
   {
+    "name": "signature-pad",
+    "type": "registry:ui",
+    "dependencies": [
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": [
+      "button",
+      "cn"
+    ]
+  },
+  {
     "name": "skeleton",
     "type": "registry:ui",
     "dependencies": [],
@@ -1054,6 +1118,14 @@
     ]
   },
   {
+    "name": "table-of-contents",
+    "type": "registry:ui",
+    "dependencies": [],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
     "name": "table",
     "type": "registry:ui",
     "dependencies": [],
@@ -1080,6 +1152,15 @@
     "registryDependencies": [
       "badge",
       "cn"
+    ]
+  },
+  {
+    "name": "terminal",
+    "type": "registry:ui",
+    "dependencies": [],
+    "registryDependencies": [
+      "cn",
+      "copy-button"
     ]
   },
   {
@@ -1475,6 +1556,15 @@
     "registryDependencies": []
   },
   {
+    "name": "status-page",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.2.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
     "name": "chat-thread",
     "type": "registry:block",
     "dependencies": [
@@ -1635,6 +1725,41 @@
     "type": "registry:block",
     "dependencies": [
       "@cooud-ui/ui@0.2.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "changelog",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.2.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "integrations",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.2.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "waitlist",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.2.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "feature-matrix",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.2.0",
+      "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
   }
