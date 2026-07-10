@@ -1,5 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { ptBR } from "date-fns/locale";
 import { describe, expect, it, vi } from "vitest";
 import { axe } from "vitest-axe";
 import { Calendar } from "./calendar.js";
@@ -38,6 +39,23 @@ describe("Calendar", () => {
     render(<Calendar mode="single" defaultMonth={JUNE_2026} />);
     await userEvent.click(screen.getByRole("button", { name: /next month/i }));
     expect(screen.getByText("July 2026")).toBeInTheDocument();
+  });
+
+  it("localizes the month caption via the locale prop", () => {
+    // `locale` is a native DayPicker prop forwarded through the spread.
+    render(<Calendar mode="single" defaultMonth={JUNE_2026} locale={ptBR} />);
+    expect(screen.getByText("junho 2026")).toBeInTheDocument();
+  });
+
+  it("positions the nav buttons with logical (RTL-safe) utilities", () => {
+    render(<Calendar mode="single" defaultMonth={JUNE_2026} />);
+    const previous = screen.getByRole("button", { name: /previous month/i });
+    const next = screen.getByRole("button", { name: /next month/i });
+    // start/end (not left/right) so the buttons flip under dir="rtl".
+    expect(previous.className).toContain("start-1");
+    expect(next.className).toContain("end-1");
+    expect(previous.className).not.toContain("left-1");
+    expect(next.className).not.toContain("right-1");
   });
 
   it("has no axe violations", async () => {

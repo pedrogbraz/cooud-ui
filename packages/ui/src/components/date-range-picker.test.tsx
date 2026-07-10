@@ -1,5 +1,7 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 import { describe, expect, it, vi } from "vitest";
 import { axe } from "vitest-axe";
 import { type DateRange, DateRangePicker } from "./date-range-picker.js";
@@ -28,6 +30,32 @@ describe("DateRangePicker", () => {
     const value: DateRange = { from: new Date(2026, 5, 1), to: new Date(2026, 5, 7) };
     render(<DateRangePicker value={value} aria-label="Report period" dateFormat="LLL dd, y" />);
     expect(screen.getByText(/Jun 01, 2026 – Jun 07, 2026/)).toBeInTheDocument();
+  });
+
+  it("formats the trigger label with the provided date-fns locale", () => {
+    const from = new Date(2026, 5, 1);
+    const to = new Date(2026, 5, 7);
+    render(
+      <DateRangePicker
+        value={{ from, to }}
+        aria-label="Report period"
+        locale={ptBR}
+        dateFormat="PPP"
+      />,
+    );
+    const expected = `${format(from, "PPP", { locale: ptBR })} – ${format(to, "PPP", { locale: ptBR })}`;
+    expect(screen.getByText(expected)).toBeInTheDocument();
+  });
+
+  it("supports a formatValue escape hatch for the trigger label", () => {
+    render(
+      <DateRangePicker
+        aria-label="Report period"
+        value={{ from: new Date(2026, 5, 1), to: new Date(2026, 5, 7) }}
+        formatValue={(range) => `${range.from?.getDate()}–${range.to?.getDate()} de junho`}
+      />,
+    );
+    expect(screen.getByText("1–7 de junho")).toBeInTheDocument();
   });
 
   it("applies a preset range and closes the popover", async () => {
@@ -75,8 +103,22 @@ describe("DateRangePicker", () => {
     expect(screen.queryByRole("grid")).not.toBeInTheDocument();
   });
 
-  it("renders an accessible calendar grid (no axe violations)", async () => {
+  it("names the popover dialog and the calendar group for assistive tech", async () => {
     render(
+      <DateRangePicker aria-label="Report period" placeholder="Pick a range" numberOfMonths={1} />,
+    );
+    await userEvent.click(screen.getByRole("button", { name: "Report period" }));
+    // The popover dialog is named via aria-label (axe: aria-dialog-name).
+    expect(await screen.findByRole("dialog", { name: "Pick a range" })).toBeInTheDocument();
+    // react-day-picker drops an aria-labelledby handed to its root, so the
+    // label is wired through a fieldset/legend we control — assert it lands.
+    const group = screen.getByRole("group", { name: "Pick a range" });
+    expect(group).toHaveAttribute("data-slot", "date-range-picker-calendar");
+    expect(within(group).getByRole("grid")).toBeInTheDocument();
+  });
+
+  it("renders an accessible open popover (no axe violations)", async () => {
+    const { baseElement } = render(
       <DateRangePicker
         aria-label="Report period"
         defaultValue={{ from: JUNE_2026 }}
@@ -84,9 +126,8 @@ describe("DateRangePicker", () => {
       />,
     );
     await userEvent.click(screen.getByRole("button", { name: "Report period" }));
-    const grid = await screen.findByRole("grid");
-    // Scoped to the grid: Radix's popover dialog lacks an accessible name in
-    // this composition (aria-dialog-name) — a source gap, not a test concern.
-    expect(await axe(grid)).toHaveNoViolations();
+    await screen.findByRole("grid");
+    // The popover portals to document.body, so axe the whole baseElement.
+    expect(await axe(baseElement)).toHaveNoViolations();
   });
 });

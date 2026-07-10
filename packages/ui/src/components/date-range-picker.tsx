@@ -1,15 +1,8 @@
 "use client";
 
-import { format } from "date-fns";
+import { format, type Locale } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-import {
-  type ComponentPropsWithoutRef,
-  forwardRef,
-  useCallback,
-  useId,
-  useMemo,
-  useState,
-} from "react";
+import { type ComponentPropsWithoutRef, forwardRef, useCallback, useMemo, useState } from "react";
 import type { Matcher, DateRange as RdpDateRange } from "react-day-picker";
 import { cn } from "../lib/cn.js";
 import { Button } from "./button.js";
@@ -52,8 +45,12 @@ export interface DateRangePickerProps {
   max?: Date;
   /** Extra non-selectable days, merged with `min`/`max`. */
   disabledDates?: Matcher | Matcher[];
+  /** `date-fns` locale used for both the trigger label and the calendar. */
+  locale?: Locale;
   /** `date-fns` format token for each end of the range. */
   dateFormat?: string;
+  /** Full override for the trigger label. Wins over `dateFormat`/`locale`. */
+  formatValue?: (range: DateRange) => string;
   /** Alignment of the popover against the trigger. */
   align?: ComponentPropsWithoutRef<typeof PopoverContent>["align"];
   /** Number of months shown on wider viewports. */
@@ -97,7 +94,9 @@ export const DateRangePicker = forwardRef<HTMLButtonElement, DateRangePickerProp
       min,
       max,
       disabledDates,
+      locale,
       dateFormat = "LLL dd, y",
+      formatValue,
       align = "start",
       numberOfMonths = 2,
       className,
@@ -113,8 +112,6 @@ export const DateRangePicker = forwardRef<HTMLButtonElement, DateRangePickerProp
 
     const isControlled = valueProp !== undefined;
     const value = isControlled ? valueProp : uncontrolledValue;
-
-    const labelId = useId();
 
     const commit = useCallback(
       (next: DateRange | undefined) => {
@@ -153,10 +150,11 @@ export const DateRangePicker = forwardRef<HTMLButtonElement, DateRangePickerProp
 
     const label = useMemo(() => {
       if (!hasSelection(value)) return placeholder;
-      const from = value.from ? format(value.from, dateFormat) : "…";
+      if (formatValue) return formatValue(value);
+      const from = value.from ? format(value.from, dateFormat, { locale }) : "…";
       if (!value.to) return from;
-      return `${from} – ${format(value.to, dateFormat)}`;
-    }, [value, placeholder, dateFormat]);
+      return `${from} – ${format(value.to, dateFormat, { locale })}`;
+    }, [value, placeholder, formatValue, dateFormat, locale]);
 
     return (
       <Popover open={open} onOpenChange={setOpen}>
@@ -179,24 +177,18 @@ export const DateRangePicker = forwardRef<HTMLButtonElement, DateRangePickerProp
             <span className="truncate">{label}</span>
           </Button>
         </PopoverTrigger>
+        {/* Names the popover dialog for assistive tech (axe: aria-dialog-name). */}
         <PopoverContent
           align={align}
+          aria-label={placeholder}
           data-slot="date-range-picker-content"
           className={cn("w-auto p-0", contentClassName)}
         >
           <div className="flex flex-col sm:flex-row">
-            {/*
-              Names the calendar grid for assistive tech. The Calendar below
-              references this element via aria-labelledby, so it must carry the
-              matching id (the reference was previously dangling).
-            */}
-            <span id={labelId} className="sr-only">
-              {placeholder}
-            </span>
             {presets && presets.length > 0 ? (
               <fieldset
                 data-slot="date-range-picker-presets"
-                className="m-0 flex min-w-0 flex-row gap-1 border-0 border-border border-b p-2 sm:flex-col sm:border-r sm:border-b-0"
+                className="m-0 flex min-w-0 flex-row gap-1 border-0 border-border border-b p-2 sm:flex-col sm:border-e sm:border-b-0"
               >
                 <legend className="sr-only">Date range presets</legend>
                 {presets.map((preset) => (
@@ -214,18 +206,26 @@ export const DateRangePicker = forwardRef<HTMLButtonElement, DateRangePickerProp
                 ))}
               </fieldset>
             ) : null}
-            <Calendar
-              mode="range"
-              selected={selected}
-              onSelect={handleSelect}
-              numberOfMonths={numberOfMonths}
-              defaultMonth={value?.from}
-              fromDate={min}
-              toDate={max}
-              disabled={disabledMatcher.length > 0 ? disabledMatcher : undefined}
-              aria-labelledby={labelId}
-              initialFocus
-            />
+            {/*
+              react-day-picker v8 does not forward unknown root props (an
+              `aria-labelledby` handed to Calendar never reaches the DOM), so
+              the calendar's group name comes from this fieldset's legend.
+            */}
+            <fieldset data-slot="date-range-picker-calendar" className="m-0 min-w-0 border-0 p-0">
+              <legend className="sr-only">{placeholder}</legend>
+              <Calendar
+                mode="range"
+                selected={selected}
+                onSelect={handleSelect}
+                numberOfMonths={numberOfMonths}
+                defaultMonth={value?.from}
+                fromDate={min}
+                toDate={max}
+                disabled={disabledMatcher.length > 0 ? disabledMatcher : undefined}
+                locale={locale}
+                initialFocus
+              />
+            </fieldset>
           </div>
         </PopoverContent>
       </Popover>
