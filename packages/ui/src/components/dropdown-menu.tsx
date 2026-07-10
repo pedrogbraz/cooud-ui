@@ -29,13 +29,13 @@ export const DropdownMenuSubTrigger = forwardRef<
       data-slot="dropdown-menu-sub-trigger"
       className={cn(
         "relative flex cursor-default select-none items-center gap-2 rounded-md px-2 py-1.5 text-sm outline-none transition-colors focus:bg-surface-overlay focus:text-fg data-[state=open]:bg-surface-overlay data-[disabled]:opacity-50 data-[disabled]:pointer-events-none [&_svg]:size-4",
-        inset && "pl-8",
+        inset && "ps-8",
         className,
       )}
       {...props}
     >
       {children}
-      <ChevronRight className="ml-auto" />
+      <ChevronRight className="ms-auto" />
     </DropdownMenuPrimitive.SubTrigger>
   );
 });
@@ -92,7 +92,7 @@ export const DropdownMenuItem = forwardRef<
       data-slot="dropdown-menu-item"
       className={cn(
         "relative flex cursor-default select-none items-center gap-2 rounded-md px-2 py-1.5 text-sm outline-none transition-colors focus:bg-surface-overlay focus:text-fg data-[disabled]:opacity-50 data-[disabled]:pointer-events-none [&_svg]:size-4",
-        inset && "pl-8",
+        inset && "ps-8",
         className,
       )}
       {...props}
@@ -111,12 +111,12 @@ export const DropdownMenuCheckboxItem = forwardRef<
       data-slot="dropdown-menu-checkbox-item"
       checked={checked}
       className={cn(
-        "relative flex cursor-default select-none items-center gap-2 rounded-md py-1.5 pr-2 pl-8 text-sm outline-none transition-colors focus:bg-surface-overlay focus:text-fg data-[disabled]:opacity-50 data-[disabled]:pointer-events-none [&_svg]:size-4",
+        "relative flex cursor-default select-none items-center gap-2 rounded-md py-1.5 pe-2 ps-8 text-sm outline-none transition-colors focus:bg-surface-overlay focus:text-fg data-[disabled]:opacity-50 data-[disabled]:pointer-events-none [&_svg]:size-4",
         className,
       )}
       {...props}
     >
-      <span className="absolute left-2 flex size-4 items-center justify-center">
+      <span className="absolute start-2 flex size-4 items-center justify-center">
         <DropdownMenuPrimitive.ItemIndicator>
           <Check className="size-4" />
         </DropdownMenuPrimitive.ItemIndicator>
@@ -136,12 +136,12 @@ export const DropdownMenuRadioItem = forwardRef<
       ref={ref}
       data-slot="dropdown-menu-radio-item"
       className={cn(
-        "relative flex cursor-default select-none items-center gap-2 rounded-md py-1.5 pr-2 pl-8 text-sm outline-none transition-colors focus:bg-surface-overlay focus:text-fg data-[disabled]:opacity-50 data-[disabled]:pointer-events-none [&_svg]:size-4",
+        "relative flex cursor-default select-none items-center gap-2 rounded-md py-1.5 pe-2 ps-8 text-sm outline-none transition-colors focus:bg-surface-overlay focus:text-fg data-[disabled]:opacity-50 data-[disabled]:pointer-events-none [&_svg]:size-4",
         className,
       )}
       {...props}
     >
-      <span className="absolute left-2 flex size-4 items-center justify-center">
+      <span className="absolute start-2 flex size-4 items-center justify-center">
         <DropdownMenuPrimitive.ItemIndicator>
           <Circle className="size-2 fill-current" />
         </DropdownMenuPrimitive.ItemIndicator>
@@ -162,7 +162,7 @@ export const DropdownMenuLabel = forwardRef<
     <DropdownMenuPrimitive.Label
       ref={ref}
       data-slot="dropdown-menu-label"
-      className={cn("px-2 py-1.5 text-xs text-fg-tertiary", inset && "pl-8", className)}
+      className={cn("px-2 py-1.5 text-xs text-fg-tertiary", inset && "ps-8", className)}
       {...props}
     />
   );
@@ -188,7 +188,7 @@ export const DropdownMenuShortcut = ({ className, ...props }: HTMLAttributes<HTM
   return (
     <span
       data-slot="dropdown-menu-shortcut"
-      className={cn("ml-auto text-xs tracking-widest text-fg-tertiary", className)}
+      className={cn("ms-auto text-xs tracking-widest text-fg-tertiary", className)}
       {...props}
     />
   );

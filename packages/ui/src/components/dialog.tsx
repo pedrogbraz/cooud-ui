@@ -62,7 +62,7 @@ export const DialogContent = forwardRef<
         {showCloseButton ? (
           <DialogPrimitive.Close
             data-slot="dialog-close"
-            className="absolute right-4 top-4 rounded-md text-fg-tertiary outline-none transition-opacity hover:text-fg focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base disabled:pointer-events-none"
+            className="absolute end-4 top-4 rounded-md text-fg-tertiary outline-none transition-opacity hover:text-fg focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base disabled:pointer-events-none"
           >
             <X className="size-4" />
             <span className="sr-only">Close</span>
@@ -78,7 +78,7 @@ export const DialogHeader = ({ className, ...props }: HTMLAttributes<HTMLDivElem
   return (
     <div
       data-slot="dialog-header"
-      className={cn("flex flex-col gap-1.5 text-center sm:text-left", className)}
+      className={cn("flex flex-col gap-1.5 text-center sm:text-start", className)}
       {...props}
     />
   );

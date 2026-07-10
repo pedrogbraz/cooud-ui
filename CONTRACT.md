@@ -30,6 +30,17 @@ themeable, and tree-shakeable. Read this fully before writing a component.
 9. No client directive needed unless the component uses hooks/state. Leaf
    components (Button, Badge, Input, Card...) are server-safe — do NOT add
    `"use client"` to them.
+10. **RTL-safe by default.** Anything directional uses logical utilities
+    (`ps-*`/`pe-*`, `ms-*`/`me-*`, `start-*`/`end-*`, `text-start`/`text-end`,
+    `rounded-s-*`/`rounded-e-*`, `border-s`/`border-e`) — never physical ones
+    (`pl-*`, `left-*`, `text-left`, `rounded-l-*`...). If a transform is
+    direction-sensitive and has no logical equivalent, add an explicit `rtl:`
+    variant. Exception: styles keyed on a physical anchor (e.g. Radix
+    `data-[side=left]`) stay physical — mark them with a comment.
+11. **i18n.** No hardcoded user-facing strings inside components — expose a
+    `labels` prop (or equivalent, e.g. `placeholder`) with English defaults.
+    Locale-sensitive formatting goes through `Intl` or an injected locale
+    (e.g. a `date-fns` `locale` prop), never a baked-in format.
 
 ## Token utility reference (resolve to `--cooud-*`, re-theme live)
 Colors (use as `bg-*`, `text-*`, `border-*`, `ring-*`):
