@@ -400,11 +400,13 @@
     "type": "registry:ui",
     "dependencies": [
       "date-fns@^3.6.0",
-      "lucide-react@^0.577.0"
+      "lucide-react@^0.577.0",
+      "react-day-picker@^8.10.1"
     ],
     "registryDependencies": [
       "button",
       "calendar",
+      "cn",
       "popover"
     ]
   },
