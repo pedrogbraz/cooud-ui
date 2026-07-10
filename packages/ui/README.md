@@ -181,6 +181,61 @@ setOverrides({ radius: "20px", primary: "#7c3aed" }); // re-themes the subtree, 
 The OKLCH token scale and the two built-in themes (Aurora, Neutral) live in
 [`@cooud-ui/tokens`](../tokens).
 
+## Testing
+
+`@cooud-ui/ui/testing` ships first-class helpers for testing apps built on
+Cooud UI with [Testing Library](https://testing-library.com/) under jsdom
+(Vitest or Jest). The subpath is not part of the main barrel, so test helpers
+can never leak into an app bundle.
+
+```sh
+npm i -D @testing-library/react vitest-axe
+```
+
+Both are **optional peer dependencies** — only `@cooud-ui/ui/testing` uses
+them, never the runtime components, and `vitest-axe` is only required if you
+call `expectNoA11yViolations`.
+
+```tsx
+import { expectNoA11yViolations, findDialog, renderWithCooud } from "@cooud-ui/ui/testing";
+import { screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { expect, it } from "vitest";
+
+it("invite dialog works and stays accessible in every theme", async () => {
+  const user = userEvent.setup();
+  const { baseElement, rerenderWithTheme } = renderWithCooud(<InvitePanel />, {
+    theme: "aurora",
+    mode: "dark",
+  });
+
+  await user.click(screen.getByRole("button", { name: "Invite teammate" }));
+  await findDialog("Invite teammate"); // portaled to document.body — still found
+  await expectNoA11yViolations(baseElement);
+
+  rerenderWithTheme("neutral", "light"); // remounts the scope in the new theme
+  expect(screen.getByRole("button", { name: "Invite teammate" })).toBeVisible();
+});
+```
+
+- `renderWithCooud(ui, { theme?, mode?, ...rtlOptions })` — Testing Library's
+  `render` with the UI wrapped in a scoped `CooudUIProvider`. The theme lands
+  on a wrapper `<div data-cooud-theme data-cooud-mode>` (never on `<html>`), so
+  tests can't bleed theme state into each other. Returns the usual render
+  result plus `rerenderWithTheme(theme, mode?)`, which remounts the scope under
+  another theme/mode.
+- `findDialog(name?)` / `findTooltip(text?)` — async queries scoped to
+  `document.body`, so they find Radix surfaces that render through portals
+  (outside the container `render` returns).
+- `expectNoA11yViolations(baseElement, axeOptions?)` — runs axe-core and fails
+  with the formatted violations, the same gate this library's own component
+  suite runs. Pass `baseElement` (not `container`) so portaled overlays are
+  included in the scan.
+
+> Radix overlays portal to `document.body`, outside the themed wrapper div —
+> assert on their behavior and accessibility here, and cover theme-dependent
+> visuals with your app-level (`asRoot`) provider in the browser.
+
 ## Copy-in option (CLI)
 
 Prefer to own the component source, shadcn-style? The `cooud-ui` CLI copies the
