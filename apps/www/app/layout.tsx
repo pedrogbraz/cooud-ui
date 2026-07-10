@@ -1,9 +1,13 @@
 import { CooudThemeScript, CooudUIProvider } from "@cooud-ui/theme";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import { SITE_URL } from "../lib/site-url";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  // Absolute base for og:image / twitter:image URLs (Next falls back to
+  // localhost in production output without it).
+  metadataBase: new URL(SITE_URL),
   title: "Cooud UI — Design System",
   description: "The Cooud design system: themeable, accessible React components. Aurora + Neutral.",
 };
