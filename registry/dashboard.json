@@ -4,7 +4,7 @@
   "dependencies": [
     "@cooud-ui/ui@0.2.0",
     "lucide-react@^0.577.0",
-    "recharts@^2.15.4"
+    "recharts@^3.9.2"
   ],
   "registryDependencies": [],
   "files": [

@@ -2,7 +2,7 @@
   "name": "chart",
   "type": "registry:ui",
   "dependencies": [
-    "recharts@^2.15.4"
+    "recharts@^3.9.2"
   ],
   "registryDependencies": [
     "cn"
