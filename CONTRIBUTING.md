@@ -46,7 +46,36 @@ Browser gates (run against the **built** app, so `bun run build` first):
 bunx playwright install chromium    # once
 bun run test:a11y                   # axe-core scans of the core routes
 bun run test:e2e                    # behavioral flows
+bunx playwright test --project=visual   # screenshot regression (see below)
 ```
+
+### Visual regression
+
+`e2e/visual/components.visual.spec.ts` screenshots a curated set of component
+galleries (~15 components in aurora/dark, plus a button/card/input smoke across
+the other themes and light mode). Baselines are **per-platform** under
+`e2e/visual/__screenshots__/<platform>/` because font rasterization differs
+across OSes:
+
+- **`darwin/`** (macOS, committed) — after an intentional visual change,
+  regenerate and commit the changed PNGs alongside the code:
+
+  ```sh
+  bunx turbo build --filter=@cooud-ui/www
+  bunx playwright test --project=visual --update-snapshots
+  ```
+
+- **`linux/`** (CI) — while this directory is missing, the CI `visual` job runs
+  in *bootstrap* mode: it generates baselines, uploads them as the
+  `visual-baselines-linux` artifact, and passes with a notice. To arm the gate,
+  download that artifact from a green run on `main`, extract it into
+  `e2e/visual/__screenshots__/linux/`, and commit. From then on CI compares
+  against the committed baselines and fails on any diff (the
+  expected/actual/diff images land in the `visual-diff-report` artifact).
+
+The suite runs against the **built** app, disables animations
+(`reducedMotion` + an injected freeze stylesheet), and pins `deviceScaleFactor`
+to 1 — a retina Mac and CI produce same-density pixels for their own platform.
 
 ## Writing or changing a component
 

@@ -1,11 +1,17 @@
 # Cooud UI CI — every gate the release script runs locally, on every PR.
 #
-# Two parallel jobs:
+# Three parallel jobs:
 #   gates   — build + lint + typecheck + unit tests + the drift gates
 #             (registry / tokens / props / example-sections) + bundle budgets
 #             (strict: a missing tracked route also fails).
 #   browser — Playwright against the built app: the axe a11y scan over the
 #             core routes and the behavioral flows.
+#   visual  — Playwright screenshot regression of the component galleries.
+#             Baselines are per-platform (e2e/visual/__screenshots__/<platform>);
+#             until linux baselines are committed the job runs in BOOTSTRAP
+#             mode: it generates them, uploads them as an artifact to be
+#             promoted into the repo, and passes with a notice (see the
+#             "Visual regression" section of CONTRIBUTING.md).
 #
 # The repo is public, so GitHub-hosted runners are free.
 name: CI
@@ -69,3 +75,49 @@ jobs:
         run: bun run test:a11y
       - name: Behavioral flows
         run: bun run test:e2e
+
+  visual:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.14
+      - name: Install
+        run: bun install --frozen-lockfile
+      - name: Build showcase
+        run: bunx turbo build --filter=@cooud-ui/www
+      - name: Install Playwright Chromium
+        run: bunx playwright install --with-deps chromium
+      # Compare when linux baselines are committed; otherwise BOOTSTRAP —
+      # generate them, upload as an artifact, and pass with a notice so the
+      # first run on a new platform can't fail on missing snapshots.
+      - name: Visual regression (compare or bootstrap)
+        id: visual
+        shell: bash
+        run: |
+          SNAP_DIR="e2e/visual/__screenshots__/linux"
+          if [ -d "$SNAP_DIR" ] && [ -n "$(ls -A "$SNAP_DIR" 2>/dev/null)" ]; then
+            echo "mode=compare" >> "$GITHUB_OUTPUT"
+            bunx playwright test --project=visual
+          else
+            echo "mode=bootstrap" >> "$GITHUB_OUTPUT"
+            echo "::notice title=Visual baselines bootstrapped::No linux baselines are committed yet. This run generated a fresh set and uploaded it as the 'visual-baselines-linux' artifact. Download it and commit it under e2e/visual/__screenshots__/linux/ to arm the visual gate (see CONTRIBUTING.md → Visual regression)."
+            bunx playwright test --project=visual --update-snapshots
+          fi
+      - name: Upload bootstrapped linux baselines
+        if: steps.visual.outputs.mode == 'bootstrap'
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-baselines-linux
+          path: e2e/visual/__screenshots__/linux
+          if-no-files-found: error
+      # On a red compare run, ship the expected/actual/diff triplets for review.
+      - name: Upload visual diff report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-diff-report
+          path: test-results
+          if-no-files-found: ignore

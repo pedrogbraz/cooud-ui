@@ -3,10 +3,12 @@ import { defineConfig, devices } from "@playwright/test";
 /**
  * Playwright configuration for the Cooud UI showcase app (`@cooud-ui/www`).
  *
- * Two projects, both Chromium-headless, separated by spec directory so each
- * `test:*` script can target one suite:
- *   - `a11y` → e2e/a11y/**  (axe-core scans of the core routes)
- *   - `e2e`  → e2e/flows/** (skip-link, command palette, install tabs behavior)
+ * Three projects, all Chromium-headless, separated by spec directory so each
+ * suite can be targeted on its own:
+ *   - `a11y`   → e2e/a11y/**   (axe-core scans of the core routes)
+ *   - `e2e`    → e2e/flows/**  (skip-link, command palette, install tabs behavior)
+ *   - `visual` → e2e/visual/** (screenshot regression of the component galleries;
+ *                run with `bunx playwright test --project=visual`)
  *
  * The `webServer` serves the **already-built** production app via `next start`
  * (the CI runs `bun run build` before the test steps; locally you must build
@@ -51,6 +53,22 @@ export default defineConfig({
       name: "e2e",
       testDir: "./e2e/flows",
       use: { ...devices["Desktop Chrome"] },
+    },
+    {
+      name: "visual",
+      testDir: "./e2e/visual",
+      // Baselines are PLATFORM-HONEST: font rasterization/AA differ across
+      // OSes, so darwin (committed from a dev machine) and linux (bootstrapped
+      // by the CI `visual` job — see ci.yml + CONTRIBUTING.md) each get their
+      // own directory instead of pretending one set of pixels fits all.
+      snapshotPathTemplate: "{testDir}/__screenshots__/{platform}/{arg}{ext}",
+      use: {
+        ...devices["Desktop Chrome"],
+        // Pin the pixel pipeline: 1x density and a fixed color profile so the
+        // same platform always rasterizes identically (retina Macs included).
+        deviceScaleFactor: 1,
+        launchOptions: { args: ["--force-color-profile=srgb"] },
+      },
     },
   ],
 
