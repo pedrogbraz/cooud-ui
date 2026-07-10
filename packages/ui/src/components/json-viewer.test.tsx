@@ -77,6 +77,128 @@ describe("JsonViewer", () => {
     expect(writeText).toHaveBeenCalledWith(JSON.stringify({ city: "London" }, null, 2));
   });
 
+  it("renders Date, RegExp, URL, and Error as faithful leaves instead of {}", () => {
+    render(
+      <JsonViewer
+        data={{
+          created: new Date("2026-07-09T12:00:00.000Z"),
+          pattern: /ab+c/gi,
+          site: new URL("https://cooud.com/docs"),
+          failure: new Error("boom"),
+        }}
+        defaultExpandedDepth={Number.POSITIVE_INFINITY}
+      />,
+    );
+
+    expect(screen.getByText("2026-07-09T12:00:00.000Z")).toHaveClass("text-info");
+    expect(screen.getByText("/ab+c/gi")).toHaveClass("text-success");
+    expect(screen.getByText('"https://cooud.com/docs"')).toHaveClass("text-success");
+    expect(screen.getByText("Error: boom")).toHaveClass("text-error");
+    // Dim type hints where the text alone is ambiguous.
+    expect(screen.getByText("Date")).toHaveClass("text-fg-muted");
+    expect(screen.getByText("URL")).toHaveClass("text-fg-muted");
+    // None of them fall back to an empty object row or a chevron.
+    expect(screen.queryByText("{}")).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Toggle created" })).not.toBeInTheDocument();
+  });
+
+  it("renders Map and Set as expandable branches with a sized type hint", async () => {
+    const user = userEvent.setup();
+    render(
+      <JsonViewer
+        data={{ pairs: new Map([["a", 42]]), flags: new Set(["x", "y"]) }}
+        defaultExpandedDepth={1}
+      />,
+    );
+
+    expect(screen.getByText("Map(1)")).toHaveClass("text-fg-muted");
+    expect(screen.getByText("Set(2)")).toHaveClass("text-fg-muted");
+    expect(screen.getByText(/1 entry/)).toBeInTheDocument();
+    expect(screen.getByText(/2 items/)).toBeInTheDocument();
+
+    // Expanding the Map reveals indexed [key, value] pairs.
+    await user.click(screen.getByRole("button", { name: "Toggle pairs" }));
+    await user.click(screen.getByRole("button", { name: "Toggle 0" }));
+    expect(screen.getByText('"a"')).toBeInTheDocument();
+    expect(screen.getByText("42")).toBeInTheDocument();
+
+    // Expanding the Set reveals indexed items.
+    await user.click(screen.getByRole("button", { name: "Toggle flags" }));
+    expect(screen.getByText('"x"')).toBeInTheDocument();
+    expect(screen.getByText('"y"')).toBeInTheDocument();
+  });
+
+  it("copies faithful JSON for Date, RegExp, Map, and Set values", async () => {
+    const user = userEvent.setup();
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, "clipboard", {
+      value: { writeText },
+      configurable: true,
+    });
+    render(
+      <JsonViewer
+        data={{
+          created: new Date("2026-07-09T12:00:00.000Z"),
+          pattern: /ab+c/gi,
+          pairs: new Map([["a", 42]]),
+          flags: new Set([1, 2]),
+        }}
+        defaultExpandedDepth={Number.POSITIVE_INFINITY}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Copy value of created" }));
+    expect(writeText).toHaveBeenCalledWith("2026-07-09T12:00:00.000Z");
+
+    await user.click(screen.getByRole("button", { name: "Copy value of pattern" }));
+    expect(writeText).toHaveBeenCalledWith("/ab+c/gi");
+
+    await user.click(screen.getByRole("button", { name: "Copy value of pairs" }));
+    expect(writeText).toHaveBeenCalledWith(JSON.stringify([["a", 42]], null, 2));
+
+    await user.click(screen.getByRole("button", { name: "Copy value of flags" }));
+    expect(writeText).toHaveBeenCalledWith(JSON.stringify([1, 2], null, 2));
+
+    // Copying a parent embeds the same faithful conversions.
+    await user.click(screen.getByRole("button", { name: "Copy value" }));
+    expect(writeText).toHaveBeenCalledWith(
+      JSON.stringify(
+        {
+          created: "2026-07-09T12:00:00.000Z",
+          pattern: "/ab+c/gi",
+          pairs: [["a", 42]],
+          flags: [1, 2],
+        },
+        null,
+        2,
+      ),
+    );
+  });
+
+  it("serializes branch copy payloads on demand, not during render", async () => {
+    const user = userEvent.setup();
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, "clipboard", {
+      value: { writeText },
+      configurable: true,
+    });
+    const stringify = vi.spyOn(JSON, "stringify");
+    try {
+      // Bare-index arrays of numbers render without any JSON.stringify call
+      // (strings/object keys would use it for display quoting), so any call
+      // here would be an eager copy-payload serialization.
+      render(<JsonViewer data={[[2, 3]]} defaultExpandedDepth={1} />);
+      expect(stringify).not.toHaveBeenCalled();
+
+      // The payload is computed inside the copy handler and copied exactly once.
+      await user.click(screen.getByRole("button", { name: "Copy value of 0" }));
+      expect(writeText).toHaveBeenCalledTimes(1);
+      expect(writeText).toHaveBeenCalledWith(JSON.stringify([2, 3], null, 2));
+    } finally {
+      stringify.mockRestore();
+    }
+  });
+
   it("renders circular references as a muted token instead of recursing", () => {
     const cyclic: Record<string, unknown> = { id: 1 };
     cyclic.self = cyclic;
