@@ -29,13 +29,13 @@ export const ContextMenuSubTrigger = forwardRef<
       data-slot="context-menu-sub-trigger"
       className={cn(
         "relative flex cursor-default select-none items-center gap-2 rounded-md px-2 py-1.5 text-sm outline-none transition-colors focus:bg-surface-overlay focus:text-fg data-[state=open]:bg-surface-overlay data-[disabled]:opacity-50 data-[disabled]:pointer-events-none [&_svg]:size-4",
-        inset && "pl-8",
+        inset && "ps-8",
         className,
       )}
       {...props}
     >
       {children}
-      <ChevronRight className="ml-auto" />
+      <ChevronRight className="ms-auto" />
     </ContextMenuPrimitive.SubTrigger>
   );
 });
@@ -91,7 +91,7 @@ export const ContextMenuItem = forwardRef<
       data-slot="context-menu-item"
       className={cn(
         "relative flex cursor-default select-none items-center gap-2 rounded-md px-2 py-1.5 text-sm outline-none transition-colors focus:bg-surface-overlay focus:text-fg data-[disabled]:opacity-50 data-[disabled]:pointer-events-none [&_svg]:size-4",
-        inset && "pl-8",
+        inset && "ps-8",
         className,
       )}
       {...props}
@@ -110,12 +110,12 @@ export const ContextMenuCheckboxItem = forwardRef<
       data-slot="context-menu-checkbox-item"
       checked={checked}
       className={cn(
-        "relative flex cursor-default select-none items-center gap-2 rounded-md py-1.5 pr-2 pl-8 text-sm outline-none transition-colors focus:bg-surface-overlay focus:text-fg data-[disabled]:opacity-50 data-[disabled]:pointer-events-none [&_svg]:size-4",
+        "relative flex cursor-default select-none items-center gap-2 rounded-md py-1.5 pe-2 ps-8 text-sm outline-none transition-colors focus:bg-surface-overlay focus:text-fg data-[disabled]:opacity-50 data-[disabled]:pointer-events-none [&_svg]:size-4",
         className,
       )}
       {...props}
     >
-      <span className="absolute left-2 flex size-4 items-center justify-center">
+      <span className="absolute start-2 flex size-4 items-center justify-center">
         <ContextMenuPrimitive.ItemIndicator>
           <Check className="size-4" />
         </ContextMenuPrimitive.ItemIndicator>
@@ -135,12 +135,12 @@ export const ContextMenuRadioItem = forwardRef<
       ref={ref}
       data-slot="context-menu-radio-item"
       className={cn(
-        "relative flex cursor-default select-none items-center gap-2 rounded-md py-1.5 pr-2 pl-8 text-sm outline-none transition-colors focus:bg-surface-overlay focus:text-fg data-[disabled]:opacity-50 data-[disabled]:pointer-events-none [&_svg]:size-4",
+        "relative flex cursor-default select-none items-center gap-2 rounded-md py-1.5 pe-2 ps-8 text-sm outline-none transition-colors focus:bg-surface-overlay focus:text-fg data-[disabled]:opacity-50 data-[disabled]:pointer-events-none [&_svg]:size-4",
         className,
       )}
       {...props}
     >
-      <span className="absolute left-2 flex size-4 items-center justify-center">
+      <span className="absolute start-2 flex size-4 items-center justify-center">
         <ContextMenuPrimitive.ItemIndicator>
           <Circle className="size-2 fill-current" />
         </ContextMenuPrimitive.ItemIndicator>
@@ -161,7 +161,7 @@ export const ContextMenuLabel = forwardRef<
     <ContextMenuPrimitive.Label
       ref={ref}
       data-slot="context-menu-label"
-      className={cn("px-2 py-1.5 text-xs text-fg-tertiary", inset && "pl-8", className)}
+      className={cn("px-2 py-1.5 text-xs text-fg-tertiary", inset && "ps-8", className)}
       {...props}
     />
   );
@@ -187,7 +187,7 @@ export const ContextMenuShortcut = ({ className, ...props }: HTMLAttributes<HTML
   return (
     <span
       data-slot="context-menu-shortcut"
-      className={cn("ml-auto text-xs tracking-widest text-fg-tertiary", className)}
+      className={cn("ms-auto text-xs tracking-widest text-fg-tertiary", className)}
       {...props}
     />
   );

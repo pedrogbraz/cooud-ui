@@ -6,6 +6,7 @@ import {
   DocsSection,
   InlineCode,
 } from "../../../components/docs/documentation";
+import { absoluteUrl } from "../../../lib/site-url";
 
 const registryFlow = [
   {
@@ -32,6 +33,8 @@ const registryFlow = [
 const buildCommand = `bun run -F cooud-ui registry
 pnpm dlx cooud-ui@latest list --registry ./registry
 pnpm dlx cooud-ui@latest add button card --registry ./registry`;
+
+const shadcnAddCommand = `npx shadcn@latest add ${absoluteUrl("/r/button.json")}`;
 
 const registryItem = `{
   "name": "button",
@@ -63,6 +66,19 @@ export default function RegistryPage() {
         description="Use a local registry path when developing or testing component changes before publishing."
       >
         <CodeBlock code={buildCommand} language="bash" />
+      </DocsSection>
+
+      <DocsSection
+        title="Use with the shadcn CLI"
+        description="The registry also speaks the shadcn registry spec, so any shadcn-compatible tool can install Cooud UI without the cooud-ui CLI."
+      >
+        <CodeBlock code={shadcnAddCommand} language="bash" />
+        <p className="mt-4 text-sm leading-6 text-fg-secondary">
+          Every item is served at <InlineCode>/r/&lt;name&gt;.json</InlineCode>, with the full index
+          at <InlineCode>/r/registry.json</InlineCode>. Registry dependencies resolve back to this
+          registry automatically, and imports are rewritten to your{" "}
+          <InlineCode>components.json</InlineCode> aliases.
+        </p>
       </DocsSection>
 
       <DocsSection

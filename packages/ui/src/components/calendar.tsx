@@ -29,13 +29,15 @@ export function Calendar({
           buttonVariants({ variant: "outline" }),
           "size-7 p-0 opacity-60 hover:opacity-100",
         ),
-        nav_button_previous: "absolute left-1",
-        nav_button_next: "absolute right-1",
+        // Logical (start/end) utilities so nav buttons and range rounding
+        // follow the writing direction under dir="rtl".
+        nav_button_previous: "absolute start-1",
+        nav_button_next: "absolute end-1",
         table: "w-full border-collapse space-y-1",
         head_row: "flex",
         head_cell: "text-fg-tertiary rounded-md w-9 font-normal text-xs",
         row: "flex w-full mt-2",
-        cell: "relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-surface-overlay [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-outside)]:bg-surface-overlay/50 first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md",
+        cell: "relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-surface-overlay [&:has([aria-selected].day-range-end)]:rounded-e-md [&:has([aria-selected].day-outside)]:bg-surface-overlay/50 first:[&:has([aria-selected])]:rounded-s-md last:[&:has([aria-selected])]:rounded-e-md",
         day: cn(
           buttonVariants({ variant: "ghost" }),
           "size-9 p-0 font-normal aria-selected:opacity-100",
@@ -54,6 +56,8 @@ export function Calendar({
         IconLeft: () => <ChevronLeft className="size-4" />,
         IconRight: () => <ChevronRight className="size-4" />,
       }}
+      // `locale` (a date-fns Locale), `dir`, etc. are native DayPicker props
+      // forwarded here — month captions, weekday names and nav labels localize.
       {...props}
     />
   );

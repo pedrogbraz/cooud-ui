@@ -53,5 +53,8 @@ export async function diff(names: string[], options: DiffOptions): Promise<void>
   }
 
   if (changed === 0) log.title("Everything is up to date.");
-  else log.title(`${changed} component(s) differ. Re-add with --overwrite to update.`);
+  else
+    log.title(
+      `${changed} component(s) differ. Run \`cooud-ui upgrade\` to merge upstream updates without losing your edits.`,
+    );
 }

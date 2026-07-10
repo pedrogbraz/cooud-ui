@@ -193,6 +193,74 @@ export interface DataTableProps<TData, TValue> {
   className?: string;
   /** Accessible label for the toolbar region. Defaults to "Table controls". */
   toolbarLabel?: string;
+  /**
+   * Override any subset of the built-in UI strings (selection checkbox labels,
+   * pagination, empty/loading/retry states…) for localization. Defaults are
+   * English; see {@link DataTableLabels}.
+   */
+  labels?: Partial<DataTableLabels>;
+  /**
+   * Accessible name for each row-selection checkbox, built from the row data
+   * (e.g. `(row) => "Select " + row.original.name`). Takes precedence over
+   * `labels.selectRow`. Only applies to the selection column injected by
+   * `enableRowSelection`.
+   */
+  getRowLabel?: (row: Row<TData>) => string;
+}
+
+/**
+ * Every built-in user-facing string the table renders. Pass any subset via the
+ * `labels` prop to localize; omitted keys keep their English defaults.
+ * Interpolated strings are builder functions so word order stays free per
+ * locale.
+ */
+export interface DataTableLabels {
+  /** `aria-label` of the header select-all checkbox. */
+  selectAllRows: string;
+  /** `aria-label` of a row checkbox. Receives the zero-based row index. */
+  selectRow: (rowIndex: number) => string;
+  /** Toolbar button that clears all active filters. */
+  reset: string;
+  /** Density toggle caption while compact (activating restores comfortable). */
+  densityComfortable: string;
+  /** Density toggle caption while comfortable (activating switches to compact). */
+  densityCompact: string;
+  /** Toolbar CSV export button. */
+  exportCsv: string;
+  /** Column-visibility menu trigger. */
+  view: string;
+  /** Column-visibility menu heading. */
+  toggleColumns: string;
+  /** Faceted-filter menu item that clears that filter. */
+  clearFilter: string;
+  /** `aria-label` of the bulk-actions bar. */
+  bulkActions: string;
+  /** Bulk-bar summary, e.g. "3 selected". */
+  selectedCount: (count: number) => string;
+  /** Selection summary under the table, e.g. "1 of 3 row(s) selected." */
+  selectedOfTotal: (selected: number, total: number) => string;
+  /** Label of the page-size select. */
+  rowsPerPage: string;
+  /** Visible row range, e.g. "1–10 of 42". */
+  rowRange: (first: number, last: number, total: number) => string;
+  /** Page position, e.g. "Page 2 of 5". */
+  pageOf: (page: number, pageCount: number) => string;
+  /** `aria-label` of the pagination nav. */
+  pagination: string;
+  /** `aria-label` of the first-page button. */
+  firstPage: string;
+  /** `aria-label` of the previous-page button. */
+  previousPage: string;
+  /** `aria-label` of the next-page button. */
+  nextPage: string;
+  /** `aria-label` of the last-page button. */
+  lastPage: string;
+  /** Default empty-state message (a custom `emptyState` node wins). */
+  noResults: string;
+  /** Error-state retry button. */
+  retry: string;
+  /** Polite screen-reader announcement while `loading`. */
+  loadingRows: string;
 }
 
 /* -------------------------------------------------------------------------------------------------
@@ -205,6 +273,34 @@ const DENSITY_CELL: Record<DataTableDensity, string> = {
 };
 
 const DEFAULT_PAGE_SIZE_OPTIONS = [10, 20, 30, 50];
+
+const DEFAULT_LABELS: DataTableLabels = {
+  selectAllRows: "Select all rows on this page",
+  // The index makes each row checkbox distinguishable to assistive tech —
+  // a page of identical "Select row" names is not navigable by voice or list.
+  selectRow: (rowIndex) => `Select row ${rowIndex + 1}`,
+  reset: "Reset",
+  densityComfortable: "Comfortable",
+  densityCompact: "Compact",
+  exportCsv: "Export",
+  view: "View",
+  toggleColumns: "Toggle columns",
+  clearFilter: "Clear filter",
+  bulkActions: "Bulk actions",
+  selectedCount: (count) => `${count} selected`,
+  selectedOfTotal: (selected, total) => `${selected} of ${total} row(s) selected.`,
+  rowsPerPage: "Rows per page",
+  rowRange: (first, last, total) => `${first}–${last} of ${total}`,
+  pageOf: (page, pageCount) => `Page ${page} of ${pageCount}`,
+  pagination: "Pagination",
+  firstPage: "Go to first page",
+  previousPage: "Go to previous page",
+  nextPage: "Go to next page",
+  lastPage: "Go to last page",
+  noResults: "No results.",
+  retry: "Retry",
+  loadingRows: "Loading rows…",
+};
 
 /** Reserved column id for the built-in selection checkbox column. */
 export const SELECTION_COLUMN_ID = "__select__";
@@ -239,12 +335,29 @@ function resolveColumnDefId<TData, TValue>(column: ColumnDef<TData, TValue>): st
   return undefined;
 }
 
+/** Labels for the checkbox column built by {@link createSelectionColumn}. */
+export interface DataTableSelectionColumnOptions<TData> {
+  /** `aria-label` of the header select-all checkbox. */
+  selectAllLabel?: string;
+  /**
+   * `aria-label` of each row checkbox. Defaults to "Select row {n}" (1-based)
+   * so every checkbox has a distinguishable accessible name.
+   */
+  getRowLabel?: (row: Row<TData>) => string;
+}
+
 /**
  * Build the leading checkbox selection column. Exposed so callers who supply
  * their own `columns` can prepend an identical, accessible selection column
  * instead of relying on `enableRowSelection` injection.
  */
-export function createSelectionColumn<TData>(): ColumnDef<TData, unknown> {
+export function createSelectionColumn<TData>(
+  options: DataTableSelectionColumnOptions<TData> = {},
+): ColumnDef<TData, unknown> {
+  const {
+    selectAllLabel = DEFAULT_LABELS.selectAllRows,
+    getRowLabel = (row: Row<TData>) => DEFAULT_LABELS.selectRow(row.index),
+  } = options;
   return {
     id: SELECTION_COLUMN_ID,
     enableSorting: false,
@@ -256,7 +369,7 @@ export function createSelectionColumn<TData>(): ColumnDef<TData, unknown> {
         <Checkbox
           checked={all ? true : some ? "indeterminate" : false}
           onCheckedChange={(checked) => table.toggleAllPageRowsSelected(checked === true)}
-          aria-label="Select all rows on this page"
+          aria-label={selectAllLabel}
         />
       );
     },
@@ -265,7 +378,7 @@ export function createSelectionColumn<TData>(): ColumnDef<TData, unknown> {
         checked={row.getIsSelected()}
         disabled={!row.getCanSelect()}
         onCheckedChange={(checked) => row.toggleSelected(checked === true)}
-        aria-label="Select row"
+        aria-label={getRowLabel(row)}
       />
     ),
   };
@@ -325,10 +438,31 @@ function downloadCsv(csv: string, fileName: string): void {
  * DataTableColumnHeader — sortable header with affordance icon
  * -----------------------------------------------------------------------------------------------*/
 
+/**
+ * `aria-label` builders for the sort button, one per sort state. Pass any
+ * subset to localize; each receives the column title.
+ */
+export interface DataTableColumnHeaderLabels {
+  /** Unsorted — activation sorts ascending. */
+  sort: (title: string) => string;
+  /** Sorted ascending — activation sorts descending. */
+  sortedAscending: (title: string) => string;
+  /** Sorted descending — activation re-sorts ascending (never clears). */
+  sortedDescending: (title: string) => string;
+}
+
+const DEFAULT_HEADER_LABELS: DataTableColumnHeaderLabels = {
+  sort: (title) => `Sort by ${title}. Activate to sort ascending.`,
+  sortedAscending: (title) => `Sorted by ${title} ascending. Activate to sort descending.`,
+  sortedDescending: (title) => `Sorted by ${title} descending. Activate to sort ascending.`,
+};
+
 export interface DataTableColumnHeaderProps<TData, TValue> {
   column: Column<TData, TValue>;
   title: string;
   className?: string;
+  /** Localize the sort-button `aria-label`s. See {@link DataTableColumnHeaderLabels}. */
+  labels?: Partial<DataTableColumnHeaderLabels>;
 }
 
 /**
@@ -339,24 +473,38 @@ export function DataTableColumnHeader<TData, TValue>({
   column,
   title,
   className,
+  labels,
 }: DataTableColumnHeaderProps<TData, TValue>) {
   if (!column.getCanSort()) {
-    return <span className={cn("font-medium text-fg-secondary", className)}>{title}</span>;
+    return (
+      <span
+        data-slot="data-table-column-header"
+        className={cn("font-medium text-fg-secondary", className)}
+      >
+        {title}
+      </span>
+    );
   }
 
   const sorted = column.getIsSorted();
+  const mergedLabels: DataTableColumnHeaderLabels = { ...DEFAULT_HEADER_LABELS, ...labels };
 
   return (
     <Button
       variant="ghost"
       size="sm"
+      data-slot="data-table-column-header"
+      // `toggleSorting` receives an explicit direction, so table-core's
+      // remove-sort branch (taken only when no manual value is passed) never
+      // runs: the real cycle is unsorted → ascending → descending → ascending,
+      // forever. The labels below promise exactly that — nothing more.
       onClick={() => column.toggleSorting(sorted === "asc")}
       aria-label={
         sorted === "asc"
-          ? `Sorted by ${title} ascending. Activate to sort descending.`
+          ? mergedLabels.sortedAscending(title)
           : sorted === "desc"
-            ? `Sorted by ${title} descending. Activate to clear sorting.`
-            : `Sort by ${title}.`
+            ? mergedLabels.sortedDescending(title)
+            : mergedLabels.sort(title)
       }
       className="-ml-3 h-8 text-fg-secondary data-[state=open]:bg-surface-overlay"
     >
@@ -380,10 +528,12 @@ function DataTableFacetedFilterControl<TData>({
   column,
   title,
   options,
+  clearFilterLabel,
 }: {
   column: Column<TData, unknown> | undefined;
   title: string;
   options: DataTableFacetOption[];
+  clearFilterLabel: string;
 }) {
   const facets = column?.getFacetedUniqueValues();
   const selected = new Set((column?.getFilterValue() as string[] | undefined) ?? []);
@@ -391,7 +541,12 @@ function DataTableFacetedFilterControl<TData>({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="sm" className="border-dashed">
+        <Button
+          variant="outline"
+          size="sm"
+          data-slot="data-table-faceted-filter"
+          className="border-dashed"
+        >
           <PlusCircle aria-hidden />
           {title}
           {selected.size > 0 ? (
@@ -438,7 +593,7 @@ function DataTableFacetedFilterControl<TData>({
               onSelect={() => column?.setFilterValue(undefined)}
               className="justify-center"
             >
-              Clear filter
+              {clearFilterLabel}
             </DropdownMenuItem>
           </>
         ) : null}
@@ -454,6 +609,7 @@ function DataTableFacetedFilterControl<TData>({
 interface DataTableToolbarProps<TData> {
   table: TanstackTable<TData>;
   label: string;
+  labels: DataTableLabels;
   searchable: boolean;
   searchPlaceholder: string;
   globalFilter: string;
@@ -472,6 +628,7 @@ interface DataTableToolbarProps<TData> {
 function DataTableToolbar<TData>({
   table,
   label,
+  labels,
   searchable,
   searchPlaceholder,
   globalFilter,
@@ -497,7 +654,12 @@ function DataTableToolbar<TData>({
     // accessible behaviour here. <fieldset> (the rule's suggestion) is wrong:
     // these are toolbar controls, not grouped form fields with a <legend>.
     // biome-ignore lint/a11y/useSemanticElements: a group of toolbar controls is not a <fieldset>.
-    <div role="group" aria-label={label} className="flex flex-wrap items-center gap-2">
+    <div
+      role="group"
+      aria-label={label}
+      data-slot="data-table-toolbar"
+      className="flex flex-wrap items-center gap-2"
+    >
       {toolbarStart}
 
       {searchable ? (
@@ -526,6 +688,7 @@ function DataTableToolbar<TData>({
           column={table.getColumn(filter.columnId)}
           title={filter.title}
           options={filter.options}
+          clearFilterLabel={labels.clearFilter}
         />
       ))}
 
@@ -538,7 +701,7 @@ function DataTableToolbar<TData>({
             onGlobalFilterChange("");
           }}
         >
-          Reset
+          {labels.reset}
           <X aria-hidden />
         </Button>
       ) : null}
@@ -554,14 +717,14 @@ function DataTableToolbar<TData>({
             onClick={() => onDensityChange(density === "compact" ? "comfortable" : "compact")}
           >
             <SlidersHorizontal aria-hidden />
-            {density === "compact" ? "Comfortable" : "Compact"}
+            {density === "compact" ? labels.densityComfortable : labels.densityCompact}
           </Button>
         ) : null}
 
         {enableCsvExport ? (
           <Button variant="outline" size="sm" onClick={onExportCsv}>
             <Download aria-hidden />
-            Export
+            {labels.exportCsv}
           </Button>
         ) : null}
 
@@ -570,12 +733,12 @@ function DataTableToolbar<TData>({
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm">
                 <Columns3 aria-hidden />
-                View
+                {labels.view}
                 <ChevronDown aria-hidden className="opacity-60" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="min-w-[10rem]">
-              <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
+              <DropdownMenuLabel>{labels.toggleColumns}</DropdownMenuLabel>
               <DropdownMenuSeparator />
               {table
                 .getAllColumns()
@@ -608,9 +771,11 @@ function DataTableToolbar<TData>({
 function DataTablePagination<TData>({
   table,
   pageSizeOptions,
+  labels,
 }: {
   table: TanstackTable<TData>;
   pageSizeOptions: number[];
+  labels: DataTableLabels;
 }) {
   const pageSizeId = useId();
   const { pageIndex, pageSize } = table.getState().pagination;
@@ -621,15 +786,18 @@ function DataTablePagination<TData>({
   const lastRow = Math.min((pageIndex + 1) * pageSize, totalRows);
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-4 px-1 py-2">
+    <div
+      data-slot="data-table-pagination"
+      className="flex flex-wrap items-center justify-between gap-4 px-1 py-2"
+    >
       <p className="text-sm text-fg-tertiary" aria-live="polite">
-        {firstRow}&ndash;{lastRow} of {totalRows}
+        {labels.rowRange(firstRow, lastRow, totalRows)}
       </p>
 
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2">
           <label htmlFor={pageSizeId} className="text-sm text-fg-secondary">
-            Rows per page
+            {labels.rowsPerPage}
           </label>
           <Select
             value={String(pageSize)}
@@ -649,16 +817,16 @@ function DataTablePagination<TData>({
         </div>
 
         <p className="text-sm text-fg-secondary">
-          Page {pageCount === 0 ? 0 : pageIndex + 1} of {pageCount}
+          {labels.pageOf(pageCount === 0 ? 0 : pageIndex + 1, pageCount)}
         </p>
 
-        <nav aria-label="Pagination" className="flex items-center gap-1">
+        <nav aria-label={labels.pagination} className="flex items-center gap-1">
           <Button
             variant="outline"
             size="icon-sm"
             onClick={() => table.setPageIndex(0)}
             disabled={!table.getCanPreviousPage()}
-            aria-label="Go to first page"
+            aria-label={labels.firstPage}
           >
             <ChevronsLeft aria-hidden />
           </Button>
@@ -667,7 +835,7 @@ function DataTablePagination<TData>({
             size="icon-sm"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
-            aria-label="Go to previous page"
+            aria-label={labels.previousPage}
           >
             <ChevronLeft aria-hidden />
           </Button>
@@ -676,7 +844,7 @@ function DataTablePagination<TData>({
             size="icon-sm"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
-            aria-label="Go to next page"
+            aria-label={labels.nextPage}
           >
             <ChevronRight aria-hidden />
           </Button>
@@ -685,7 +853,7 @@ function DataTablePagination<TData>({
             size="icon-sm"
             onClick={() => table.setPageIndex(pageCount - 1)}
             disabled={!table.getCanNextPage()}
-            aria-label="Go to last page"
+            aria-label={labels.lastPage}
           >
             <ChevronsRight aria-hidden />
           </Button>
@@ -744,7 +912,14 @@ export function DataTable<TData, TValue>(props: DataTableProps<TData, TValue>) {
     emptyState,
     className,
     toolbarLabel = "Table controls",
+    labels: labelsProp,
+    getRowLabel,
   } = props;
+
+  const labels = useMemo<DataTableLabels>(
+    () => ({ ...DEFAULT_LABELS, ...labelsProp }),
+    [labelsProp],
+  );
 
   /* ---- Uncontrolled fallbacks (only used when the matching prop is absent) ---- */
   const [sortingState, setSortingState] = useState<SortingState>([]);
@@ -795,8 +970,12 @@ export function DataTable<TData, TValue>(props: DataTableProps<TData, TValue>) {
           });
 
     if (!selectionEnabled) return withFacetFilterFn;
-    return [createSelectionColumn<TData>() as ColumnDef<TData, TValue>, ...withFacetFilterFn];
-  }, [columns, facetedColumnIds, selectionEnabled]);
+    const selectionColumn = createSelectionColumn<TData>({
+      selectAllLabel: labels.selectAllRows,
+      getRowLabel: getRowLabel ?? ((row) => labels.selectRow(row.index)),
+    });
+    return [selectionColumn as ColumnDef<TData, TValue>, ...withFacetFilterFn];
+  }, [columns, facetedColumnIds, selectionEnabled, labels, getRowLabel]);
 
   /* ---- Feature detection: only wire optional models/state when used ---- */
   const filteringEnabled =
@@ -878,11 +1057,12 @@ export function DataTable<TData, TValue>(props: DataTableProps<TData, TValue>) {
   const skeletonRows = loadingRowCount ?? (paginationEnabled ? paginationStateValue.pageSize : 5);
 
   return (
-    <div className={cn("flex flex-col gap-3", className)}>
+    <div data-slot="data-table" className={cn("flex flex-col gap-3", className)}>
       {showToolbar ? (
         <DataTableToolbar
           table={table}
           label={toolbarLabel}
+          labels={labels}
           searchable={searchable}
           searchPlaceholder={searchPlaceholder}
           globalFilter={globalFilter}
@@ -906,28 +1086,61 @@ export function DataTable<TData, TValue>(props: DataTableProps<TData, TValue>) {
 
       {selectionEnabled && bulkActions && selectedRows.length > 0 ? (
         <section
-          aria-label="Bulk actions"
+          aria-label={labels.bulkActions}
+          data-slot="data-table-bulk-actions"
           className="flex flex-wrap items-center gap-3 rounded-lg border border-border bg-surface-inset px-3 py-2"
         >
           <span className="text-sm text-fg-secondary" aria-live="polite">
-            {selectedRows.length} selected
+            {labels.selectedCount(selectedRows.length)}
           </span>
           <div className="ml-auto flex items-center gap-2">{bulkActions(selectedRows)}</div>
         </section>
       ) : null}
 
-      <div className="overflow-hidden rounded-xl border border-border">
+      <div
+        data-slot="data-table-container"
+        // The whole table region is "busy" while skeleton rows stand in for
+        // data, so assistive tech knows the content is not final yet.
+        aria-busy={loading || undefined}
+        className="overflow-hidden rounded-xl border border-border"
+      >
+        {loading ? (
+          // The skeletons themselves are aria-hidden; this polite status is
+          // the only thing screen readers hear while rows load.
+          <span role="status" data-slot="data-table-loading" className="sr-only">
+            {labels.loadingRows}
+          </span>
+        ) : null}
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id} colSpan={header.colSpan}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(header.column.columnDef.header, header.getContext())}
-                  </TableHead>
-                ))}
+                {headerGroup.headers.map((header) => {
+                  const sortable = !header.isPlaceholder && header.column.getCanSort();
+                  const sorted = header.column.getIsSorted();
+                  return (
+                    <TableHead
+                      key={header.id}
+                      colSpan={header.colSpan}
+                      scope="col"
+                      // WAI-ARIA sort pattern: sortable columns always expose
+                      // their sort state; non-sortable ones omit the attribute.
+                      aria-sort={
+                        sortable
+                          ? sorted === "asc"
+                            ? "ascending"
+                            : sorted === "desc"
+                              ? "descending"
+                              : "none"
+                          : undefined
+                      }
+                    >
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(header.column.columnDef.header, header.getContext())}
+                    </TableHead>
+                  );
+                })}
               </TableRow>
             ))}
           </TableHeader>
@@ -955,7 +1168,7 @@ export function DataTable<TData, TValue>(props: DataTableProps<TData, TValue>) {
                     {onRetry ? (
                       <Button variant="outline" size="sm" onClick={onRetry}>
                         <RefreshCw aria-hidden />
-                        Retry
+                        {labels.retry}
                       </Button>
                     ) : null}
                   </div>
@@ -974,7 +1187,7 @@ export function DataTable<TData, TValue>(props: DataTableProps<TData, TValue>) {
             ) : (
               <TableRow>
                 <TableCell colSpan={colSpan} className="h-24 text-center text-fg-tertiary">
-                  {emptyState ?? "No results."}
+                  {emptyState ?? labels.noResults}
                 </TableCell>
               </TableRow>
             )}
@@ -986,18 +1199,18 @@ export function DataTable<TData, TValue>(props: DataTableProps<TData, TValue>) {
         <div className="flex flex-wrap items-center justify-between gap-4">
           {selectionEnabled ? (
             <p className="text-sm text-fg-tertiary" aria-live="polite">
-              {selectedRows.length} of {table.getFilteredRowModel().rows.length} row(s) selected.
+              {labels.selectedOfTotal(selectedRows.length, table.getFilteredRowModel().rows.length)}
             </p>
           ) : (
             <span />
           )}
           <div className="ml-auto">
-            <DataTablePagination table={table} pageSizeOptions={pageSizeOptions} />
+            <DataTablePagination table={table} pageSizeOptions={pageSizeOptions} labels={labels} />
           </div>
         </div>
       ) : selectionEnabled && !loading && error == null ? (
         <p className="text-sm text-fg-tertiary" aria-live="polite">
-          {selectedRows.length} of {table.getFilteredRowModel().rows.length} row(s) selected.
+          {labels.selectedOfTotal(selectedRows.length, table.getFilteredRowModel().rows.length)}
         </p>
       ) : null}
     </div>

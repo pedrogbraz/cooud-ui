@@ -164,11 +164,14 @@ export type {
 } from "./components/currency-input.js";
 export { CurrencyInput } from "./components/currency-input.js";
 export type {
+  DataTableColumnHeaderLabels,
   DataTableColumnHeaderProps,
   DataTableDensity,
   DataTableFacetedFilter,
   DataTableFacetOption,
+  DataTableLabels,
   DataTableProps,
+  DataTableSelectionColumnOptions,
 } from "./components/data-table.js";
 export {
   createSelectionColumn,
@@ -493,6 +496,7 @@ export { SpotlightCard } from "./components/spotlight-card.js";
 export type {
   StepperIndicatorProps,
   StepperItemProps,
+  StepperLabels,
   StepperProps,
   StepperTriggerProps,
 } from "./components/stepper.js";

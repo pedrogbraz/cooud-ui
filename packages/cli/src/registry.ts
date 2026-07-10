@@ -32,6 +32,32 @@ export interface RegistryIndexEntry {
 
 export type RegistryIndex = RegistryIndexEntry[];
 
+/**
+ * Matches a release-pinned "/vX.Y.Z/" path segment in a registry source, e.g.
+ * ".../cooud-ui/v0.2.0/registry" (the default raw.githubusercontent.com layout)
+ * or a local ".../v0.2.0/registry" mirror. The trailing separator is a
+ * lookahead so replacements never eat it.
+ */
+const VERSION_SEGMENT_RE = /([/\\])v(\d+\.\d+\.\d+(?:-[\w.]+)?)(?=[/\\])/;
+
+/** Extract the release version a registry source is pinned to, if any. */
+export function registrySourceVersion(source: string): string | undefined {
+  return VERSION_SEGMENT_RE.exec(source)?.[2];
+}
+
+/**
+ * Re-pin a versioned registry source to a different release tag. Because the
+ * default registry lives at `raw.githubusercontent.com/.../v<version>/registry`,
+ * every published release's registry stays addressable forever — `upgrade`
+ * uses this to fetch the exact merge base a component was installed from.
+ * Returns undefined when the source carries no version segment (an unversioned
+ * URL or plain local directory), in which case past releases are unreachable.
+ */
+export function registrySourceAtVersion(source: string, version: string): string | undefined {
+  if (!VERSION_SEGMENT_RE.test(source)) return undefined;
+  return source.replace(VERSION_SEGMENT_RE, `$1v${version}`);
+}
+
 /** A registry source: either a local directory or an http(s) base URL. */
 export class Registry {
   private readonly base: string;

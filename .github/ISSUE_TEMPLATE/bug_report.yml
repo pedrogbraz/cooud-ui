@@ -1,0 +1,78 @@
+name: Bug report
+description: Something in a @cooud-ui package, the CLI, or the docs site doesn't work as documented.
+title: "[bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. Please search existing issues first — duplicates will be closed.
+  - type: dropdown
+    id: package
+    attributes:
+      label: Package
+      description: Where does the bug live?
+      options:
+        - "@cooud-ui/ui (components)"
+        - "@cooud-ui/tokens"
+        - "@cooud-ui/theme"
+        - "@cooud-ui/stack"
+        - "cooud-ui (CLI / registry)"
+        - "create-cooud-app / create-cooud-stack"
+        - "@cooud-ui/mcp"
+        - "Docs site (ui.testcooud.cloud)"
+        - "Other / not sure"
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: The published package version (`npm ls @cooud-ui/ui`) or "docs site".
+      placeholder: "0.2.0"
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      description: Minimal steps or a repro repo/StackBlitz. The smaller the repro, the faster the fix.
+      placeholder: |
+        1. `npx cooud-ui add button`
+        2. Render `<Button asChild>` with ...
+        3. Click ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What you expected to happen.
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: What actually happens. Include error messages and stack traces as text, not screenshots.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Framework, React, Tailwind, browser and OS versions.
+      placeholder: |
+        - Framework: Next.js 16.2.x (App Router)
+        - React: 19.2.x
+        - Tailwind: 4.3.x
+        - Browser/OS: Chrome 138 / macOS 15
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Screenshots for visual bugs, theme overrides in play, anything else useful.
+    validations:
+      required: false

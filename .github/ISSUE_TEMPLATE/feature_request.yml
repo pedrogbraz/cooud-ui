@@ -1,0 +1,51 @@
+name: Feature request
+description: Propose a new component, block, or capability for Cooud UI.
+title: "[feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Check the [components catalog](https://ui.testcooud.cloud/components) and existing issues first — it may already exist or be planned.
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - "New component"
+        - "New block"
+        - "Existing component/block improvement"
+        - "Theming / tokens"
+        - "CLI / registry"
+        - "Docs site"
+        - "Other"
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What are you trying to build and what's missing or painful today?
+      placeholder: "I need a ... but currently I have to ..."
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: What should it look like? API sketches, links to comparable components elsewhere, and mockups all help.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Workarounds you tried, or why existing components don't cover it.
+    validations:
+      required: false
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+    validations:
+      required: false

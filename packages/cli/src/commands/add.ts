@@ -1,5 +1,11 @@
-import { hasConfig, readConfig } from "../config.js";
-import { Registry } from "../registry.js";
+import {
+  CLI_VERSION,
+  hasConfig,
+  type InstalledRecord,
+  readConfig,
+  writeConfig,
+} from "../config.js";
+import { Registry, registrySourceVersion } from "../registry.js";
 import {
   closestName,
   collectDependencies,
@@ -88,6 +94,14 @@ export async function add(names: string[], options: AddOptions): Promise<void> {
     log.step(`Pulling in dependencies: ${pulledIn.map((i) => i.name).join(", ")}`);
   }
 
+  // The registry release these files come from — recorded in the install
+  // manifest so `upgrade` can later fetch the exact merge base. Sources without
+  // a version segment (e.g. a local dir) are pinned to the running CLI version.
+  const sourceUsed = options.registry ?? config.registry;
+  const installedVersion = registrySourceVersion(sourceUsed) ?? CLI_VERSION;
+  const installed: Record<string, InstalledRecord> = { ...config.installed };
+  let manifestChanged = false;
+
   const allWritten: string[] = [];
   const allSkipped: string[] = [];
   for (const item of items) {
@@ -96,10 +110,21 @@ export async function add(names: string[], options: AddOptions): Promise<void> {
     });
     allWritten.push(...written);
     allSkipped.push(...skipped);
+    // Only record an item whose files were ALL written this run. A partially
+    // skipped item keeps older (possibly edited) files on disk — pinning it to
+    // today's release would corrupt the 3-way merge base for `upgrade`.
+    if (written.length === item.files.length && written.length > 0) {
+      installed[item.name] = { version: installedVersion, files: written };
+      manifestChanged = true;
+    }
   }
 
   for (const path of allWritten) log.ok(`Added ${path}`);
   for (const path of allSkipped) log.warn(`Skipped ${path} (exists — use --overwrite)`);
+
+  if (manifestChanged) {
+    await writeConfig(cwd, { ...config, installed });
+  }
 
   const deps = collectDependencies(items);
   if (deps.length > 0 && !options.skipInstall) {

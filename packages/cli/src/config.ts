@@ -8,6 +8,14 @@ export const CLI_VERSION = "0.2.0";
 
 export const DEFAULT_REGISTRY = `https://raw.githubusercontent.com/pedrogbraz/cooud-ui/v${CLI_VERSION}/registry`;
 
+/** Manifest entry `add`/`upgrade` record per installed registry item. */
+export interface InstalledRecord {
+  /** Registry release the files came from (git tag without the leading "v"). */
+  version: string;
+  /** Project-relative paths the item wrote (e.g. "components/ui/button.tsx"). */
+  files: string[];
+}
+
 export interface CooudUIConfig {
   /** Import aliases used when rewriting component sources. */
   aliases: {
@@ -28,6 +36,13 @@ export interface CooudUIConfig {
     name: string;
     mode: string;
   };
+  /**
+   * Install manifest: which items are installed, from which registry release,
+   * and which files they own. `upgrade` uses the recorded version as the merge
+   * base for its 3-way merge. Absent for installs made before this field
+   * existed ("legacy") — `upgrade` then falls back to a 2-way diff.
+   */
+  installed?: Record<string, InstalledRecord>;
 }
 
 export const DEFAULT_CONFIG: CooudUIConfig = {
@@ -53,6 +68,9 @@ export async function readConfig(cwd: string): Promise<CooudUIConfig> {
     registry: parsed.registry ?? DEFAULT_CONFIG.registry,
     // Preserve the theme block when present so `add`/`init` round-trips never drop it.
     ...(parsed.theme ? { theme: parsed.theme } : {}),
+    // Same for the install manifest — dropping it would silently downgrade every
+    // component to the legacy (2-way) upgrade path.
+    ...(parsed.installed ? { installed: parsed.installed } : {}),
   };
 }
 

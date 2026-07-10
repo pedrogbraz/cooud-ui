@@ -21,6 +21,26 @@ import { cn } from "../lib/cn.js";
 
 type StepperOrientation = "horizontal" | "vertical";
 
+/**
+ * Screen-reader-only step-state announcements. Pass any subset via the
+ * `labels` prop on {@link Stepper} to localize; omitted keys keep their
+ * English defaults.
+ */
+export interface StepperLabels {
+  /** Announced after a completed step. */
+  completed: string;
+  /** Announced after the active step. */
+  current: string;
+  /** Announced after a step that has not started yet. */
+  upcoming: string;
+}
+
+const DEFAULT_LABELS: StepperLabels = {
+  completed: "completed",
+  current: "current",
+  upcoming: "not started",
+};
+
 interface StepperContextValue {
   /** Zero-based index of the active step. */
   value: number;
@@ -28,6 +48,8 @@ interface StepperContextValue {
   setValue: (value: number) => void;
   /** Layout axis. */
   orientation: StepperOrientation;
+  /** Resolved sr-only state labels (defaults merged with the `labels` prop). */
+  labels: StepperLabels;
 }
 
 const StepperContext = createContext<StepperContextValue | null>(null);
@@ -78,6 +100,8 @@ export interface StepperProps extends Omit<HTMLAttributes<HTMLDivElement>, "onCh
   onValueChange?: (value: number) => void;
   /** Layout axis. Defaults to `"horizontal"`. */
   orientation?: StepperOrientation;
+  /** Localize the sr-only step-state announcements. See {@link StepperLabels}. */
+  labels?: Partial<StepperLabels>;
 }
 
 /**
@@ -94,6 +118,7 @@ export const Stepper = forwardRef<HTMLDivElement, StepperProps>(
       defaultValue = 0,
       onValueChange,
       orientation = "horizontal",
+      labels,
       className,
       children,
       ...props
@@ -120,9 +145,11 @@ export const Stepper = forwardRef<HTMLDivElement, StepperProps>(
       [value, isControlled, onValueChange],
     );
 
+    const mergedLabels = useMemo<StepperLabels>(() => ({ ...DEFAULT_LABELS, ...labels }), [labels]);
+
     const contextValue = useMemo<StepperContextValue>(
-      () => ({ value, setValue, orientation }),
-      [value, setValue, orientation],
+      () => ({ value, setValue, orientation, labels: mergedLabels }),
+      [value, setValue, orientation, mergedLabels],
     );
 
     return (
@@ -195,14 +222,23 @@ export interface StepperItemProps extends HTMLAttributes<HTMLLIElement> {
  * A single step. Computes its state relative to the active step — earlier steps
  * are `completed`, the current one is `active`, later ones are `upcoming` — and
  * exposes it (plus its index and disabled flag) to descendants through context.
- * Renders an `<li>`; carries `aria-current="step"` on the active step.
+ * Renders an `<li>`; carries `aria-current="step"` on the active step and
+ * appends an sr-only state suffix ("completed" / "current" / "not started",
+ * localizable via the stepper's `labels` prop) — the visual state is otherwise
+ * color/icon-only, which screen readers cannot perceive.
  */
 export const StepperItem = forwardRef<HTMLLIElement, StepperItemProps>(
   ({ step, completed, disabled = false, className, children, ...props }, ref) => {
-    const { value, orientation } = useStepper("StepperItem");
+    const { value, orientation, labels } = useStepper("StepperItem");
 
     const state: StepState =
       completed || step < value ? "completed" : step === value ? "active" : "upcoming";
+    const stateLabel =
+      state === "completed"
+        ? labels.completed
+        : state === "active"
+          ? labels.current
+          : labels.upcoming;
 
     const itemContext = useMemo<StepperItemContextValue>(
       () => ({ step, state, disabled }),
@@ -226,6 +262,9 @@ export const StepperItem = forwardRef<HTMLLIElement, StepperItemProps>(
           {...props}
         >
           {children}
+          <span data-slot="stepper-item-state" className="sr-only">
+            {stateLabel}
+          </span>
         </li>
       </StepperItemContext.Provider>
     );

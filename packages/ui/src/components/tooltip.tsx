@@ -1,36 +1,66 @@
 "use client";
 
 import * as TooltipPrimitive from "@radix-ui/react-tooltip";
-import { type ComponentPropsWithoutRef, type ComponentRef, forwardRef } from "react";
+import {
+  type ComponentPropsWithoutRef,
+  type ComponentRef,
+  createContext,
+  forwardRef,
+  useContext,
+} from "react";
 import { cn } from "../lib/cn.js";
 
+/** Cooud house default open delay (ms) — snappier than Radix's 700ms. */
+const DEFAULT_DELAY_DURATION = 200;
+
+/**
+ * Marks that a Cooud <TooltipProvider> is mounted above, so <Tooltip> renders
+ * a bare Radix Root instead of mounting its provider-less fallback. Radix
+ * providers do not inherit from ancestors — nesting one would silently reset
+ * the app-level config — so detection is the only way to honor both contracts.
+ */
+const HasTooltipProviderContext = createContext(false);
+
+/**
+ * App-level tooltip config — `delayDuration` (default 200ms),
+ * `skipDelayDuration`, and `disableHoverableContent` — shared by every
+ * <Tooltip> beneath it. Mount one near the app root: cross-tooltip skip-delay
+ * (instant re-open when moving between triggers) only works through a shared
+ * provider. Use this component, not the raw Radix provider — <Tooltip> only
+ * detects this one.
+ */
 export const TooltipProvider = ({
-  delayDuration = 200,
+  delayDuration = DEFAULT_DELAY_DURATION,
   ...props
 }: ComponentPropsWithoutRef<typeof TooltipPrimitive.Provider>) => {
   return (
-    <TooltipPrimitive.Provider
-      data-slot="tooltip-provider"
-      delayDuration={delayDuration}
-      {...props}
-    />
+    <HasTooltipProviderContext.Provider value={true}>
+      <TooltipPrimitive.Provider
+        data-slot="tooltip-provider"
+        delayDuration={delayDuration}
+        {...props}
+      />
+    </HasTooltipProviderContext.Provider>
   );
 };
 TooltipProvider.displayName = "TooltipProvider";
 
 /**
- * Self-contained: wraps its own Provider so a single <Tooltip> works without a
- * top-level <TooltipProvider>. For shared delay config, still wrap your app in
- * one <TooltipProvider> (nested providers are fine).
+ * Radix Tooltip.Root with Cooud defaults. Under a <TooltipProvider> it renders
+ * bare, so the provider's config genuinely applies; per-tooltip
+ * `delayDuration` / `disableHoverableContent` props go to the Root and win
+ * over the provider's values. Without a provider it mounts a private fallback
+ * (200ms delay) so standalone usage still works — but standalone tooltips
+ * cannot share skip-delay, so prefer one app-level <TooltipProvider>.
  */
-export const Tooltip = ({
-  delayDuration,
-  ...props
-}: ComponentPropsWithoutRef<typeof TooltipPrimitive.Root>) => {
+export const Tooltip = (props: ComponentPropsWithoutRef<typeof TooltipPrimitive.Root>) => {
+  const hasProvider = useContext(HasTooltipProviderContext);
+  const root = <TooltipPrimitive.Root data-slot="tooltip" {...props} />;
+  if (hasProvider) return root;
   return (
-    <TooltipProvider delayDuration={delayDuration}>
-      <TooltipPrimitive.Root data-slot="tooltip" {...props} />
-    </TooltipProvider>
+    <TooltipPrimitive.Provider delayDuration={DEFAULT_DELAY_DURATION}>
+      {root}
+    </TooltipPrimitive.Provider>
   );
 };
 Tooltip.displayName = "Tooltip";

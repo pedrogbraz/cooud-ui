@@ -984,6 +984,12 @@ export const COMPONENT_PROPS: Record<string, PropsDoc[]> = {
           description: 'Layout axis. Defaults to `"horizontal"`.',
           default: '"horizontal"',
         },
+        {
+          name: "labels",
+          type: "Partial<StepperLabels>",
+          required: false,
+          description: "Localize the sr-only step-state announcements. See .",
+        },
       ],
     },
     {
@@ -1846,6 +1852,20 @@ export const COMPONENT_PROPS: Record<string, PropsDoc[]> = {
           required: false,
           description: 'Accessible label for the toolbar region. Defaults to "Table controls".',
         },
+        {
+          name: "labels",
+          type: "Partial<DataTableLabels>",
+          required: false,
+          description:
+            "Override any subset of the built-in UI strings (selection checkbox labels, pagination, empty/loading/retry states…) for localization. Defaults are English; see .",
+        },
+        {
+          name: "getRowLabel",
+          type: "(row: Row<TData>) => string",
+          required: false,
+          description:
+            'Accessible name for each row-selection checkbox, built from the row data (e.g. `(row) => "Select " + row.original.name`). Takes precedence over `labels.selectRow`. Only applies to the selection column injected by `enableRowSelection`.',
+        },
       ],
     },
     {
@@ -1865,6 +1885,12 @@ export const COMPONENT_PROPS: Record<string, PropsDoc[]> = {
           name: "className",
           type: "string",
           required: false,
+        },
+        {
+          name: "labels",
+          type: "Partial<DataTableColumnHeaderLabels>",
+          required: false,
+          description: "Localize the sort-button `aria-label`s. See .",
         },
       ],
     },
@@ -2251,7 +2277,7 @@ export const COMPONENT_PROPS: Record<string, PropsDoc[]> = {
           type: "number",
           required: false,
           description:
-            "How many levels start expanded. The root value is depth 0, so the default of 1 shows the root's entries with every nested branch collapsed. Pass `Number.POSITIVE_INFINITY` to expand everything.",
+            "How many levels start expanded — a mount-time default, not a controlled value. Expansion state is uncontrolled per branch and seeded once when a branch first mounts, so later changes to this prop leave already-mounted branches untouched. The root value is depth 0, so the default of 1 shows the root's entries with every nested branch collapsed. Pass `Number.POSITIVE_INFINITY` to expand everything.",
           default: "1",
         },
       ],
@@ -3067,26 +3093,129 @@ export const COMPONENT_PROPS: Record<string, PropsDoc[]> = {
   "date-picker": [
     {
       interfaceName: "DatePickerProps",
+      extends:
+        'Extends Omit< ButtonHTMLAttributes<HTMLButtonElement>, "value" | "defaultValue" | "onChange" | "disabled" | "name" >',
       props: [
         {
           name: "value",
           type: "Date",
           required: false,
+          description: "Controlled selected date. Pair with `onValueChange`.",
+        },
+        {
+          name: "defaultValue",
+          type: "Date",
+          required: false,
+          description: "Initial date for uncontrolled usage.",
+        },
+        {
+          name: "onValueChange",
+          type: "(date: Date | undefined) => void",
+          required: false,
+          description:
+            "Called with the new date (`undefined` when deselected) on every selection change.",
         },
         {
           name: "onChange",
           type: "(date: Date | undefined) => void",
           required: false,
+          description: "Legacy change callback, fired with the same payload as `onValueChange`.",
+        },
+        {
+          name: "open",
+          type: "boolean",
+          required: false,
+          description: "Controlled open state of the calendar popover. Pair with `onOpenChange`.",
+        },
+        {
+          name: "defaultOpen",
+          type: "boolean",
+          required: false,
+          description: "Initial open state for uncontrolled usage.",
+          default: "false",
+        },
+        {
+          name: "onOpenChange",
+          type: "(open: boolean) => void",
+          required: false,
+          description: "Called whenever the popover opens or closes.",
         },
         {
           name: "placeholder",
           type: "string",
           required: false,
+          description: "Text shown on the trigger when no date is selected.",
+          default: '"Pick a date"',
         },
         {
           name: "disabled",
           type: "boolean",
           required: false,
+          description: "Disables the trigger entirely.",
+          default: "false",
+        },
+        {
+          name: "invalid",
+          type: "boolean",
+          required: false,
+          description: "Marks the trigger invalid (error border/ring + `aria-invalid`).",
+          default: "false",
+        },
+        {
+          name: "min",
+          type: "Date",
+          required: false,
+          description: "Earliest selectable day (inclusive).",
+        },
+        {
+          name: "max",
+          type: "Date",
+          required: false,
+          description: "Latest selectable day (inclusive).",
+        },
+        {
+          name: "disabledDates",
+          type: "Matcher | Matcher[]",
+          required: false,
+          description: "Extra non-selectable days, merged with `min`/`max`.",
+        },
+        {
+          name: "locale",
+          type: "Locale",
+          required: false,
+          description: "`date-fns` locale used for both the trigger label and the calendar.",
+        },
+        {
+          name: "dateFormat",
+          type: "string",
+          required: false,
+          description: "`date-fns` format token for the trigger label.",
+          default: '"PPP"',
+        },
+        {
+          name: "formatValue",
+          type: "(date: Date) => string",
+          required: false,
+          description: "Full override for the trigger label. Wins over `dateFormat`/`locale`.",
+        },
+        {
+          name: "name",
+          type: "string",
+          required: false,
+          description: "Form field name — renders a hidden input with the local `yyyy-MM-dd` date.",
+        },
+        {
+          name: "align",
+          type: 'ComponentPropsWithoutRef<typeof PopoverContent>["align"]',
+          required: false,
+          description: "Alignment of the popover against the trigger.",
+          default: '"start"',
+        },
+        {
+          name: "contentClassName",
+          type: "string",
+          required: false,
+          description: "Extra classes for the popover content.",
         },
       ],
     },
@@ -3152,11 +3281,23 @@ export const COMPONENT_PROPS: Record<string, PropsDoc[]> = {
           description: "Extra non-selectable days, merged with `min`/`max`.",
         },
         {
+          name: "locale",
+          type: "Locale",
+          required: false,
+          description: "`date-fns` locale used for both the trigger label and the calendar.",
+        },
+        {
           name: "dateFormat",
           type: "string",
           required: false,
           description: "`date-fns` format token for each end of the range.",
           default: '"LLL dd, y"',
+        },
+        {
+          name: "formatValue",
+          type: "(range: DateRange) => string",
+          required: false,
+          description: "Full override for the trigger label. Wins over `dateFormat`/`locale`.",
         },
         {
           name: "align",

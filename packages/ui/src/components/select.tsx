@@ -78,6 +78,8 @@ export const SelectContent = forwardRef<
         position={position}
         className={cn(
           "relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-lg border border-border bg-surface-floating text-fg shadow-lg data-[state=open]:animate-[cooud-pop-in_180ms_var(--ease-out-quart)_both] data-[state=closed]:animate-[cooud-pop-out_140ms_var(--ease-out-quart)_both]",
+          // Intentionally physical: Radix's data-side is a physical side, and
+          // the nudge moves the popper away from the trigger on that side.
           position === "popper" &&
             "data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
           className,
@@ -125,12 +127,12 @@ export const SelectItem = forwardRef<
       ref={ref}
       data-slot="select-item"
       className={cn(
-        "relative flex w-full cursor-default select-none items-center gap-2 rounded-md py-1.5 pr-2 pl-8 text-sm outline-none focus:bg-surface-overlay focus:text-fg data-[disabled]:opacity-50 data-[disabled]:pointer-events-none",
+        "relative flex w-full cursor-default select-none items-center gap-2 rounded-md py-1.5 pe-2 ps-8 text-sm outline-none focus:bg-surface-overlay focus:text-fg data-[disabled]:opacity-50 data-[disabled]:pointer-events-none",
         className,
       )}
       {...props}
     >
-      <span className="absolute left-2 flex size-4 items-center justify-center">
+      <span className="absolute start-2 flex size-4 items-center justify-center">
         <SelectPrimitive.ItemIndicator>
           <Check className="size-4" />
         </SelectPrimitive.ItemIndicator>
