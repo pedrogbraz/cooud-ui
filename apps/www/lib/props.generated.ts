@@ -715,6 +715,19 @@ export const COMPONENT_PROPS: Record<string, PropsDoc[]> = {
           type: "ReactNode",
           required: false,
         },
+        {
+          name: "aria-label",
+          type: "string",
+          required: false,
+          description:
+            'Accessible name for the file input. Defaults to `"Upload files"` so the control is never nameless.',
+        },
+        {
+          name: "aria-describedby",
+          type: "string",
+          required: false,
+          description: "IDs of element(s) that describe the dropzone (e.g. accepted types).",
+        },
       ],
     },
   ],
@@ -2059,6 +2072,21 @@ export const COMPONENT_PROPS: Record<string, PropsDoc[]> = {
           required: false,
           description:
             "Hint for the intended number of week columns. Ignored — the data drives the layout — but accepted so callers can document intent.",
+        },
+      ],
+    },
+  ],
+  "scroll-area": [
+    {
+      interfaceName: "ScrollAreaProps",
+      extends: "Extends ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.Root>",
+      props: [
+        {
+          name: "aria-label",
+          type: "string",
+          required: false,
+          description:
+            'Accessible name for the scrollable viewport. Supply this when the content warrants a distinct name (e.g. "Release notes"); the viewport is always keyboard-focusable so it can be scrolled with the arrow keys regardless.',
         },
       ],
     },
