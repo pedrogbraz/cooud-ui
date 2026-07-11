@@ -235,6 +235,20 @@ export default function AccessibilityPage() {
           screen-reader pass remain part of the review.
         </DocCallout>
       </DocsSection>
+
+      <DocsSection
+        title="Conformance"
+        description="For the target standard, how it's enforced, and an honest list of what's not yet covered, see the conformance statement."
+      >
+        <p className="text-fg-secondary">
+          The{" "}
+          <PrimaryLink href="/docs/accessibility/conformance">
+            accessibility conformance statement
+          </PrimaryLink>{" "}
+          is a self-assessment against WCAG 2.2 Level AA — it lays out the enforcement layers, what
+          is supported, and the known limitations, without overclaiming.
+        </p>
+      </DocsSection>
     </div>
   );
 }
