@@ -52,6 +52,8 @@ jobs:
         run: bun run props:check
       - name: Example sections in sync
         run: bun run check:example-sections
+      - name: A11y route manifest in sync
+        run: bun run a11y:routes:check
       - name: Bundle budgets
         env:
           BUNDLE_CHECK_STRICT: "1"

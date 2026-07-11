@@ -26,8 +26,10 @@
     "release": "node scripts/release.mjs",
     "bundle:check": "node scripts/bundle-check.mjs",
     "check:example-sections": "node scripts/check-example-sections.mjs",
+    "a11y:routes": "node scripts/build-a11y-routes.mjs",
+    "a11y:routes:check": "node scripts/build-a11y-routes.mjs --check",
     "audit": "bun audit",
-    "test:a11y": "playwright test --project=a11y",
+    "test:a11y": "playwright test --project=a11y --workers=4",
     "test:e2e": "playwright test --project=e2e"
   },
   "devDependencies": {
