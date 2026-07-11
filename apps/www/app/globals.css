@@ -6,6 +6,26 @@
 @source "../app/**/*.{ts,tsx}";
 @source "../components/**/*.{ts,tsx}";
 
+/* Syntax-highlight palette for the docs code viewer (components/docs/code-block.tsx).
+   The code sample always sits on `surface-inset`, so the token colors must adapt
+   to the mode: bright on the dark surface, darkened on the light surface so code
+   stays AA-legible in every theme. Dark values are the originals; light values are
+   lowered in lightness to clear 4.5:1 on the light inset. */
+:root {
+  --cooud-syntax-keyword: oklch(0.5 0.17 262);
+  --cooud-syntax-fn: oklch(0.5 0.11 215);
+  --cooud-syntax-string: oklch(0.47 0.13 150);
+  --cooud-syntax-attr: oklch(0.5 0.11 70);
+  --cooud-syntax-number: oklch(0.51 0.16 38);
+}
+.dark {
+  --cooud-syntax-keyword: oklch(0.72 0.15 235);
+  --cooud-syntax-fn: oklch(0.78 0.13 200);
+  --cooud-syntax-string: oklch(0.78 0.14 150);
+  --cooud-syntax-attr: oklch(0.8 0.12 90);
+  --cooud-syntax-number: oklch(0.8 0.13 50);
+}
+
 /* The typed `@property --cooud-*` registrations that make token overrides
    cross-fade now ship in @cooud-ui/tokens (imported above), so every adopter — not
    just this app — gets smooth token transitions. */
