@@ -207,9 +207,11 @@ export const DateRangePicker = forwardRef<HTMLButtonElement, DateRangePickerProp
               </fieldset>
             ) : null}
             {/*
-              react-day-picker v8 does not forward unknown root props (an
-              `aria-labelledby` handed to Calendar never reaches the DOM), so
-              the calendar's group name comes from this fieldset's legend.
+              The calendar's group name comes from this fieldset's legend — a
+              root aria-labelledby would point at an id we don't render.
+              v9+ split the old fromDate/toDate: startMonth/endMonth clamp the
+              navigation while the before/after matchers (from toMatcherList)
+              keep out-of-bounds days disabled within the boundary months.
             */}
             <fieldset data-slot="date-range-picker-calendar" className="m-0 min-w-0 border-0 p-0">
               <legend className="sr-only">{placeholder}</legend>
@@ -219,11 +221,11 @@ export const DateRangePicker = forwardRef<HTMLButtonElement, DateRangePickerProp
                 onSelect={handleSelect}
                 numberOfMonths={numberOfMonths}
                 defaultMonth={value?.from}
-                fromDate={min}
-                toDate={max}
+                startMonth={min}
+                endMonth={max}
                 disabled={disabledMatcher.length > 0 ? disabledMatcher : undefined}
                 locale={locale}
-                initialFocus
+                autoFocus
               />
             </fieldset>
           </div>

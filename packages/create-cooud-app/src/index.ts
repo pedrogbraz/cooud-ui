@@ -19,6 +19,7 @@ import { runInstall, scaffold } from "./scaffold.js";
 import {
   c,
   DEFAULT_MODE,
+  DEFAULT_TEMPLATE,
   DEFAULT_THEME,
   dirNameFromProjectName,
   isValidProjectName,
@@ -29,6 +30,9 @@ import {
   type PackageManager,
   promptConfirm,
   promptSelect,
+  TEMPLATE_HINTS,
+  TEMPLATES,
+  type TemplateName,
   THEME_HINTS,
   THEMES,
   type Theme,
@@ -41,6 +45,8 @@ ${c.bold("Usage")}
   create-cooud-app [project-name] [options]
 
 ${c.bold("Options")}
+  --template <${TEMPLATES.join("|")}>
+                             Starter template to scaffold (default: ${DEFAULT_TEMPLATE})
   --theme <${THEMES.join("|")}>
                              Theme preset to bake in (default: ${DEFAULT_THEME})
   --mode <${MODES.join("|")}>            Default color mode (default: ${DEFAULT_MODE})
@@ -60,6 +66,7 @@ ${c.bold("Options")}
 
 ${c.bold("Examples")}
   npx create-cooud-app my-app
+  npx create-cooud-app my-app --template dashboard
   npx create-cooud-app my-app --theme sunset --mode light
   npx create-cooud-app my-app --ai --assistants claude,cursor --preset fintech
   npx create-cooud-app my-app --no-ai --pm pnpm --yes
@@ -70,6 +77,8 @@ interface ParsedCli {
   name?: string;
   pm?: PackageManager;
   install: boolean;
+  /** Template from `--template`, or undefined to prompt. */
+  template?: TemplateName;
   /** Theme from `--theme`, or undefined to prompt. */
   theme?: Theme;
   /** Mode from `--mode`, or undefined to prompt. */
@@ -97,6 +106,7 @@ export function parseCli(argv: string[]): ParsedCli {
     args: argv,
     allowPositionals: true,
     options: {
+      template: { type: "string" },
       theme: { type: "string" },
       mode: { type: "string" },
       ai: { type: "boolean", default: false },
@@ -118,6 +128,11 @@ export function parseCli(argv: string[]): ParsedCli {
   const pm = values.pm;
   if (pm !== undefined && !PACKAGE_MANAGERS.includes(pm as PackageManager)) {
     throw new Error(`Unknown --pm "${pm}". Use one of: ${PACKAGE_MANAGERS.join(", ")}.`);
+  }
+
+  const template = values.template;
+  if (template !== undefined && !TEMPLATES.includes(template as TemplateName)) {
+    throw new Error(`Unknown --template "${template}". Use one of: ${TEMPLATES.join(", ")}.`);
   }
 
   const theme = values.theme;
@@ -143,6 +158,7 @@ export function parseCli(argv: string[]): ParsedCli {
     name: positionals[0],
     pm: pm as PackageManager | undefined,
     install: !values["no-install"],
+    template: template as TemplateName | undefined,
     theme: theme as Theme | undefined,
     mode: mode as ModeName | undefined,
     yes: values.yes,
@@ -210,8 +226,13 @@ async function main(): Promise<void> {
     return;
   }
 
-  // Theme + mode: an explicit flag wins; otherwise prompt on a TTY (unless
-  // --yes), and fall back to the ship defaults when piped/CI.
+  // Template + theme + mode: an explicit flag wins; otherwise prompt on a TTY
+  // (unless --yes), and fall back to the ship defaults when piped/CI.
+  const template =
+    parsed.template ??
+    (parsed.yes
+      ? DEFAULT_TEMPLATE
+      : await promptSelect("Template", TEMPLATES, DEFAULT_TEMPLATE, TEMPLATE_HINTS));
   const theme =
     parsed.theme ??
     (parsed.yes ? DEFAULT_THEME : await promptSelect("Theme", THEMES, DEFAULT_THEME, THEME_HINTS));
@@ -220,8 +241,10 @@ async function main(): Promise<void> {
     (parsed.yes ? DEFAULT_MODE : await promptSelect("Default mode", MODES, DEFAULT_MODE));
 
   log.step(`Scaffolding into ${c.cyan(dirName)}…`);
-  const { fileCount } = scaffold({ targetDir, name, theme, mode });
-  log.ok(`Created ${fileCount} files (${c.cyan(theme)} theme, ${mode} mode).`);
+  const { fileCount } = scaffold({ targetDir, name, theme, mode, template });
+  log.ok(
+    `Created ${fileCount} files (${c.cyan(template)} template, ${c.cyan(theme)} theme, ${mode} mode).`,
+  );
 
   // AI Kit: skills, rules & doctrine for Claude Code / Cursor / Copilot.
   const wantAi =

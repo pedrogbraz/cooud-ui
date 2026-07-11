@@ -73,11 +73,11 @@ function packageJson(projectName: string, config: StackConfig): string {
   const isCooudUi = usesCooudUi(config);
   const deps: Record<string, string> = {};
   const devDeps: Record<string, string> = {
-    typescript: "^5.9.3",
+    typescript: "^6.0.3",
   };
 
   if (isNext) {
-    add(deps, "next", "16.2.6");
+    add(deps, "next", "16.2.10");
     add(deps, "react", "^19.2.0");
     add(deps, "react-dom", "^19.2.0");
     add(devDeps, "@types/node", "^22.10.0");

@@ -73,6 +73,30 @@ const complexWidgetExample = `// Charts can't be made node-accessible, so descri
   </div>
 </div>`;
 
+const testingInstallExample = `npm i -D @testing-library/react vitest-axe`;
+
+const testingHelpersExample = `// invite-panel.test.tsx — Vitest + jsdom, using @cooud-ui/ui/testing.
+import { expectNoA11yViolations, findDialog, renderWithCooud } from "@cooud-ui/ui/testing";
+import { screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { it } from "vitest";
+
+it("invite dialog stays accessible", async () => {
+  const user = userEvent.setup();
+  // render() wrapped in a scoped CooudUIProvider (a wrapper div, not <html>).
+  const { baseElement, rerenderWithTheme } = renderWithCooud(<InvitePanel />, {
+    theme: "aurora",
+    mode: "dark",
+  });
+
+  await user.click(screen.getByRole("button", { name: "Invite teammate" }));
+  await findDialog("Invite teammate"); // portaled to document.body — still found
+  await expectNoA11yViolations(baseElement); // axe-core, fails with the violations
+
+  rerenderWithTheme("neutral", "light"); // remount the scope in another theme
+  await expectNoA11yViolations(baseElement);
+});`;
+
 const axeExample = `// e2e/a11y/core-routes.a11y.spec.ts — axe-core over every core route.
 const results = await new AxeBuilder({ page })
   .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
@@ -196,6 +220,16 @@ export default function AccessibilityPage() {
           list.
         </p>
         <CodeBlock code={axeExample} language="tsx" />
+        <p className="text-fg-secondary">
+          Run the same axe gate on your own components with{" "}
+          <InlineCode>@cooud-ui/ui/testing</InlineCode> — Testing Library helpers that render under
+          a scoped <InlineCode>CooudUIProvider</InlineCode>, find Radix surfaces through their
+          portals, and assert zero axe violations. Both testing packages are optional peer
+          dependencies of <InlineCode>@cooud-ui/ui</InlineCode>, so they never touch your app
+          bundle:
+        </p>
+        <CodeBlock code={testingInstallExample} language="bash" />
+        <CodeBlock code={testingHelpersExample} language="tsx" />
         <DocCallout title="Manual checks still matter">
           Automated scans catch contrast, names, and landmarks, but keyboard-only walkthroughs and a
           screen-reader pass remain part of the review.

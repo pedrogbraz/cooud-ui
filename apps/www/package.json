@@ -16,7 +16,7 @@
     "@cooud-ui/theme": "workspace:*",
     "@cooud-ui/tokens": "workspace:*",
     "@cooud-ui/ui": "workspace:*",
-    "@hookform/resolvers": "^3.10.0",
+    "@hookform/resolvers": "^5.4.0",
     "@hugeicons/core-free-icons": "^4.2.1",
     "@hugeicons/react": "^1.1.7",
     "@phosphor-icons/react": "^2.1.10",
@@ -25,13 +25,13 @@
     "@tanstack/react-table": "^8.21.3",
     "lucide-react": "^0.577.0",
     "motion": "^12.23.0",
-    "next": "16.2.6",
+    "next": "16.2.10",
     "prism-react-renderer": "^2.4.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-hook-form": "^7.54.2",
-    "recharts": "^2.15.4",
-    "zod": "^3.24.1"
+    "recharts": "^3.9.2",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.0",
@@ -39,6 +39,6 @@
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "tailwindcss": "^4.3.0",
-    "typescript": "^5.9.3"
+    "typescript": "^6.0.3"
   }
 }

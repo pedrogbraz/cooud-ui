@@ -195,16 +195,21 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(
           data-slot="date-picker-content"
           className={cn("w-auto p-0", contentClassName)}
         >
+          {/*
+            v9+ split the old fromDate/toDate: startMonth/endMonth clamp the
+            navigation while the before/after matchers (from toMatcherList)
+            keep out-of-bounds days disabled within the boundary months.
+          */}
           <Calendar
             mode="single"
             selected={value}
             onSelect={handleSelect}
             defaultMonth={value}
-            fromDate={min}
-            toDate={max}
+            startMonth={min}
+            endMonth={max}
             disabled={disabledMatcher.length > 0 ? disabledMatcher : undefined}
             locale={locale}
-            initialFocus
+            autoFocus
           />
         </PopoverContent>
         {/* Local calendar date, not `toISOString()` — UTC would shift the day. */}

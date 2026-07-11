@@ -19,6 +19,38 @@ const adapterContract = `// 1. Import tokens in the framework global CSS entry.
 // 3. Add components through the registry.
 pnpm dlx cooud-ui@latest add button card dialog form`;
 
+const rscUsage = `// app/activity/page.tsx — a Server Component, no "use client" anywhere.
+import { Badge } from "@cooud-ui/ui/badge";
+import { Timeline, TimelineContent, TimelineItem, TimelineTitle } from "@cooud-ui/ui/timeline";
+// Client components nest inside server markup and hydrate as islands:
+import { CopyButton } from "@cooud-ui/ui/copy-button";
+
+export default function ActivityPage() {
+  return (
+    <Timeline>
+      <TimelineItem>
+        <TimelineContent>
+          <TimelineTitle>
+            Deploy finished <Badge variant="success">live</Badge>
+          </TimelineTitle>
+          <CopyButton value="deploy-7f4c45f" />
+        </TimelineContent>
+      </TimelineItem>
+    </Timeline>
+  );
+}`;
+
+const rscNextConfig = `// next.config.ts — tree-shake barrel imports out of server bundles.
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  experimental: {
+    optimizePackageImports: ["@cooud-ui/ui"],
+  },
+};
+
+export default nextConfig;`;
+
 export default function FrameworksPage() {
   return (
     <div className="py-10">
@@ -40,6 +72,30 @@ export default function FrameworksPage() {
         description="Every framework path has the same three checkpoints: token CSS, provider placement, and registry component ownership."
       >
         <CodeBlock code={adapterContract} language="tsx" expandable />
+      </DocsSection>
+
+      <DocsSection
+        title="React Server Components"
+        description="Components wearing the Server Component badge in the docs ship without a use client directive — they render entirely inside React Server Components and add zero client JavaScript of their own."
+      >
+        <p className="text-sm leading-6 text-fg-secondary">
+          In server files, prefer per-entry imports such as{" "}
+          <InlineCode>@cooud-ui/ui/timeline</InlineCode> so only the rendered module is loaded.
+          Interactive components are already marked <InlineCode>&quot;use client&quot;</InlineCode>{" "}
+          internally, so you can nest them inside server markup freely — they hydrate as client
+          islands while the rest of the page stays server-rendered.
+        </p>
+        <div className="mt-4">
+          <CodeBlock code={rscUsage} language="tsx" expandable />
+        </div>
+        <p className="mt-4 text-sm leading-6 text-fg-secondary">
+          If you keep the barrel import (<InlineCode>@cooud-ui/ui</InlineCode>), add the package to
+          Next.js <InlineCode>optimizePackageImports</InlineCode> so server bundles stay
+          tree-shaken:
+        </p>
+        <div className="mt-4">
+          <CodeBlock code={rscNextConfig} language="ts" />
+        </div>
       </DocsSection>
 
       <DocCallout title="Accessibility handoff" tone="success">

@@ -43,7 +43,12 @@ export default function RadialChartDemo() {
     >
       <div aria-hidden="true" className="h-full w-full">
         <ChartContainer config={chartConfig} className="h-full w-full">
-          <RadialBarChart data={chartData} innerRadius={32} outerRadius={110}>
+          <RadialBarChart
+            accessibilityLayer={false}
+            data={chartData}
+            innerRadius={32}
+            outerRadius={110}
+          >
             <ChartTooltip content={<ChartTooltipContent hideLabel nameKey="device" />} />
             <PolarGrid gridType="circle" radialLines={false} stroke="none" />
             <RadialBar dataKey="visitors" background cornerRadius={8} />

@@ -50,14 +50,14 @@
   },
   "dependencies": {
     "@cooud-ui/ai-kit": "workspace:*",
-    "commander": "^12.1.0",
+    "commander": "^15.0.0",
     "picocolors": "^1.1.1"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",
-    "typescript": "^5.9.3"
+    "typescript": "^6.0.3"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=22.12.0"
   }
 }

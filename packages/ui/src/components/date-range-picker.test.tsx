@@ -8,6 +8,12 @@ import { type DateRange, DateRangePicker } from "./date-range-picker.js";
 
 const JUNE_2026 = new Date(2026, 5, 1);
 
+/** react-day-picker v9+ nests the interactive day button inside the gridcell. */
+function dayButton(grid: HTMLElement, name: string): HTMLElement {
+  const cell = within(grid).getAllByRole("gridcell", { name })[0] as HTMLElement;
+  return within(cell).getByRole("button");
+}
+
 describe("DateRangePicker", () => {
   it("renders a trigger showing the placeholder when empty", () => {
     render(<DateRangePicker placeholder="Pick a range" aria-label="Report period" />);
@@ -91,7 +97,7 @@ describe("DateRangePicker", () => {
     );
     await userEvent.click(screen.getByRole("button", { name: "Report period" }));
     const grid = await screen.findByRole("grid");
-    await userEvent.click(within(grid).getAllByRole("gridcell", { name: "10" })[0]);
+    await userEvent.click(dayButton(grid, "10"));
     expect(onValueChange).toHaveBeenCalled();
   });
 

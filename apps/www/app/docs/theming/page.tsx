@@ -191,6 +191,38 @@ export default function ThemingPage() {
           ))}
         </DocsGrid>
       </DocsSection>
+
+      <DocsSection
+        title="Design tool handoff"
+        description="The token source also compiles to design-tool formats — generated and drift-checked alongside tokens.json, and shipped with @cooud-ui/tokens."
+      >
+        <DocsGrid columns={2}>
+          <DocsCard
+            title="W3C DTCG tokens"
+            description="Every theme and mode in the Design Tokens Community Group format, grouped cooud.{theme}.{mode}.{token}, for pipelines like Style Dictionary or Tokens Studio. Colors stay as the source oklch() strings; shadows are structured shadow objects; font stacks are family arrays."
+            badge="tokens.dtcg.json"
+          >
+            <p className="text-xs text-fg-tertiary">
+              <InlineCode>@cooud-ui/tokens/tokens.dtcg.json</InlineCode>
+            </p>
+          </DocsCard>
+          <DocsCard
+            title="Figma Variables"
+            description="One Cooud UI collection with ten {theme}-{mode} modes for Figma Variables plugins or the REST API. Colors are converted to sRGB hex (gamut-clamped, self-checked at build time); radius is a px FLOAT; fonts and shadows are STRING values."
+            badge="figma-variables.json"
+          >
+            <p className="text-xs text-fg-tertiary">
+              <InlineCode>@cooud-ui/tokens/figma-variables.json</InlineCode>
+            </p>
+          </DocsCard>
+        </DocsGrid>
+        <p className="mt-4 text-sm leading-6 text-fg-secondary">
+          Gradients are intentionally not in either file — the{" "}
+          <InlineCode>bg-gradient-*</InlineCode> utilities derive from{" "}
+          <InlineCode>primary</InlineCode>/<InlineCode>accent</InlineCode> at runtime, so they
+          re-theme on their own.
+        </p>
+      </DocsSection>
     </div>
   );
 }

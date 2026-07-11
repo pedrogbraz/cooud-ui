@@ -10,6 +10,8 @@
     },
     "./styles.css": "./styles/tokens.css",
     "./tokens.json": "./styles/tokens.json",
+    "./tokens.dtcg.json": "./styles/tokens.dtcg.json",
+    "./figma-variables.json": "./styles/figma-variables.json",
     "./preset": {
       "types": "./preset/index.d.ts",
       "import": "./preset/index.js"
@@ -59,6 +61,6 @@
     "prepublishOnly": "bun run scripts/build-tokens.ts --check && tsc -p tsconfig.json"
   },
   "devDependencies": {
-    "typescript": "^5.9.3"
+    "typescript": "^6.0.3"
   }
 }

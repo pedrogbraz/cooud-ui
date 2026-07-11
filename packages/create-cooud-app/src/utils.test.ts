@@ -60,6 +60,13 @@ describe("parseCli", () => {
     });
   });
 
+  it("parses --template and leaves it undefined (prompt later) when omitted", () => {
+    expect(parseCli(["my-app"]).template).toBeUndefined();
+    expect(parseCli(["my-app", "--template", "dashboard"]).template).toBe("dashboard");
+    expect(parseCli(["my-app", "--template", "marketing"]).template).toBe("marketing");
+    expect(parseCli(["my-app", "--template", "default"]).template).toBe("default");
+  });
+
   it("defaults the AI Kit fields (ai undecided, all assistants/skills, standard preset)", () => {
     const parsed = parseCli(["my-app"]);
     expect(parsed.ai).toBeUndefined();
@@ -96,6 +103,10 @@ describe("parseCli", () => {
 
   it("throws on an unknown --theme", () => {
     expect(() => parseCli(["my-app", "--theme", "galaxy"])).toThrow(/Unknown --theme/);
+  });
+
+  it("throws on an unknown --template", () => {
+    expect(() => parseCli(["my-app", "--template", "blog"])).toThrow(/Unknown --template/);
   });
 
   it("throws on an unknown --mode", () => {

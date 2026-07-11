@@ -11,6 +11,22 @@ import { FrameworkGrid } from "../../../components/docs/framework-grid";
 import { PackageManagerTabs } from "../../../components/docs/package-manager-tabs";
 import { INSTALL_OPTIONS } from "../../../lib/docs";
 
+/**
+ * Heavy, component-specific libraries that ship as OPTIONAL peer dependencies
+ * of the @cooud-ui/ui npm package — installed only by consumers who import the
+ * matching component. CLI installs are unaffected (add installs per-item deps).
+ */
+const OPTIONAL_PEERS = [
+  { components: "Chart", install: "npm i recharts" },
+  { components: "RichTextEditor", install: "npm i @tiptap/react @tiptap/pm @tiptap/starter-kit" },
+  { components: "Kanban", install: "npm i @dnd-kit/core @dnd-kit/sortable @dnd-kit/utilities" },
+  { components: "DataTable", install: "npm i @tanstack/react-table" },
+  { components: "Calendar", install: "npm i react-day-picker" },
+  { components: "DatePicker, DateRangePicker", install: "npm i react-day-picker date-fns" },
+  { components: "Scheduler", install: "npm i date-fns" },
+  { components: "Form", install: "npm i react-hook-form zod @hookform/resolvers" },
+] as const;
+
 export default function InstallationPage() {
   return (
     <div className="py-10">
@@ -66,6 +82,32 @@ export default function InstallationPage() {
         description="After init, copy components from the registry into your app. Imports are rewritten to your local aliases."
       >
         <PackageManagerTabs command="add" description="Copy components into your app" />
+      </DocsSection>
+
+      <DocsSection
+        title="Optional peer dependencies (npm package)"
+        description="Using @cooud-ui/ui as a managed npm dependency instead of the CLI? A few heavy, component-specific libraries are optional peers and are not installed automatically — add them only when you import the component. CLI users skip this: add installs each item's dependencies."
+      >
+        <div className="overflow-x-auto rounded-xl border border-border">
+          <table className="w-full min-w-[32rem] border-collapse text-left text-sm">
+            <thead>
+              <tr className="border-b border-border bg-surface-inset/60 text-xs uppercase tracking-wider text-fg-tertiary">
+                <th className="px-4 py-2.5 font-medium">Component(s)</th>
+                <th className="px-4 py-2.5 font-medium">Install</th>
+              </tr>
+            </thead>
+            <tbody>
+              {OPTIONAL_PEERS.map((row) => (
+                <tr key={row.components} className="border-b border-border/60 last:border-b-0">
+                  <td className="px-4 py-3 text-fg-secondary">{row.components}</td>
+                  <td className="px-4 py-3">
+                    <InlineCode>{row.install}</InlineCode>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </DocsSection>
 
       <DocsSection

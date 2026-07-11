@@ -9,6 +9,12 @@ import { DatePicker } from "./date-picker.js";
 
 const JUNE_15 = new Date(2026, 5, 15);
 
+/** react-day-picker v9+ nests the interactive day button inside the gridcell. */
+function dayButton(grid: HTMLElement, name: string): HTMLElement {
+  const cell = within(grid).getAllByRole("gridcell", { name })[0] as HTMLElement;
+  return within(cell).getByRole("button");
+}
+
 function ControlledPicker({ onValueChange }: { onValueChange?: (d: Date | undefined) => void }) {
   const [value, setValue] = useState<Date | undefined>(undefined);
   return (
@@ -40,7 +46,7 @@ describe("DatePicker", () => {
 
     await user.click(screen.getByRole("button", { name: /pick a date/i }));
     const grid = await screen.findByRole("grid");
-    await user.click(within(grid).getAllByRole("gridcell", { name: "15" })[0]);
+    await user.click(dayButton(grid, "15"));
 
     // The popover CLOSES on selection.
     expect(screen.queryByRole("grid")).not.toBeInTheDocument();
@@ -65,7 +71,7 @@ describe("DatePicker", () => {
 
     await user.click(screen.getByRole("button", { name: /pick a date/i }));
     const grid = await screen.findByRole("grid");
-    await user.click(within(grid).getAllByRole("gridcell", { name: "15" })[0]);
+    await user.click(dayButton(grid, "15"));
 
     const picked = onValueChange.mock.calls[0]?.[0] as Date;
     expect(screen.getByRole("button", { name: format(picked, "PPP") })).toBeInTheDocument();
@@ -79,7 +85,7 @@ describe("DatePicker", () => {
     render(<DatePicker defaultOpen onChange={onChange} onValueChange={onValueChange} />);
 
     const grid = await screen.findByRole("grid");
-    await user.click(within(grid).getAllByRole("gridcell", { name: "15" })[0]);
+    await user.click(dayButton(grid, "15"));
 
     expect(onValueChange).toHaveBeenCalledTimes(1);
     expect(onChange).toHaveBeenCalledTimes(1);
@@ -125,7 +131,7 @@ describe("DatePicker", () => {
     const grid = await screen.findByRole("grid");
 
     // Selecting a day requests close through the same controlled channel.
-    await user.click(within(grid).getAllByRole("gridcell", { name: "15" })[0]);
+    await user.click(dayButton(grid, "15"));
     expect(onOpenChange).toHaveBeenCalledWith(false);
     expect(screen.queryByRole("grid")).not.toBeInTheDocument();
   });
@@ -196,9 +202,9 @@ describe("DatePicker", () => {
       />,
     );
     const grid = await screen.findByRole("grid");
-    expect(within(grid).getAllByRole("gridcell", { name: "5" })[0]).toBeDisabled();
-    expect(within(grid).getAllByRole("gridcell", { name: "25" })[0]).toBeDisabled();
-    expect(within(grid).getAllByRole("gridcell", { name: "15" })[0]).toBeEnabled();
+    expect(dayButton(grid, "5")).toBeDisabled();
+    expect(dayButton(grid, "25")).toBeDisabled();
+    expect(dayButton(grid, "15")).toBeEnabled();
   });
 
   it("has no axe violations while open", async () => {

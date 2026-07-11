@@ -3,8 +3,10 @@
 The Cooud design tokens — the single source of truth for color, typography,
 elevation, and shape across the Cooud UI system.
 
-Tokens are authored once in TypeScript and compiled to two consumable artifacts:
-a **CSS variable bridge** for Tailwind v4 and a **preset** for Tailwind v3. Every
+Tokens are authored once in TypeScript and compiled to consumable artifacts: a
+**CSS variable bridge** for Tailwind v4, a **preset** for Tailwind v3, and
+machine-readable token JSON — including [design-tool formats](#design-tool-handoff)
+(W3C DTCG + Figma Variables). Every
 `@cooud-ui/ui` component renders against these tokens through semantic utilities
 (`bg-primary`, `text-fg-secondary`, `rounded-lg`, `shadow-glow`), so a single
 token change re-themes the whole library — at build time or at runtime.
@@ -85,7 +87,8 @@ serializeOverrides({ radius: "20px" }, ":root");
 Exports: `themes`, `themeNames`, `modes`, `defaultTheme`, `defaultMode`,
 `cssVarMap`, `tokensToCssVars`, `serializeOverrides`, and the types `ThemeName`,
 `Mode`, `ThemeTokens`, `ThemeOverrides`. The raw token map is also published as
-`@cooud-ui/tokens/tokens.json`.
+`@cooud-ui/tokens/tokens.json`, alongside the two design-tool artifacts
+described below.
 
 ## The token system
 
@@ -96,12 +99,44 @@ Exports: `themes`, `themeNames`, `modes`, `defaultTheme`, `defaultMode`,
   five-color chart palette.
 - **Typography**, **shape** (`radius`), and **elevation** (`shadow-xs` →
   `shadow-glow`) are tokens too, so they move with the theme.
-- Two built-in themes — **Aurora** (the default; premium sky/cyan) and
-  **Neutral** — each with `light` and `dark` modes.
+- Five built-in themes — **Aurora** (the default; premium sky/cyan),
+  **Neutral**, and the brand presets **Midnight**, **Sunset**, and **Emerald** —
+  each with `light` and `dark` modes.
 
-The generated `styles/tokens.css` and `preset/` are checked in. After editing
-`src/tokens.ts`, regenerate them with `tokens:generate`; verify they are in sync
-with `tokens:check`.
+The generated artifacts (`styles/tokens.json`, `styles/tokens.dtcg.json`,
+`styles/figma-variables.json`, `preset/`) are checked in, and the hand-authored
+`styles/tokens.css` is drift-checked against the TS source. After editing
+`src/tokens.ts`, regenerate with `tokens:generate`; verify everything is in
+sync with `tokens:check`.
+
+## Design tool handoff
+
+Two generated artifacts bridge the tokens into design tools. Both are emitted
+by `tokens:generate` next to `tokens.json`, drift-checked by `tokens:check`,
+and shipped with the package:
+
+- **`@cooud-ui/tokens/tokens.dtcg.json`** — the tokens in the
+  [W3C Design Tokens (DTCG) format](https://design-tokens.github.io/community-group/format/),
+  for token pipelines such as Style Dictionary or Tokens Studio. Tokens are
+  grouped `cooud.{theme}.{mode}.{token}` (e.g. `cooud.aurora.dark.primary`).
+  Color `$value`s are the source-of-truth CSS color strings (mostly `oklch()`,
+  some with an alpha channel) kept verbatim rather than converted, so nothing
+  is lost — convert downstream if a tool needs hex. Shadows are structured
+  DTCG shadow objects, font stacks are family arrays, radius is a dimension.
+- **`@cooud-ui/tokens/figma-variables.json`** — a pragmatic import shape for
+  Figma Variables plugins and the Figma Variables REST API: one collection
+  (`Cooud UI`) with ten modes (`{theme}-{mode}`, e.g. `aurora-dark`) and one
+  variable per token, grouped by slash-prefix (`color/primary`, `font/sans`,
+  `shadow/glow`, `radius`). Colors are converted from `oklch()` to sRGB hex
+  (`#rrggbb`, or `#rrggbbaa` when the token carries alpha) and clamped to the
+  sRGB gamut; radius is a px number (`FLOAT`); font stacks and box-shadows are
+  raw CSS strings (`STRING`), since Figma variables have no font-stack or
+  shadow type. The oklch → sRGB conversion is self-checked against known color
+  pairs on every build.
+
+Gradients are intentionally absent from both files: the `bg-gradient-*`
+utilities in `styles.css` are derived from `primary`/`accent` at runtime, so
+they re-theme automatically and are not tokens.
 
 ## Related packages
 

@@ -5,7 +5,7 @@ import { aiAdd } from "./commands/ai.js";
 import { diff } from "./commands/diff.js";
 import { init } from "./commands/init.js";
 import { list } from "./commands/list.js";
-import { themeSet } from "./commands/theme.js";
+import { themeAdd, themeSet } from "./commands/theme.js";
 import { upgrade } from "./commands/upgrade.js";
 import { CLI_VERSION } from "./config.js";
 
@@ -115,6 +115,18 @@ theme
   .option("-m, --mode <mode>", "color mode (dark or light)")
   .option("-c, --cwd <dir>", "working directory", process.cwd())
   .action((name, opts) => themeSet({ name, mode: opts.mode, cwd: opts.cwd }));
+theme
+  .command("add")
+  .description(
+    "Apply a theme built in the Create Studio (permalink URL, bare c= payload, or exported theme JSON file).",
+  )
+  .argument("<source>", "Create Studio permalink, c= payload, or path to a theme JSON export")
+  .option("-c, --cwd <dir>", "working directory", process.cwd())
+  .option("--css <file>", "globals CSS file for the overrides block (default: auto-detect)")
+  .option("--dry-run", "print what would be applied, write nothing")
+  .action((source, opts) =>
+    themeAdd({ source, cwd: opts.cwd, css: opts.css, dryRun: opts.dryRun }),
+  );
 
 program
   .command("ai")

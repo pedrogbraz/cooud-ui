@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { useState } from "react";
-import { beforeAll, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { axe } from "vitest-axe";
 import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "./input-otp.js";
 
@@ -19,6 +19,15 @@ beforeAll(() => {
   if (!document.elementFromPoint) {
     document.elementFromPoint = () => null;
   }
+});
+
+// input-otp's internal selection-sync scheduler queues setTimeout(0/10/50ms)
+// callbacks that call setState and are never cleared on unmount. Drain them
+// while this file's jsdom environment is still alive, otherwise under load a
+// straggler fires after teardown and crashes the run with an unhandled
+// "window is not defined" from react-dom.
+afterEach(async () => {
+  await new Promise((resolve) => setTimeout(resolve, 60));
 });
 
 function Otp(props: Partial<React.ComponentProps<typeof InputOTP>>) {
