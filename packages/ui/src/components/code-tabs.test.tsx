@@ -82,7 +82,8 @@ describe("CodeTabs", () => {
       { label: "usage", code: 'import { z } from "zod";', language: "ts" },
     ];
     render(<CodeTabs items={mixed} />);
-    expect(screen.getByText("bash")).toBeInTheDocument();
+    // Info-bearing label uses AA-safe `fg-tertiary`, not the decorative `fg-muted`.
+    expect(screen.getByText("bash")).toHaveClass("text-fg-tertiary");
     await userEvent.click(screen.getByRole("tab", { name: "usage" }));
     expect(screen.getByText("ts")).toBeInTheDocument();
     expect(screen.queryByText("bash")).not.toBeInTheDocument();

@@ -49,6 +49,11 @@ Colors (use as `bg-*`, `text-*`, `border-*`, `ring-*`):
   `surface-elevated`, `surface-floating`
 - `fg`, `fg-secondary`, `fg-tertiary`, `fg-muted`, `fg-inverse`
   (text color = `text-fg`, `text-fg-secondary`, ...)
+  - **`fg-muted` is for decorative / non-essential text only** — it does NOT
+    meet WCAG AA (4.5:1) as small body text on every surface. Any
+    information-bearing but de-emphasized text (labels, values, counts, hints
+    the user must read) MUST use `fg-tertiary` or stronger. Reserve `fg-muted`
+    for purely ornamental text (redundant annotations, watermark-style hints).
 - `border`, `border-strong`, `border-soft`, `ring`
 - `success`, `warning`, `error`, `info`
 

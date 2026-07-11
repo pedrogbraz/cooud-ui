@@ -131,10 +131,16 @@ function stringifyValue(value: unknown): string {
   return json ?? String(value);
 }
 
-/** Map a primitive to its display text + semantic color token. */
+/**
+ * Map a primitive to its display text + semantic color token.
+ *
+ * De-emphasized values (`null`, `undefined`, functions/symbols) use
+ * `fg-tertiary`, not `fg-muted`: they are meaningful data, and `fg-muted` fails
+ * AA contrast on the inset surface (see CONTRACT.md).
+ */
 function formatPrimitive(value: unknown): { text: string; className: string } {
-  if (value === null) return { text: "null", className: "text-fg-muted" };
-  if (value === undefined) return { text: "undefined", className: "text-fg-muted" };
+  if (value === null) return { text: "null", className: "text-fg-tertiary" };
+  if (value === undefined) return { text: "undefined", className: "text-fg-tertiary" };
   switch (typeof value) {
     case "string":
       // JSON.stringify supplies the quotes and escapes embedded ones.
@@ -146,10 +152,10 @@ function formatPrimitive(value: unknown): { text: string; className: string } {
     case "boolean":
       return { text: String(value), className: "text-warning" };
     default:
-      // Functions and symbols are not JSON; render a compact muted token.
+      // Functions and symbols are not JSON; render a compact de-emphasized token.
       return {
         text: typeof value === "function" ? "ƒ ()" : String(value),
-        className: "text-fg-muted italic",
+        className: "text-fg-tertiary italic",
       };
   }
 }
@@ -161,7 +167,7 @@ function formatPrimitive(value: unknown): { text: string; className: string } {
 function formatLeaf(value: unknown): { text: string; className: string; hint?: string } {
   if (value instanceof Date) {
     return Number.isNaN(value.getTime())
-      ? { text: "Invalid Date", className: "text-fg-muted italic", hint: "Date" }
+      ? { text: "Invalid Date", className: "text-fg-tertiary italic", hint: "Date" }
       : { text: value.toISOString(), className: "text-info", hint: "Date" };
   }
   if (value instanceof RegExp) {
@@ -328,7 +334,7 @@ function JsonCircularLeaf({ name, quotedName, isLast }: JsonNodeProps) {
   return (
     <JsonRow control={<ControlSpacer />} copyText="[Circular]" copyLabel={copyLabelFor(name)}>
       {name !== undefined && <KeyLabel name={name} quoted={quotedName} />}
-      <span data-slot="json-viewer-value" className="text-fg-muted italic">
+      <span data-slot="json-viewer-value" className="text-fg-tertiary italic">
         {"[Circular]"}
       </span>
       {!isLast && <Punct>,</Punct>}
@@ -437,7 +443,9 @@ function JsonBranch({
           <>
             <span
               data-slot="json-viewer-summary"
-              className="text-fg-muted tabular-nums"
+              // The child count is information-bearing, so it uses `fg-tertiary`
+              // (AA-safe on the inset surface) rather than the decorative `fg-muted`.
+              className="text-fg-tertiary tabular-nums"
             >{` … ${count} ${noun} `}</span>
             <Punct>{closeToken}</Punct>
             {!isLast && <Punct>,</Punct>}
@@ -499,7 +507,7 @@ export interface JsonViewerProps extends HTMLAttributes<HTMLDivElement> {
  * `<button>` (`aria-expanded`, focus ring) and a muted child-count summary
  * while collapsed; primitives are colored purely by semantic tokens (strings
  * `text-success`, numbers `text-info` + `tabular-nums`, booleans
- * `text-warning`, null/undefined `text-fg-muted`), keys use
+ * `text-warning`, null/undefined `text-fg-tertiary`), keys use
  * `text-fg-secondary` and punctuation `text-fg-tertiary`, with `border-border`
  * indent guides.
  *

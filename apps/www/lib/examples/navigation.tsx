@@ -239,9 +239,14 @@ function TableOfContentsDemo() {
         offset={12}
         className="w-44 shrink-0 self-start"
       />
-      <div
+      {/* A named <section> is a scrollable region; it must be keyboard-focusable
+          (axe scrollable-region-focusable) so users can scroll it with the arrow keys. */}
+      <section
         id="toc-demo-article"
-        className="h-64 flex-1 overflow-y-auto rounded-xl border border-border bg-surface-inset p-5"
+        aria-label="Article content"
+        // biome-ignore lint/a11y/noNoninteractiveTabindex: a scrollable region must be keyboard-focusable (WCAG / axe scrollable-region-focusable)
+        tabIndex={0}
+        className="h-64 flex-1 overflow-y-auto rounded-xl border border-border bg-surface-inset p-5 outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base"
       >
         {TOC_DEMO_SECTIONS.map((section) => (
           <section key={section.id} className="mb-6 last:mb-0 last:min-h-56">
@@ -253,7 +258,7 @@ function TableOfContentsDemo() {
             </p>
           </section>
         ))}
-      </div>
+      </section>
     </div>
   );
 }
@@ -927,8 +932,10 @@ export const navigationExamples: ExampleMap = {
     offset={12}
     className="w-44 shrink-0 self-start"
   />
-  <div
+  <section
     id="article"
+    aria-label="Article content"
+    tabIndex={0}
     className="h-64 flex-1 overflow-y-auto rounded-xl border border-border p-5"
   >
     {sections.map((section) => (
@@ -939,7 +946,7 @@ export const navigationExamples: ExampleMap = {
         <p className="mt-1.5 text-sm leading-relaxed text-fg-secondary">…</p>
       </section>
     ))}
-  </div>
+  </section>
 </div>`,
       preview: <TableOfContentsDemo />,
     },

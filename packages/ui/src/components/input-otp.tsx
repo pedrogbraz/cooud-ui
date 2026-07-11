@@ -11,23 +11,48 @@ import {
 } from "react";
 import { cn } from "../lib/cn.js";
 
+/**
+ * A segmented one-time-passcode field. The visible slots are decorative; a
+ * single hidden `<input autocomplete="one-time-code">` holds the real value and
+ * receives keyboard input.
+ *
+ * That input is the only labelable control, so it always needs an accessible
+ * name. Pass `aria-label` (or `aria-labelledby`) to describe the specific code
+ * being entered; when neither is provided it falls back to a generic
+ * `"One-time passcode"` so the field is never nameless.
+ */
 export const InputOTP = forwardRef<
   ComponentRef<typeof OTPInput>,
   ComponentPropsWithoutRef<typeof OTPInput>
->(({ className, containerClassName, ...props }, ref) => {
-  return (
-    <OTPInput
-      ref={ref}
-      data-slot="input-otp"
-      containerClassName={cn(
-        "flex items-center gap-2 has-[:disabled]:opacity-50",
-        containerClassName,
-      )}
-      className={cn("disabled:cursor-not-allowed", className)}
-      {...props}
-    />
-  );
-});
+>(
+  (
+    {
+      className,
+      containerClassName,
+      "aria-label": ariaLabel,
+      "aria-labelledby": ariaLabelledBy,
+      ...props
+    },
+    ref,
+  ) => {
+    return (
+      <OTPInput
+        ref={ref}
+        data-slot="input-otp"
+        // The input is the only labelable node, so guarantee a name: honor an
+        // explicit label, else fall back so axe never sees a nameless control.
+        aria-label={ariaLabelledBy ? undefined : (ariaLabel ?? "One-time passcode")}
+        aria-labelledby={ariaLabelledBy}
+        containerClassName={cn(
+          "flex items-center gap-2 has-[:disabled]:opacity-50",
+          containerClassName,
+        )}
+        className={cn("disabled:cursor-not-allowed", className)}
+        {...props}
+      />
+    );
+  },
+);
 InputOTP.displayName = "InputOTP";
 
 export const InputOTPGroup = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(

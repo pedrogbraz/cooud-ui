@@ -4,10 +4,19 @@ import * as ScrollAreaPrimitive from "@radix-ui/react-scroll-area";
 import { type ComponentPropsWithoutRef, type ComponentRef, forwardRef } from "react";
 import { cn } from "../lib/cn.js";
 
+export interface ScrollAreaProps extends ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.Root> {
+  /**
+   * Accessible name for the scrollable viewport. Supply this when the content
+   * warrants a distinct name (e.g. "Release notes"); the viewport is always
+   * keyboard-focusable so it can be scrolled with the arrow keys regardless.
+   */
+  "aria-label"?: string;
+}
+
 export const ScrollArea = forwardRef<
   ComponentRef<typeof ScrollAreaPrimitive.Root>,
-  ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.Root>
->(({ className, children, ...props }, ref) => {
+  ScrollAreaProps
+>(({ className, children, "aria-label": ariaLabel, ...props }, ref) => {
   return (
     <ScrollAreaPrimitive.Root
       ref={ref}
@@ -15,7 +24,19 @@ export const ScrollArea = forwardRef<
       className={cn("relative overflow-hidden", className)}
       {...props}
     >
-      <ScrollAreaPrimitive.Viewport className="size-full rounded-[inherit]">
+      {/*
+       * The viewport is the element that actually scrolls, so it must be
+       * keyboard-focusable (tabIndex={0}) for arrow-key scrolling — this clears
+       * axe's `scrollable-region-focusable`. Promote it to a named `region`
+       * landmark only when an aria-label is supplied, so we never leave an
+       * unnamed region behind.
+       */}
+      <ScrollAreaPrimitive.Viewport
+        role={ariaLabel ? "region" : undefined}
+        aria-label={ariaLabel}
+        tabIndex={0}
+        className="size-full rounded-[inherit] outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base"
+      >
         {children}
       </ScrollAreaPrimitive.Viewport>
       <ScrollBar />

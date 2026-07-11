@@ -15,7 +15,12 @@ const buttonVariants = cva(
         secondary: "bg-surface-overlay text-fg border border-border hover:border-border-strong",
         outline: "border border-border text-fg hover:bg-surface-overlay",
         ghost: "text-fg-secondary hover:bg-surface-overlay hover:text-fg",
-        destructive: "bg-error text-white hover:opacity-90 shadow-xs",
+        // `text-white` on the raw `error` token fails AA (≥4.5:1) in every dark
+        // theme (error is a light rose ~3.7:1). Darkening the surface toward
+        // black — the same technique the primary variant uses — lifts every
+        // theme/mode above 4.5:1 (min 6.63:1) while staying theme-relative.
+        destructive:
+          "bg-[color-mix(in_oklch,var(--cooud-error),black_30%)] text-white hover:opacity-90 shadow-xs",
         link: "text-primary underline-offset-4 hover:underline",
       },
       size: {

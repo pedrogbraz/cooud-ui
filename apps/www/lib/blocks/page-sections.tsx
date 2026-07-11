@@ -22,6 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
   Tabs,
+  TabsContent,
   TabsList,
   TabsTrigger,
   ToggleGroup,
@@ -203,6 +204,12 @@ export function PageHeaderTabsBlock() {
         </div>
       </div>
 
+      {/*
+       * Each TabsTrigger emits `aria-controls` pointing at its panel, so the
+       * matching TabsContent must exist in the DOM. `forceMount` keeps every
+       * panel mounted (Radix hides the inactive ones) — this clears axe's
+       * `aria-valid-attr-value` on the trigger.
+       */}
       <Tabs defaultValue="overview">
         <TabsList aria-label="Billing sections">
           <TabsTrigger value="overview">Overview</TabsTrigger>
@@ -210,6 +217,18 @@ export function PageHeaderTabsBlock() {
           <TabsTrigger value="invoices">Invoices</TabsTrigger>
           <TabsTrigger value="payment">Payment</TabsTrigger>
         </TabsList>
+        <TabsContent forceMount value="overview" className="text-sm text-fg-secondary">
+          Plan, seats, and renewal date at a glance.
+        </TabsContent>
+        <TabsContent forceMount value="usage" className="text-sm text-fg-secondary">
+          Metered usage for the current billing period.
+        </TabsContent>
+        <TabsContent forceMount value="invoices" className="text-sm text-fg-secondary">
+          Download past invoices and receipts.
+        </TabsContent>
+        <TabsContent forceMount value="payment" className="text-sm text-fg-secondary">
+          Manage cards and billing contacts.
+        </TabsContent>
       </Tabs>
     </header>
   );
@@ -225,6 +244,7 @@ const pageHeaderTabsCode = `import {
   BreadcrumbSeparator,
   Button,
   Tabs,
+  TabsContent,
   TabsList,
   TabsTrigger,
 } from "@cooud-ui/ui";
@@ -261,6 +281,7 @@ export function PageHeaderTabsBlock() {
         </div>
       </div>
 
+      {/* forceMount keeps every panel in the DOM so each trigger's aria-controls resolves. */}
       <Tabs defaultValue="overview">
         <TabsList aria-label="Billing sections">
           <TabsTrigger value="overview">Overview</TabsTrigger>
@@ -268,6 +289,18 @@ export function PageHeaderTabsBlock() {
           <TabsTrigger value="invoices">Invoices</TabsTrigger>
           <TabsTrigger value="payment">Payment</TabsTrigger>
         </TabsList>
+        <TabsContent forceMount value="overview" className="text-sm text-fg-secondary">
+          Plan, seats, and renewal date at a glance.
+        </TabsContent>
+        <TabsContent forceMount value="usage" className="text-sm text-fg-secondary">
+          Metered usage for the current billing period.
+        </TabsContent>
+        <TabsContent forceMount value="invoices" className="text-sm text-fg-secondary">
+          Download past invoices and receipts.
+        </TabsContent>
+        <TabsContent forceMount value="payment" className="text-sm text-fg-secondary">
+          Manage cards and billing contacts.
+        </TabsContent>
       </Tabs>
     </header>
   );

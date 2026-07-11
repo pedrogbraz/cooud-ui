@@ -4,6 +4,13 @@ import * as SliderPrimitive from "@radix-ui/react-slider";
 import { type ComponentPropsWithoutRef, type ComponentRef, forwardRef } from "react";
 import { cn } from "../lib/cn.js";
 
+/**
+ * A single- or multi-thumb range slider. Each focusable thumb is the actual
+ * `role="slider"` input, so pass `aria-label`/`aria-labelledby` describing what
+ * the slider controls (e.g. "Volume") to give every thumb an accessible name
+ * and satisfy `aria-input-field-name` (WCAG 4.1.2). Multi-thumb (range) sliders
+ * derive a unique per-thumb name by suffixing the label with its 1-based index.
+ */
 export const Slider = forwardRef<
   ComponentRef<typeof SliderPrimitive.Root>,
   ComponentPropsWithoutRef<typeof SliderPrimitive.Root>

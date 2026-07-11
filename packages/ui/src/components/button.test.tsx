@@ -28,6 +28,16 @@ describe("Button", () => {
     expect(onClick).not.toHaveBeenCalled();
   });
 
+  it("gives the destructive variant an AA-contrast foreground on the error surface", () => {
+    // `text-white` must sit on the darkened error mix (not the raw `bg-error`,
+    // which fails AA in the dark themes) — see button.tsx for the ratios.
+    render(<Button variant="destructive">Delete</Button>);
+    const button = screen.getByRole("button", { name: "Delete" });
+    expect(button).toHaveClass("text-white");
+    expect(button.className).toContain("color-mix(in_oklch,var(--cooud-error),black_30%)");
+    expect(button.className).not.toContain("bg-error");
+  });
+
   it("renders as the child element when asChild is set", () => {
     render(
       <Button asChild>

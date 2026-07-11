@@ -20,7 +20,8 @@ describe("JsonViewer", () => {
     expect(screen.getByText('"Ada"')).toHaveClass("text-success");
     expect(screen.getByText("36")).toHaveClass("text-info", "tabular-nums");
     expect(screen.getByText("true")).toHaveClass("text-warning");
-    expect(screen.getByText("null")).toHaveClass("text-fg-muted");
+    // null is meaningful data, so it uses AA-safe `fg-tertiary`, not `fg-muted`.
+    expect(screen.getByText("null")).toHaveClass("text-fg-tertiary");
     expect(screen.getByText('"name"')).toHaveClass("text-fg-secondary");
   });
 
@@ -204,7 +205,7 @@ describe("JsonViewer", () => {
     cyclic.self = cyclic;
     render(<JsonViewer data={cyclic} defaultExpandedDepth={Number.POSITIVE_INFINITY} />);
 
-    expect(screen.getByText("[Circular]")).toHaveClass("text-fg-muted");
+    expect(screen.getByText("[Circular]")).toHaveClass("text-fg-tertiary");
   });
 
   it("renders empty containers as a single leaf row without a chevron", () => {

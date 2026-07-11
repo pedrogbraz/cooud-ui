@@ -52,6 +52,21 @@ describe("InputOTP", () => {
     expect(screen.getByRole("textbox", { name: "One-time code" })).toBeInTheDocument();
   });
 
+  it("falls back to a default accessible name when no aria-label is given", () => {
+    render(
+      <InputOTP maxLength={4}>
+        <InputOTPGroup>
+          <InputOTPSlot index={0} />
+          <InputOTPSlot index={1} />
+          <InputOTPSlot index={2} />
+          <InputOTPSlot index={3} />
+        </InputOTPGroup>
+      </InputOTP>,
+    );
+    // The internal input is never nameless — axe `label` would fail otherwise.
+    expect(screen.getByRole("textbox", { name: "One-time passcode" })).toBeInTheDocument();
+  });
+
   it("fills the slots as the user types", async () => {
     render(<Otp />);
     const input = screen.getByRole("textbox", { name: "One-time code" });

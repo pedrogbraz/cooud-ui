@@ -479,7 +479,14 @@ function SliderDemo() {
         <Label>Volume</Label>
         <span className="font-mono text-fg">{volume[0]}%</span>
       </div>
-      <Slider value={volume} onValueChange={setVolume} min={0} max={100} step={1} />
+      <Slider
+        aria-label="Volume"
+        value={volume}
+        onValueChange={setVolume}
+        min={0}
+        max={100}
+        step={1}
+      />
     </div>
   );
 }
@@ -493,7 +500,14 @@ const sliderDemoCode = `function SliderDemo() {
         <Label>Volume</Label>
         <span className="font-mono text-fg">{volume[0]}%</span>
       </div>
-      <Slider value={volume} onValueChange={setVolume} min={0} max={100} step={1} />
+      <Slider
+        aria-label="Volume"
+        value={volume}
+        onValueChange={setVolume}
+        min={0}
+        max={100}
+        step={1}
+      />
     </div>
   );
 }`;
@@ -509,7 +523,14 @@ function SliderRangeDemo() {
           ${price[0]} – ${price[1]}
         </span>
       </div>
-      <Slider value={price} onValueChange={setPrice} min={0} max={100} step={5} />
+      <Slider
+        aria-label="Price range"
+        value={price}
+        onValueChange={setPrice}
+        min={0}
+        max={100}
+        step={5}
+      />
     </div>
   );
 }
@@ -525,7 +546,14 @@ const sliderRangeDemoCode = `function SliderRangeDemo() {
           \${price[0]} – \${price[1]}
         </span>
       </div>
-      <Slider value={price} onValueChange={setPrice} min={0} max={100} step={5} />
+      <Slider
+        aria-label="Price range"
+        value={price}
+        onValueChange={setPrice}
+        min={0}
+        max={100}
+        step={5}
+      />
     </div>
   );
 }`;
@@ -577,7 +605,7 @@ function InputOTPDemo() {
 
   return (
     <div className="flex flex-col gap-4">
-      <InputOTP maxLength={6} value={otp} onChange={setOtp}>
+      <InputOTP maxLength={6} value={otp} onChange={setOtp} aria-label="6-digit verification code">
         <InputOTPGroup>
           <InputOTPSlot index={0} />
           <InputOTPSlot index={1} />
@@ -607,7 +635,7 @@ const inputOTPDemoCode = `function InputOTPDemo() {
 
   return (
     <div className="flex flex-col gap-4">
-      <InputOTP maxLength={6} value={otp} onChange={setOtp}>
+      <InputOTP maxLength={6} value={otp} onChange={setOtp} aria-label="6-digit verification code">
         <InputOTPGroup>
           <InputOTPSlot index={0} />
           <InputOTPSlot index={1} />
@@ -638,7 +666,11 @@ function FileDropzoneDemo() {
 
   return (
     <div className="flex flex-col gap-4">
-      <FileDropzone multiple onFiles={(picked) => setFiles(picked.map((file) => file.name))} />
+      <FileDropzone
+        multiple
+        aria-label="Upload attachments"
+        onFiles={(picked) => setFiles(picked.map((file) => file.name))}
+      />
       {files.length > 0 ? (
         <ul className="flex flex-col gap-2">
           {files.map((name) => (
@@ -663,7 +695,11 @@ const fileDropzoneDemoCode = `function FileDropzoneDemo() {
 
   return (
     <div className="flex flex-col gap-4">
-      <FileDropzone multiple onFiles={(picked) => setFiles(picked.map((file) => file.name))} />
+      <FileDropzone
+        multiple
+        aria-label="Upload attachments"
+        onFiles={(picked) => setFiles(picked.map((file) => file.name))}
+      />
       {files.length > 0 ? (
         <ul className="flex flex-col gap-2">
           {files.map((name) => (
