@@ -75,6 +75,8 @@ jobs:
         run: bunx playwright install --with-deps chromium
       - name: Accessibility scan (axe)
         run: bun run test:a11y
+      - name: Per-theme contrast
+        run: bun run test:contrast
       - name: Behavioral flows
         run: bun run test:e2e
 
