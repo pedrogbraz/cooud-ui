@@ -1,0 +1,16 @@
+{
+  "name": "logo-cloud",
+  "type": "registry:block",
+  "dependencies": [
+    "@cooud-ui/ui@0.2.0",
+    "lucide-react@^0.577.0"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "logo-cloud.tsx",
+      "content": "import {\n  Aperture,\n  Box,\n  Command,\n  Feather,\n  Globe,\n  Hexagon,\n  Layers,\n  Triangle,\n  Waves,\n  Zap,\n} from \"lucide-react\";\n\nconst cloudLogos = [\n  { name: \"Northwind\", icon: Hexagon },\n  { name: \"Vertex\", icon: Triangle },\n  { name: \"Lumina\", icon: Zap },\n  { name: \"Fathom\", icon: Waves },\n  { name: \"Polaris\", icon: Globe },\n  { name: \"Halcyon\", icon: Feather },\n  { name: \"Driftline\", icon: Layers },\n  { name: \"Basalt\", icon: Box },\n  { name: \"Cascade\", icon: Aperture },\n  { name: \"Emberly\", icon: Command },\n] as const;\n\nexport function LogoCloudGridBlock() {\n  return (\n    <section\n      aria-label=\"Customers\"\n      className=\"mx-auto flex w-full max-w-5xl flex-col items-center gap-8 py-8\"\n    >\n      <p className=\"text-sm font-medium uppercase tracking-widest text-fg-tertiary\">\n        Trusted by 4,000+ product teams\n      </p>\n      <ul className=\"grid w-full grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-3 lg:grid-cols-5\">\n        {cloudLogos.map((logo) => (\n          <li\n            key={logo.name}\n            className=\"flex items-center justify-center gap-2 text-fg-tertiary transition-colors hover:text-fg-secondary\"\n          >\n            <logo.icon className=\"size-5\" aria-hidden=\"true\" />\n            <span className=\"font-display text-lg font-semibold tracking-tight\">{logo.name}</span>\n          </li>\n        ))}\n      </ul>\n      <p className=\"text-sm text-fg-secondary\">\n        From seed-stage startups to public companies in 60 countries.\n      </p>\n    </section>\n  );\n}",
+      "target": "block"
+    }
+  ]
+}

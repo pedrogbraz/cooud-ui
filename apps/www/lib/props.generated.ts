@@ -1551,6 +1551,89 @@ export const COMPONENT_PROPS: Record<string, PropsDoc[]> = {
       ],
     },
   ],
+  chip: [
+    {
+      interfaceName: "ChipProps",
+      extends:
+        'Extends Omit<HTMLAttributes<HTMLElement>, "color">, Omit<VariantProps<typeof chipVariants>, "interactive" | "selected">',
+      props: [
+        {
+          name: "variant",
+          type: '"solid" | "soft" | "outline"',
+          required: false,
+          description: "Visual treatment: `solid` fill, `soft` 15% tint, or `outline`.",
+          default: '"soft"',
+        },
+        {
+          name: "color",
+          type: '"neutral" | "primary" | "success" | "warning" | "error" | "info"',
+          required: false,
+          description: "Semantic hue applied by the variant recipe.",
+          default: '"neutral"',
+        },
+        {
+          name: "size",
+          type: '"sm" | "md" | "lg"',
+          required: false,
+          description: "Pill height / typography preset.",
+          default: '"md"',
+        },
+        {
+          name: "selected",
+          type: "boolean",
+          required: false,
+          description:
+            "Toggle state for filter-style chips. Any non-`undefined` value renders the chip as a `<button>` with `aria-pressed`; while `true` it also gains a leading check mark and emphasized styling.",
+          default: "undefined",
+        },
+        {
+          name: "icon",
+          type: "ReactNode",
+          required: false,
+          description: "Leading icon slot rendered before the label (e.g. a lucide icon).",
+        },
+        {
+          name: "avatar",
+          type: "ReactNode",
+          required: false,
+          description:
+            "Leading avatar slot (an `img`, `Avatar`, …) clipped to a circle and sized by `size`.",
+        },
+        {
+          name: "onRemove",
+          type: "() => void",
+          required: false,
+          description:
+            "Makes the chip dismissible. On a static chip this renders a real, focusable remove button (Enter/Space activate it); on an interactive chip the affordance is decorative and Delete or Backspace on the focused chip removes it instead. Removal never triggers `onClick`, and removal clicks never propagate to ancestor click handlers.",
+        },
+        {
+          name: "disabled",
+          type: "boolean",
+          required: false,
+          description: "Disables the chip and its remove affordance.",
+          default: "false",
+        },
+        {
+          name: "labels",
+          type: "Partial<ChipLabels>",
+          required: false,
+          description: "Override any subset of the built-in screen-reader strings. See .",
+        },
+      ],
+    },
+    {
+      interfaceName: "ChipGroupProps",
+      extends: "Extends HTMLAttributes<HTMLDivElement>",
+      props: [
+        {
+          name: "aria-label",
+          type: "string",
+          required: false,
+          description: "Accessible name announcing what the chip collection represents.",
+        },
+      ],
+    },
+  ],
   "avatar-group": [
     {
       interfaceName: "AvatarGroupProps",
@@ -2307,6 +2390,271 @@ export const COMPONENT_PROPS: Record<string, PropsDoc[]> = {
           description:
             "How many levels start expanded — a mount-time default, not a controlled value. Expansion state is uncontrolled per branch and seeded once when a branch first mounts, so later changes to this prop leave already-mounted branches untouched. The root value is depth 0, so the default of 1 shows the root's entries with every nested branch collapsed. Pass `Number.POSITIVE_INFINITY` to expand everything.",
           default: "1",
+        },
+      ],
+    },
+  ],
+  "status-dot": [
+    {
+      interfaceName: "StatusDotProps",
+      extends:
+        'Extends Omit<HTMLAttributes<HTMLSpanElement>, "children">, VariantProps<typeof statusDotVariants>',
+      props: [
+        {
+          name: "status",
+          type: "StatusDotStatus",
+          required: false,
+          description:
+            "Presence / semantic state the dot communicates. Drives the fill color and the default accessible name.",
+          default: '"online"',
+        },
+        {
+          name: "size",
+          type: "StatusDotSize",
+          required: false,
+          description: "Dot size preset.",
+          default: '"md"',
+        },
+        {
+          name: "ring",
+          type: "boolean",
+          required: false,
+          description:
+            "Draws a surface-colored ring around the dot so it cuts out cleanly when overlaid on an avatar or icon.",
+          default: "false",
+        },
+        {
+          name: "label",
+          type: "string",
+          required: false,
+          description:
+            "Status text. Rendered next to the dot when `withLabel` is set; otherwise rendered as visually-hidden live-region content so screen readers announce both the initial status and later `status` changes.",
+          default: 'The English name of `status` (e.g. `"Online"`).',
+        },
+        {
+          name: "withLabel",
+          type: "boolean",
+          required: false,
+          description:
+            "Renders `label` visibly next to the dot (in `text-fg-secondary`) instead of exposing it only to assistive technology.",
+          default: "false",
+        },
+        {
+          name: "pulse",
+          type: "boolean",
+          required: false,
+          description:
+            'Animates an expanding "ping" halo behind the dot to draw attention. The halo reuses the dot\'s fill; the hollow `offline` dot gets a matching outline halo instead (its fill is transparent). The animation only runs for users who have not requested reduced motion.',
+          default: "false",
+        },
+        {
+          name: "position",
+          type: "StatusDotPosition",
+          required: false,
+          description:
+            'Absolute corner anchor for overlaying the dot on an avatar or icon — place the component inside a `relative` wrapper. The "right" corners map to the inline end, so they mirror under RTL.',
+          default: '"none"',
+        },
+      ],
+    },
+  ],
+  "image-zoom": [
+    {
+      interfaceName: "ImageZoomProps",
+      extends:
+        "Extends ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof imageZoomVariants>",
+      props: [
+        {
+          name: "src",
+          type: "string",
+          required: false,
+          description: "Image URL for the built-in `<img>`. Ignored when `children` is passed.",
+        },
+        {
+          name: "alt",
+          type: "string",
+          required: false,
+          description:
+            "Describes the image for assistive tech. The root is a button whose `aria-label` overrides the inner image's alt, so the description is composed into the toggle's accessible name (`\"{labels.zoom}: {alt}\"`) in addition to serving as the built-in `<img>` alt.",
+          default: '""',
+        },
+        {
+          name: "zoom",
+          type: "number",
+          required: false,
+          description: "Magnification applied while zoomed. Values below `1` clamp to `1`.",
+          default: "2",
+        },
+        {
+          name: "disabled",
+          type: "boolean",
+          required: false,
+          description: "Disables all zoom interaction.",
+          default: "false",
+        },
+        {
+          name: "showIndicator",
+          type: "boolean",
+          required: false,
+          description: "Renders the zoom-in indicator overlay, which fades out while zoomed.",
+          default: "true",
+        },
+        {
+          name: "labels",
+          type: "Partial<ImageZoomLabels>",
+          required: false,
+          description: "Assistive strings, merged over the English defaults.",
+        },
+        {
+          name: "zoomed",
+          type: "boolean",
+          required: false,
+          description: "Controlled zoom state. Pair with `onZoomChange`.",
+        },
+        {
+          name: "defaultZoomed",
+          type: "boolean",
+          required: false,
+          description: "Initial zoom state for uncontrolled usage.",
+          default: "false",
+        },
+        {
+          name: "onZoomChange",
+          type: "(zoomed: boolean) => void",
+          required: false,
+          description: "Called with the next state whenever zoom toggles on or off.",
+        },
+        {
+          name: "children",
+          type: "ReactNode",
+          required: false,
+          description: "Custom image markup to zoom instead of the built-in `src` image.",
+        },
+      ],
+    },
+  ],
+  "video-player": [
+    {
+      interfaceName: "VideoPlayerProps",
+      extends: "Extends HTMLAttributes<HTMLDivElement>, VariantProps<typeof videoPlayerVariants>",
+      props: [
+        {
+          name: "src",
+          type: "string",
+          required: true,
+          description: "Video source URL.",
+        },
+        {
+          name: "poster",
+          type: "string",
+          required: false,
+          description: "Preview image shown before the first frame is available.",
+        },
+        {
+          name: "autoPlay",
+          type: "boolean",
+          required: false,
+          description: "Starts playback automatically once the media can play.",
+          default: "false",
+        },
+        {
+          name: "loop",
+          type: "boolean",
+          required: false,
+          description: "Restarts playback from the beginning when the video ends.",
+          default: "false",
+        },
+        {
+          name: "muted",
+          type: "boolean",
+          required: false,
+          description: "Starts with the audio muted.",
+          default: "false",
+        },
+        {
+          name: "aspect",
+          type: '"video" | "square" | "wide"',
+          required: false,
+          description: 'Frame aspect ratio: 16:9 (`"video"`), 1:1 (`"square"`) or 21:9 (`"wide"`).',
+          default: '"video"',
+        },
+        {
+          name: "labels",
+          type: "Partial<VideoPlayerLabels>",
+          required: false,
+          description: "Control-label overrides for i18n. Every label defaults to English.",
+        },
+        {
+          name: "videoRef",
+          type: "Ref<HTMLVideoElement>",
+          required: false,
+          description: "Ref to the underlying `<video>` element, for imperative control.",
+        },
+        {
+          name: "children",
+          type: "ReactNode",
+          required: false,
+          description:
+            "Extra media children, e.g. a captions `<track>` or additional `<source>` elements.",
+        },
+      ],
+    },
+  ],
+  "description-list": [
+    {
+      interfaceName: "DescriptionListProps",
+      extends:
+        "Extends HTMLAttributes<HTMLDListElement>, VariantProps<typeof descriptionListVariants>",
+      props: [
+        {
+          name: "layout",
+          type: '"stacked" | "horizontal" | "grid"',
+          required: false,
+          description:
+            "How term/details pairs are arranged. `stacked` places each term above its details; `horizontal` aligns them into classic two-column rows with a divider between rows; `grid` spreads grouped pairs across a responsive 1 → 2 → 3 column set of card tiles.",
+          default: '"stacked"',
+        },
+        {
+          name: "size",
+          type: '"sm" | "md"',
+          required: false,
+          description: "Density preset controlling the type scale and spacing.",
+          default: '"md"',
+        },
+        {
+          name: "striped",
+          type: "boolean",
+          required: false,
+          description:
+            "Tints alternate rows for scannability. The zebra counts only div-wrapped rows — wrap each pair in a row (or a plain `<div>`); raw `<dt>`/`<dd>` pairs are never counted or tinted.",
+          default: "false",
+        },
+        {
+          name: "bordered",
+          type: "boolean",
+          required: false,
+          description: "Wraps the list in a rounded outer border and insets the content.",
+          default: "false",
+        },
+        {
+          name: "detailsAlign",
+          type: '"start" | "end"',
+          required: false,
+          description:
+            "Alignment of the details column. Logical (`text-start`/`text-end`), so `end` stays correct in RTL.",
+          default: '"start"',
+        },
+      ],
+    },
+    {
+      interfaceName: "DescriptionItemProps",
+      extends: "Extends HTMLAttributes<HTMLDivElement>",
+      props: [
+        {
+          name: "term",
+          type: "ReactNode",
+          required: true,
+          description: "The label rendered in the pair's .",
         },
       ],
     },

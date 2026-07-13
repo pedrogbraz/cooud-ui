@@ -107,6 +107,27 @@ const BLOCK_MANIFEST: ReadonlyArray<{ slug: string; file: string; constName: str
   { slug: "integrations", file: "integrations.tsx", constName: "integrationsCode" },
   { slug: "waitlist", file: "waitlist.tsx", constName: "waitlistCode" },
   { slug: "feature-matrix", file: "feature-matrix.tsx", constName: "featureMatrixCode" },
+  { slug: "product-detail", file: "store.tsx", constName: "productDetailCode" },
+  { slug: "cart", file: "store.tsx", constName: "cartPageCode" },
+  { slug: "order-tracking", file: "store.tsx", constName: "orderTrackingCode" },
+  { slug: "order-history", file: "store.tsx", constName: "orderHistoryTableCode" },
+  { slug: "reviews", file: "store.tsx", constName: "reviewsSummaryCode" },
+  { slug: "account-security", file: "account.tsx", constName: "accountSecurityTwoFactorCode" },
+  { slug: "sessions", file: "account.tsx", constName: "sessionsListCode" },
+  { slug: "api-keys", file: "account.tsx", constName: "apiKeysListCode" },
+  {
+    slug: "notification-preferences",
+    file: "account.tsx",
+    constName: "notificationPreferencesMatrixCode",
+  },
+  { slug: "user-management", file: "admin.tsx", constName: "userManagementTableCode" },
+  { slug: "analytics", file: "admin.tsx", constName: "analyticsOverviewCode" },
+  { slug: "kanban-board", file: "admin.tsx", constName: "kanbanBoardCode" },
+  { slug: "audit-log", file: "admin.tsx", constName: "auditLogTimelineCode" },
+  { slug: "blog", file: "content.tsx", constName: "blogGridCode" },
+  { slug: "blog-post", file: "content.tsx", constName: "blogPostArticleCode" },
+  { slug: "logo-cloud", file: "content.tsx", constName: "logoCloudGridCode" },
+  { slug: "about", file: "content.tsx", constName: "aboutStoryCode" },
 ];
 
 /**

@@ -230,7 +230,8 @@ export function SplitHeroBlock() {
             Build the product surface before the backlog catches up.
           </h1>
           <p className="mt-6 max-w-2xl text-lg leading-8 text-fg-secondary">
-            Compose accessible primitives, tokenized themes, and production-ready sections.
+            Compose accessible primitives, tokenized themes, and production-ready sections without
+            re-solving every interaction from scratch.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Button variant="gradient" size="lg">Start building <ArrowRight aria-hidden="true" /></Button>
@@ -618,10 +619,34 @@ function PricingToggleBlock() {
   );
 }
 
-const pricingToggleCode = `import { Badge, Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@cooud-ui/ui";
+const pricingToggleCode = `import {
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@cooud-ui/ui";
 import { Check } from "lucide-react";
 
 export function PricingToggleBlock() {
+  const tiers = [
+    {
+      name: "Launch",
+      price: "$19",
+      description: "For focused teams shipping one product.",
+      features: ["Unlimited blocks", "Theme presets", "Email support"],
+    },
+    {
+      name: "Scale",
+      price: "$59",
+      description: "For teams running multiple surfaces.",
+      features: ["Everything in Launch", "Private registry", "Priority support"],
+    },
+  ] as const;
+
   return (
     <section className="px-6 py-20">
       <div className="mx-auto max-w-2xl text-center">
@@ -630,13 +655,46 @@ export function PricingToggleBlock() {
           Pick the pace that matches your team.
         </h2>
         <div className="mx-auto mt-6 inline-flex rounded-full border border-border bg-surface-inset p-1">
-          <Button variant="secondary" size="sm" className="rounded-full">Monthly</Button>
-          <Button variant="ghost" size="sm" className="rounded-full">Annual - save 20%</Button>
+          <Button variant="secondary" size="sm" className="rounded-full">
+            Monthly
+          </Button>
+          <Button variant="ghost" size="sm" className="rounded-full">
+            Annual - save 20%
+          </Button>
         </div>
       </div>
 
       <div className="mx-auto mt-12 grid max-w-4xl grid-cols-[repeat(auto-fit,minmax(min(100%,18rem),1fr))] gap-6">
-        {/* Map your plans here */}
+        {tiers.map((tier, index) => (
+          <Card
+            key={tier.name}
+            className={index === 1 ? "border-primary shadow-glow" : "border-border"}
+          >
+            <CardHeader>
+              <CardTitle>{tier.name}</CardTitle>
+              <CardDescription>{tier.description}</CardDescription>
+              <div className="mt-2 flex items-baseline gap-1">
+                <span className="font-display text-4xl font-semibold text-fg">{tier.price}</span>
+                <span className="text-sm text-fg-tertiary">/ month</span>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <ul className="flex flex-col gap-3">
+                {tier.features.map((feature) => (
+                  <li key={feature} className="flex items-center gap-2 text-sm text-fg-secondary">
+                    <Check className="size-4 text-primary" aria-hidden="true" />
+                    {feature}
+                  </li>
+                ))}
+              </ul>
+            </CardContent>
+            <CardFooter>
+              <Button variant={index === 1 ? "gradient" : "outline"} className="w-full">
+                Choose {tier.name}
+              </Button>
+            </CardFooter>
+          </Card>
+        ))}
       </div>
     </section>
   );
@@ -696,7 +754,16 @@ function UsagePricingBlock() {
   );
 }
 
-const usagePricingCode = `import { Badge, Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@cooud-ui/ui";
+const usagePricingCode = `import {
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@cooud-ui/ui";
 import { Check } from "lucide-react";
 
 export function UsagePricingBlock() {
@@ -712,9 +779,40 @@ export function UsagePricingBlock() {
             <p className="mt-4 max-w-2xl text-fg-secondary">
               A pricing layout for APIs, infrastructure, and usage-metered products.
             </p>
+            <div className="mt-8 grid gap-3 sm:grid-cols-3">
+              {["10k events", "5 seats", "99.9% SLA"].map((item) => (
+                <div
+                  key={item}
+                  className="rounded-xl border border-border bg-surface-inset px-4 py-3 text-sm text-fg-secondary"
+                >
+                  {item}
+                </div>
+              ))}
+            </div>
           </div>
+
           <Card className="border-primary bg-surface-floating shadow-glow">
-            {/* Highlight your metered plan here */}
+            <CardHeader>
+              <CardTitle>Growth</CardTitle>
+              <CardDescription>Best for teams validating scale.</CardDescription>
+              <div className="mt-2">
+                <span className="font-display text-4xl font-semibold text-fg">$0.08</span>
+                <span className="text-sm text-fg-tertiary"> / 1k events</span>
+              </div>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-3">
+              {["Unlimited projects", "Realtime analytics", "Priority queues"].map((item) => (
+                <div key={item} className="flex items-center gap-2 text-sm text-fg-secondary">
+                  <Check className="size-4 text-primary" aria-hidden="true" />
+                  {item}
+                </div>
+              ))}
+            </CardContent>
+            <CardFooter>
+              <Button variant="gradient" className="w-full">
+                Estimate usage
+              </Button>
+            </CardFooter>
           </Card>
         </div>
       </div>
@@ -911,7 +1009,40 @@ function BentoFeatureBlock() {
 }
 
 const bentoFeatureCode = `import { Badge, Card, CardDescription, CardHeader, CardTitle } from "@cooud-ui/ui";
-import { BarChart3, Layers, Lock, Palette, Zap } from "lucide-react";
+import { BarChart3, Layers, Lock, Palette, Workflow, Zap } from "lucide-react";
+
+const FEATURES = [
+  {
+    icon: Zap,
+    title: "Lightning fast",
+    description: "Optimized rendering and zero-runtime styling keep every interaction instant.",
+  },
+  {
+    icon: Palette,
+    title: "Themeable by design",
+    description: "Swap a palette and every surface, border, and gradient updates live.",
+  },
+  {
+    icon: Lock,
+    title: "Secure by default",
+    description: "SOC 2 compliant infrastructure with end-to-end encryption on every request.",
+  },
+  {
+    icon: Layers,
+    title: "Composable primitives",
+    description: "Build complex layouts from small, predictable, accessible building blocks.",
+  },
+  {
+    icon: BarChart3,
+    title: "Insightful analytics",
+    description: "Understand how people use your product with real-time usage dashboards.",
+  },
+  {
+    icon: Workflow,
+    title: "Automate anything",
+    description: "Connect your favorite tools and wire up workflows without writing glue code.",
+  },
+] as const;
 
 export function BentoFeatureBlock() {
   return (
@@ -922,8 +1053,34 @@ export function BentoFeatureBlock() {
           A bento grid for product capabilities.
         </h2>
       </div>
+
       <div className="mx-auto mt-12 grid max-w-5xl gap-4 md:grid-cols-6">
-        {/* Use md:col-span-* and md:row-span-* to shape the bento layout */}
+        {FEATURES.slice(0, 4).map((feature, index) => (
+          <Card
+            key={feature.title}
+            className={[
+              "border-border bg-surface-raised",
+              index === 0 ? "md:col-span-4 md:row-span-2" : "md:col-span-2",
+              index === 3 ? "md:col-span-3" : "",
+            ].join(" ")}
+          >
+            <CardHeader>
+              <span className="grid size-11 place-items-center rounded-xl bg-primary/15 text-primary">
+                <feature.icon aria-hidden="true" className="size-5" />
+              </span>
+              <CardTitle className="mt-4">{feature.title}</CardTitle>
+              <CardDescription>{feature.description}</CardDescription>
+            </CardHeader>
+          </Card>
+        ))}
+        <Card className="border-primary bg-gradient-primary text-primary-foreground shadow-glow md:col-span-3">
+          <CardHeader>
+            <CardTitle className="text-primary-foreground">Production ready</CardTitle>
+            <CardDescription className="text-primary-foreground/75">
+              Compose, theme, and ship from one registry.
+            </CardDescription>
+          </CardHeader>
+        </Card>
       </div>
     </section>
   );
@@ -1037,6 +1194,258 @@ export function CtaBlock() {
           <p className="mt-4 text-sm text-primary-foreground/70">
             No spam. Unsubscribe at any time.
           </p>
+        </div>
+      </div>
+    </section>
+  );
+}`;
+
+function CtaBannerBlock() {
+  return (
+    <section className="relative overflow-hidden bg-gradient-primary px-6 py-16 sm:py-20">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -start-24 -top-24 size-72 rounded-full bg-primary-foreground/15 blur-3xl"
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -bottom-28 -end-20 size-80 rounded-full bg-primary-foreground/10 blur-3xl"
+      />
+      <div className="relative mx-auto flex max-w-5xl flex-col items-center gap-8 text-center lg:flex-row lg:justify-between lg:text-start">
+        <div className="max-w-2xl">
+          <h2 className="text-balance font-display text-3xl font-semibold tracking-tight text-primary-foreground sm:text-4xl">
+            Ship your next launch on Cooud.
+          </h2>
+          <p className="mt-3 text-balance text-lg text-primary-foreground/80">
+            Every block, theme, and primitive wired together — production-ready from day one.
+          </p>
+        </div>
+        <div className="flex shrink-0 flex-col gap-3 sm:flex-row">
+          <Button variant="secondary" size="lg">
+            Start free trial
+            <ArrowRight aria-hidden="true" />
+          </Button>
+          <Button
+            variant="outline"
+            size="lg"
+            className="border-primary-foreground/40 bg-transparent text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground"
+          >
+            Talk to sales
+          </Button>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+const ctaBannerCode = `import { Button } from "@cooud-ui/ui";
+import { ArrowRight } from "lucide-react";
+
+export function CtaBannerBlock() {
+  return (
+    <section className="relative overflow-hidden bg-gradient-primary px-6 py-16 sm:py-20">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -start-24 -top-24 size-72 rounded-full bg-primary-foreground/15 blur-3xl"
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -bottom-28 -end-20 size-80 rounded-full bg-primary-foreground/10 blur-3xl"
+      />
+      <div className="relative mx-auto flex max-w-5xl flex-col items-center gap-8 text-center lg:flex-row lg:justify-between lg:text-start">
+        <div className="max-w-2xl">
+          <h2 className="text-balance font-display text-3xl font-semibold tracking-tight text-primary-foreground sm:text-4xl">
+            Ship your next launch on Cooud.
+          </h2>
+          <p className="mt-3 text-balance text-lg text-primary-foreground/80">
+            Every block, theme, and primitive wired together — production-ready from day one.
+          </p>
+        </div>
+        <div className="flex shrink-0 flex-col gap-3 sm:flex-row">
+          <Button variant="secondary" size="lg">
+            Start free trial
+            <ArrowRight aria-hidden="true" />
+          </Button>
+          <Button
+            variant="outline"
+            size="lg"
+            className="border-primary-foreground/40 bg-transparent text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground"
+          >
+            Talk to sales
+          </Button>
+        </div>
+      </div>
+    </section>
+  );
+}`;
+
+function CtaSplitVisualBlock() {
+  return (
+    <section className="px-6 py-20">
+      <div className="mx-auto grid max-w-6xl items-center gap-10 rounded-2xl border border-border bg-surface-raised p-8 shadow-lg sm:p-10 lg:grid-cols-2 lg:gap-14">
+        <div>
+          <Badge variant="primary">Get started</Badge>
+          <h2 className="mt-4 text-balance font-display text-3xl font-semibold tracking-tight text-fg sm:text-4xl">
+            Your product surface, themed and shipped this week.
+          </h2>
+          <p className="mt-4 max-w-md text-fg-secondary">
+            Assemble the screens your customers see every day from blocks that already speak your
+            brand.
+          </p>
+          <ul className="mt-6 flex flex-col gap-3">
+            {[
+              "50+ production-ready blocks",
+              "Dark and light themes included",
+              "Accessible and RTL-safe by default",
+            ].map((item) => (
+              <li key={item} className="flex items-center gap-2.5 text-sm text-fg-secondary">
+                <span className="grid size-5 shrink-0 place-items-center rounded-full bg-success/15">
+                  <Check aria-hidden="true" className="size-3 text-success" />
+                </span>
+                {item}
+              </li>
+            ))}
+          </ul>
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <Button variant="gradient" size="lg">
+              Start building
+              <ArrowRight aria-hidden="true" />
+            </Button>
+            <Button variant="ghost" size="lg">
+              Explore blocks
+            </Button>
+          </div>
+        </div>
+
+        <div className="relative">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute -inset-6 rounded-3xl bg-gradient-primary opacity-20 blur-2xl"
+          />
+          <div className="relative overflow-hidden rounded-2xl border border-border bg-surface-overlay shadow-lg">
+            <div className="flex items-center gap-1.5 border-b border-border bg-surface-inset px-4 py-3">
+              <span aria-hidden="true" className="size-2.5 rounded-full bg-error/60" />
+              <span aria-hidden="true" className="size-2.5 rounded-full bg-warning/60" />
+              <span aria-hidden="true" className="size-2.5 rounded-full bg-success/60" />
+              <span className="ms-3 text-xs text-fg-tertiary">app.cooud.com/overview</span>
+            </div>
+            <div className="flex flex-col gap-5 p-5">
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <p className="text-xs text-fg-tertiary">Monthly recurring revenue</p>
+                  <p className="mt-1 font-display text-2xl font-semibold text-fg">$48,210</p>
+                </div>
+                <Badge variant="success">+18.2%</Badge>
+              </div>
+              <div aria-hidden="true" className="flex h-24 items-end gap-1.5">
+                {[35, 55, 42, 70, 52, 80, 64, 92, 76, 100].map((height) => (
+                  <div
+                    key={height}
+                    className="flex-1 rounded-t-sm bg-primary/70"
+                    style={{ height: `${height}%` }}
+                  />
+                ))}
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="rounded-xl border border-border bg-surface-inset px-3.5 py-3">
+                  <p className="text-xs text-fg-tertiary">Active customers</p>
+                  <p className="mt-1 text-sm font-semibold text-fg">2,847</p>
+                </div>
+                <div className="rounded-xl border border-border bg-surface-inset px-3.5 py-3">
+                  <p className="text-xs text-fg-tertiary">Net revenue churn</p>
+                  <p className="mt-1 text-sm font-semibold text-fg">0.8%</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+const ctaSplitVisualCode = `import { Badge, Button } from "@cooud-ui/ui";
+import { ArrowRight, Check } from "lucide-react";
+
+export function CtaSplitVisualBlock() {
+  return (
+    <section className="px-6 py-20">
+      <div className="mx-auto grid max-w-6xl items-center gap-10 rounded-2xl border border-border bg-surface-raised p-8 shadow-lg sm:p-10 lg:grid-cols-2 lg:gap-14">
+        <div>
+          <Badge variant="primary">Get started</Badge>
+          <h2 className="mt-4 text-balance font-display text-3xl font-semibold tracking-tight text-fg sm:text-4xl">
+            Your product surface, themed and shipped this week.
+          </h2>
+          <p className="mt-4 max-w-md text-fg-secondary">
+            Assemble the screens your customers see every day from blocks that already speak your
+            brand.
+          </p>
+          <ul className="mt-6 flex flex-col gap-3">
+            {[
+              "50+ production-ready blocks",
+              "Dark and light themes included",
+              "Accessible and RTL-safe by default",
+            ].map((item) => (
+              <li key={item} className="flex items-center gap-2.5 text-sm text-fg-secondary">
+                <span className="grid size-5 shrink-0 place-items-center rounded-full bg-success/15">
+                  <Check aria-hidden="true" className="size-3 text-success" />
+                </span>
+                {item}
+              </li>
+            ))}
+          </ul>
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <Button variant="gradient" size="lg">
+              Start building
+              <ArrowRight aria-hidden="true" />
+            </Button>
+            <Button variant="ghost" size="lg">
+              Explore blocks
+            </Button>
+          </div>
+        </div>
+
+        <div className="relative">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute -inset-6 rounded-3xl bg-gradient-primary opacity-20 blur-2xl"
+          />
+          <div className="relative overflow-hidden rounded-2xl border border-border bg-surface-overlay shadow-lg">
+            <div className="flex items-center gap-1.5 border-b border-border bg-surface-inset px-4 py-3">
+              <span aria-hidden="true" className="size-2.5 rounded-full bg-error/60" />
+              <span aria-hidden="true" className="size-2.5 rounded-full bg-warning/60" />
+              <span aria-hidden="true" className="size-2.5 rounded-full bg-success/60" />
+              <span className="ms-3 text-xs text-fg-tertiary">app.cooud.com/overview</span>
+            </div>
+            <div className="flex flex-col gap-5 p-5">
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <p className="text-xs text-fg-tertiary">Monthly recurring revenue</p>
+                  <p className="mt-1 font-display text-2xl font-semibold text-fg">$48,210</p>
+                </div>
+                <Badge variant="success">+18.2%</Badge>
+              </div>
+              <div aria-hidden="true" className="flex h-24 items-end gap-1.5">
+                {[35, 55, 42, 70, 52, 80, 64, 92, 76, 100].map((height) => (
+                  <div
+                    key={height}
+                    className="flex-1 rounded-t-sm bg-primary/70"
+                    style={{ height: \`\${height}%\` }}
+                  />
+                ))}
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="rounded-xl border border-border bg-surface-inset px-3.5 py-3">
+                  <p className="text-xs text-fg-tertiary">Active customers</p>
+                  <p className="mt-1 text-sm font-semibold text-fg">2,847</p>
+                </div>
+                <div className="rounded-xl border border-border bg-surface-inset px-3.5 py-3">
+                  <p className="text-xs text-fg-tertiary">Net revenue churn</p>
+                  <p className="mt-1 text-sm font-semibold text-fg">0.8%</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -1238,7 +1647,7 @@ const TESTIMONIAL_AVATARS = [
   { src: "https://i.pravatar.cc/96?img=47", alt: "Sofia Lindqvist", fallback: "SL" },
 ];
 
-function TestimonialCard({ testimonial }) {
+function TestimonialCard({ testimonial }: { testimonial: (typeof TESTIMONIALS)[number] }) {
   return (
     <Card className="w-80 shrink-0 border-border bg-surface-raised">
       <CardContent className="flex flex-col gap-5 pt-6">
@@ -1947,6 +2356,357 @@ export function FooterBlock() {
   );
 }`;
 
+const FOOTER_MEGA_COLUMNS = [
+  {
+    heading: "Product",
+    links: [
+      { label: "Features", href: "#features" },
+      { label: "Pricing", href: "#pricing" },
+      { label: "Blocks", href: "#blocks" },
+      { label: "Themes", href: "#themes" },
+      { label: "Changelog", href: "#changelog" },
+    ],
+  },
+  {
+    heading: "Developers",
+    links: [
+      { label: "Documentation", href: "#docs" },
+      { label: "API reference", href: "#api" },
+      { label: "CLI", href: "#cli" },
+      { label: "Open source", href: "#open-source" },
+    ],
+  },
+  {
+    heading: "Company",
+    links: [
+      { label: "About", href: "#about" },
+      { label: "Careers", href: "#careers" },
+      { label: "Customers", href: "#customers" },
+      { label: "Press kit", href: "#press" },
+    ],
+  },
+  {
+    heading: "Resources",
+    links: [
+      { label: "Guides", href: "#guides" },
+      { label: "Templates", href: "#templates" },
+      { label: "Community", href: "#community" },
+      { label: "Support", href: "#support" },
+    ],
+  },
+  {
+    heading: "Legal",
+    links: [
+      { label: "Privacy", href: "#privacy" },
+      { label: "Terms", href: "#terms" },
+      { label: "Security", href: "#security" },
+      { label: "DPA", href: "#dpa" },
+    ],
+  },
+] as const;
+
+function FooterMegaBlock() {
+  return (
+    <footer className="border-t border-border bg-surface-base px-6 py-16">
+      <div className="mx-auto max-w-6xl">
+        <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+          <div className="max-w-sm">
+            <div className="flex items-center gap-2.5">
+              <span className="grid size-9 place-items-center rounded-xl bg-gradient-primary text-primary-foreground shadow-glow">
+                <Hexagon aria-hidden="true" className="size-5" />
+              </span>
+              <span className="font-display text-lg font-semibold text-fg">Cooud</span>
+            </div>
+            <p className="mt-4 text-sm leading-6 text-fg-secondary">
+              Product updates, new blocks, and launch guides — a few times a month.
+            </p>
+          </div>
+          <form
+            className="flex w-full max-w-md flex-col gap-3 sm:flex-row"
+            onSubmit={(event) => event.preventDefault()}
+          >
+            <div className="flex-1">
+              <Label htmlFor="footer-mega-email" className="sr-only">
+                Email address
+              </Label>
+              <Input
+                id="footer-mega-email"
+                type="email"
+                required
+                placeholder="you@company.com"
+                autoComplete="email"
+              />
+            </div>
+            <Button type="submit" variant="gradient">
+              Subscribe
+              <Send aria-hidden="true" />
+            </Button>
+          </form>
+        </div>
+
+        <div className="mt-14 grid gap-10 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+          {FOOTER_MEGA_COLUMNS.map((column) => (
+            <div key={column.heading}>
+              <h3 className="text-sm font-medium text-fg">{column.heading}</h3>
+              <ul className="mt-4 flex flex-col gap-3">
+                {column.links.map((link) => (
+                  <li key={link.label}>
+                    <a
+                      href={link.href}
+                      className="text-sm text-fg-secondary transition-colors hover:text-fg"
+                    >
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        <Separator className="my-10" />
+
+        <div className="flex flex-col-reverse items-center justify-between gap-6 lg:flex-row">
+          <p className="text-sm text-fg-tertiary">© 2026 Cooud Labs, Inc. All rights reserved.</p>
+          <div className="flex flex-col items-center gap-4 sm:flex-row sm:gap-6">
+            <a
+              href="#status"
+              className="inline-flex items-center gap-2 text-sm font-medium text-success-strong transition-colors hover:text-fg"
+            >
+              <span aria-hidden="true" className="size-2 rounded-full bg-success" />
+              All systems operational
+            </a>
+            <div className="flex items-center gap-1">
+              <Button variant="ghost" size="icon-sm" aria-label="GitHub">
+                <Github aria-hidden="true" />
+              </Button>
+              <Button variant="ghost" size="icon-sm" aria-label="Twitter">
+                <Twitter aria-hidden="true" />
+              </Button>
+              <Button variant="ghost" size="icon-sm" aria-label="LinkedIn">
+                <Linkedin aria-hidden="true" />
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+const footerMegaCode = `import { Button, Input, Label, Separator } from "@cooud-ui/ui";
+import { Github, Hexagon, Linkedin, Send, Twitter } from "lucide-react";
+
+const FOOTER_MEGA_COLUMNS = [
+  {
+    heading: "Product",
+    links: [
+      { label: "Features", href: "#features" },
+      { label: "Pricing", href: "#pricing" },
+      { label: "Blocks", href: "#blocks" },
+      { label: "Themes", href: "#themes" },
+      { label: "Changelog", href: "#changelog" },
+    ],
+  },
+  {
+    heading: "Developers",
+    links: [
+      { label: "Documentation", href: "#docs" },
+      { label: "API reference", href: "#api" },
+      { label: "CLI", href: "#cli" },
+      { label: "Open source", href: "#open-source" },
+    ],
+  },
+  {
+    heading: "Company",
+    links: [
+      { label: "About", href: "#about" },
+      { label: "Careers", href: "#careers" },
+      { label: "Customers", href: "#customers" },
+      { label: "Press kit", href: "#press" },
+    ],
+  },
+  {
+    heading: "Resources",
+    links: [
+      { label: "Guides", href: "#guides" },
+      { label: "Templates", href: "#templates" },
+      { label: "Community", href: "#community" },
+      { label: "Support", href: "#support" },
+    ],
+  },
+  {
+    heading: "Legal",
+    links: [
+      { label: "Privacy", href: "#privacy" },
+      { label: "Terms", href: "#terms" },
+      { label: "Security", href: "#security" },
+      { label: "DPA", href: "#dpa" },
+    ],
+  },
+];
+
+export function FooterMegaBlock() {
+  return (
+    <footer className="border-t border-border bg-surface-base px-6 py-16">
+      <div className="mx-auto max-w-6xl">
+        <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+          <div className="max-w-sm">
+            <div className="flex items-center gap-2.5">
+              <span className="grid size-9 place-items-center rounded-xl bg-gradient-primary text-primary-foreground shadow-glow">
+                <Hexagon aria-hidden="true" className="size-5" />
+              </span>
+              <span className="font-display text-lg font-semibold text-fg">Cooud</span>
+            </div>
+            <p className="mt-4 text-sm leading-6 text-fg-secondary">
+              Product updates, new blocks, and launch guides — a few times a month.
+            </p>
+          </div>
+          <form
+            className="flex w-full max-w-md flex-col gap-3 sm:flex-row"
+            onSubmit={(event) => event.preventDefault()}
+          >
+            <div className="flex-1">
+              <Label htmlFor="footer-mega-email" className="sr-only">
+                Email address
+              </Label>
+              <Input
+                id="footer-mega-email"
+                type="email"
+                required
+                placeholder="you@company.com"
+                autoComplete="email"
+              />
+            </div>
+            <Button type="submit" variant="gradient">
+              Subscribe
+              <Send aria-hidden="true" />
+            </Button>
+          </form>
+        </div>
+
+        <div className="mt-14 grid gap-10 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+          {FOOTER_MEGA_COLUMNS.map((column) => (
+            <div key={column.heading}>
+              <h3 className="text-sm font-medium text-fg">{column.heading}</h3>
+              <ul className="mt-4 flex flex-col gap-3">
+                {column.links.map((link) => (
+                  <li key={link.label}>
+                    <a
+                      href={link.href}
+                      className="text-sm text-fg-secondary transition-colors hover:text-fg"
+                    >
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        <Separator className="my-10" />
+
+        <div className="flex flex-col-reverse items-center justify-between gap-6 lg:flex-row">
+          <p className="text-sm text-fg-tertiary">© 2026 Cooud Labs, Inc. All rights reserved.</p>
+          <div className="flex flex-col items-center gap-4 sm:flex-row sm:gap-6">
+            <a
+              href="#status"
+              className="inline-flex items-center gap-2 text-sm font-medium text-success-strong transition-colors hover:text-fg"
+            >
+              <span aria-hidden="true" className="size-2 rounded-full bg-success" />
+              All systems operational
+            </a>
+            <div className="flex items-center gap-1">
+              <Button variant="ghost" size="icon-sm" aria-label="GitHub">
+                <Github aria-hidden="true" />
+              </Button>
+              <Button variant="ghost" size="icon-sm" aria-label="Twitter">
+                <Twitter aria-hidden="true" />
+              </Button>
+              <Button variant="ghost" size="icon-sm" aria-label="LinkedIn">
+                <Linkedin aria-hidden="true" />
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}`;
+
+const FOOTER_MINIMAL_LINKS = [
+  { label: "Docs", href: "#docs" },
+  { label: "Pricing", href: "#pricing" },
+  { label: "Support", href: "#support" },
+] as const;
+
+function FooterMinimalBlock() {
+  return (
+    <footer className="border-t border-border bg-surface-base px-6 py-8">
+      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 sm:flex-row">
+        <div className="flex items-center gap-2">
+          <span className="grid size-8 place-items-center rounded-lg bg-gradient-primary text-primary-foreground shadow-glow">
+            <Hexagon aria-hidden="true" className="size-4" />
+          </span>
+          <span className="font-display text-base font-semibold text-fg">Cooud</span>
+        </div>
+
+        <div className="flex items-center gap-6">
+          {FOOTER_MINIMAL_LINKS.map((link) => (
+            <a
+              key={link.label}
+              href={link.href}
+              className="text-sm text-fg-secondary transition-colors hover:text-fg"
+            >
+              {link.label}
+            </a>
+          ))}
+        </div>
+
+        <p className="text-sm text-fg-tertiary">© 2026 Cooud. All rights reserved.</p>
+      </div>
+    </footer>
+  );
+}
+
+const footerMinimalCode = `import { Hexagon } from "lucide-react";
+
+const FOOTER_MINIMAL_LINKS = [
+  { label: "Docs", href: "#docs" },
+  { label: "Pricing", href: "#pricing" },
+  { label: "Support", href: "#support" },
+];
+
+export function FooterMinimalBlock() {
+  return (
+    <footer className="border-t border-border bg-surface-base px-6 py-8">
+      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 sm:flex-row">
+        <div className="flex items-center gap-2">
+          <span className="grid size-8 place-items-center rounded-lg bg-gradient-primary text-primary-foreground shadow-glow">
+            <Hexagon aria-hidden="true" className="size-4" />
+          </span>
+          <span className="font-display text-base font-semibold text-fg">Cooud</span>
+        </div>
+
+        <div className="flex items-center gap-6">
+          {FOOTER_MINIMAL_LINKS.map((link) => (
+            <a
+              key={link.label}
+              href={link.href}
+              className="text-sm text-fg-secondary transition-colors hover:text-fg"
+            >
+              {link.label}
+            </a>
+          ))}
+        </div>
+
+        <p className="text-sm text-fg-tertiary">© 2026 Cooud. All rights reserved.</p>
+      </div>
+    </footer>
+  );
+}`;
+
 /* ──────────────────────────────────────────────────────────────────
    8. NAVBAR
    ────────────────────────────────────────────────────────────────── */
@@ -2052,6 +2812,214 @@ export function NavbarBlock() {
   );
 }`;
 
+function NavbarCenteredBlock() {
+  return (
+    <section className="px-6 py-8">
+      <nav className="mx-auto grid max-w-4xl grid-cols-[1fr_auto_1fr] items-center gap-4 rounded-full border border-border bg-surface-overlay/70 px-5 py-2.5 shadow-lg backdrop-blur-md">
+        <div className="flex items-center gap-2">
+          <span className="grid size-8 place-items-center rounded-lg bg-gradient-primary text-primary-foreground shadow-glow">
+            <Hexagon aria-hidden="true" className="size-4" />
+          </span>
+          <span className="font-display text-base font-semibold text-fg">Cooud</span>
+        </div>
+
+        <div className="hidden items-center gap-6 md:flex">
+          {NAVBAR_LINKS.map((link) => (
+            <a
+              key={link.label}
+              href={link.href}
+              className="text-sm text-fg-secondary transition-colors hover:text-fg"
+            >
+              {link.label}
+            </a>
+          ))}
+        </div>
+
+        <div className="col-start-3 flex items-center justify-end gap-2">
+          <Button variant="gradient" size="sm" className="hidden sm:inline-flex">
+            Get started
+          </Button>
+          <Button variant="ghost" size="icon-sm" className="md:hidden" aria-label="Open menu">
+            <Menu aria-hidden="true" />
+          </Button>
+        </div>
+      </nav>
+    </section>
+  );
+}
+
+const navbarCenteredCode = `import { Button } from "@cooud-ui/ui";
+import { Hexagon, Menu } from "lucide-react";
+
+const NAVBAR_LINKS = [
+  { label: "Features", href: "#features" },
+  { label: "Pricing", href: "#pricing" },
+  { label: "Docs", href: "#docs" },
+  { label: "Changelog", href: "#changelog" },
+];
+
+export function NavbarCenteredBlock() {
+  return (
+    <section className="px-6 py-8">
+      <nav className="mx-auto grid max-w-4xl grid-cols-[1fr_auto_1fr] items-center gap-4 rounded-full border border-border bg-surface-overlay/70 px-5 py-2.5 shadow-lg backdrop-blur-md">
+        <div className="flex items-center gap-2">
+          <span className="grid size-8 place-items-center rounded-lg bg-gradient-primary text-primary-foreground shadow-glow">
+            <Hexagon aria-hidden="true" className="size-4" />
+          </span>
+          <span className="font-display text-base font-semibold text-fg">Cooud</span>
+        </div>
+
+        <div className="hidden items-center gap-6 md:flex">
+          {NAVBAR_LINKS.map((link) => (
+            <a
+              key={link.label}
+              href={link.href}
+              className="text-sm text-fg-secondary transition-colors hover:text-fg"
+            >
+              {link.label}
+            </a>
+          ))}
+        </div>
+
+        <div className="col-start-3 flex items-center justify-end gap-2">
+          <Button variant="gradient" size="sm" className="hidden sm:inline-flex">
+            Get started
+          </Button>
+          <Button variant="ghost" size="icon-sm" className="md:hidden" aria-label="Open menu">
+            <Menu aria-hidden="true" />
+          </Button>
+        </div>
+      </nav>
+    </section>
+  );
+}`;
+
+function NavbarAnnouncementBlock() {
+  return (
+    <section className="px-6 py-8">
+      <div className="mx-auto max-w-5xl overflow-hidden rounded-2xl border border-border bg-surface-raised shadow-xs">
+        <div className="flex items-center justify-center gap-3 border-b border-border bg-surface-inset px-4 py-2">
+          <Badge variant="primary" className="hidden gap-1.5 sm:inline-flex">
+            <Sparkles aria-hidden="true" className="size-3.5" />
+            New
+          </Badge>
+          <p className="truncate text-sm text-fg-secondary">
+            Cooud 2.0 is live — 40 new blocks and a refreshed theme engine.
+          </p>
+          <a
+            href="#changelog"
+            className="inline-flex shrink-0 items-center gap-1 text-sm font-medium text-primary-strong transition-colors hover:text-fg"
+          >
+            Read more
+            <ArrowRight aria-hidden="true" className="size-3.5" />
+          </a>
+        </div>
+
+        <nav className="flex items-center justify-between gap-4 px-4 py-2.5">
+          <div className="flex items-center gap-2.5">
+            <span className="grid size-8 place-items-center rounded-lg bg-gradient-primary text-primary-foreground shadow-glow">
+              <Hexagon aria-hidden="true" className="size-4" />
+            </span>
+            <span className="font-display text-base font-semibold text-fg">Cooud</span>
+          </div>
+
+          <div className="hidden items-center gap-6 md:flex">
+            {NAVBAR_LINKS.map((link) => (
+              <a
+                key={link.label}
+                href={link.href}
+                className="text-sm text-fg-secondary transition-colors hover:text-fg"
+              >
+                {link.label}
+              </a>
+            ))}
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="sm" className="hidden sm:inline-flex">
+              Sign in
+            </Button>
+            <Button variant="gradient" size="sm">
+              Get started
+            </Button>
+            <Button variant="ghost" size="icon-sm" className="md:hidden" aria-label="Open menu">
+              <Menu aria-hidden="true" />
+            </Button>
+          </div>
+        </nav>
+      </div>
+    </section>
+  );
+}
+
+const navbarAnnouncementCode = `import { Badge, Button } from "@cooud-ui/ui";
+import { ArrowRight, Hexagon, Menu, Sparkles } from "lucide-react";
+
+const NAVBAR_LINKS = [
+  { label: "Features", href: "#features" },
+  { label: "Pricing", href: "#pricing" },
+  { label: "Docs", href: "#docs" },
+  { label: "Changelog", href: "#changelog" },
+];
+
+export function NavbarAnnouncementBlock() {
+  return (
+    <section className="px-6 py-8">
+      <div className="mx-auto max-w-5xl overflow-hidden rounded-2xl border border-border bg-surface-raised shadow-xs">
+        <div className="flex items-center justify-center gap-3 border-b border-border bg-surface-inset px-4 py-2">
+          <Badge variant="primary" className="hidden gap-1.5 sm:inline-flex">
+            <Sparkles aria-hidden="true" className="size-3.5" />
+            New
+          </Badge>
+          <p className="truncate text-sm text-fg-secondary">
+            Cooud 2.0 is live — 40 new blocks and a refreshed theme engine.
+          </p>
+          <a
+            href="#changelog"
+            className="inline-flex shrink-0 items-center gap-1 text-sm font-medium text-primary-strong transition-colors hover:text-fg"
+          >
+            Read more
+            <ArrowRight aria-hidden="true" className="size-3.5" />
+          </a>
+        </div>
+
+        <nav className="flex items-center justify-between gap-4 px-4 py-2.5">
+          <div className="flex items-center gap-2.5">
+            <span className="grid size-8 place-items-center rounded-lg bg-gradient-primary text-primary-foreground shadow-glow">
+              <Hexagon aria-hidden="true" className="size-4" />
+            </span>
+            <span className="font-display text-base font-semibold text-fg">Cooud</span>
+          </div>
+
+          <div className="hidden items-center gap-6 md:flex">
+            {NAVBAR_LINKS.map((link) => (
+              <a
+                key={link.label}
+                href={link.href}
+                className="text-sm text-fg-secondary transition-colors hover:text-fg"
+              >
+                {link.label}
+              </a>
+            ))}
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="sm" className="hidden sm:inline-flex">
+              Sign in
+            </Button>
+            <Button variant="gradient" size="sm">
+              Get started
+            </Button>
+            <Button variant="ghost" size="icon-sm" className="md:hidden" aria-label="Open menu">
+              <Menu aria-hidden="true" />
+            </Button>
+          </div>
+        </nav>
+      </div>
+    </section>
+  );
+}`;
+
 /* ──────────────────────────────────────────────────────────────────
    Export map
    ────────────────────────────────────────────────────────────────── */
@@ -2139,7 +3107,36 @@ export const marketingBlocks: BlockContentMap = {
       },
     ],
   },
-  cta: { preview: <CtaBlock />, code: ctaCode },
+  cta: {
+    preview: <CtaBlock />,
+    code: ctaCode,
+    variants: [
+      {
+        id: "classic",
+        name: "Gradient panel",
+        description: "Contained gradient panel with an email-capture form and dotted texture.",
+        appearance: "dark",
+        preview: <CtaBlock />,
+        code: ctaCode,
+      },
+      {
+        id: "banner",
+        name: "Gradient banner",
+        description: "Full-width gradient band with a display headline and dual CTAs.",
+        appearance: "dark",
+        preview: <CtaBannerBlock />,
+        code: ctaBannerCode,
+      },
+      {
+        id: "split-visual",
+        name: "Split with visual",
+        description: "Copy and checkmark bullets beside a token-built product mock panel.",
+        appearance: "light",
+        preview: <CtaSplitVisualBlock />,
+        code: ctaSplitVisualCode,
+      },
+    ],
+  },
   testimonials: {
     preview: <TestimonialsBlock />,
     code: testimonialsCode,
@@ -2184,8 +3181,66 @@ export const marketingBlocks: BlockContentMap = {
       },
     ],
   },
-  footer: { preview: <FooterBlock />, code: footerCode },
-  navbar: { preview: <NavbarBlock />, code: navbarCode },
+  footer: {
+    preview: <FooterBlock />,
+    code: footerCode,
+    variants: [
+      {
+        id: "classic",
+        name: "Columns with newsletter",
+        description: "Brand column, three link columns and a newsletter panel.",
+        appearance: "dark",
+        preview: <FooterBlock />,
+        code: footerCode,
+      },
+      {
+        id: "mega",
+        name: "Mega",
+        description: "Five link columns, newsletter, social icons and a live-status legal row.",
+        appearance: "dark",
+        preview: <FooterMegaBlock />,
+        code: footerMegaCode,
+      },
+      {
+        id: "minimal",
+        name: "Minimal",
+        description: "A single-row footer with logo, three links and copyright.",
+        appearance: "light",
+        preview: <FooterMinimalBlock />,
+        code: footerMinimalCode,
+      },
+    ],
+  },
+  navbar: {
+    preview: <NavbarBlock />,
+    code: navbarCode,
+    variants: [
+      {
+        id: "classic",
+        name: "Pill with actions",
+        description: "Rounded navbar with brand badge, primary links and sign-in actions.",
+        appearance: "dark",
+        preview: <NavbarBlock />,
+        code: navbarCode,
+      },
+      {
+        id: "centered",
+        name: "Centered pill",
+        description: "Floating pill navbar with centered links on a blurred overlay surface.",
+        appearance: "light",
+        preview: <NavbarCenteredBlock />,
+        code: navbarCenteredCode,
+      },
+      {
+        id: "with-announcement",
+        name: "With announcement",
+        description: "Announcement bar with a badge and link above the navigation row.",
+        appearance: "dark",
+        preview: <NavbarAnnouncementBlock />,
+        code: navbarAnnouncementCode,
+      },
+    ],
+  },
 };
 
 /* -------------------------------------------------------------------------- */

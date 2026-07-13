@@ -57,6 +57,7 @@ export const EXAMPLE_FAMILY_BY_SLUG: Record<string, ExampleFamily> = {
   "rich-text-editor": "forms",
   "color-picker": "forms",
   rating: "forms",
+  chip: "forms",
   "currency-input": "forms",
   "phone-input": "forms",
   "credit-card-input": "forms",
@@ -85,6 +86,10 @@ export const EXAMPLE_FAMILY_BY_SLUG: Record<string, ExampleFamily> = {
   "aspect-ratio": "data-display",
   kanban: "data-display",
   timeline: "data-display",
+  "status-dot": "data-display",
+  "image-zoom": "data-display",
+  "video-player": "data-display",
+  "description-list": "data-display",
   "tree-view": "data-display",
   "json-viewer": "data-display",
   // feedback

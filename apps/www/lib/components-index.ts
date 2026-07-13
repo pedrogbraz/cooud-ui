@@ -215,6 +215,13 @@ export const CATEGORIES: ComponentCategory[] = [
           "Canvas signature input with smoothed strokes, undo/clear, and data-URL output.",
         importName: "SignaturePad",
       },
+      {
+        slug: "chip",
+        name: "Chip",
+        description:
+          "Interactive filter/selection chip — toggleable, dismissible, with icon and avatar slots.",
+        rsc: true,
+      },
     ],
   },
   {
@@ -333,6 +340,31 @@ export const CATEGORIES: ComponentCategory[] = [
         name: "JsonViewer",
         description: "Collapsible JSON tree with type-colored values and per-row copy.",
         importName: "JsonViewer",
+      },
+      {
+        slug: "status-dot",
+        name: "StatusDot",
+        description: "Presence dot with pulse, optional label, and avatar-overlay anchoring.",
+        rsc: true,
+      },
+      {
+        slug: "image-zoom",
+        name: "ImageZoom",
+        description:
+          "Inline hover/press zoom that magnifies product imagery and pans with the cursor.",
+      },
+      {
+        slug: "video-player",
+        name: "VideoPlayer",
+        description:
+          "Native video wrapped in token-styled custom controls: seek, volume, playback speed, and fullscreen.",
+      },
+      {
+        slug: "description-list",
+        name: "DescriptionList",
+        description:
+          "Semantic dl/dt/dd pairs in stacked, horizontal, or grid-card layouts for detail panes and order summaries.",
+        rsc: true,
       },
     ],
   },

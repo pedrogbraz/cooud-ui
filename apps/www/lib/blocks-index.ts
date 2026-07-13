@@ -31,11 +31,54 @@ export const BLOCK_CATEGORIES: BlockCategory[] = [
         slug: "login",
         name: "Login",
         description: "A centered authentication card with email + social login.",
+        variants: [
+          {
+            id: "classic",
+            name: "Classic card",
+            description: "Centered email and password card with social sign-in shortcuts.",
+          },
+          {
+            id: "split",
+            name: "Split panel",
+            description:
+              "Brand gradient panel with a customer testimonial beside the sign-in form.",
+          },
+          {
+            id: "social-first",
+            name: "Social first",
+            description: "Google, GitHub, and Apple buttons stacked above the email fallback.",
+          },
+          {
+            id: "minimal",
+            name: "Minimal",
+            description:
+              "Ultra-clean logo mark, email, and continue button with quiet footer links.",
+          },
+        ],
       },
       {
         slug: "signup",
         name: "Sign Up",
         description: "A create-account card with email, password, terms, and social sign-up.",
+        variants: [
+          {
+            id: "classic",
+            name: "Classic card",
+            description: "Centered create-account card with social sign-up shortcuts.",
+          },
+          {
+            id: "split-proof",
+            name: "Split with proof",
+            description:
+              "Create-account form beside customer logos, a star rating, and short quotes.",
+          },
+          {
+            id: "with-plan",
+            name: "With plan summary",
+            description:
+              "Signup form beside the selected plan, trial terms, and first-charge summary.",
+          },
+        ],
       },
       {
         slug: "forgot-password",
@@ -74,6 +117,80 @@ export const BLOCK_CATEGORIES: BlockCategory[] = [
             name: "Link sent",
             description:
               "Confirmation that a magic sign-in link was emailed, with a resend action.",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    slug: "account",
+    name: "Account",
+    items: [
+      {
+        slug: "account-security",
+        name: "Account security",
+        description: "Two-factor authentication setup and password management with a danger zone.",
+        variants: [
+          {
+            id: "two-factor",
+            name: "Two-factor setup",
+            description: "Status card plus QR pairing, setup key, and one-time backup codes.",
+          },
+          {
+            id: "password",
+            name: "Password & danger zone",
+            description: "Password change with strength meter, recovery email, and a danger zone.",
+          },
+        ],
+      },
+      {
+        slug: "sessions",
+        name: "Sessions",
+        description: "Active device sessions with per-session and bulk revoke.",
+        variants: [
+          {
+            id: "list",
+            name: "Device list",
+            description: "Signed-in devices with client, location, last activity, and revoke.",
+          },
+          {
+            id: "table",
+            name: "Selectable table",
+            description: "Session table with bulk selection and a revoke-selected action.",
+          },
+        ],
+      },
+      {
+        slug: "api-keys",
+        name: "API keys",
+        description: "API key management with masked secrets, scopes, and a scoped create flow.",
+        variants: [
+          {
+            id: "list",
+            name: "Key list",
+            description: "Masked keys with reveal and copy, scope badges, and usage metadata.",
+          },
+          {
+            id: "create",
+            name: "Create key",
+            description: "Scoped key creation with expiry and a one-time generated-key reveal.",
+          },
+        ],
+      },
+      {
+        slug: "notification-preferences",
+        name: "Notification preferences",
+        description: "Per-channel notification controls as a matrix or grouped toggle list.",
+        variants: [
+          {
+            id: "matrix",
+            name: "Channel matrix",
+            description: "Per-event switches across email, push, and SMS, grouped by area.",
+          },
+          {
+            id: "simple",
+            name: "Simple toggles",
+            description: "Grouped email toggles with a plain-language description per row.",
           },
         ],
       },
@@ -154,6 +271,23 @@ export const BLOCK_CATEGORIES: BlockCategory[] = [
         slug: "cta",
         name: "Call to Action",
         description: "A bold gradient call-to-action banner.",
+        variants: [
+          {
+            id: "classic",
+            name: "Gradient panel",
+            description: "Contained gradient panel with an email-capture form and dotted texture.",
+          },
+          {
+            id: "banner",
+            name: "Gradient banner",
+            description: "Full-width gradient band with a display headline and dual CTAs.",
+          },
+          {
+            id: "split-visual",
+            name: "Split with visual",
+            description: "Copy and checkmark bullets beside a token-built product mock panel.",
+          },
+        ],
       },
       {
         slug: "testimonials",
@@ -194,11 +328,45 @@ export const BLOCK_CATEGORIES: BlockCategory[] = [
         slug: "footer",
         name: "Footer",
         description: "A full site footer with brand block, link columns, and a newsletter sign-up.",
+        variants: [
+          {
+            id: "classic",
+            name: "Columns with newsletter",
+            description: "Brand column, three link columns and a newsletter panel.",
+          },
+          {
+            id: "mega",
+            name: "Mega",
+            description: "Five link columns, newsletter, social icons and a live-status legal row.",
+          },
+          {
+            id: "minimal",
+            name: "Minimal",
+            description: "A single-row footer with logo, three links and copyright.",
+          },
+        ],
       },
       {
         slug: "navbar",
         name: "Navbar",
         description: "A contained, rounded marketing navigation bar with brand mark and CTAs.",
+        variants: [
+          {
+            id: "classic",
+            name: "Pill with actions",
+            description: "Rounded navbar with brand badge, primary links and sign-in actions.",
+          },
+          {
+            id: "centered",
+            name: "Centered pill",
+            description: "Floating pill navbar with centered links on a blurred overlay surface.",
+          },
+          {
+            id: "with-announcement",
+            name: "With announcement",
+            description: "Announcement bar with a badge and link above the navigation row.",
+          },
+        ],
       },
       {
         slug: "changelog",
@@ -211,6 +379,85 @@ export const BLOCK_CATEGORIES: BlockCategory[] = [
         name: "Waitlist Hero",
         description:
           "A waitlist capture hero with an early-access pill, a gradient headline, an inline email form that swaps to a joined state, and avatar social proof.",
+      },
+    ],
+  },
+  {
+    slug: "content",
+    name: "Content",
+    items: [
+      {
+        slug: "blog",
+        name: "Blog",
+        description:
+          "Blog index layouts: a featured hero post with a responsive post grid, and an editorial list with larger typography.",
+        variants: [
+          {
+            id: "grid",
+            name: "Featured grid",
+            description: "A featured hero post above a responsive three-column post grid.",
+          },
+          {
+            id: "list",
+            name: "Editorial list",
+            description: "An editorial list layout with larger typography and horizontal cards.",
+          },
+        ],
+      },
+      {
+        slug: "blog-post",
+        name: "Blog post",
+        description:
+          "Article detail layouts with token-styled prose (headings, blockquote, inline code), author card, hero art, and a share row.",
+        variants: [
+          {
+            id: "article",
+            name: "Article",
+            description: "A single-column article with token-styled prose and a share row.",
+          },
+          {
+            id: "with-sidebar",
+            name: "With sidebar",
+            description: "The article beside a sticky table of contents and a newsletter card.",
+          },
+        ],
+      },
+      {
+        slug: "logo-cloud",
+        name: "Logo cloud",
+        description:
+          "Customer trust sections built from wordmark-style text logos in text-fg-tertiary — a quiet grid and a dual counter-scrolling marquee.",
+        variants: [
+          {
+            id: "grid",
+            name: "Trust grid",
+            description: "A quiet responsive grid of customer wordmarks under a trust heading.",
+          },
+          {
+            id: "marquee",
+            name: "Dual marquee",
+            description:
+              "Two counter-scrolling, pause-on-hover marquee rows of customer wordmarks.",
+          },
+        ],
+      },
+      {
+        slug: "about",
+        name: "About",
+        description:
+          "Company about sections: mission story with stats, founder quote, and milestone timeline; plus a values card grid with a token-built culture collage.",
+        variants: [
+          {
+            id: "story",
+            name: "Story",
+            description: "Mission statement, stats row, founder quote, and a milestone timeline.",
+          },
+          {
+            id: "values",
+            name: "Values",
+            description: "A values card grid with icons and a token-built culture collage.",
+          },
+        ],
       },
     ],
   },
@@ -320,6 +567,91 @@ export const BLOCK_CATEGORIES: BlockCategory[] = [
     ],
   },
   {
+    slug: "admin",
+    name: "Admin",
+    items: [
+      {
+        slug: "user-management",
+        name: "User management",
+        description:
+          "Team member administration for a B2B SaaS workspace — a searchable directory table with role filter, status badges, per-user action menus and pagination, plus a card-grid variant for small teams.",
+        variants: [
+          {
+            id: "table",
+            name: "Directory table",
+            description:
+              "A searchable member table with a role filter, status badges, row actions and pagination.",
+          },
+          {
+            id: "cards",
+            name: "Member cards",
+            description: "A card grid with the same member actions — a better fit for small teams.",
+          },
+        ],
+      },
+      {
+        slug: "analytics",
+        name: "Analytics",
+        description:
+          "Admin analytics surfaces — KPI metrics with sparklines, a 30-day traffic trend and top pages/referrers breakdowns with progress bars, plus a cohort-retention engagement variant built from token-colored heat cells.",
+        variants: [
+          {
+            id: "overview",
+            name: "Traffic overview",
+            description:
+              "KPI metrics with sparklines, a 30-day traffic trend and top pages and referrers breakdowns.",
+          },
+          {
+            id: "engagement",
+            name: "Engagement cohorts",
+            description:
+              "Retention stat cards plus a weekly cohort heat grid built from token-colored cells.",
+          },
+        ],
+      },
+      {
+        slug: "kanban-board",
+        name: "Kanban board",
+        description:
+          "A sprint board with four columns of labeled cards — Badge labels, assignee avatar stacks, due dates and comment counts — plus a dense compact variant with per-column WIP limits and at-limit indicators.",
+        variants: [
+          {
+            id: "default",
+            name: "Sprint board",
+            description:
+              "Four columns of labeled cards with assignees, due dates, comment counts and add actions.",
+          },
+          {
+            id: "compact",
+            name: "Compact WIP board",
+            description:
+              "A dense single-line task list with per-column WIP limits and at-limit indicators.",
+          },
+        ],
+      },
+      {
+        slug: "audit-log",
+        name: "Audit log",
+        description:
+          "A security audit trail — a grouped-by-day timeline feed with actor avatars, emphasized actor/object names and severity badges, plus a filterable table variant with event-type badges, actors, IPs and expandable detail hints.",
+        variants: [
+          {
+            id: "timeline",
+            name: "Day-grouped timeline",
+            description:
+              "A grouped-by-day security feed with actor avatars, emphasized names and severity badges.",
+          },
+          {
+            id: "table",
+            name: "Filterable table",
+            description:
+              "A filterable event table with type badges, actors, IP addresses and detail affordances.",
+          },
+        ],
+      },
+    ],
+  },
+  {
     slug: "billing",
     name: "Billing",
     items: [
@@ -390,6 +722,25 @@ export const BLOCK_CATEGORIES: BlockCategory[] = [
         slug: "checkout",
         name: "Checkout",
         description: "A product checkout with an order summary and a card payment form.",
+        variants: [
+          {
+            id: "classic",
+            name: "Card payment",
+            description: "Two-column checkout with an order summary beside a card payment form.",
+          },
+          {
+            id: "one-page",
+            name: "One page",
+            description:
+              "Single-page checkout stacking contact, shipping, and payment beside a sticky order summary.",
+          },
+          {
+            id: "multi-step",
+            name: "Multi-step",
+            description:
+              "Wizard checkout with a shipping–payment–review stepper and back/continue navigation.",
+          },
+        ],
       },
       {
         slug: "payouts",
@@ -402,11 +753,150 @@ export const BLOCK_CATEGORIES: BlockCategory[] = [
         name: "Product Grid",
         description:
           "A digital-products storefront grid of product cards with prices and buy buttons.",
+        variants: [
+          {
+            id: "classic",
+            name: "Storefront grid",
+            description: "Three-column storefront grid with product art, pricing, and buy actions.",
+          },
+          {
+            id: "with-filters",
+            name: "With filters",
+            description:
+              "Catalog layout with category, price, and color filters beside a sortable product grid.",
+          },
+          {
+            id: "showcase",
+            name: "Editorial showcase",
+            description: "Hero product feature with an asymmetric grid and overlay shop actions.",
+          },
+        ],
       },
       {
         slug: "invoice",
         name: "Invoice",
         description: "An invoice receipt with line items, totals, status, and a download action.",
+        variants: [
+          {
+            id: "classic",
+            name: "Detailed invoice",
+            description:
+              "Full invoice with billing parties, line items, totals, and a download action.",
+          },
+          {
+            id: "receipt",
+            name: "Receipt",
+            description:
+              "Narrow thermal-style receipt with mono totals, dashed separators, and a paid stamp.",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    slug: "store",
+    name: "Store",
+    items: [
+      {
+        slug: "product-detail",
+        name: "Product detail",
+        description:
+          "Full product page section with gallery art, rating, variant selectors, quantity stepper, add-to-cart CTA and detail accordions.",
+        variants: [
+          {
+            id: "standard",
+            name: "Standard",
+            description:
+              "Full product page with variant selectors, a quantity stepper and detail accordions.",
+          },
+          {
+            id: "gallery",
+            name: "Gallery",
+            description: "Thumbnail rail beside the main image, with a quick spec strip.",
+          },
+          {
+            id: "minimal",
+            name: "Minimal",
+            description: "Centered single-column layout, ideal for one-product stores.",
+          },
+        ],
+      },
+      {
+        slug: "cart",
+        name: "Cart",
+        description:
+          "Shopping cart surfaces: a full cart page with editable line items and order summary, and a static slide-over drawer composition.",
+        variants: [
+          {
+            id: "page",
+            name: "Cart page",
+            description: "Full cart page with editable line items and an order summary.",
+          },
+          {
+            id: "drawer",
+            name: "Drawer",
+            description: "Slide-over mini cart with a free-shipping meter and quick checkout.",
+          },
+        ],
+      },
+      {
+        slug: "order-tracking",
+        name: "Order tracking",
+        description:
+          "Shipment status card with a vertical timeline, ETA banner and courier info across in-transit, delivered and delayed states.",
+        variants: [
+          {
+            id: "in-transit",
+            name: "In transit",
+            description: "Shipment timeline with the current leg highlighted and courier info.",
+          },
+          {
+            id: "delivered",
+            name: "Delivered",
+            description: "Completed timeline with a delivery confirmation and a review prompt.",
+          },
+          {
+            id: "delayed",
+            name: "Delayed",
+            description: "Late shipment with a warning notice, a new estimate and support actions.",
+          },
+        ],
+      },
+      {
+        slug: "order-history",
+        name: "Order history",
+        description:
+          "Customer purchase history as a dense table with row actions or stacked order cards with thumbnails and reorder.",
+        variants: [
+          {
+            id: "table",
+            name: "Table",
+            description: "Dense orders table with status badges and a per-row actions menu.",
+          },
+          {
+            id: "cards",
+            name: "Cards",
+            description: "Stacked order cards with item thumbnails and one-tap reorder.",
+          },
+        ],
+      },
+      {
+        slug: "reviews",
+        name: "Reviews",
+        description:
+          "Customer reviews: aggregate rating with distribution bars plus top reviews, or a dense compact grid of short reviews.",
+        variants: [
+          {
+            id: "summary",
+            name: "Summary",
+            description: "Aggregate rating with a distribution chart next to the top reviews.",
+          },
+          {
+            id: "compact",
+            name: "Compact grid",
+            description: "Dense grid of short reviews for landing and product pages.",
+          },
+        ],
       },
     ],
   },

@@ -236,6 +236,17 @@
     ]
   },
   {
+    "name": "chip",
+    "type": "registry:ui",
+    "dependencies": [
+      "class-variance-authority@^0.7.1",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
     "name": "code-block",
     "type": "registry:ui",
     "dependencies": [],
@@ -426,6 +437,16 @@
     ]
   },
   {
+    "name": "description-list",
+    "type": "registry:ui",
+    "dependencies": [
+      "class-variance-authority@^0.7.1"
+    ],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
     "name": "dialog",
     "type": "registry:ui",
     "dependencies": [
@@ -582,6 +603,17 @@
     "type": "registry:ui",
     "dependencies": [
       "@radix-ui/react-hover-card@^1.1.14"
+    ],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "image-zoom",
+    "type": "registry:ui",
+    "dependencies": [
+      "class-variance-authority@^0.7.1",
+      "lucide-react@^0.577.0"
     ],
     "registryDependencies": [
       "cn"
@@ -1099,6 +1131,16 @@
     ]
   },
   {
+    "name": "status-dot",
+    "type": "registry:ui",
+    "dependencies": [
+      "class-variance-authority@^0.7.1"
+    ],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
     "name": "stepper",
     "type": "registry:ui",
     "dependencies": [
@@ -1268,6 +1310,17 @@
     "name": "usage-meter",
     "type": "registry:ui",
     "dependencies": [],
+    "registryDependencies": [
+      "cn"
+    ]
+  },
+  {
+    "name": "video-player",
+    "type": "registry:ui",
+    "dependencies": [
+      "class-variance-authority@^0.7.1",
+      "lucide-react@^0.577.0"
+    ],
     "registryDependencies": [
       "cn"
     ]
@@ -1758,6 +1811,157 @@
   },
   {
     "name": "feature-matrix",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.2.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "product-detail",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.2.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "cart",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.2.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "order-tracking",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.2.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "order-history",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.2.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "reviews",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.2.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "account-security",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.2.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "sessions",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.2.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "api-keys",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.2.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "notification-preferences",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.2.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "user-management",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.2.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "analytics",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.2.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "kanban-board",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.2.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "audit-log",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.2.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "blog",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.2.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "blog-post",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.2.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "logo-cloud",
+    "type": "registry:block",
+    "dependencies": [
+      "@cooud-ui/ui@0.2.0",
+      "lucide-react@^0.577.0"
+    ],
+    "registryDependencies": []
+  },
+  {
+    "name": "about",
     "type": "registry:block",
     "dependencies": [
       "@cooud-ui/ui@0.2.0",
