@@ -122,7 +122,7 @@ export function ComponentShowcase() {
                     </AvatarFallback>
                   </Avatar>
                 ))}
-                <span className="grid size-9 place-items-center rounded-full border-2 border-surface-inset bg-primary/15 text-xs font-medium text-primary">
+                <span className="grid size-9 place-items-center rounded-full border-2 border-surface-inset bg-primary text-xs font-medium text-primary-foreground">
                   +9k
                 </span>
               </div>

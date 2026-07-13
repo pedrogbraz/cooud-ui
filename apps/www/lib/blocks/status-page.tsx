@@ -73,7 +73,7 @@ export function StatusPageBlock() {
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-50 motion-reduce:animate-none" />
             <span className="relative inline-flex size-2.5 rounded-full bg-success" />
           </span>
-          <p className="font-medium text-sm text-success">All systems operational</p>
+          <p className="font-medium text-sm text-success-strong">All systems operational</p>
           <span className="ml-auto text-fg-tertiary text-xs tabular-nums">Updated 2 min ago</span>
         </div>
 
@@ -190,7 +190,7 @@ export function StatusPageBlock() {
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-50 motion-reduce:animate-none" />
             <span className="relative inline-flex size-2.5 rounded-full bg-success" />
           </span>
-          <p className="font-medium text-sm text-success">All systems operational</p>
+          <p className="font-medium text-sm text-success-strong">All systems operational</p>
           <span className="ml-auto text-fg-tertiary text-xs tabular-nums">Updated 2 min ago</span>
         </div>
 

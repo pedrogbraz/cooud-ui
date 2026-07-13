@@ -180,8 +180,9 @@ export function StackOutput({
                   // thumb) and only its text color changes.
                   "relative min-w-0 flex-1 data-[state=active]:bg-transparent data-[state=active]:shadow-none",
                   // The Kickoff Prompt is the signature artifact: when it is the
-                  // active tab its label takes the primary tint so the eye lands there.
-                  value === "kickoff" && "data-[state=active]:text-primary",
+                  // active tab its label takes the primary accent (AA-tuned
+                  // `-strong` so it clears contrast on the primary/10 tab thumb).
+                  value === "kickoff" && "data-[state=active]:text-primary-strong",
                 )}
               >
                 <Icon aria-hidden="true" className="shrink-0" />

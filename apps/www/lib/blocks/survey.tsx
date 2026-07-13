@@ -164,7 +164,7 @@ export function FeedbackFormBlock() {
                 <button
                   type="button"
                   key={category}
-                  className="rounded-full border border-primary bg-primary/10 px-3 py-1 text-sm font-medium text-primary"
+                  className="rounded-full border border-primary bg-primary/10 px-3 py-1 text-sm font-medium text-primary-strong"
                 >
                   {category}
                 </button>
@@ -232,7 +232,7 @@ export function FeedbackFormBlock() {
                 <button
                   type="button"
                   key={category}
-                  className="rounded-full border border-primary bg-primary/10 px-3 py-1 text-sm font-medium text-primary"
+                  className="rounded-full border border-primary bg-primary/10 px-3 py-1 text-sm font-medium text-primary-strong"
                 >
                   {category}
                 </button>

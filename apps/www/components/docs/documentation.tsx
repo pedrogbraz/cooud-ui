@@ -17,7 +17,9 @@ export function DocsHeader({
   return (
     <header className="border-b border-border/60 pb-10">
       {eyebrow ? (
-        <p className="mb-3 text-xs font-medium uppercase tracking-widest text-primary">{eyebrow}</p>
+        <p className="mb-3 text-xs font-medium uppercase tracking-widest text-primary-strong">
+          {eyebrow}
+        </p>
       ) : null}
       <h1 className="max-w-4xl font-display text-4xl font-semibold tracking-tight text-fg sm:text-5xl">
         {title}
@@ -85,7 +87,7 @@ export function DocsCard({
       <p className="mt-3 text-sm leading-6 text-fg-secondary">{description}</p>
       {children ? <div className="mt-5">{children}</div> : null}
       {href && action ? (
-        <span className="mt-auto inline-flex items-center gap-1 pt-6 text-sm font-medium text-primary">
+        <span className="mt-auto inline-flex items-center gap-1 pt-6 text-sm font-medium text-primary-strong">
           {action}
           <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-0.5" />
         </span>

@@ -111,7 +111,7 @@ export function ChangelogBlock() {
     <div className="flex w-full items-center justify-center py-4">
       <section aria-labelledby="changelog-heading" className="w-full max-w-3xl px-4 py-8 sm:px-6">
         <div className="flex flex-col gap-3">
-          <span className="font-medium text-primary text-xs uppercase tracking-widest">
+          <span className="font-medium text-primary-strong text-xs uppercase tracking-widest">
             Changelog
           </span>
           <h2 id="changelog-heading" className="font-display font-semibold text-3xl tracking-tight">
@@ -267,7 +267,7 @@ export function ChangelogBlock() {
     <div className="flex w-full items-center justify-center py-4">
       <section aria-labelledby="changelog-heading" className="w-full max-w-3xl px-4 py-8 sm:px-6">
         <div className="flex flex-col gap-3">
-          <span className="font-medium text-primary text-xs uppercase tracking-widest">
+          <span className="font-medium text-primary-strong text-xs uppercase tracking-widest">
             Changelog
           </span>
           <h2 id="changelog-heading" className="font-display font-semibold text-3xl tracking-tight">

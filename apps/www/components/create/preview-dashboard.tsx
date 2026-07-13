@@ -583,7 +583,9 @@ function StatRow() {
                 </span>
                 <span
                   className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${
-                    trend === "down" ? "bg-error/10 text-error" : "bg-success/10 text-success"
+                    trend === "down"
+                      ? "bg-error/10 text-error-strong"
+                      : "bg-success/10 text-success-strong"
                   }`}
                 >
                   {trend === "down" ? (

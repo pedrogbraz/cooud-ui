@@ -32,7 +32,7 @@ function PropRow({
         <div className="flex items-center gap-1.5">
           <Code>{name}</Code>
           {required ? (
-            <span className="font-mono text-xs text-primary" title="Required">
+            <span className="font-mono text-xs text-primary-strong" title="Required">
               *
             </span>
           ) : null}

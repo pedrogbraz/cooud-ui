@@ -166,7 +166,7 @@ function ThemeCardView({ card }: { card: ThemeCard }) {
         <CopyCommand command={`npx cooud-ui theme add "${absoluteUrl(studioPath)}"`} />
         <Link
           href={studioPath}
-          className="inline-flex w-fit items-center gap-1.5 rounded-md text-sm font-medium text-primary outline-none transition-colors hover:text-fg focus-visible:ring-2 focus-visible:ring-ring"
+          className="inline-flex w-fit items-center gap-1.5 rounded-md text-sm font-medium text-primary-strong outline-none transition-colors hover:text-fg focus-visible:ring-2 focus-visible:ring-ring"
         >
           Open in Create Studio
           <ArrowUpRight className="size-3.5" aria-hidden="true" />
@@ -288,7 +288,7 @@ export default function ThemesPage() {
             </p>
             <Link
               href="/create"
-              className="inline-flex w-fit items-center gap-1.5 rounded-md text-sm font-medium text-primary outline-none transition-colors hover:text-fg focus-visible:ring-2 focus-visible:ring-ring"
+              className="inline-flex w-fit items-center gap-1.5 rounded-md text-sm font-medium text-primary-strong outline-none transition-colors hover:text-fg focus-visible:ring-2 focus-visible:ring-ring"
             >
               Build your own in the Create Studio
               <ArrowUpRight className="size-3.5" aria-hidden="true" />
