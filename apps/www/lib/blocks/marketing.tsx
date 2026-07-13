@@ -1143,7 +1143,9 @@ function CtaBlock() {
   );
 }
 
-const ctaCode = `import { Button, Input, Label } from "@cooud-ui/ui";
+const ctaCode = `"use client";
+
+import { Button, Input, Label } from "@cooud-ui/ui";
 import { Send } from "lucide-react";
 
 export function CtaBlock() {
@@ -2083,6 +2085,7 @@ export function FaqSplitBlock() {
    7. FOOTER
    ────────────────────────────────────────────────────────────────── */
 
+/* @cooud:data footer-links */
 const FOOTER_COLUMNS = [
   {
     heading: "Product",
@@ -2115,6 +2118,7 @@ const FOOTER_COLUMNS = [
     ],
   },
 ] as const;
+/* @cooud:data-end */
 
 function FooterBlock() {
   return (
@@ -2218,9 +2222,12 @@ function FooterBlock() {
   );
 }
 
-const footerCode = `import { Button, Input, Label, Separator } from "@cooud-ui/ui";
+const footerCode = `"use client";
+
+import { Button, Input, Label, Separator } from "@cooud-ui/ui";
 import { Github, Hexagon, Linkedin, Send, Twitter } from "lucide-react";
 
+/* @cooud:data footer-links */
 const FOOTER_COLUMNS = [
   {
     heading: "Product",
@@ -2253,6 +2260,7 @@ const FOOTER_COLUMNS = [
     ],
   },
 ];
+/* @cooud:data-end */
 
 export function FooterBlock() {
   return (
@@ -2711,12 +2719,14 @@ export function FooterMinimalBlock() {
    8. NAVBAR
    ────────────────────────────────────────────────────────────────── */
 
+/* @cooud:data navbar-links */
 const NAVBAR_LINKS = [
   { label: "Features", href: "#features" },
   { label: "Pricing", href: "#pricing" },
   { label: "Docs", href: "#docs" },
   { label: "Changelog", href: "#changelog" },
 ] as const;
+/* @cooud:data-end */
 
 function NavbarBlock() {
   return (
@@ -2763,12 +2773,14 @@ function NavbarBlock() {
 const navbarCode = `import { Badge, Button } from "@cooud-ui/ui";
 import { Hexagon, Menu } from "lucide-react";
 
+/* @cooud:data navbar-links */
 const NAVBAR_LINKS = [
   { label: "Features", href: "#features" },
   { label: "Pricing", href: "#pricing" },
   { label: "Docs", href: "#docs" },
   { label: "Changelog", href: "#changelog" },
 ];
+/* @cooud:data-end */
 
 export function NavbarBlock() {
   return (

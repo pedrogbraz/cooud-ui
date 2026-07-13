@@ -9,6 +9,12 @@ import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import { basename, dirname, extname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import ts from "typescript";
+// These two indexes are the single source of block/component metadata. Both are
+// pure data modules (zero imports, no React), so importing them here never pulls
+// UI code into the build-registry process. If either ever gains a React import,
+// switch to reading the manifest + a small typed lift instead.
+import { BLOCK_CATEGORIES } from "../../../apps/www/lib/blocks-index.ts";
+import { CATEGORIES as COMPONENT_CATEGORIES } from "../../../apps/www/lib/components-index.ts";
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(scriptDir, "../../..");
@@ -16,9 +22,15 @@ const uiRoot = join(repoRoot, "packages/ui");
 const componentsDir = join(uiRoot, "src/components");
 const cnFile = join(uiRoot, "src/lib/cn.ts");
 const blocksDir = join(repoRoot, "apps/www/lib/blocks");
+/** Bundled app-template manifests read into the meta `apps` section (empty when absent). */
+export const appsTemplatesDir = join(repoRoot, "packages/cli/templates/apps");
 
 /** Committed registry output directory. */
 export const outDir = join(repoRoot, "registry");
+/** Committed metadata sidecar file name (lives alongside index.json in `registry/`). */
+export const META_FILE = "meta.json";
+/** Registry metadata schema version (bumped on breaking meta shape changes). */
+const REGISTRY_VERSION = "0.4.0";
 
 interface PkgJson {
   version?: string;
@@ -31,7 +43,7 @@ interface RegistryFile {
   content: string;
   target: "ui" | "lib" | "block";
 }
-interface RegistryItem {
+export interface RegistryItem {
   name: string;
   type: "registry:ui" | "registry:lib" | "registry:block";
   dependencies: string[];
@@ -129,6 +141,309 @@ const BLOCK_MANIFEST: ReadonlyArray<{ slug: string; file: string; constName: str
   { slug: "logo-cloud", file: "content.tsx", constName: "logoCloudGridCode" },
   { slug: "about", file: "content.tsx", constName: "aboutStoryCode" },
 ];
+
+/**
+ * Semantic kind of a block, used by the composer for slot validation:
+ * - `page`   — a full-page surface a route can render on its own (login, checkout…).
+ * - `section`— a stackable page section (hero, pricing, product-grid…). Default.
+ * - `chrome` — layout furniture that lives in a layout, never in a page (navbar, footer).
+ * - `email`  — an email template, never rendered in an app route.
+ */
+export type BlockKind = "page" | "section" | "chrome" | "email";
+
+/**
+ * Explicit per-slug `kind` overrides. Anything not listed here falls back to the
+ * category default in {@link CATEGORY_KIND}, then to `"section"`. Kept explicit
+ * (no runtime guessing) so the semantic slot rules the composer enforces are a
+ * reviewable, deterministic table — never inferred from source at build time.
+ */
+const BLOCK_KIND: Readonly<Record<string, BlockKind>> = {
+  // Layout chrome — only ever valid in a route-group layout slot.
+  navbar: "chrome",
+  footer: "chrome",
+  // Full-page auth surfaces.
+  login: "page",
+  signup: "page",
+  "forgot-password": "page",
+  otp: "page",
+  "magic-link": "page",
+  // Full-page application/commerce/store surfaces.
+  checkout: "page",
+  dashboard: "page",
+  "product-detail": "page",
+  cart: "page",
+  // Full-page states (also usable as Next special files via manifest `extras`).
+  "not-found": "page",
+  "error-state": "page",
+  "success-state": "page",
+  maintenance: "page",
+  "status-page": "page",
+};
+
+/**
+ * Category-level `kind` default, applied when a slug has no {@link BLOCK_KIND}
+ * entry. The `email` family is entirely email templates; every other category
+ * defaults to a stackable `section`.
+ */
+const CATEGORY_KIND: Readonly<Record<string, BlockKind>> = {
+  email: "email",
+};
+
+/**
+ * Brand-token anchors per block: `{ token, literal }` where `literal` MUST occur
+ * verbatim in the shipped block source (enforced by `registry:check`). The
+ * composer replaces the literal with the app's `--brand` value. Phase 1 anchors
+ * only the two chrome blocks that carry the brand wordmark.
+ */
+const BLOCK_BRAND_TOKENS: Readonly<Record<string, ReadonlyArray<BrandTokenMeta>>> = {
+  navbar: [{ token: "brand", literal: "Cooud" }],
+  footer: [{ token: "brand", literal: "Cooud" }],
+};
+
+/**
+ * Data-slot expectations per block: the `@cooud:data <name>` markers the block
+ * source MUST contain so the composer can replace the delimited data const. Both
+ * `build-registry` (records them in meta) and `registry:check` (fails if absent)
+ * read this table, so the two never drift.
+ */
+export const BLOCK_DATA_SLOTS: Readonly<Record<string, ReadonlyArray<string>>> = {
+  navbar: ["navbar-links"],
+  footer: ["footer-links"],
+};
+
+/** Open/close markers for a named data-slot inside a block source. */
+export function dataSlotMarkers(name: string): { open: string; close: string } {
+  return { open: `/* @cooud:data ${name} */`, close: "/* @cooud:data-end */" };
+}
+
+/**
+ * `registry/meta.json` shapes — a generated, committed sidecar carrying the
+ * semantic metadata (title/description/category/exportName/kind/variants…) that
+ * the flat registry index does not. Deterministic: a pure function of the source
+ * indexes + block sources, with stable key ordering and no timestamps.
+ */
+export interface BrandTokenMeta {
+  token: string;
+  literal: string;
+}
+export interface VariantMeta {
+  id: string;
+  name: string;
+  description: string;
+}
+export interface BlockMetaEntry {
+  title: string;
+  description: string;
+  category: string;
+  exportName: string;
+  kind: BlockKind;
+  dataSlots: string[];
+  brandTokens: BrandTokenMeta[];
+  variants: VariantMeta[];
+}
+export interface ComponentMetaEntry {
+  title: string;
+  category: string;
+  description: string;
+  rsc: boolean;
+}
+export interface AppMetaEntry {
+  title: string;
+  description: string;
+  pages: number;
+}
+export interface RegistryMeta {
+  registryVersion: string;
+  blocks: Record<string, BlockMetaEntry>;
+  components: Record<string, ComponentMetaEntry>;
+  apps: Record<string, AppMetaEntry>;
+}
+
+/**
+ * Resolve the semantic {@link BlockKind} for a block: explicit per-slug override
+ * first, then the category default, then `section`.
+ */
+function kindFor(slug: string, category: string): BlockKind {
+  return BLOCK_KIND[slug] ?? CATEGORY_KIND[category] ?? "section";
+}
+
+/**
+ * Extract the component export a generated page will import from the SHIPPED
+ * block source (the extracted template-literal text), via `export function <Name>`.
+ * This is deterministic and matches exactly what `add` writes to disk. Throws a
+ * slug-scoped Error if the source carries no such export so drift fails loudly.
+ */
+export function extractExportName(source: string, slug: string): string {
+  const match = /export function (\w+)/.exec(source);
+  if (!match?.[1]) {
+    throw new Error(
+      `block "${slug}": no \`export function <Name>\` found in the shipped source — ` +
+        `meta.exportName cannot be derived (a generated page imports this name).`,
+    );
+  }
+  return match[1];
+}
+
+/**
+ * One bundled app-template manifest as read off disk: the source `file`, the
+ * derived `name` (manifest `name` field, falling back to the basename), and the
+ * raw JSON-parsed value. Deliberately un-narrowed (`raw: unknown`) — the meta
+ * build reads a permissive shape, while `registry:check` runs the strict
+ * `parseManifest` + a plan against the registry to catch bad block refs.
+ */
+export interface LoadedAppManifest {
+  file: string;
+  name: string;
+  raw: unknown;
+}
+
+/**
+ * Read every `templates/apps/*.json` once (sorted for determinism) and return
+ * the parsed JSON per file. Returns `[]` when the directory is absent (Phase 1
+ * ships no bundled apps yet). Shared by {@link buildAppsMeta} and the
+ * `registry:check` app-template reference gate so both read the same bytes.
+ */
+export async function loadAppManifests(): Promise<LoadedAppManifest[]> {
+  let files: string[];
+  try {
+    files = (await readdir(appsTemplatesDir)).filter((f) => f.endsWith(".json")).sort();
+  } catch {
+    return [];
+  }
+  const loaded: LoadedAppManifest[] = [];
+  for (const file of files) {
+    const raw = JSON.parse(await readFile(join(appsTemplatesDir, file), "utf8")) as unknown;
+    const name =
+      typeof (raw as { name?: unknown }).name === "string"
+        ? (raw as { name: string }).name
+        : basename(file, ".json");
+    loaded.push({ file, name, raw });
+  }
+  return loaded;
+}
+
+/**
+ * Build the meta `apps` section, keyed by manifest `name`. Reads only
+ * title/description/pages-count off each manifest. Deterministic: entries are
+ * sorted by key.
+ */
+async function buildAppsMeta(): Promise<Record<string, AppMetaEntry>> {
+  const apps: Record<string, AppMetaEntry> = {};
+  for (const { name, raw } of await loadAppManifests()) {
+    const m =
+      (raw as { manifest?: { title?: unknown; description?: unknown; pages?: unknown } })
+        .manifest ?? {};
+    apps[name] = {
+      title: typeof m.title === "string" ? m.title : name,
+      description: typeof m.description === "string" ? m.description : "",
+      pages: Array.isArray(m.pages) ? m.pages.length : 0,
+    };
+  }
+  // Stable key ordering regardless of readdir order.
+  return Object.fromEntries(Object.entries(apps).sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)));
+}
+
+/**
+ * Build the `registry/meta.json` payload from the source indexes and the shipped
+ * block sources. `blockSources` maps slug → shipped source string (the exact
+ * bytes `add` writes), so `exportName` is parsed from what actually ships.
+ * Deterministic: keys are ordered by the source indexes, then re-sorted, and no
+ * `Date`/random is used anywhere.
+ */
+export async function buildMeta(blockSources: Map<string, string>): Promise<RegistryMeta> {
+  const blocks: Record<string, BlockMetaEntry> = {};
+  const exportNameOwner = new Map<string, string>();
+  for (const category of BLOCK_CATEGORIES) {
+    for (const item of category.items) {
+      const source = blockSources.get(item.slug);
+      if (source === undefined) {
+        // A block in the index without a manifest entry (no shipped source) is a
+        // drift bug — fail loudly rather than emit half a meta entry.
+        throw new Error(
+          `block "${item.slug}" is in BLOCK_CATEGORIES but has no BLOCK_MANIFEST source — ` +
+            `add it to BLOCK_MANIFEST so its meta.exportName can be derived.`,
+        );
+      }
+      const exportName = extractExportName(source, item.slug);
+      // exportName must be unique across blocks: a generated page imports it by
+      // name, so a collision would produce ambiguous/duplicate imports.
+      const prior = exportNameOwner.get(exportName);
+      if (prior !== undefined) {
+        throw new Error(
+          `duplicate block exportName "${exportName}" shared by "${prior}" and "${item.slug}" — ` +
+            `each block's shipped export must be uniquely named.`,
+        );
+      }
+      exportNameOwner.set(exportName, item.slug);
+
+      // Every declared data-slot marker must be present in the shipped source
+      // (both the opening `@cooud:data <name>` and its `@cooud:data-end`), so the
+      // composer's anchored replacement can never silently target a missing slot.
+      for (const slot of BLOCK_DATA_SLOTS[item.slug] ?? []) {
+        const { open, close } = dataSlotMarkers(slot);
+        if (!source.includes(open) || !source.includes(close)) {
+          throw new Error(
+            `block "${item.slug}": declared data-slot "${slot}" is missing its markers in the ` +
+              `shipped source (expected both \`${open}\` and \`${close}\`).`,
+          );
+        }
+      }
+
+      // Every declared brand-token literal must occur verbatim in the shipped
+      // source so the composer's brand substitution has a real anchor.
+      for (const brand of BLOCK_BRAND_TOKENS[item.slug] ?? []) {
+        if (!source.includes(brand.literal)) {
+          throw new Error(
+            `block "${item.slug}": brand-token literal "${brand.literal}" (token "${brand.token}") ` +
+              `is absent from the shipped source.`,
+          );
+        }
+      }
+
+      blocks[item.slug] = {
+        title: item.name,
+        description: item.description,
+        category: category.slug,
+        exportName,
+        kind: kindFor(item.slug, category.slug),
+        dataSlots: [...(BLOCK_DATA_SLOTS[item.slug] ?? [])],
+        brandTokens: (BLOCK_BRAND_TOKENS[item.slug] ?? []).map((b) => ({ ...b })),
+        variants: (item.variants ?? []).map((v) => ({
+          id: v.id,
+          name: v.name,
+          description: v.description,
+        })),
+      };
+    }
+  }
+
+  const components: Record<string, ComponentMetaEntry> = {};
+  for (const category of COMPONENT_CATEGORIES) {
+    for (const item of category.items) {
+      components[item.slug] = {
+        title: item.name,
+        category: category.slug,
+        description: item.description,
+        rsc: item.rsc === true,
+      };
+    }
+  }
+
+  return {
+    registryVersion: REGISTRY_VERSION,
+    // Re-sort so meta key order never depends on index authoring order.
+    blocks: sortByKey(blocks),
+    components: sortByKey(components),
+    apps: await buildAppsMeta(),
+  };
+}
+
+/** Return a new object with the same entries ordered by key (ascending). */
+function sortByKey<T>(record: Record<string, T>): Record<string, T> {
+  return Object.fromEntries(
+    Object.entries(record).sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)),
+  );
+}
 
 /**
  * Hand-rolled schema validation (no extra deps): every emitted item must carry a
@@ -236,6 +551,27 @@ function extractBlockSource(
   return source;
 }
 
+/**
+ * Read every block family file once and extract each slug's SHIPPED source (the
+ * cooked no-substitution template literal) into a `Map<slug, source>`. This is
+ * the exact bytes `add` writes, so both the registry `<slug>.json` files and
+ * `meta.json` (its `exportName`/`dataSlots`) are derived from the same strings.
+ */
+export async function readBlockSources(): Promise<Map<string, string>> {
+  const fileTextCache = new Map<string, string>();
+  const sources = new Map<string, string>();
+  for (const block of BLOCK_MANIFEST) {
+    const filePath = join(blocksDir, block.file);
+    let fileText = fileTextCache.get(filePath);
+    if (fileText === undefined) {
+      fileText = await readFile(filePath, "utf8");
+      fileTextCache.set(filePath, fileText);
+    }
+    sources.set(block.slug, extractBlockSource(filePath, fileText, block.constName, block.slug));
+  }
+  return sources;
+}
+
 /** Read the @cooud-ui/ui sources and derive the full, validated set of registry items. */
 export async function buildItems(): Promise<RegistryItem[]> {
   const pkg = JSON.parse(await readFile(join(uiRoot, "package.json"), "utf8")) as PkgJson;
@@ -294,15 +630,10 @@ export async function buildItems(): Promise<RegistryItem[]> {
   // `dependencies` only and an empty `registryDependencies`. Their source is
   // TS-parsed out of the app's block family files — never imported/executed.
   const uiPackage = `@cooud-ui/ui@${pkg.version ?? "latest"}`;
-  const blockSources = new Map<string, string>();
+  const blockSources = await readBlockSources();
   for (const block of BLOCK_MANIFEST) {
-    const filePath = join(blocksDir, block.file);
-    let fileText = blockSources.get(filePath);
-    if (fileText === undefined) {
-      fileText = await readFile(filePath, "utf8");
-      blockSources.set(filePath, fileText);
-    }
-    const source = extractBlockSource(filePath, fileText, block.constName, block.slug);
+    const source = blockSources.get(block.slug);
+    if (source === undefined) throw new Error(`block "${block.slug}": missing extracted source`);
 
     // @cooud-ui/ui is a bare import in every block but is not in the ui package's
     // own dependency map, so pin it explicitly to the ui package version.
@@ -337,11 +668,16 @@ export async function buildItems(): Promise<RegistryItem[]> {
 }
 
 /**
- * Serialize items to the exact file map written to disk:
- * `{ "index.json": "...", "<name>.json": "..." }` — newline-terminated JSON,
- * matching `writeFile` output byte-for-byte so checks can diff in memory.
+ * Serialize items (and, when provided, the metadata sidecar) to the exact file
+ * map written to disk: `{ "index.json": "...", "<name>.json": "...", "meta.json":
+ * "..." }` — newline-terminated JSON, matching `writeFile` output byte-for-byte
+ * so checks can diff in memory. `meta.json` is emitted only when `meta` is passed
+ * so the serializer stays a pure function of its inputs (no I/O, deterministic).
  */
-export function serializeRegistry(items: RegistryItem[]): Record<string, string> {
+export function serializeRegistry(
+  items: RegistryItem[],
+  meta?: RegistryMeta,
+): Record<string, string> {
   const out: Record<string, string> = {};
   const index = items.map(({ name, type, dependencies, registryDependencies }) => ({
     name,
@@ -353,12 +689,19 @@ export function serializeRegistry(items: RegistryItem[]): Record<string, string>
   for (const item of items) {
     out[`${item.name}.json`] = `${JSON.stringify(item, null, 2)}\n`;
   }
+  if (meta) {
+    out[META_FILE] = `${JSON.stringify(meta, null, 2)}\n`;
+  }
   return out;
 }
 
-export async function writeRegistry(targetDir: string, items: RegistryItem[]): Promise<void> {
+export async function writeRegistry(
+  targetDir: string,
+  items: RegistryItem[],
+  meta?: RegistryMeta,
+): Promise<void> {
   await mkdir(targetDir, { recursive: true });
-  const files = serializeRegistry(items);
+  const files = serializeRegistry(items, meta);
   for (const [file, content] of Object.entries(files)) {
     await writeFile(join(targetDir, file), content, "utf8");
   }
@@ -366,8 +709,9 @@ export async function writeRegistry(targetDir: string, items: RegistryItem[]): P
 
 async function main() {
   const items = await buildItems();
-  await writeRegistry(outDir, items);
-  console.log(`registry: wrote ${items.length} items + index.json to ${outDir}`);
+  const meta = await buildMeta(await readBlockSources());
+  await writeRegistry(outDir, items, meta);
+  console.log(`registry: wrote ${items.length} items + index.json + ${META_FILE} to ${outDir}`);
 }
 
 // Only run when invoked directly (not when imported by check-registry.ts).

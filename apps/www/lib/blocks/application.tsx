@@ -473,7 +473,9 @@ export function SettingsBlock() {
   );
 }
 
-const settingsCode = `import {
+const settingsCode = `"use client";
+
+import {
   Avatar,
   AvatarFallback,
   AvatarImage,
