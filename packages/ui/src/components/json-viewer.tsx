@@ -144,13 +144,15 @@ function formatPrimitive(value: unknown): { text: string; className: string } {
   switch (typeof value) {
     case "string":
       // JSON.stringify supplies the quotes and escapes embedded ones.
-      return { text: JSON.stringify(value), className: "text-success" };
+      // `text-*-strong` (the AA-tuned same-hue variants): the plain semantic
+      // colors read ~4.4:1 as small code text on the lightest light surfaces.
+      return { text: JSON.stringify(value), className: "text-success-strong" };
     case "number":
-      return { text: String(value), className: "text-info tabular-nums" };
+      return { text: String(value), className: "text-info-strong tabular-nums" };
     case "bigint":
-      return { text: `${value}n`, className: "text-info tabular-nums" };
+      return { text: `${value}n`, className: "text-info-strong tabular-nums" };
     case "boolean":
-      return { text: String(value), className: "text-warning" };
+      return { text: String(value), className: "text-warning-strong" };
     default:
       // Functions and symbols are not JSON; render a compact de-emphasized token.
       return {
@@ -168,18 +170,18 @@ function formatLeaf(value: unknown): { text: string; className: string; hint?: s
   if (value instanceof Date) {
     return Number.isNaN(value.getTime())
       ? { text: "Invalid Date", className: "text-fg-tertiary italic", hint: "Date" }
-      : { text: value.toISOString(), className: "text-info", hint: "Date" };
+      : { text: value.toISOString(), className: "text-info-strong", hint: "Date" };
   }
   if (value instanceof RegExp) {
     // The literal form (`/ab+c/gi`) is self-describing — no hint needed.
-    return { text: String(value), className: "text-success" };
+    return { text: String(value), className: "text-success-strong" };
   }
   if (value instanceof URL) {
-    return { text: JSON.stringify(value.href), className: "text-success", hint: "URL" };
+    return { text: JSON.stringify(value.href), className: "text-success-strong", hint: "URL" };
   }
   if (value instanceof Error) {
     // `String(error)` is "Name: message", so the name doubles as the hint.
-    return { text: String(value), className: "text-error" };
+    return { text: String(value), className: "text-error-strong" };
   }
   return formatPrimitive(value);
 }
@@ -506,8 +508,8 @@ export interface JsonViewerProps extends HTMLAttributes<HTMLDivElement> {
  * monospaced tree: objects and arrays become branches with a real chevron
  * `<button>` (`aria-expanded`, focus ring) and a muted child-count summary
  * while collapsed; primitives are colored purely by semantic tokens (strings
- * `text-success`, numbers `text-info` + `tabular-nums`, booleans
- * `text-warning`, null/undefined `text-fg-tertiary`), keys use
+ * `text-success-strong`, numbers `text-info-strong` + `tabular-nums`, booleans
+ * `text-warning-strong`, null/undefined `text-fg-tertiary`), keys use
  * `text-fg-secondary` and punctuation `text-fg-tertiary`, with `border-border`
  * indent guides.
  *

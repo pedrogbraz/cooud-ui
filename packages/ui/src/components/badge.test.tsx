@@ -12,13 +12,13 @@ describe("Badge", () => {
   it("applies the destructive variant classes", () => {
     render(<Badge variant="destructive">Failed</Badge>);
     const badge = screen.getByText("Failed");
-    expect(badge).toHaveClass("text-error");
+    expect(badge).toHaveClass("text-error-strong");
     expect(badge).toHaveAttribute("data-slot", "badge");
   });
 
   it("applies the success variant classes", () => {
     render(<Badge variant="success">Paid</Badge>);
-    expect(screen.getByText("Paid")).toHaveClass("text-success");
+    expect(screen.getByText("Paid")).toHaveClass("text-success-strong");
   });
 
   it("has no axe violations", async () => {

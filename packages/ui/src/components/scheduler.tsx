@@ -32,15 +32,16 @@ export interface SchedulerEvent {
 }
 
 /**
- * Token classes per event colour. Mirrors the soft `bg-…/15 text-…` treatment
- * used by `Badge` so chips read as quiet, on-brand pills in any theme.
+ * Token classes per event colour. Mirrors the soft `bg-…/15 text-…-strong`
+ * treatment used by `Badge` so chips read as quiet, on-brand pills that still
+ * clear WCAG AA (the `*-strong` text variant is AA-tuned for the 15% tint).
  */
 const EVENT_CHIP_CLASSES: Record<SchedulerEventColor, string> = {
-  primary: "bg-primary/15 text-primary",
-  success: "bg-success/15 text-success",
-  warning: "bg-warning/15 text-warning",
-  error: "bg-error/15 text-error",
-  info: "bg-info/15 text-info",
+  primary: "bg-primary/15 text-primary-strong",
+  success: "bg-success/15 text-success-strong",
+  warning: "bg-warning/15 text-warning-strong",
+  error: "bg-error/15 text-error-strong",
+  info: "bg-info/15 text-info-strong",
 };
 
 /** Max chips rendered per day before collapsing the rest into `+N more`. */

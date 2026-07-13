@@ -100,8 +100,10 @@ export const FloatingLabelInput = forwardRef<HTMLInputElement, FloatingLabelInpu
               // Resting: empty and unfocused → sits in the placeholder position.
               "peer-placeholder-shown:translate-y-[-50%] peer-placeholder-shown:scale-100 peer-placeholder-shown:text-fg-tertiary",
               // Focused: float back up and take the accent (or error) color.
+              // `text-primary-strong` (AA-tuned): the raw `primary` fill reads
+              // ~2:1 as this small label on white in the bright-accent light themes.
               "peer-focus:-translate-y-[1.6rem] peer-focus:scale-[0.8]",
-              invalid ? "peer-focus:text-error" : "peer-focus:text-primary",
+              invalid ? "peer-focus:text-error" : "peer-focus:text-primary-strong",
               // Disabled dimming mirrors the input.
               "peer-disabled:opacity-50",
               labelClassName,

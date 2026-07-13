@@ -285,7 +285,7 @@ const stepperIndicatorVariants = cva(
   {
     variants: {
       state: {
-        completed: "bg-primary/15 text-primary",
+        completed: "bg-primary/15 text-primary-strong",
         active: "bg-primary text-white shadow-xs",
         upcoming: "border border-border bg-surface-overlay text-fg-tertiary",
       },
