@@ -23,6 +23,7 @@ export function renderPreview(plan: ComposePlan): string {
     const parts: string[] = [];
     if (chrome.navbar !== undefined) parts.push(`navbar=${chrome.navbar}`);
     if (chrome.footer !== undefined) parts.push(`footer=${chrome.footer}`);
+    if (chrome.block !== undefined) parts.push(`shell=${chrome.block}`);
     lines.push(`  (${chrome.group}) ${parts.length > 0 ? parts.join(" ") : "bare"}`);
   }
 
@@ -33,7 +34,8 @@ export function renderPreview(plan: ComposePlan): string {
     const navMark = page.nav !== undefined ? ` [nav: ${page.nav}]` : "";
     lines.push(`  ${page.route}  "${page.title}"  (${page.chrome})${navMark}`);
     for (const block of page.blocks) {
-      lines.push(`    - ${block.slug} <${block.exportName}> (${block.kind})`);
+      const variantMark = block.variant !== undefined ? ` (variant: ${block.variant})` : "";
+      lines.push(`    - ${block.slug}${variantMark} <${block.exportName}> (${block.kind})`);
     }
   }
 

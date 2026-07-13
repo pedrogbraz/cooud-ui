@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { Command } from "commander";
 import { add } from "./commands/add.js";
+import { addPageCommand } from "./commands/add-page.js";
 import { aiAdd } from "./commands/ai.js";
 import { compose } from "./commands/compose.js";
 import { diff } from "./commands/diff.js";
@@ -83,6 +84,40 @@ program
       skipInstall: opts.skipInstall,
       dryRun: opts.dryRun,
       yes: opts.yes,
+    }),
+  );
+
+program
+  .command("add-page")
+  .description(
+    "Add one page to an already-composed app (installs new blocks, updates the nav + composed record).",
+  )
+  .requiredOption("--route <route>", "route to add, e.g. /faq")
+  .requiredOption("--blocks <list>", "comma-separated blocks, e.g. faq,cta (or login=split)")
+  .option("-c, --cwd <dir>", "working directory", process.cwd())
+  .option("-r, --registry <source>", "registry URL or local directory")
+  .option("--chrome <group>", "chrome group for the page (default: the app's first group)")
+  .option("--title <title>", "page <title> (default: Title-Cased route)")
+  .option("--nav <label>", "nav label; adds the page to the chrome nav")
+  .option("--app <name>", "which composed app to extend (required if the project has >1)")
+  .option("-m, --manifest <file>", "reload the manifest from a file (for --manifest-composed apps)")
+  .option("-o, --overwrite", "replace the page if the route already exists")
+  .option("--skip-install", "do not install npm dependencies")
+  .option("--dry-run", "print the plan + files that would be written, write nothing")
+  .action((opts) =>
+    addPageCommand({
+      cwd: opts.cwd,
+      route: opts.route,
+      blocks: opts.blocks,
+      chrome: opts.chrome,
+      title: opts.title,
+      nav: opts.nav,
+      app: opts.app,
+      manifest: opts.manifest,
+      overwrite: opts.overwrite,
+      skipInstall: opts.skipInstall,
+      dryRun: opts.dryRun,
+      registry: opts.registry,
     }),
   );
 

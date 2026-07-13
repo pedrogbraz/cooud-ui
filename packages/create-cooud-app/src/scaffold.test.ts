@@ -127,6 +127,7 @@ describe("scaffold (into a temp dir, no install)", () => {
   it.each([
     "store",
     "landing",
+    "saas",
   ] as const)('scaffolds the "%s" composed template from the default base (compose runs later)', (template) => {
     const { fileCount } = scaffold({ targetDir, name, template });
     // Composed templates have no bundled dir: they copy the "default" base.

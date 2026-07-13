@@ -57,44 +57,208 @@ const VALID_TYPES = new Set(["registry:ui", "registry:lib", "registry:block"]);
 const VALID_TARGETS = new Set(["ui", "lib", "block"]);
 
 /**
+ * The reserved separator between a block slug and a variant id in a variant's
+ * registry item name (`<slug>--<variantId>`). No real block slug may contain it
+ * (asserted in {@link buildItems}) so `login--split` is always unambiguously a
+ * variant item, and `blockRefParts`/plan resolution can split on it safely.
+ */
+export const VARIANT_SEPARATOR = "--";
+
+/** One non-default variant of a block: its id + the family-file code const. */
+interface BlockVariantManifest {
+  /** Variant id, mirrors the `variants[].id` in blocks-index / the family map. */
+  id: string;
+  /** The family-file template-literal const holding this variant's shipped source. */
+  constName: string;
+}
+
+/**
  * Installable product blocks. Each entry maps a registry slug to the family
  * source file under `apps/www/lib/blocks/` and the exported template-literal
  * const that holds the block's copy-paste source. The source is TS-parsed out
  * of these files (never imported) so block generation never pulls in React.
+ *
+ * `constName` is the DEFAULT variant (the first `variants[]` entry in
+ * blocks-index, whose family-file `code` equals the block's bare const) — it
+ * ships as the bare `<slug>` item. `variants[]` lists ONLY the NON-DEFAULT
+ * variants; each ships as a separate `<slug>--<variantId>` item (file
+ * `<slug>-<variantId>.tsx`) whose `exportName` is parsed from its shipped source.
+ * The default variant is intentionally absent here (the bare item covers it).
  */
-const BLOCK_MANIFEST: ReadonlyArray<{ slug: string; file: string; constName: string }> = [
-  { slug: "hero", file: "marketing.tsx", constName: "heroCode" },
-  { slug: "pricing", file: "marketing.tsx", constName: "pricingCode" },
-  { slug: "feature-grid", file: "marketing.tsx", constName: "featureGridCode" },
-  { slug: "cta", file: "marketing.tsx", constName: "ctaCode" },
-  { slug: "testimonials", file: "marketing.tsx", constName: "testimonialsCode" },
-  { slug: "faq", file: "marketing.tsx", constName: "faqCode" },
-  { slug: "footer", file: "marketing.tsx", constName: "footerCode" },
-  { slug: "navbar", file: "marketing.tsx", constName: "navbarCode" },
-  { slug: "login", file: "auth.tsx", constName: "loginCode" },
-  { slug: "signup", file: "auth.tsx", constName: "signupCode" },
-  { slug: "forgot-password", file: "auth.tsx", constName: "forgotPasswordCode" },
+const BLOCK_MANIFEST: ReadonlyArray<{
+  slug: string;
+  file: string;
+  constName: string;
+  variants?: ReadonlyArray<BlockVariantManifest>;
+}> = [
+  {
+    slug: "hero",
+    file: "marketing.tsx",
+    constName: "heroCode",
+    variants: [
+      { id: "split", constName: "splitHeroCode" },
+      { id: "compact", constName: "compactHeroCode" },
+    ],
+  },
+  {
+    slug: "pricing",
+    file: "marketing.tsx",
+    constName: "pricingCode",
+    variants: [
+      { id: "toggle", constName: "pricingToggleCode" },
+      { id: "usage", constName: "usagePricingCode" },
+    ],
+  },
+  {
+    slug: "feature-grid",
+    file: "marketing.tsx",
+    constName: "featureGridCode",
+    variants: [{ id: "bento", constName: "bentoFeatureCode" }],
+  },
+  {
+    slug: "cta",
+    file: "marketing.tsx",
+    constName: "ctaCode",
+    variants: [
+      { id: "banner", constName: "ctaBannerCode" },
+      { id: "split-visual", constName: "ctaSplitVisualCode" },
+    ],
+  },
+  {
+    slug: "testimonials",
+    file: "marketing.tsx",
+    constName: "testimonialsCode",
+    variants: [{ id: "grid", constName: "testimonialsGridCode" }],
+  },
+  {
+    slug: "faq",
+    file: "marketing.tsx",
+    constName: "faqCode",
+    variants: [{ id: "split", constName: "faqSplitCode" }],
+  },
+  {
+    slug: "footer",
+    file: "marketing.tsx",
+    constName: "footerCode",
+    variants: [
+      { id: "mega", constName: "footerMegaCode" },
+      { id: "minimal", constName: "footerMinimalCode" },
+    ],
+  },
+  {
+    slug: "navbar",
+    file: "marketing.tsx",
+    constName: "navbarCode",
+    variants: [
+      { id: "centered", constName: "navbarCenteredCode" },
+      { id: "with-announcement", constName: "navbarAnnouncementCode" },
+    ],
+  },
+  {
+    slug: "login",
+    file: "auth.tsx",
+    constName: "loginCode",
+    variants: [
+      { id: "split", constName: "loginSplitCode" },
+      { id: "social-first", constName: "loginSocialFirstCode" },
+      { id: "minimal", constName: "loginMinimalCode" },
+    ],
+  },
+  {
+    slug: "signup",
+    file: "auth.tsx",
+    constName: "signupCode",
+    variants: [
+      { id: "split-proof", constName: "signupSplitProofCode" },
+      { id: "with-plan", constName: "signupWithPlanCode" },
+    ],
+  },
+  {
+    slug: "forgot-password",
+    file: "auth.tsx",
+    constName: "forgotPasswordCode",
+    variants: [{ id: "sent", constName: "forgotPasswordSentCode" }],
+  },
   { slug: "otp", file: "auth.tsx", constName: "otpCode" },
-  { slug: "magic-link", file: "auth.tsx", constName: "magicLinkCode" },
-  { slug: "stats", file: "application.tsx", constName: "statsCode" },
+  {
+    slug: "magic-link",
+    file: "auth.tsx",
+    constName: "magicLinkCode",
+    variants: [{ id: "sent", constName: "magicLinkSentCode" }],
+  },
+  {
+    slug: "stats",
+    file: "application.tsx",
+    constName: "statsCode",
+    variants: [
+      { id: "compact-summary", constName: "statsCompactCode" },
+      { id: "pipeline-funnel", constName: "statsPipelineCode" },
+    ],
+  },
   { slug: "settings", file: "application.tsx", constName: "settingsCode" },
   { slug: "team", file: "application.tsx", constName: "teamCode" },
   { slug: "welcome", file: "onboarding.tsx", constName: "welcomeCode" },
   { slug: "setup-wizard", file: "onboarding.tsx", constName: "setupWizardCode" },
   { slug: "setup-checklist", file: "onboarding.tsx", constName: "setupChecklistCode" },
-  { slug: "dashboard", file: "dashboard.tsx", constName: "dashboardAnalyticsCode" },
-  { slug: "billing", file: "billing.tsx", constName: "subscriptionCode" },
+  {
+    slug: "dashboard",
+    file: "dashboard.tsx",
+    constName: "dashboardAnalyticsCode",
+    variants: [{ id: "admin-overview", constName: "dashboardAdminOverviewCode" }],
+  },
+  {
+    slug: "billing",
+    file: "billing.tsx",
+    constName: "subscriptionCode",
+    variants: [{ id: "plans", constName: "plansCode" }],
+  },
   { slug: "manage-subscription", file: "billing.tsx", constName: "manageSubscriptionCode" },
-  { slug: "payment-method", file: "billing.tsx", constName: "paymentMethodCode" },
+  {
+    slug: "payment-method",
+    file: "billing.tsx",
+    constName: "paymentMethodCode",
+    variants: [{ id: "add-card", constName: "paymentMethodAddCode" }],
+  },
   { slug: "usage-dashboard", file: "billing.tsx", constName: "usageDashboardCode" },
   { slug: "cancel-flow", file: "billing.tsx", constName: "cancelFlowCode" },
-  { slug: "checkout", file: "commerce.tsx", constName: "checkoutCode" },
+  {
+    slug: "checkout",
+    file: "commerce.tsx",
+    constName: "checkoutCode",
+    variants: [
+      { id: "one-page", constName: "checkoutOnePageCode" },
+      { id: "multi-step", constName: "checkoutMultiStepCode" },
+    ],
+  },
   { slug: "payouts", file: "commerce.tsx", constName: "payoutsCode" },
-  { slug: "product-grid", file: "commerce.tsx", constName: "productGridCode" },
-  { slug: "invoice", file: "commerce.tsx", constName: "invoiceCode" },
-  { slug: "page-header", file: "page-sections.tsx", constName: "pageHeaderCode" },
+  {
+    slug: "product-grid",
+    file: "commerce.tsx",
+    constName: "productGridCode",
+    variants: [
+      { id: "with-filters", constName: "productGridWithFiltersCode" },
+      { id: "showcase", constName: "productGridShowcaseCode" },
+    ],
+  },
+  {
+    slug: "invoice",
+    file: "commerce.tsx",
+    constName: "invoiceCode",
+    variants: [{ id: "receipt", constName: "invoiceReceiptCode" }],
+  },
+  {
+    slug: "page-header",
+    file: "page-sections.tsx",
+    constName: "pageHeaderCode",
+    variants: [{ id: "with-tabs", constName: "pageHeaderTabsCode" }],
+  },
   { slug: "filter-bar", file: "page-sections.tsx", constName: "filterBarCode" },
-  { slug: "empty-state", file: "page-sections.tsx", constName: "emptyStateCode" },
+  {
+    slug: "empty-state",
+    file: "page-sections.tsx",
+    constName: "emptyStateCode",
+    variants: [{ id: "error", constName: "emptyStateErrorCode" }],
+  },
   { slug: "status-page", file: "status-page.tsx", constName: "statusPageCode" },
   { slug: "chat-thread", file: "ai.tsx", constName: "chatThreadCode" },
   { slug: "prompt-box", file: "ai.tsx", constName: "promptBoxCode" },
@@ -119,27 +283,115 @@ const BLOCK_MANIFEST: ReadonlyArray<{ slug: string; file: string; constName: str
   { slug: "integrations", file: "integrations.tsx", constName: "integrationsCode" },
   { slug: "waitlist", file: "waitlist.tsx", constName: "waitlistCode" },
   { slug: "feature-matrix", file: "feature-matrix.tsx", constName: "featureMatrixCode" },
-  { slug: "product-detail", file: "store.tsx", constName: "productDetailCode" },
-  { slug: "cart", file: "store.tsx", constName: "cartPageCode" },
-  { slug: "order-tracking", file: "store.tsx", constName: "orderTrackingCode" },
-  { slug: "order-history", file: "store.tsx", constName: "orderHistoryTableCode" },
-  { slug: "reviews", file: "store.tsx", constName: "reviewsSummaryCode" },
-  { slug: "account-security", file: "account.tsx", constName: "accountSecurityTwoFactorCode" },
-  { slug: "sessions", file: "account.tsx", constName: "sessionsListCode" },
-  { slug: "api-keys", file: "account.tsx", constName: "apiKeysListCode" },
+  {
+    slug: "product-detail",
+    file: "store.tsx",
+    constName: "productDetailCode",
+    variants: [
+      { id: "gallery", constName: "productDetailGalleryCode" },
+      { id: "minimal", constName: "productDetailMinimalCode" },
+    ],
+  },
+  {
+    slug: "cart",
+    file: "store.tsx",
+    constName: "cartPageCode",
+    variants: [{ id: "drawer", constName: "cartDrawerCode" }],
+  },
+  {
+    slug: "order-tracking",
+    file: "store.tsx",
+    constName: "orderTrackingCode",
+    variants: [
+      { id: "delivered", constName: "orderDeliveredCode" },
+      { id: "delayed", constName: "orderDelayedCode" },
+    ],
+  },
+  {
+    slug: "order-history",
+    file: "store.tsx",
+    constName: "orderHistoryTableCode",
+    variants: [{ id: "cards", constName: "orderHistoryCardsCode" }],
+  },
+  {
+    slug: "reviews",
+    file: "store.tsx",
+    constName: "reviewsSummaryCode",
+    variants: [{ id: "compact", constName: "reviewsCompactCode" }],
+  },
+  {
+    slug: "account-security",
+    file: "account.tsx",
+    constName: "accountSecurityTwoFactorCode",
+    variants: [{ id: "password", constName: "accountSecurityPasswordCode" }],
+  },
+  {
+    slug: "sessions",
+    file: "account.tsx",
+    constName: "sessionsListCode",
+    variants: [{ id: "table", constName: "sessionsTableCode" }],
+  },
+  {
+    slug: "api-keys",
+    file: "account.tsx",
+    constName: "apiKeysListCode",
+    variants: [{ id: "create", constName: "apiKeysCreateCode" }],
+  },
   {
     slug: "notification-preferences",
     file: "account.tsx",
     constName: "notificationPreferencesMatrixCode",
+    variants: [{ id: "simple", constName: "notificationPreferencesSimpleCode" }],
   },
-  { slug: "user-management", file: "admin.tsx", constName: "userManagementTableCode" },
-  { slug: "analytics", file: "admin.tsx", constName: "analyticsOverviewCode" },
-  { slug: "kanban-board", file: "admin.tsx", constName: "kanbanBoardCode" },
-  { slug: "audit-log", file: "admin.tsx", constName: "auditLogTimelineCode" },
-  { slug: "blog", file: "content.tsx", constName: "blogGridCode" },
-  { slug: "blog-post", file: "content.tsx", constName: "blogPostArticleCode" },
-  { slug: "logo-cloud", file: "content.tsx", constName: "logoCloudGridCode" },
-  { slug: "about", file: "content.tsx", constName: "aboutStoryCode" },
+  {
+    slug: "user-management",
+    file: "admin.tsx",
+    constName: "userManagementTableCode",
+    variants: [{ id: "cards", constName: "userManagementCardsCode" }],
+  },
+  {
+    slug: "analytics",
+    file: "admin.tsx",
+    constName: "analyticsOverviewCode",
+    variants: [{ id: "engagement", constName: "analyticsEngagementCode" }],
+  },
+  {
+    slug: "kanban-board",
+    file: "admin.tsx",
+    constName: "kanbanBoardCode",
+    variants: [{ id: "compact", constName: "kanbanBoardCompactCode" }],
+  },
+  {
+    slug: "audit-log",
+    file: "admin.tsx",
+    constName: "auditLogTimelineCode",
+    variants: [{ id: "table", constName: "auditLogTableCode" }],
+  },
+  {
+    slug: "blog",
+    file: "content.tsx",
+    constName: "blogGridCode",
+    variants: [{ id: "list", constName: "blogListCode" }],
+  },
+  {
+    slug: "blog-post",
+    file: "content.tsx",
+    constName: "blogPostArticleCode",
+    variants: [{ id: "with-sidebar", constName: "blogPostSidebarCode" }],
+  },
+  {
+    slug: "logo-cloud",
+    file: "content.tsx",
+    constName: "logoCloudGridCode",
+    variants: [{ id: "marquee", constName: "logoCloudMarqueeCode" }],
+  },
+  {
+    slug: "about",
+    file: "content.tsx",
+    constName: "aboutStoryCode",
+    variants: [{ id: "values", constName: "aboutValuesCode" }],
+  },
+  { slug: "app-shell-chrome", file: "shell.tsx", constName: "appShellCode" },
 ];
 
 /**
@@ -161,6 +413,7 @@ const BLOCK_KIND: Readonly<Record<string, BlockKind>> = {
   // Layout chrome — only ever valid in a route-group layout slot.
   navbar: "chrome",
   footer: "chrome",
+  "app-shell-chrome": "chrome",
   // Full-page auth surfaces.
   login: "page",
   signup: "page",
@@ -198,6 +451,7 @@ const CATEGORY_KIND: Readonly<Record<string, BlockKind>> = {
 const BLOCK_BRAND_TOKENS: Readonly<Record<string, ReadonlyArray<BrandTokenMeta>>> = {
   navbar: [{ token: "brand", literal: "Cooud" }],
   footer: [{ token: "brand", literal: "Cooud" }],
+  "app-shell-chrome": [{ token: "brand", literal: "Cooud" }],
 };
 
 /**
@@ -209,6 +463,7 @@ const BLOCK_BRAND_TOKENS: Readonly<Record<string, ReadonlyArray<BrandTokenMeta>>
 export const BLOCK_DATA_SLOTS: Readonly<Record<string, ReadonlyArray<string>>> = {
   navbar: ["navbar-links"],
   footer: ["footer-links"],
+  "app-shell-chrome": ["app-nav"],
 };
 
 /** Open/close markers for a named data-slot inside a block source. */
@@ -230,6 +485,13 @@ export interface VariantMeta {
   id: string;
   name: string;
   description: string;
+  /**
+   * The registry item name the composer installs for this variant: the bare
+   * `<slug>` for the DEFAULT variant, or `<slug>--<id>` for a non-default one.
+   */
+  item: string;
+  /** The component export a generated page imports for this variant. */
+  exportName: string;
 }
 export interface BlockMetaEntry {
   title: string;
@@ -269,19 +531,79 @@ function kindFor(slug: string, category: string): BlockKind {
 
 /**
  * Extract the component export a generated page will import from the SHIPPED
- * block source (the extracted template-literal text), via `export function <Name>`.
- * This is deterministic and matches exactly what `add` writes to disk. Throws a
- * slug-scoped Error if the source carries no such export so drift fails loudly.
+ * block source (the extracted template-literal text). The source is TS-PARSED
+ * (not regex-scraped) and the single exported top-level function declaration's
+ * name is returned, so a `// export function Ghost` in a comment or an
+ * `"export function Fake"` string literal is never mistaken for the real export
+ * (a page's `import { <Name> }` must resolve to what actually ships). This is
+ * deterministic and matches exactly what `add` writes to disk. Throws a
+ * slug-scoped Error when the source carries zero — or more than one — exported
+ * top-level function so drift fails loudly (SDD §2.1: exactly one export/block).
  */
 export function extractExportName(source: string, slug: string): string {
-  const match = /export function (\w+)/.exec(source);
-  if (!match?.[1]) {
+  const sourceFile = ts.createSourceFile(
+    `${slug}.tsx`,
+    source,
+    ts.ScriptTarget.Latest,
+    true,
+    ts.ScriptKind.TSX,
+  );
+  const exported: string[] = [];
+  for (const statement of sourceFile.statements) {
+    if (!ts.isFunctionDeclaration(statement) || statement.name === undefined) continue;
+    const isExported = statement.modifiers?.some((m) => m.kind === ts.SyntaxKind.ExportKeyword);
+    if (isExported) exported.push(statement.name.text);
+  }
+  if (exported.length === 0) {
     throw new Error(
-      `block "${slug}": no \`export function <Name>\` found in the shipped source — ` +
+      `block "${slug}": no top-level \`export function <Name>\` found in the shipped source — ` +
         `meta.exportName cannot be derived (a generated page imports this name).`,
     );
   }
-  return match[1];
+  if (exported.length > 1) {
+    throw new Error(
+      `block "${slug}": expected exactly one exported top-level function, found ` +
+        `${exported.length} (${exported.join(", ")}) — a generated page imports a single name.`,
+    );
+  }
+  // Non-null: length is exactly 1 here.
+  return exported[0] as string;
+}
+
+/** The registry item name for a block variant: `<slug>--<variantId>`. */
+export function variantItemName(slug: string, variantId: string): string {
+  return `${slug}${VARIANT_SEPARATOR}${variantId}`;
+}
+
+/** The block file path for a variant item: `<slug>-<variantId>.tsx`. */
+function variantFileName(slug: string, variantId: string): string {
+  return `${slug}-${variantId}.tsx`;
+}
+
+/**
+ * Read every non-default block variant's SHIPPED source (the cooked
+ * no-substitution template literal held by its family-file const) into a
+ * `Map<itemName, source>` keyed by `<slug>--<variantId>`. The DEFAULT variant is
+ * excluded — it ships as the bare `<slug>` item via {@link readBlockSources}.
+ * Same TS-parse path as the bare sources, so a variant's published bytes are the
+ * exact family-file const bytes.
+ */
+export async function readVariantSources(): Promise<Map<string, string>> {
+  const fileTextCache = new Map<string, string>();
+  const sources = new Map<string, string>();
+  for (const block of BLOCK_MANIFEST) {
+    for (const variant of block.variants ?? []) {
+      const filePath = join(blocksDir, block.file);
+      let fileText = fileTextCache.get(filePath);
+      if (fileText === undefined) {
+        fileText = await readFile(filePath, "utf8");
+        fileTextCache.set(filePath, fileText);
+      }
+      const itemName = variantItemName(block.slug, variant.id);
+      sources.set(itemName, extractBlockSource(filePath, fileText, variant.constName, itemName));
+    }
+  }
+  return sources;
 }
 
 /**
@@ -344,13 +666,24 @@ async function buildAppsMeta(): Promise<Record<string, AppMetaEntry>> {
 }
 
 /**
+ * Map every block slug to its BLOCK_MANIFEST entry (for variant lookup in meta).
+ */
+const MANIFEST_BY_SLUG = new Map(BLOCK_MANIFEST.map((b) => [b.slug, b] as const));
+
+/**
  * Build the `registry/meta.json` payload from the source indexes and the shipped
  * block sources. `blockSources` maps slug → shipped source string (the exact
  * bytes `add` writes), so `exportName` is parsed from what actually ships.
+ * `variantSources` maps `<slug>--<variantId>` → the variant's shipped source, so
+ * each non-default variant's meta carries its item name + parsed exportName (the
+ * default variant maps to the bare `<slug>` item + the block's own exportName).
  * Deterministic: keys are ordered by the source indexes, then re-sorted, and no
  * `Date`/random is used anywhere.
  */
-export async function buildMeta(blockSources: Map<string, string>): Promise<RegistryMeta> {
+export async function buildMeta(
+  blockSources: Map<string, string>,
+  variantSources: Map<string, string> = new Map(),
+): Promise<RegistryMeta> {
   const blocks: Record<string, BlockMetaEntry> = {};
   const exportNameOwner = new Map<string, string>();
   for (const category of BLOCK_CATEGORIES) {
@@ -400,6 +733,43 @@ export async function buildMeta(blockSources: Map<string, string>): Promise<Regi
         }
       }
 
+      // Map each blocks-index variant to its registry item + exportName. The
+      // DEFAULT variant (any id NOT listed in the manifest's non-default
+      // `variants[]`) resolves to the bare `<slug>` item and the block's own
+      // exportName; a non-default variant resolves to `<slug>--<id>` and the
+      // exportName parsed from its shipped variant source. Fails loud on drift
+      // (a blocks-index variant id with no manifest const, or a missing source).
+      const manifestVariants = MANIFEST_BY_SLUG.get(item.slug)?.variants ?? [];
+      const nonDefaultIds = new Set(manifestVariants.map((v) => v.id));
+      const variants: VariantMeta[] = (item.variants ?? []).map((v) => {
+        if (!nonDefaultIds.has(v.id)) {
+          // Default variant → the bare block item + the block's own export.
+          return {
+            id: v.id,
+            name: v.name,
+            description: v.description,
+            item: item.slug,
+            exportName,
+          };
+        }
+        const variantItem = variantItemName(item.slug, v.id);
+        const variantSource = variantSources.get(variantItem);
+        if (variantSource === undefined) {
+          throw new Error(
+            `block "${item.slug}": variant "${v.id}" has no shipped source — ` +
+              `expected a BLOCK_MANIFEST variant const for it (regenerate variant sources).`,
+          );
+        }
+        const variantExport = extractExportName(variantSource, variantItem);
+        return {
+          id: v.id,
+          name: v.name,
+          description: v.description,
+          item: variantItem,
+          exportName: variantExport,
+        };
+      });
+
       blocks[item.slug] = {
         title: item.name,
         description: item.description,
@@ -408,11 +778,7 @@ export async function buildMeta(blockSources: Map<string, string>): Promise<Regi
         kind: kindFor(item.slug, category.slug),
         dataSlots: [...(BLOCK_DATA_SLOTS[item.slug] ?? [])],
         brandTokens: (BLOCK_BRAND_TOKENS[item.slug] ?? []).map((b) => ({ ...b })),
-        variants: (item.variants ?? []).map((v) => ({
-          id: v.id,
-          name: v.name,
-          description: v.description,
-        })),
+        variants,
       };
     }
   }
@@ -631,10 +997,10 @@ export async function buildItems(): Promise<RegistryItem[]> {
   // TS-parsed out of the app's block family files — never imported/executed.
   const uiPackage = `@cooud-ui/ui@${pkg.version ?? "latest"}`;
   const blockSources = await readBlockSources();
-  for (const block of BLOCK_MANIFEST) {
-    const source = blockSources.get(block.slug);
-    if (source === undefined) throw new Error(`block "${block.slug}": missing extracted source`);
+  const variantSources = await readVariantSources();
 
+  /** Derive a block item's npm deps from its shipped source (bare or variant). */
+  const blockItemDeps = (source: string): string[] => {
     // @cooud-ui/ui is a bare import in every block but is not in the ui package's
     // own dependency map, so pin it explicitly to the ui package version.
     const npm = new Set<string>([uiPackage]);
@@ -644,27 +1010,93 @@ export async function buildItems(): Promise<RegistryItem[]> {
       if (pkgName === "@cooud-ui/ui" || IGNORED_NPM.has(pkgName)) continue;
       npm.add(resolveDep(pkgName));
     }
+    return [...npm].sort();
+  };
 
+  for (const block of BLOCK_MANIFEST) {
+    // A real block slug can never contain the reserved variant separator, or the
+    // `<slug>--<variantId>` item name would be ambiguous.
+    if (block.slug.includes(VARIANT_SEPARATOR)) {
+      throw new Error(
+        `block slug "${block.slug}" contains the reserved "${VARIANT_SEPARATOR}" separator.`,
+      );
+    }
+
+    const source = blockSources.get(block.slug);
+    if (source === undefined) throw new Error(`block "${block.slug}": missing extracted source`);
+
+    // The bare DEFAULT-variant item, unchanged.
     items.push({
       name: block.slug,
       type: "registry:block",
-      dependencies: [...npm].sort(),
+      dependencies: blockItemDeps(source),
       registryDependencies: [],
       files: [{ path: `${block.slug}.tsx`, content: source, target: "block" }],
     });
+
+    // One `<slug>--<variantId>` item per NON-DEFAULT variant (file
+    // `<slug>-<variantId>.tsx`), same npm-dep derivation as the bare block.
+    for (const variant of block.variants ?? []) {
+      const itemName = variantItemName(block.slug, variant.id);
+      const variantSource = variantSources.get(itemName);
+      if (variantSource === undefined) {
+        throw new Error(`variant "${itemName}": missing extracted source`);
+      }
+      items.push({
+        name: itemName,
+        type: "registry:block",
+        dependencies: blockItemDeps(variantSource),
+        registryDependencies: [],
+        files: [
+          {
+            path: variantFileName(block.slug, variant.id),
+            content: variantSource,
+            target: "block",
+          },
+        ],
+      });
+    }
   }
 
-  // Validate every item (schema + duplicate-name guard) before anything ships.
+  // Validate every item (schema + duplicate-name + duplicate-file-path guards).
+  assertItemsUnique(items);
+
+  return items;
+}
+
+/**
+ * Fail loud (before anything ships) when two registry items collide on either
+ * their NAME or their on-disk FILE PATH. Also runs the per-item schema check.
+ *
+ * The NAME guard alone is insufficient: variant items are named `<slug>--<id>`
+ * (double dash) but WRITE to a single-dash file `<slug>-<id>.tsx`. A bare block
+ * whose slug is literally `<slug>-<id>` (e.g. a real `login-split` block
+ * colliding with the variant `login--split`) has a DISTINCT item name yet both
+ * carry `files[].path === "login-split.tsx"`, so `writeItemFiles` would silently
+ * overwrite one with the other at install/compose time. The path guard rejects
+ * that. Exported so the gate is directly unit-testable with synthetic items.
+ */
+export function assertItemsUnique(items: RegistryItem[]): void {
   const seenNames = new Set<string>();
+  const pathOwner = new Map<string, string>();
   for (const item of items) {
     validateItem(item);
     if (seenNames.has(item.name)) {
       throw new Error(`duplicate registry item name: "${item.name}"`);
     }
     seenNames.add(item.name);
+    for (const file of item.files) {
+      const priorOwner = pathOwner.get(file.path);
+      if (priorOwner !== undefined) {
+        throw new Error(
+          `two registry items resolve to the same file path "${file.path}": ` +
+            `"${priorOwner}" and "${item.name}" — a bare block slug must not collide with a ` +
+            `variant's single-dash file basename (install-time overwrite).`,
+        );
+      }
+      pathOwner.set(file.path, item.name);
+    }
   }
-
-  return items;
 }
 
 /**
@@ -709,7 +1141,7 @@ export async function writeRegistry(
 
 async function main() {
   const items = await buildItems();
-  const meta = await buildMeta(await readBlockSources());
+  const meta = await buildMeta(await readBlockSources(), await readVariantSources());
   await writeRegistry(outDir, items, meta);
   console.log(`registry: wrote ${items.length} items + index.json + ${META_FILE} to ${outDir}`);
 }

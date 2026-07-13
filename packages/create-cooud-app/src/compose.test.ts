@@ -142,6 +142,45 @@ describe.skipIf(!CAN_COMPOSE)("composeTemplate — integration (local repo regis
     expect(existsSync(join(cwd, "app/(bare)/login/page.tsx"))).toBe(true);
     expect(existsSync(join(cwd, "app/(site)/products/page.tsx"))).toBe(true);
   });
+
+  it("composes the saas template into (shell)/(bare) route groups with the app-shell chrome", async () => {
+    const result = await composeTemplate({
+      targetDir: cwd,
+      template: "saas",
+      brand: "Painel",
+      registry: REPO_REGISTRY,
+      skipInstall: true,
+    });
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    // 7 manifest pages → 7 generated page.tsx files.
+    expect(result.pageCount).toBe(7);
+    // Bare auth pages + shell pages. The dashboard is the shell HOME at "/", so it
+    // lives at app/(shell)/page.tsx (not /dashboard) — this is the polished landing
+    // surface that create-cooud-app opens on, and it supersedes the base app/page.tsx.
+    expect(existsSync(join(cwd, "app/(bare)/login/page.tsx"))).toBe(true);
+    expect(existsSync(join(cwd, "app/(shell)/page.tsx"))).toBe(true);
+    expect(existsSync(join(cwd, "app/(shell)/dashboard/page.tsx"))).toBe(false);
+    expect(existsSync(join(cwd, "app/(shell)/settings/page.tsx"))).toBe(true);
+
+    // The (shell) layout is a thin AppShellNav wrapper (golden rule).
+    const layout = readFileSync(join(cwd, "app/(shell)/layout.tsx"), "utf8");
+    expect(layout).toContain("<AppShellNav>{children}</AppShellNav>");
+    const wrapper = readFileSync(join(cwd, "components/blocks/chrome/app-shell.tsx"), "utf8");
+    expect(wrapper).toContain("AppShellChromeBlock");
+
+    // The login page uses the split variant (imported from the dash-named file).
+    const login = readFileSync(join(cwd, "app/(bare)/login/page.tsx"), "utf8");
+    expect(login).toContain("login-split");
+
+    // The installed shell block copy carries the real sidebar nav + brand. The
+    // Dashboard nav entry now points at "/" (the shell home), not "/dashboard".
+    const shellBlock = readFileSync(join(cwd, "components/blocks/app-shell-chrome.tsx"), "utf8");
+    expect(shellBlock).toContain('{ label: "Dashboard", href: "/" }');
+    expect(shellBlock).toContain("Painel");
+    // It stays a client boundary (AppShell/Sidebar use hooks) for the RSC layout.
+    expect(shellBlock.startsWith('"use client"')).toBe(true);
+  });
 });
 
 /**
@@ -217,6 +256,40 @@ describe.skipIf(!CAN_COMPOSE)("composeTemplate — base app/page.tsx collision (
     // No two pages resolve to the same URL after stripping route groups.
     const routes = pageDirs(join(cwd, "app")).map(resolvedRoute);
     expect(routes).toContain("/");
+    expect(new Set(routes).size).toBe(routes.length);
+  });
+
+  it("removes the base app/page.tsx for saas (dashboard is the shell home at /)", async () => {
+    // Re-scaffold with the saas base (default) so app/page.tsx exists on disk.
+    scaffold({ targetDir: cwd, name: "loja", template: "saas" });
+    const configPath = join(cwd, "cooud-ui.json");
+    const config = JSON.parse(readFileSync(configPath, "utf8"));
+    config.registry = REPO_REGISTRY;
+    writeFileSync(configPath, JSON.stringify(config, null, 2));
+    expect(existsSync(join(cwd, "app/page.tsx"))).toBe(true);
+
+    const result = await composeTemplate({
+      targetDir: cwd,
+      template: "saas",
+      brand: "Painel",
+      registry: REPO_REGISTRY,
+      skipInstall: true,
+    });
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+
+    // The composed dashboard owns "/" under the shell group…
+    expect(existsSync(join(cwd, "app/(shell)/page.tsx"))).toBe(true);
+    // …so the throwaway base starter is gone (the app opens on the real dashboard).
+    expect(existsSync(join(cwd, "app/page.tsx"))).toBe(false);
+    // The root layout (required <html>/<body>) is KEPT.
+    expect(existsSync(join(cwd, "app/layout.tsx"))).toBe(true);
+
+    // No two pages resolve to the same URL after stripping route groups, and
+    // exactly one owns "/".
+    const routes = pageDirs(join(cwd, "app")).map(resolvedRoute);
+    expect(routes).toContain("/");
+    expect(routes.filter((r) => r === "/").length).toBe(1);
     expect(new Set(routes).size).toBe(routes.length);
   });
 

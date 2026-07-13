@@ -92,6 +92,17 @@ function serializeFooterColumns(constName: string, links: NavLink[]): string {
 }
 
 /**
+ * Serialize the app-shell sidebar nav const (a flat `{ label, href }[]`, same
+ * shape as the navbar links). The shell block maps over this const to render the
+ * SidebarMenu items, so the composer replaces its body from the (app) group's
+ * nav pages. Kept as a plain `const NAME = [...]` (no `as const`) so the emitted
+ * data-slot matches the shipped code literal's const exactly.
+ */
+function serializeAppNav(constName: string, links: NavLink[]): string {
+  return serializeNavLinks(constName, links);
+}
+
+/**
  * The nav links derived from the plan's pages: every page that carries a `nav`
  * label, in manifest order, linking to its route. Deterministic.
  */
@@ -104,6 +115,22 @@ export function navLinksOf(plan: ComposePlan): NavLink[] {
 }
 
 /**
+ * The nav links of the pages under one chrome group (every such page carrying a
+ * `nav` label), in manifest order. The app-shell sidebar nav is scoped to its
+ * own (app) group's pages — a shell sidebar lists the app sections, not a bare
+ * /login page. Falls back to `navLinksOf` shape but filtered by group.
+ */
+export function navLinksForGroup(plan: ComposePlan, group: string): NavLink[] {
+  const links: NavLink[] = [];
+  for (const page of plan.pages) {
+    if (page.chrome === group && page.nav !== undefined) {
+      links.push({ label: page.nav, href: page.route });
+    }
+  }
+  return links;
+}
+
+/**
  * The data-const name declared inside a chrome block's data-slot. Kept as an
  * explicit table (not inferred) so the serialized replacement matches the shipped
  * const exactly — the two chrome families F1 supports.
@@ -111,6 +138,7 @@ export function navLinksOf(plan: ComposePlan): NavLink[] {
 const CHROME_SLOT_CONST: Readonly<Record<string, string>> = {
   "navbar-links": "NAVBAR_LINKS",
   "footer-links": "FOOTER_COLUMNS",
+  "app-nav": "APP_NAV",
 };
 
 /**
@@ -121,6 +149,9 @@ const CHROME_SLOT_CONST: Readonly<Record<string, string>> = {
  */
 export function rewriteChromeBlock(slug: string, blockSource: string, plan: ComposePlan): string {
   const links = navLinksOf(plan);
+  // The (app)-group this chrome block serves, if it is the shell — its sidebar
+  // nav is scoped to that group's pages. A navbar/footer slug has no group here.
+  const shellGroup = plan.chromes.find((c) => c.block === slug)?.group;
   let out = blockSource;
 
   for (const slot of plan.dataSlotsBySlug[slug] ?? []) {
@@ -130,10 +161,16 @@ export function rewriteChromeBlock(slug: string, blockSource: string, plan: Comp
       // markers exist (gated) but we have no data to fill them, so fail loud.
       throw new Error(`chrome block "${slug}": no serializer for data-slot "${slot}"`);
     }
-    const body =
-      constName === "FOOTER_COLUMNS"
-        ? serializeFooterColumns(constName, links)
-        : serializeNavLinks(constName, links);
+    let body: string;
+    if (constName === "FOOTER_COLUMNS") {
+      body = serializeFooterColumns(constName, links);
+    } else if (constName === "APP_NAV") {
+      // Scope the sidebar nav to the shell's own group pages when known.
+      const groupLinks = shellGroup !== undefined ? navLinksForGroup(plan, shellGroup) : links;
+      body = serializeAppNav(constName, groupLinks);
+    } else {
+      body = serializeNavLinks(constName, links);
+    }
     out = replaceDataSlot(out, slot, body);
   }
 
@@ -144,9 +181,21 @@ export function rewriteChromeBlock(slug: string, blockSource: string, plan: Comp
   return out;
 }
 
-/** Import specifier for a block slug via the consumer's blocks alias. */
-function blockImport(config: CooudUIConfig, slug: string): string {
-  return `${config.aliases.blocks}/${slug}`;
+/**
+ * The blocks-alias import base for a block. The installed file is named after the
+ * item with the `--` variant separator collapsed to a single dash
+ * (`login--split` → `login-split.tsx`), so the import must match that file
+ * basename: the bare `<slug>` for the default variant, or `<slug>-<variant>` for
+ * a non-default one. Built from slug+variant (not by munging the item name) so
+ * it always agrees with the registry's `<slug>-<variantId>.tsx` file name.
+ */
+export function blockImportBase(block: { slug: string; variant?: string }): string {
+  return block.variant === undefined ? block.slug : `${block.slug}-${block.variant}`;
+}
+
+/** Import specifier for a block via the consumer's blocks alias. */
+function blockImport(config: CooudUIConfig, importBase: string): string {
+  return `${config.aliases.blocks}/${importBase}`;
 }
 
 /** Render a single page.tsx: imports of its blocks + a <main> stacking them. */
@@ -159,7 +208,7 @@ export function renderPage(page: PlanPage, config: CooudUIConfig): string {
     if (seen.has(block.exportName)) continue;
     seen.add(block.exportName);
     imports.push(
-      `import { ${block.exportName} } from ${jsString(blockImport(config, block.slug))};`,
+      `import { ${block.exportName} } from ${jsString(blockImport(config, blockImportBase(block)))};`,
     );
   }
   const importLines = imports.join("\n");
@@ -204,10 +253,32 @@ function chromeWrapperImport(config: CooudUIConfig, name: string): string {
   return `${config.aliases.blocks}/chrome/${name}`;
 }
 
-/** Render a route-group layout for a chrome group (site = navbar+footer; bare = centered). */
+/**
+ * Render a route-group layout for a chrome group:
+ *   - site  = navbar + footer thin wrappers around a flex column;
+ *   - shell = the AppShellNav thin wrapper (sidebar + header) around {children};
+ *   - bare  = a passthrough layout (centered pages own their own frame).
+ */
 export function renderLayout(chrome: PlanChrome, config: CooudUIConfig): string {
   const hasNav = chrome.navbar !== undefined;
   const hasFooter = chrome.footer !== undefined;
+  const hasShell = chrome.block !== undefined;
+
+  if (hasShell) {
+    // App-shell group: the whole page frame is the shell block (sidebar + header
+    // wrapping {children}). The layout is a thin wrapper import + a single
+    // <AppShellNav> — no invented UI, mirroring the (site) SiteNav/SiteFooter
+    // pattern. The generated page still owns the one <main> inside {children}.
+    return [
+      `import type { ReactNode } from "react";`,
+      `import { AppShellNav } from ${jsString(chromeWrapperImport(config, "app-shell"))};`,
+      "",
+      `export default function ${layoutComponentName(chrome.group)}({ children }: { children: ReactNode }) {`,
+      "  return <AppShellNav>{children}</AppShellNav>;",
+      "}",
+      "",
+    ].join("\n");
+  }
 
   if (!hasNav && !hasFooter) {
     // Bare/centered group: no chrome furniture, just a passthrough layout so the
@@ -286,6 +357,30 @@ export function renderChromeWrapper(
   ].join("\n");
 }
 
+/**
+ * Render the thin app-shell wrapper: a `children`-forwarding component that wraps
+ * the layout's {children} in the installed shell chrome block. Unlike SiteNav/
+ * SiteFooter (which render standalone furniture), the shell composes the page
+ * content, so this wrapper takes + forwards `children`. GOLDEN-RULE compliant:
+ * imports the installed block and forwards children — no new UI. Pure.
+ */
+export function renderShellWrapper(
+  exportAs: string,
+  blockSlug: string,
+  blockExportName: string,
+  config: CooudUIConfig,
+): string {
+  return [
+    `import type { ReactNode } from "react";`,
+    `import { ${blockExportName} } from ${jsString(blockImport(config, blockSlug))};`,
+    "",
+    `export function ${exportAs}({ children }: { children: ReactNode }) {`,
+    `  return <${blockExportName}>{children}</${blockExportName}>;`,
+    "}",
+    "",
+  ].join("\n");
+}
+
 /** Path of a chrome wrapper file under the blocks path. */
 export function chromeWrapperPath(config: CooudUIConfig, name: string): string {
   return `${config.paths.blocks}/chrome/${name}.tsx`;
@@ -349,6 +444,14 @@ export function renderPlan(plan: ComposePlan, config: CooudUIConfig): RenderResu
     files.push({
       path: chromeWrapperPath(config, "site-footer"),
       content: renderChromeWrapper("SiteFooter", plan.footerSlug, plan.footerExportName, config),
+    });
+  }
+  // The app-shell wrapper (AppShellNav): a children-forwarding thin wrapper the
+  // (app)-group layout imports, only when a group uses the shell.
+  if (plan.usesShell && plan.shellExportName !== undefined && plan.shellSlug !== undefined) {
+    files.push({
+      path: chromeWrapperPath(config, "app-shell"),
+      content: renderShellWrapper("AppShellNav", plan.shellSlug, plan.shellExportName, config),
     });
   }
 

@@ -8,6 +8,8 @@
  * slot?) live in `plan.ts`.
  */
 
+import { createHash } from "node:crypto";
+
 /** The only plan schema version F1 understands. Unknown values are rejected. */
 export const SUPPORTED_PLAN_VERSION = 1;
 
@@ -266,4 +268,32 @@ export function blockRefParts(ref: BlockRef): { slug: string; variant?: string }
   return ref.variant !== undefined
     ? { slug: ref.block, variant: ref.variant }
     : { slug: ref.block };
+}
+
+/** Canonical (sorted-key) JSON of a value — deterministic regardless of key order. */
+function canonicalJson(value: unknown): string {
+  if (value === null || typeof value !== "object") return JSON.stringify(value);
+  if (Array.isArray(value)) return `[${value.map(canonicalJson).join(",")}]`;
+  const obj = value as Record<string, unknown>;
+  const entries = Object.keys(obj)
+    .sort()
+    .map((k) => `${JSON.stringify(k)}:${canonicalJson(obj[k])}`);
+  return `{${entries.join(",")}}`;
+}
+
+/**
+ * A deterministic content fingerprint of a parsed manifest, used as compose
+ * provenance persisted in `composed{}.manifestHash`. Keyed on the manifest's
+ * meaningful shape (name + planVersion + body) via canonical sorted-key JSON, so
+ * two manifests fingerprint equal iff they describe the same app — independent of
+ * source key order or whitespace. Pure (no Date/random) so it stays byte-stable.
+ */
+export function manifestFingerprint(manifest: AppManifest): string {
+  const canonical = canonicalJson({
+    name: manifest.name,
+    type: manifest.type,
+    planVersion: manifest.planVersion,
+    manifest: manifest.manifest,
+  });
+  return createHash("sha256").update(canonical).digest("hex");
 }

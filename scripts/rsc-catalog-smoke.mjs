@@ -188,15 +188,35 @@ function readCatalog() {
   const metaBlocks = meta.blocks || {};
 
   const blocks = [];
-  for (const slug of blockNames.sort()) {
-    const exportName = metaBlocks[slug]?.exportName;
+  for (const name of blockNames.sort()) {
+    // Resolve the exportName. Variant items are named `<base>--<variant>` (double
+    // dash) and their exportName is NOT a top-level meta.blocks key — it lives in
+    // meta.blocks[<base>].variants[] keyed by `item`. Plain items read the
+    // top-level meta.blocks[<name>].exportName.
+    const base = name.includes("--") ? name.split("--")[0] : name;
+    const baseMeta = metaBlocks[base];
+    const exportName = name.includes("--")
+      ? (baseMeta?.variants || []).find((v) => v.item === name)?.exportName
+      : baseMeta?.exportName;
     if (!exportName) {
       // A block with no meta exportName can't be imported by the generator — that
       // is itself a catalog defect, so fail loudly rather than skip it.
-      check(false, `${slug}: registry/meta.json has an exportName`);
+      check(false, `${name}: registry/meta.json has an exportName`);
       continue;
     }
-    blocks.push({ slug, exportName });
+    // A chrome SHELL (kind "chrome" + category "shell", e.g. app-shell-chrome)
+    // is layout furniture that WRAPS page content: its shipped export takes a
+    // required `children` prop. The generator composes it AROUND a page's <main>
+    // (chrome.shell.block), never as a childless leaf — so its RSC test page must
+    // render it wrapping content, or `next build` type-errors on the missing
+    // `children`. Every other block (incl. chrome navbar/footer) is a childless
+    // leaf rendered as <Block />.
+    const wrapsChildren = baseMeta?.kind === "chrome" && baseMeta?.category === "shell";
+    // The registry resolves by ITEM name (`slug`), but variant items install to a
+    // SINGLE-dash file (`<base>-<variant>.tsx`) — so the on-disk file, import
+    // specifier, and test-page route all key off the single-dash basename.
+    const file = name.replace(/--/g, "-");
+    blocks.push({ slug: name, file, exportName, wrapsChildren });
   }
   return blocks;
 }
@@ -224,8 +244,26 @@ function catalogNpmDeps(Registry, collectDependencies, blocks) {
  * single <main>. RSC by default — deliberately NO "use client" — so the ONLY way
  * this page can break `next build` is a client-only block missing its own
  * directive.
+ *
+ * A chrome SHELL block (`wrapsChildren`) is the inverse: it WRAPS the page's
+ * <main> (it takes a required `children` prop and owns no <main> itself — the
+ * SINGLE-MAIN INVARIANT). Rendering it as a childless `<Block />` would type-error
+ * on the missing `children`, so its page nests the single <main> INSIDE the shell
+ * — exactly the composition the generator emits (chrome.shell.block around a page).
  */
-function rscTestPage(blocksAlias, slug, exportName) {
+function rscTestPage(blocksAlias, slug, exportName, wrapsChildren = false) {
+  if (wrapsChildren) {
+    return `import { ${exportName} } from "${blocksAlias}/${slug}";
+
+export default function Page() {
+  return (
+    <${exportName}>
+      <main>Content</main>
+    </${exportName}>
+  );
+}
+`;
+  }
   return `import { ${exportName} } from "${blocksAlias}/${slug}";
 
 export default function Page() {
@@ -272,23 +310,27 @@ async function buildCatalogApp(dist) {
   }
 
   // Every block's own source file must be on disk (blocks land in
-  // components/blocks/<slug>.tsx; they import @cooud-ui/ui + lucide-react, not
+  // components/blocks/<file>.tsx; they import @cooud-ui/ui + lucide-react, not
   // copied component source, so only the block file itself is asserted here).
+  // Variant items install to a single-dash `<file>.tsx`, not the double-dash item
+  // name — so this keys off `file`, not `slug`.
   const blocksDir = DEFAULT_CONFIG.paths.blocks; // "components/blocks"
   const blocksAlias = DEFAULT_CONFIG.aliases.blocks; // "@/components/blocks"
-  for (const { slug } of blocks) {
+  for (const { file } of blocks) {
     check(
-      existsSync(join(target, blocksDir, `${slug}.tsx`)),
-      `installed block file: ${join(blocksDir, `${slug}.tsx`)}`,
+      existsSync(join(target, blocksDir, `${file}.tsx`)),
+      `installed block file: ${join(blocksDir, `${file}.tsx`)}`,
     );
   }
 
-  // 3) Generate a bare RSC test page per block (imports + single <main>).
-  for (const { slug, exportName } of blocks) {
-    const rel = testPageRel(slug);
+  // 3) Generate a bare RSC test page per block (imports + single <main>). The
+  //    import specifier and route both use the single-dash `file` basename. A
+  //    chrome shell wraps the <main> instead of being a childless leaf.
+  for (const { file, exportName, wrapsChildren } of blocks) {
+    const rel = testPageRel(file);
     const abs = join(target, rel);
     mkdirSync(dirname(abs), { recursive: true });
-    writeFileSync(abs, rscTestPage(blocksAlias, slug, exportName), "utf8");
+    writeFileSync(abs, rscTestPage(blocksAlias, file, exportName, wrapsChildren), "utf8");
   }
 
   return { tmp, target, blocks, blocksAlias };
@@ -301,8 +343,8 @@ function lightAssertPages({ target, blocks, blocksAlias }) {
   group(`structure · ${blocks.length} RSC test pages (offline)`);
 
   const routes = new Map();
-  for (const { slug, exportName } of blocks) {
-    const rel = testPageRel(slug);
+  for (const { slug, file, exportName } of blocks) {
+    const rel = testPageRel(file);
     const abs = join(target, rel);
     if (!existsSync(abs)) {
       check(false, `${slug}: test page written (${rel})`);
@@ -312,8 +354,9 @@ function lightAssertPages({ target, blocks, blocksAlias }) {
 
     // Golden-rule shape: imports the exportName from the blocks alias, renders it
     // inside a single <main>, and is RSC (no "use client"). No stray chrome JSX.
+    // The import specifier keys off the single-dash `file` basename.
     const importsFromAlias =
-      src.includes(`from "${blocksAlias}/${slug}"`) && new RegExp(`\\b${exportName}\\b`).test(src);
+      src.includes(`from "${blocksAlias}/${file}"`) && new RegExp(`\\b${exportName}\\b`).test(src);
     const hasMain = /<main[\s>]/.test(src) && /<\/main>/.test(src);
     const rendersBlock = new RegExp(`<${exportName}[\\s/>]`).test(src);
     const noStrayJsx = !/<(div|section|header|footer|nav|span|p|article)[\s>]/.test(src);
@@ -326,7 +369,8 @@ function lightAssertPages({ target, blocks, blocksAlias }) {
 
     // Route uniqueness: strip the path-transparent "(_rsc)" group; each block
     // must own a distinct route so next build never sees a parallel-page clash.
-    const route = `/${slug}`;
+    // Routes key off the single-dash `file` basename (avoids any `--` route edge).
+    const route = `/${file}`;
     const existing = routes.get(route);
     if (existing) existing.push(slug);
     else routes.set(route, [slug]);
@@ -417,9 +461,11 @@ function isolateFailingBlocks(target, blocks) {
   mkdirSync(groupDir, { recursive: true });
 
   try {
-    for (const { slug, exportName } of blocks) {
-      const from = join(stash, slug);
-      const to = join(groupDir, slug);
+    for (const { slug, file, exportName } of blocks) {
+      // Test-page folders are named by the single-dash `file` basename, so the
+      // move keys off `file`; reports still name the registry item `slug`.
+      const from = join(stash, file);
+      const to = join(groupDir, file);
       if (!existsSync(from)) continue;
       renameSync(from, to);
       const build = tryNextBuild(target);

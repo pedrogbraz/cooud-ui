@@ -511,7 +511,9 @@ export function PlansBlock() {
   );
 }
 
-const plansCode = `import {
+const plansCode = `"use client";
+
+import {
   Badge,
   Button,
   Card,

@@ -1,0 +1,64 @@
+{
+  "name": "saas",
+  "type": "registry:app",
+  "planVersion": 1,
+  "manifest": {
+    "title": "SaaS",
+    "description": "A complete multi-page SaaS app: split login/signup, and a sidebar-shell dashboard, analytics, team, billing and settings — all from validated blocks.",
+    "chrome": {
+      "shell": { "block": "app-shell-chrome" },
+      "bare": {}
+    },
+    "pages": [
+      {
+        "route": "/login",
+        "title": "Sign in",
+        "chrome": "bare",
+        "blocks": [{ "block": "login", "variant": "split" }]
+      },
+      {
+        "route": "/signup",
+        "title": "Create account",
+        "chrome": "bare",
+        "blocks": ["signup"]
+      },
+      {
+        "route": "/",
+        "title": "Dashboard",
+        "nav": "Dashboard",
+        "chrome": "shell",
+        "blocks": ["dashboard", "stats"]
+      },
+      {
+        "route": "/analytics",
+        "title": "Analytics",
+        "nav": "Analytics",
+        "chrome": "shell",
+        "blocks": ["analytics"]
+      },
+      {
+        "route": "/team",
+        "title": "Team",
+        "nav": "Team",
+        "chrome": "shell",
+        "blocks": ["team"]
+      },
+      {
+        "route": "/billing",
+        "title": "Billing",
+        "nav": "Billing",
+        "chrome": "shell",
+        "blocks": ["billing", "usage-dashboard"]
+      },
+      {
+        "route": "/settings",
+        "title": "Settings",
+        "nav": "Settings",
+        "chrome": "shell",
+        "blocks": ["settings", "account-security"]
+      }
+    ],
+    "extras": { "not-found": "not-found" },
+    "defaults": { "theme": "aurora", "mode": "dark", "brand": "__APP_NAME__" }
+  }
+}

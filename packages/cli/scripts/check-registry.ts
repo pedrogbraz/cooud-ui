@@ -27,12 +27,15 @@ import type { RegistryIndex } from "../src/registry.ts";
 import {
   buildItems,
   buildMeta,
+  extractExportName,
   loadAppManifests,
   outDir,
   type RegistryItem,
   type RegistryMeta,
   readBlockSources,
+  readVariantSources,
   serializeRegistry,
+  variantItemName,
   writeRegistry,
 } from "./build-registry.ts";
 
@@ -119,18 +122,130 @@ export function validateAppTemplateRefs(
   return problems;
 }
 
+/**
+ * The variant-item gate (F2): for every block variant declared in `meta`, its
+ * `item` must be a PUBLISHED registry item whose file's shipped export matches
+ * the variant's `exportName`, and every block export must be unique across the
+ * WHOLE registry (a generated page imports the export by name). Uniqueness is
+ * checked against every shipped block item's export — bare blocks (incl. the 35
+ * that declare no variants) AND variant items — not just variant-vs-variant, so
+ * a variant renamed onto a bare block's export (e.g. `SettingsBlock`) fails loud
+ * here. The DEFAULT variant must map to the bare `<slug>` item; a non-default
+ * variant to `<slug>--<id>`. Returns a flat list of problems (empty when clean).
+ */
+export function validateVariantItems(items: RegistryItem[], meta: RegistryMeta): string[] {
+  const problems: string[] = [];
+  const itemsByName = new Map(items.map((i) => [i.name, i] as const));
+  // Every published block item's TS-parsed export (the single exported top-level
+  // function), so a variant's meta.exportName can be checked against what really
+  // ships. Uses the same robust extractor as the build (comment/string-proof,
+  // single-export-enforced); an item that ships zero or multiple exports is left
+  // out here and surfaced as a `ships no \`export function\`` problem downstream.
+  const exportOfItem = new Map<string, string>();
+  for (const item of items) {
+    if (item.type !== "registry:block") continue;
+    const content = item.files[0]?.content ?? "";
+    try {
+      exportOfItem.set(item.name, extractExportName(content, item.name));
+    } catch {
+      // Left unrecorded → the downstream "ships no `export function`" check fires.
+    }
+  }
+
+  // exportName → the ITEM NAME that first claimed it (must be globally unique
+  // across the WHOLE import namespace — bare blocks AND variants). Seed it with
+  // every shipped block item's export FIRST so a variant renamed onto a
+  // zero-variant bare block's export (e.g. SettingsBlock/OtpBlock — 35 blocks
+  // that never appear as a variant entry) is caught here, matching the
+  // docstring's "unique across the registry" claim. Owner values are item names
+  // throughout, so the variant loop below can assert an exportName is owned by no
+  // item other than the variant's own `variant.item` (its default variant simply
+  // re-confirms the bare item it already owns from this seed pass — no conflict).
+  const exportOwner = new Map<string, string>();
+  for (const [itemName, exportName] of exportOfItem) {
+    const prior = exportOwner.get(exportName);
+    if (prior !== undefined && prior !== itemName) {
+      problems.push(
+        `item "${itemName}": exportName "${exportName}" is also shipped by "${prior}" — ` +
+          `block exports must be unique across the registry.`,
+      );
+    } else {
+      exportOwner.set(exportName, itemName);
+    }
+  }
+
+  for (const [slug, block] of Object.entries(meta.blocks)) {
+    for (const variant of block.variants) {
+      const where = `block "${slug}" variant "${variant.id}"`;
+      const isDefault = variant.item === slug;
+      const expectedItem = isDefault ? slug : variantItemName(slug, variant.id);
+
+      // The default variant maps to the bare slug; a non-default one to `slug--id`.
+      if (variant.item !== expectedItem) {
+        problems.push(
+          `${where}: item "${variant.item}" should be "${expectedItem}" ` +
+            `(default → bare slug, non-default → <slug>--<id>).`,
+        );
+      }
+
+      const published = itemsByName.get(variant.item);
+      if (published === undefined) {
+        problems.push(`${where}: no published registry item "${variant.item}".`);
+        continue;
+      }
+
+      const shipped = exportOfItem.get(variant.item);
+      if (shipped === undefined) {
+        problems.push(`${where}: item "${variant.item}" ships no \`export function\`.`);
+      } else if (shipped !== variant.exportName) {
+        problems.push(
+          `${where}: meta.exportName "${variant.exportName}" ≠ shipped export "${shipped}" ` +
+            `in item "${variant.item}".`,
+        );
+      }
+
+      // The variant's meta.exportName must be owned by NO item other than its
+      // own backing `variant.item`. exportOwner is pre-seeded with every shipped
+      // block export (bare + variant), so this now also catches a variant that
+      // collides with a zero-variant bare block's export (the 35 bare blocks that
+      // never appear as a variant entry), not just variant-vs-variant.
+      const prior = exportOwner.get(variant.exportName);
+      if (prior !== undefined && prior !== variant.item) {
+        problems.push(
+          `${where}: exportName "${variant.exportName}" is also used by "${prior}" — ` +
+            `variant exports must be unique across the registry.`,
+        );
+      } else {
+        exportOwner.set(variant.exportName, variant.item);
+      }
+    }
+  }
+
+  return problems;
+}
+
 async function main() {
   // Build + validate from source, then materialize into a tmp dir (literal regen).
   // `buildMeta` runs the compose gates (unique exportName + data-slot/brand-token
   // markers present); a violation throws a clear Error caught by `main().catch`.
   const items = await buildItems();
   const blockSources = await readBlockSources();
+  const variantSources = await readVariantSources();
   let meta: Awaited<ReturnType<typeof buildMeta>>;
   try {
-    meta = await buildMeta(blockSources);
+    meta = await buildMeta(blockSources, variantSources);
   } catch (err) {
     console.error("registry:check FAILED — metadata invariant violated:");
     console.error(`  - ${err instanceof Error ? err.message : String(err)}`);
+    process.exit(1);
+  }
+
+  // Every meta-declared variant must have a published item with a matching,
+  // globally-unique export (default → bare slug, non-default → <slug>--<id>).
+  const variantProblems = validateVariantItems(items, meta);
+  if (variantProblems.length > 0) {
+    console.error("registry:check FAILED — block variant items are out of sync with meta:");
+    for (const p of variantProblems) console.error(`  - ${p}`);
     process.exit(1);
   }
 

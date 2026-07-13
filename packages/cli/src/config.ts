@@ -48,6 +48,15 @@ export interface ComposedRecord {
   choices: ComposedChoices;
   /** Project-relative paths the composer generated (pages, layouts, chrome wrappers). */
   files: string[];
+  /**
+   * Content fingerprint of the manifest this app was composed from (compose
+   * provenance). `add-page` reloads a bundled template only when it matches this
+   * hash — so a `--manifest`-composed app whose `name` collides with a bundled
+   * template (store/landing/saas) is NOT silently reloaded from the wrong bundled
+   * manifest. Absent for apps composed before this field existed (legacy): the
+   * verification is then skipped (nothing to compare against).
+   */
+  manifestHash?: string;
 }
 
 export interface CooudUIConfig {

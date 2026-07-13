@@ -5,9 +5,10 @@ import {
   fixtureIndex,
   fixtureManifest,
   fixtureMeta,
+  fixtureShellManifest,
 } from "./compose.fixtures.js";
 import { buildComposePlan, type ComposePlan } from "./plan.js";
-import { renderPage, renderPlan, rewriteChromeBlock } from "./render.js";
+import { renderLayout, renderPage, renderPlan, rewriteChromeBlock } from "./render.js";
 
 const config = DEFAULT_CONFIG;
 
@@ -113,6 +114,36 @@ describe("renderPlan — extras (Next special files)", () => {
   });
 });
 
+describe("renderPage — variants (F2)", () => {
+  function variantLoginPlan(variant: string): ComposePlan {
+    const m = fixtureManifest();
+    m.manifest.pages[1]!.blocks = [{ block: "login", variant }];
+    return buildComposePlan(
+      m,
+      { appName: "loja" },
+      fixtureIndex(),
+      fixtureMeta(),
+      fixtureChromeSources(),
+    );
+  }
+
+  it("imports the variant export from the `<slug>-<variant>` file (dash, not `--`)", () => {
+    const login = renderPage(variantLoginPlan("split").pages[1]!, config);
+    // The installed variant file is login-split.tsx; the import base matches it.
+    expect(login).toContain('import { LoginSplitBlock } from "@/components/blocks/login-split";');
+    expect(login).toContain("<LoginSplitBlock />");
+    // No bare login import leaks in.
+    expect(login).not.toContain('from "@/components/blocks/login"');
+    expect(login).not.toContain("<LoginBlock />");
+  });
+
+  it("imports the bare block for the default variant (unchanged)", () => {
+    const login = renderPage(plan().pages[1]!, config);
+    expect(login).toContain('import { LoginBlock } from "@/components/blocks/login";');
+    expect(login).toContain("<LoginBlock />");
+  });
+});
+
 describe("renderPlan — DETERMINISM (byte-equality)", () => {
   it("renders byte-identical output across two independent runs", () => {
     const a = renderPlan(plan({ brand: "Loja X" }), config);
@@ -121,6 +152,74 @@ describe("renderPlan — DETERMINISM (byte-equality)", () => {
     expect(a.chromeRewrites).toEqual(b.chromeRewrites);
     // And the exact serialized bytes match.
     expect(JSON.stringify(a)).toBe(JSON.stringify(b));
+  });
+});
+
+describe("renderPlan — app-shell chrome (F2 saas shell)", () => {
+  function shellPlan(brand = "Acme"): ComposePlan {
+    return buildComposePlan(
+      fixtureShellManifest(),
+      { appName: "saas", brand },
+      fixtureIndex(),
+      fixtureMeta(),
+      fixtureChromeSources(),
+    );
+  }
+
+  it("emits the (shell) layout as a thin AppShellNav wrapper around {children}", () => {
+    const { files } = renderPlan(shellPlan(), config);
+    const layout = files.find((f) => f.path === "app/(shell)/layout.tsx")?.content ?? "";
+    expect(layout).toContain('import { AppShellNav } from "@/components/blocks/chrome/app-shell";');
+    expect(layout).toContain("<AppShellNav>{children}</AppShellNav>");
+    // No invented UI: only AppShellNav appears as a JSX component tag.
+    const jsxTags = [...layout.matchAll(/<([A-Za-z][A-Za-z0-9]*)/g)].map((m) => m[1]);
+    for (const tag of jsxTags) expect(["AppShellNav"]).toContain(tag);
+  });
+
+  it("emits the AppShellNav wrapper that forwards children to the installed block", () => {
+    const { files } = renderPlan(shellPlan(), config);
+    const wrapper =
+      files.find((f) => f.path === "components/blocks/chrome/app-shell.tsx")?.content ?? "";
+    expect(wrapper).toContain(
+      'import { AppShellChromeBlock } from "@/components/blocks/app-shell-chrome";',
+    );
+    expect(wrapper).toContain("export function AppShellNav({ children }");
+    expect(wrapper).toContain("<AppShellChromeBlock>{children}</AppShellChromeBlock>");
+  });
+
+  it("shell pages keep exactly one <main> (the page owns it, the shell wraps a div)", () => {
+    const { files } = renderPlan(shellPlan(), config);
+    const dash = files.find((f) => f.path === "app/(shell)/dashboard/page.tsx")?.content ?? "";
+    expect((dash.match(/<main/g) ?? []).length).toBe(1);
+    // The shell wrapper never re-declares a <main> — the block forwards children.
+    const wrapper =
+      files.find((f) => f.path === "components/blocks/chrome/app-shell.tsx")?.content ?? "";
+    expect(wrapper).not.toContain("<main");
+  });
+
+  it("injects the (shell)-group nav links into the app-nav data-slot + brand", () => {
+    const p = shellPlan("Acme");
+    const out = rewriteChromeBlock(
+      "app-shell-chrome",
+      fixtureChromeSources()["app-shell-chrome"]!,
+      p,
+    );
+    // Sidebar nav is scoped to the shell group's nav pages (Dashboard + Settings),
+    // NOT the bare /login page.
+    expect(out).toContain('{ label: "Dashboard", href: "/dashboard" }');
+    expect(out).toContain('{ label: "Settings", href: "/settings" }');
+    // The fixture's placeholder Home link is replaced by the real nav.
+    expect(out).not.toContain('{ label: "Home", href: "/dashboard" }');
+    // Brand wordmark replaced; markers preserved for a recompose.
+    expect(out).toContain("Sidebar>Acme<");
+    expect(out).not.toContain(">Cooud<");
+    expect(out).toContain("/* @cooud:data app-nav */");
+  });
+
+  it("a bare-only group layout under the same plan stays a passthrough (no shell leak)", () => {
+    const bare = renderLayout(shellPlan().chromes.find((c) => c.group === "bare")!, config);
+    expect(bare).toContain("return <>{children}</>;");
+    expect(bare).not.toContain("AppShellNav");
   });
 });
 
