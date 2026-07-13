@@ -26,6 +26,7 @@ import {
   UsageMeterCircular,
   UsageMeterLinear,
 } from "@cooud-ui/ui";
+import { INVOICES, PLANS, USAGE_METERS } from "@cooud-ui/ui/demo-saas";
 import { CalendarClock, Check, CreditCard, Download, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { BlockGalleryBody } from "../../components/blocks/block-gallery-body";
@@ -37,49 +38,6 @@ import type { BlockContentMap } from "./types";
 /* ──────────────────────────────────────────────────────────────────────────
  * 1. Subscription — current plan, usage meters, payment method, invoices
  * ────────────────────────────────────────────────────────────────────────── */
-
-interface UsageMeter {
-  id: string;
-  label: string;
-  used: number;
-  limit: number;
-  display: string;
-  value: number;
-}
-
-const usageMeters: UsageMeter[] = [
-  { id: "usage-seats", label: "Seats", used: 18, limit: 25, display: "18 / 25", value: 72 },
-  {
-    id: "usage-storage",
-    label: "Storage",
-    used: 164,
-    limit: 250,
-    display: "164 GB / 250 GB",
-    value: 66,
-  },
-  {
-    id: "usage-api",
-    label: "API calls",
-    used: 842_000,
-    limit: 1_000_000,
-    display: "842K / 1M",
-    value: 84,
-  },
-];
-
-interface Invoice {
-  id: string;
-  date: string;
-  amount: string;
-  status: "Paid" | "Pending";
-}
-
-const invoices: Invoice[] = [
-  { id: "INV-2026-006", date: "Jun 1, 2026", amount: "$290.00", status: "Paid" },
-  { id: "INV-2026-005", date: "May 1, 2026", amount: "$290.00", status: "Paid" },
-  { id: "INV-2026-004", date: "Apr 1, 2026", amount: "$290.00", status: "Paid" },
-  { id: "INV-2026-003", date: "Mar 1, 2026", amount: "$245.00", status: "Pending" },
-];
 
 export function SubscriptionBlock() {
   return (
@@ -128,7 +86,7 @@ export function SubscriptionBlock() {
           </p>
         </CardHeader>
         <CardContent className="flex flex-col gap-5">
-          {usageMeters.map(({ id, label, display, value }) => (
+          {USAGE_METERS.map(({ id, label, display, value }) => (
             <div key={id} className="flex flex-col gap-2">
               <div className="flex items-center justify-between text-sm">
                 <span className="font-medium text-fg">{label}</span>
@@ -183,7 +141,7 @@ export function SubscriptionBlock() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {invoices.map((invoice) => (
+              {INVOICES.map((invoice) => (
                 <TableRow key={invoice.id}>
                   <TableCell className="pl-4 font-medium text-fg sm:pl-6">{invoice.id}</TableCell>
                   <TableCell className="text-fg-secondary">{invoice.date}</TableCell>
@@ -226,33 +184,7 @@ const subscriptionCode = `import {
   TableRow,
 } from "@cooud-ui/ui";
 import { CreditCard, Download } from "lucide-react";
-
-interface UsageMeter {
-  id: string;
-  label: string;
-  display: string;
-  value: number;
-}
-
-const usageMeters: UsageMeter[] = [
-  { id: "usage-seats", label: "Seats", display: "18 / 25", value: 72 },
-  { id: "usage-storage", label: "Storage", display: "164 GB / 250 GB", value: 66 },
-  { id: "usage-api", label: "API calls", display: "842K / 1M", value: 84 },
-];
-
-interface Invoice {
-  id: string;
-  date: string;
-  amount: string;
-  status: "Paid" | "Pending";
-}
-
-const invoices: Invoice[] = [
-  { id: "INV-2026-006", date: "Jun 1, 2026", amount: "$290.00", status: "Paid" },
-  { id: "INV-2026-005", date: "May 1, 2026", amount: "$290.00", status: "Paid" },
-  { id: "INV-2026-004", date: "Apr 1, 2026", amount: "$290.00", status: "Paid" },
-  { id: "INV-2026-003", date: "Mar 1, 2026", amount: "$245.00", status: "Pending" },
-];
+import { INVOICES, USAGE_METERS } from "../lib/demo-saas.js";
 
 export function SubscriptionBlock() {
   return (
@@ -298,7 +230,7 @@ export function SubscriptionBlock() {
           </p>
         </CardHeader>
         <CardContent className="flex flex-col gap-5">
-          {usageMeters.map(({ id, label, display, value }) => (
+          {USAGE_METERS.map(({ id, label, display, value }) => (
             <div key={id} className="flex flex-col gap-2">
               <div className="flex items-center justify-between text-sm">
                 <span className="font-medium text-fg">{label}</span>
@@ -353,7 +285,7 @@ export function SubscriptionBlock() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {invoices.map((invoice) => (
+              {INVOICES.map((invoice) => (
                 <TableRow key={invoice.id}>
                   <TableCell className="pl-4 font-medium text-fg sm:pl-6">{invoice.id}</TableCell>
                   <TableCell className="text-fg-secondary">{invoice.date}</TableCell>
@@ -382,60 +314,6 @@ export function SubscriptionBlock() {
  * 2. Plans — three-tier plan selector with monthly/annual toggle
  * ────────────────────────────────────────────────────────────────────────── */
 
-interface Plan {
-  id: string;
-  name: string;
-  tagline: string;
-  monthly: number;
-  annual: number;
-  features: string[];
-  cta: string;
-  popular?: boolean;
-}
-
-const plans: Plan[] = [
-  {
-    id: "starter",
-    name: "Starter",
-    tagline: "For individuals shipping their first project.",
-    monthly: 0,
-    annual: 0,
-    features: ["1 workspace", "Up to 3 seats", "5 GB storage", "Community support"],
-    cta: "Get started",
-  },
-  {
-    id: "team",
-    name: "Team",
-    tagline: "For growing teams that need room to scale.",
-    monthly: 29,
-    annual: 24,
-    features: [
-      "Unlimited workspaces",
-      "Up to 25 seats",
-      "250 GB storage",
-      "Priority email support",
-      "Usage analytics",
-    ],
-    cta: "Upgrade to Team",
-    popular: true,
-  },
-  {
-    id: "enterprise",
-    name: "Enterprise",
-    tagline: "For organizations with advanced controls.",
-    monthly: 89,
-    annual: 74,
-    features: [
-      "Everything in Team",
-      "SSO & SCIM",
-      "Unlimited storage",
-      "Dedicated success manager",
-      "99.9% uptime SLA",
-    ],
-    cta: "Contact sales",
-  },
-];
-
 export function PlansBlock() {
   const [annual, setAnnual] = useState(true);
 
@@ -461,7 +339,7 @@ export function PlansBlock() {
       </header>
 
       <div className="grid items-start gap-4 sm:grid-cols-3">
-        {plans.map((plan) => {
+        {PLANS.map((plan) => {
           const price = annual ? plan.annual : plan.monthly;
           return (
             <Card
@@ -526,60 +404,7 @@ import {
 } from "@cooud-ui/ui";
 import { Check } from "lucide-react";
 import { useState } from "react";
-
-interface Plan {
-  id: string;
-  name: string;
-  tagline: string;
-  monthly: number;
-  annual: number;
-  features: string[];
-  cta: string;
-  popular?: boolean;
-}
-
-const plans: Plan[] = [
-  {
-    id: "starter",
-    name: "Starter",
-    tagline: "For individuals shipping their first project.",
-    monthly: 0,
-    annual: 0,
-    features: ["1 workspace", "Up to 3 seats", "5 GB storage", "Community support"],
-    cta: "Get started",
-  },
-  {
-    id: "team",
-    name: "Team",
-    tagline: "For growing teams that need room to scale.",
-    monthly: 29,
-    annual: 24,
-    features: [
-      "Unlimited workspaces",
-      "Up to 25 seats",
-      "250 GB storage",
-      "Priority email support",
-      "Usage analytics",
-    ],
-    cta: "Upgrade to Team",
-    popular: true,
-  },
-  {
-    id: "enterprise",
-    name: "Enterprise",
-    tagline: "For organizations with advanced controls.",
-    monthly: 89,
-    annual: 74,
-    features: [
-      "Everything in Team",
-      "SSO & SCIM",
-      "Unlimited storage",
-      "Dedicated success manager",
-      "99.9% uptime SLA",
-    ],
-    cta: "Contact sales",
-  },
-];
+import { PLANS } from "../lib/demo-saas.js";
 
 export function PlansBlock() {
   const [annual, setAnnual] = useState(true);
@@ -606,7 +431,7 @@ export function PlansBlock() {
       </header>
 
       <div className="grid items-start gap-4 sm:grid-cols-3">
-        {plans.map((plan) => {
+        {PLANS.map((plan) => {
           const price = annual ? plan.annual : plan.monthly;
           return (
             <Card

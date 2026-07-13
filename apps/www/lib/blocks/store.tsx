@@ -42,6 +42,7 @@ import {
   ToggleGroup,
   ToggleGroupItem,
 } from "@cooud-ui/ui";
+import { CART, ORDERS, productById, RATING_DISTRIBUTION, REVIEWS } from "@cooud-ui/ui/demo-store";
 import {
   Check,
   Clock,
@@ -782,32 +783,21 @@ interface CartLine {
   gradient: string;
 }
 
-const cartLines: CartLine[] = [
-  {
-    id: "aurora",
-    name: "Aurora Wireless Headphones",
-    option: "Midnight",
-    price: "$349.00",
-    qty: 1,
-    gradient: "from-primary/30 to-info/20",
-  },
-  {
-    id: "case",
-    name: "Hard-Shell Travel Case",
-    option: "Charcoal",
-    price: "$49.00",
-    qty: 1,
-    gradient: "from-info/30 to-success/20",
-  },
-  {
-    id: "cushions",
-    name: "Memory-Foam Ear Cushions",
-    option: "2-pack",
-    price: "$29.00",
-    qty: 2,
-    gradient: "from-warning/30 to-primary/20",
-  },
-];
+// Derive the cart view from the shared demo-store CART (each line references a
+// PRODUCTS id): the same Aurora headphones + case + cushions the order and
+// invoice show. Presentation is unchanged — name/price/gradient come from the
+// product, option/qty from the cart line.
+const cartLines: CartLine[] = CART.map((line) => {
+  const product = productById(line.productId);
+  return {
+    id: line.productId,
+    name: product?.name ?? line.productId,
+    option: line.option,
+    price: product?.price ?? "",
+    qty: line.qty,
+    gradient: product?.gradient ?? "",
+  };
+});
 
 export function CartPageBlock() {
   return (
@@ -924,6 +914,7 @@ const cartPageCode = `import {
   Separator,
 } from "@cooud-ui/ui";
 import { Minus, Package, Plus, ShieldCheck, Trash2 } from "lucide-react";
+import { CART, productById } from "../lib/demo-store.js";
 
 interface CartLine {
   id: string;
@@ -934,32 +925,20 @@ interface CartLine {
   gradient: string;
 }
 
-const cartLines: CartLine[] = [
-  {
-    id: "aurora",
-    name: "Aurora Wireless Headphones",
-    option: "Midnight",
-    price: "$349.00",
-    qty: 1,
-    gradient: "from-primary/30 to-info/20",
-  },
-  {
-    id: "case",
-    name: "Hard-Shell Travel Case",
-    option: "Charcoal",
-    price: "$49.00",
-    qty: 1,
-    gradient: "from-info/30 to-success/20",
-  },
-  {
-    id: "cushions",
-    name: "Memory-Foam Ear Cushions",
-    option: "2-pack",
-    price: "$29.00",
-    qty: 2,
-    gradient: "from-warning/30 to-primary/20",
-  },
-];
+// Derive the cart view from the shared demo-store CART (each line references a
+// PRODUCTS id): name/price/gradient come from the product, option/qty from the
+// cart line — the same items the order and invoice show.
+const cartLines: CartLine[] = CART.map((line) => {
+  const product = productById(line.productId);
+  return {
+    id: line.productId,
+    name: product?.name ?? line.productId,
+    option: line.option,
+    price: product?.price ?? "",
+    qty: line.qty,
+    gradient: product?.gradient ?? "",
+  };
+});
 
 export function CartPageBlock() {
   return (
@@ -1133,6 +1112,7 @@ export function CartDrawerBlock() {
 
 const cartDrawerCode = `import { Badge, Button, Progress } from "@cooud-ui/ui";
 import { Package, ShoppingBag, X } from "lucide-react";
+import { CART, productById } from "../lib/demo-store.js";
 
 interface CartLine {
   id: string;
@@ -1143,32 +1123,20 @@ interface CartLine {
   gradient: string;
 }
 
-const cartLines: CartLine[] = [
-  {
-    id: "aurora",
-    name: "Aurora Wireless Headphones",
-    option: "Midnight",
-    price: "$349.00",
-    qty: 1,
-    gradient: "from-primary/30 to-info/20",
-  },
-  {
-    id: "case",
-    name: "Hard-Shell Travel Case",
-    option: "Charcoal",
-    price: "$49.00",
-    qty: 1,
-    gradient: "from-info/30 to-success/20",
-  },
-  {
-    id: "cushions",
-    name: "Memory-Foam Ear Cushions",
-    option: "2-pack",
-    price: "$29.00",
-    qty: 2,
-    gradient: "from-warning/30 to-primary/20",
-  },
-];
+// Derive the cart view from the shared demo-store CART (each line references a
+// PRODUCTS id): name/price/gradient come from the product, option/qty from the
+// cart line — the same items the order and invoice show.
+const cartLines: CartLine[] = CART.map((line) => {
+  const product = productById(line.productId);
+  return {
+    id: line.productId,
+    name: product?.name ?? line.productId,
+    option: line.option,
+    price: product?.price ?? "",
+    qty: line.qty,
+    gradient: product?.gradient ?? "",
+  };
+});
 
 export function CartDrawerBlock() {
   return (
@@ -1845,25 +1813,22 @@ interface StoreOrder {
   status: OrderStatus;
 }
 
-const storeOrders: StoreOrder[] = [
-  {
-    id: "#CD-58291",
-    date: "Jul 9, 2026",
-    items: "4 items",
-    total: "$387.60",
-    status: "In transit",
-  },
-  { id: "#CD-57904", date: "Jun 20, 2026", items: "1 item", total: "$129.00", status: "Delivered" },
-  { id: "#CD-57648", date: "Jun 11, 2026", items: "2 items", total: "$94.50", status: "Delivered" },
-  { id: "#CD-57310", date: "May 30, 2026", items: "1 item", total: "$349.00", status: "Refunded" },
-  {
-    id: "#CD-57122",
-    date: "May 21, 2026",
-    items: "4 items",
-    total: "$212.80",
-    status: "Processing",
-  },
-];
+// Item count is a derived label ("4 items" / "1 item"), summed from the shared
+// demo-store ORDERS line quantities.
+function itemsLabel(items: { qty: number }[]): string {
+  const count = items.reduce((sum, item) => sum + item.qty, 0);
+  return `${count} ${count === 1 ? "item" : "items"}`;
+}
+
+// Derive the orders table from the shared demo-store ORDERS — the same ids,
+// dates, totals and statuses the cards, tracking and invoice surfaces show.
+const storeOrders: StoreOrder[] = ORDERS.map((order) => ({
+  id: order.id,
+  date: order.date,
+  items: itemsLabel(order.items),
+  total: order.total,
+  status: order.status,
+}));
 
 function orderStatusVariant(status: OrderStatus) {
   if (status === "Delivered") return "success" as const;
@@ -1960,6 +1925,7 @@ const orderHistoryTableCode = `import {
   TableRow,
 } from "@cooud-ui/ui";
 import { Download, MoreHorizontal } from "lucide-react";
+import { ORDERS } from "../lib/demo-store.js";
 
 type OrderStatus = "Delivered" | "In transit" | "Processing" | "Refunded";
 
@@ -1971,25 +1937,22 @@ interface StoreOrder {
   status: OrderStatus;
 }
 
-const storeOrders: StoreOrder[] = [
-  {
-    id: "#CD-58291",
-    date: "Jul 9, 2026",
-    items: "4 items",
-    total: "$387.60",
-    status: "In transit",
-  },
-  { id: "#CD-57904", date: "Jun 20, 2026", items: "1 item", total: "$129.00", status: "Delivered" },
-  { id: "#CD-57648", date: "Jun 11, 2026", items: "2 items", total: "$94.50", status: "Delivered" },
-  { id: "#CD-57310", date: "May 30, 2026", items: "1 item", total: "$349.00", status: "Refunded" },
-  {
-    id: "#CD-57122",
-    date: "May 21, 2026",
-    items: "4 items",
-    total: "$212.80",
-    status: "Processing",
-  },
-];
+// Item count is a derived label ("4 items" / "1 item"), summed from the shared
+// demo-store ORDERS line quantities.
+function itemsLabel(items: { qty: number }[]): string {
+  const count = items.reduce((sum, item) => sum + item.qty, 0);
+  return \`\${count} \${count === 1 ? "item" : "items"}\`;
+}
+
+// Derive the orders table from the shared demo-store ORDERS — the same ids,
+// dates, totals and statuses the cards, tracking and invoice surfaces show.
+const storeOrders: StoreOrder[] = ORDERS.map((order) => ({
+  id: order.id,
+  date: order.date,
+  items: itemsLabel(order.items),
+  total: order.total,
+  status: order.status,
+}));
 
 function orderStatusVariant(status: OrderStatus) {
   if (status === "Delivered") return "success" as const;
@@ -2304,67 +2267,10 @@ function ReviewStars({ rating, label }: { rating: number; label: string }) {
   );
 }
 
-interface RatingBar {
-  stars: string;
-  percent: number;
-  label: string;
-}
-
-const ratingBars: RatingBar[] = [
-  { stars: "5", percent: 82, label: "5 stars: 82% of reviews" },
-  { stars: "4", percent: 11, label: "4 stars: 11% of reviews" },
-  { stars: "3", percent: 4, label: "3 stars: 4% of reviews" },
-  { stars: "2", percent: 2, label: "2 stars: 2% of reviews" },
-  { stars: "1", percent: 1, label: "1 star: 1% of reviews" },
-];
-
-interface CustomerReview {
-  id: string;
-  name: string;
-  initials: string;
-  date: string;
-  rating: number;
-  ratingLabel: string;
-  title: string;
-  body: string;
-  verified: boolean;
-}
-
-const topReviews: CustomerReview[] = [
-  {
-    id: "sofia",
-    name: "Sofia Almeida",
-    initials: "SA",
-    date: "Jul 2, 2026",
-    rating: 5,
-    ratingLabel: "Rated 5 out of 5 stars",
-    title: "Best headphones I have ever owned",
-    body: "The noise cancellation is unreal on flights — I forgot I was seated by the engine. And 40 hours of battery is not marketing math; I charge them about once a week.",
-    verified: true,
-  },
-  {
-    id: "marcus",
-    name: "Marcus Chen",
-    initials: "MC",
-    date: "Jun 27, 2026",
-    rating: 5,
-    ratingLabel: "Rated 5 out of 5 stars",
-    title: "Worth every dollar",
-    body: "Swapped from a much pricier pair and the Aurora sounds warmer and fits better. Multipoint pairing between my laptop and phone just works.",
-    verified: true,
-  },
-  {
-    id: "priya",
-    name: "Priya Nair",
-    initials: "PN",
-    date: "Jun 19, 2026",
-    rating: 4,
-    ratingLabel: "Rated 4 out of 5 stars",
-    title: "Great sound, snug fit at first",
-    body: "Sound stage is stunning for the price. The clamp was tight the first week but broke in nicely — would still buy again.",
-    verified: false,
-  },
-];
+// The rating histogram is the shared demo-store distribution; the top-review
+// column is the first three reviewers (Sofia, Marcus, Priya) with their titles.
+const ratingBars = RATING_DISTRIBUTION;
+const topReviews = REVIEWS.slice(0, 3);
 
 export function ReviewsSummaryBlock() {
   return (
@@ -2443,6 +2349,7 @@ const reviewsSummaryCode = `import {
   Progress,
 } from "@cooud-ui/ui";
 import { Star, StarHalf } from "lucide-react";
+import { RATING_DISTRIBUTION, REVIEWS } from "../lib/demo-store.js";
 
 function ReviewStars({ rating, label }: { rating: number; label: string }) {
   return (
@@ -2468,67 +2375,10 @@ function ReviewStars({ rating, label }: { rating: number; label: string }) {
   );
 }
 
-interface RatingBar {
-  stars: string;
-  percent: number;
-  label: string;
-}
-
-const ratingBars: RatingBar[] = [
-  { stars: "5", percent: 82, label: "5 stars: 82% of reviews" },
-  { stars: "4", percent: 11, label: "4 stars: 11% of reviews" },
-  { stars: "3", percent: 4, label: "3 stars: 4% of reviews" },
-  { stars: "2", percent: 2, label: "2 stars: 2% of reviews" },
-  { stars: "1", percent: 1, label: "1 star: 1% of reviews" },
-];
-
-interface CustomerReview {
-  id: string;
-  name: string;
-  initials: string;
-  date: string;
-  rating: number;
-  ratingLabel: string;
-  title: string;
-  body: string;
-  verified: boolean;
-}
-
-const topReviews: CustomerReview[] = [
-  {
-    id: "sofia",
-    name: "Sofia Almeida",
-    initials: "SA",
-    date: "Jul 2, 2026",
-    rating: 5,
-    ratingLabel: "Rated 5 out of 5 stars",
-    title: "Best headphones I have ever owned",
-    body: "The noise cancellation is unreal on flights — I forgot I was seated by the engine. And 40 hours of battery is not marketing math; I charge them about once a week.",
-    verified: true,
-  },
-  {
-    id: "marcus",
-    name: "Marcus Chen",
-    initials: "MC",
-    date: "Jun 27, 2026",
-    rating: 5,
-    ratingLabel: "Rated 5 out of 5 stars",
-    title: "Worth every dollar",
-    body: "Swapped from a much pricier pair and the Aurora sounds warmer and fits better. Multipoint pairing between my laptop and phone just works.",
-    verified: true,
-  },
-  {
-    id: "priya",
-    name: "Priya Nair",
-    initials: "PN",
-    date: "Jun 19, 2026",
-    rating: 4,
-    ratingLabel: "Rated 4 out of 5 stars",
-    title: "Great sound, snug fit at first",
-    body: "Sound stage is stunning for the price. The clamp was tight the first week but broke in nicely — would still buy again.",
-    verified: false,
-  },
-];
+// The rating histogram is the shared demo-store distribution; the top-review
+// column is the first three reviewers (Sofia, Marcus, Priya) with their titles.
+const ratingBars = RATING_DISTRIBUTION;
+const topReviews = REVIEWS.slice(0, 3);
 
 export function ReviewsSummaryBlock() {
   return (
