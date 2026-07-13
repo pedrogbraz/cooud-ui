@@ -102,6 +102,8 @@ export {
 } from "./components/chart.js";
 // ── Wave 1 — forms ─────────────────────────────────────────────────
 export { Checkbox } from "./components/checkbox.js";
+export type { ChipGroupProps, ChipLabels, ChipProps } from "./components/chip.js";
+export { Chip, ChipGroup, chipVariants } from "./components/chip.js";
 export type { CodeBlockProps } from "./components/code-block.js";
 export { CodeBlock } from "./components/code-block.js";
 export type { CodeTabsItem, CodeTabsProps } from "./components/code-tabs.js";
@@ -189,6 +191,14 @@ export type {
   DateRangePreset,
 } from "./components/date-range-picker.js";
 export { DateRangePicker } from "./components/date-range-picker.js";
+export type { DescriptionItemProps, DescriptionListProps } from "./components/description-list.js";
+export {
+  DescriptionDetails,
+  DescriptionItem,
+  DescriptionList,
+  DescriptionTerm,
+  descriptionListVariants,
+} from "./components/description-list.js";
 export type { DialogContentProps } from "./components/dialog.js";
 export {
   Dialog,
@@ -270,6 +280,8 @@ export { GradientText } from "./components/gradient-text.js";
 export type { HeatmapDay, HeatmapProps } from "./components/heatmap.js";
 export { getHeatmapLevel, Heatmap } from "./components/heatmap.js";
 export { HoverCard, HoverCardContent, HoverCardTrigger } from "./components/hover-card.js";
+export type { ImageZoomLabels, ImageZoomProps } from "./components/image-zoom.js";
+export { ImageZoom, imageZoomVariants } from "./components/image-zoom.js";
 export type { InputProps } from "./components/input.js";
 export { Input } from "./components/input.js";
 export type { InputGroupAddonProps, InputGroupProps } from "./components/input-group.js";
@@ -493,6 +505,8 @@ export { Spinner } from "./components/spinner.js";
 export type { SplitButtonItem, SplitButtonProps } from "./components/split-button.js";
 export { SplitButton } from "./components/split-button.js";
 export { SpotlightCard } from "./components/spotlight-card.js";
+export type { StatusDotProps } from "./components/status-dot.js";
+export { StatusDot, statusDotVariants } from "./components/status-dot.js";
 export type {
   StepperIndicatorProps,
   StepperItemProps,
@@ -576,4 +590,6 @@ export type { TreeNode, TreeViewProps } from "./components/tree-view.js";
 export { TreeView } from "./components/tree-view.js";
 export type { UsageMeterProps } from "./components/usage-meter.js";
 export { UsageMeter, UsageMeterCircular, UsageMeterLinear } from "./components/usage-meter.js";
+export type { VideoPlayerLabels, VideoPlayerProps } from "./components/video-player.js";
+export { VideoPlayer, videoPlayerVariants } from "./components/video-player.js";
 export { cn } from "./lib/cn.js";
