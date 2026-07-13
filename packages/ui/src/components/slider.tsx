@@ -14,16 +14,15 @@ import { cn } from "../lib/cn.js";
 export const Slider = forwardRef<
   ComponentRef<typeof SliderPrimitive.Root>,
   ComponentPropsWithoutRef<typeof SliderPrimitive.Root>
->(({ className, ...props }, ref) => {
+>(({ className, "aria-label": ariaLabel, "aria-labelledby": ariaLabelledby, ...props }, ref) => {
   const provided = props.value ?? props.defaultValue;
   const values = provided?.length ? provided : [props.min ?? 0];
 
-  // Radix forwards the Root's `aria-label`/`aria-labelledby` only inconsistently
-  // to the focusable thumb. The thumb is the actual `role="slider"` input, so we
-  // name it explicitly to satisfy `aria-input-field-name` (WCAG 4.1.2). For
-  // multi-thumb sliders each thumb gets an index suffix so the names stay unique.
-  const ariaLabel = props["aria-label"];
-  const ariaLabelledby = props["aria-labelledby"];
+  // The thumb is the actual `role="slider"` input, so we name it explicitly to
+  // satisfy `aria-input-field-name` (WCAG 4.1.2). The label props are pulled OUT
+  // of the spread: Radix's Root renders a role-less <span>, where `aria-label`
+  // would trip axe `aria-prohibited-attr` (serious, WCAG 4.1.2). For multi-thumb
+  // sliders each thumb gets an index suffix so the names stay unique.
   const multipleThumbs = values.length > 1;
 
   return (
