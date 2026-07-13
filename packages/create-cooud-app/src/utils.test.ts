@@ -1,6 +1,14 @@
 import { describe, expect, it } from "vitest";
 import { parseCli } from "./index.js";
-import { dirNameFromProjectName, isValidProjectName } from "./utils.js";
+import {
+  COMPOSED_TEMPLATES,
+  dirNameFromProjectName,
+  isComposedTemplate,
+  isValidProjectName,
+  TEMPLATE_HINTS,
+  TEMPLATES,
+  templateBaseDir,
+} from "./utils.js";
 
 describe("isValidProjectName", () => {
   it("accepts simple lowercase names", () => {
@@ -18,6 +26,40 @@ describe("isValidProjectName", () => {
     expect(isValidProjectName(".hidden")).toBe(false);
     expect(isValidProjectName("my app")).toBe(false);
     expect(isValidProjectName("a/b/c")).toBe(false);
+  });
+});
+
+describe("templates", () => {
+  it("includes the composed templates in the picker set", () => {
+    expect(TEMPLATES).toContain("store");
+    expect(TEMPLATES).toContain("landing");
+    // The bundled-dir templates stay listed too.
+    expect(TEMPLATES).toContain("default");
+    expect(TEMPLATES).toContain("dashboard");
+    expect(TEMPLATES).toContain("marketing");
+  });
+
+  it("has a one-line hint for every template", () => {
+    for (const t of TEMPLATES) {
+      expect(TEMPLATE_HINTS[t], t).toBeTruthy();
+    }
+  });
+
+  it("classifies only store/landing as composed templates", () => {
+    expect(isComposedTemplate("store")).toBe(true);
+    expect(isComposedTemplate("landing")).toBe(true);
+    expect(isComposedTemplate("default")).toBe(false);
+    expect(isComposedTemplate("dashboard")).toBe(false);
+    expect(isComposedTemplate("marketing")).toBe(false);
+    expect(Object.keys(COMPOSED_TEMPLATES).sort()).toEqual(["landing", "store"]);
+  });
+
+  it("maps composed templates to the default base dir, others to themselves", () => {
+    expect(templateBaseDir("store")).toBe("default");
+    expect(templateBaseDir("landing")).toBe("default");
+    expect(templateBaseDir("default")).toBe("default");
+    expect(templateBaseDir("dashboard")).toBe("dashboard");
+    expect(templateBaseDir("marketing")).toBe("marketing");
   });
 });
 
@@ -65,6 +107,11 @@ describe("parseCli", () => {
     expect(parseCli(["my-app", "--template", "dashboard"]).template).toBe("dashboard");
     expect(parseCli(["my-app", "--template", "marketing"]).template).toBe("marketing");
     expect(parseCli(["my-app", "--template", "default"]).template).toBe("default");
+  });
+
+  it("accepts the composed templates (store/landing)", () => {
+    expect(parseCli(["my-app", "--template", "store"]).template).toBe("store");
+    expect(parseCli(["my-app", "--template", "landing"]).template).toBe("landing");
   });
 
   it("defaults the AI Kit fields (ai undecided, all assistants/skills, standard preset)", () => {

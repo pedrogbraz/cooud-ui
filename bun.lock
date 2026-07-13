@@ -85,6 +85,7 @@
       },
       "dependencies": {
         "@cooud-ui/ai-kit": "workspace:*",
+        "cooud-ui": "workspace:*",
       },
       "devDependencies": {
         "@types/node": "^22.10.0",
