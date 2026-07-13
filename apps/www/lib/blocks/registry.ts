@@ -26,7 +26,11 @@ export type BlockFamily =
   | "changelog"
   | "integrations"
   | "waitlist"
-  | "feature-matrix";
+  | "feature-matrix"
+  | "store"
+  | "account"
+  | "admin"
+  | "content";
 
 /** slug → the family module that owns its content. */
 export const BLOCK_FAMILY_BY_SLUG: Record<string, BlockFamily> = {
@@ -104,6 +108,27 @@ export const BLOCK_FAMILY_BY_SLUG: Record<string, BlockFamily> = {
   waitlist: "waitlist",
   // feature matrix
   "feature-matrix": "feature-matrix",
+  // store
+  "product-detail": "store",
+  cart: "store",
+  "order-tracking": "store",
+  "order-history": "store",
+  reviews: "store",
+  // account
+  "account-security": "account",
+  sessions: "account",
+  "api-keys": "account",
+  "notification-preferences": "account",
+  // admin
+  "user-management": "admin",
+  analytics: "admin",
+  "kanban-board": "admin",
+  "audit-log": "admin",
+  // content
+  blog: "content",
+  "blog-post": "content",
+  "logo-cloud": "content",
+  about: "content",
 };
 
 export function getBlockFamily(slug: string): BlockFamily | undefined {

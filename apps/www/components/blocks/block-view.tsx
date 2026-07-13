@@ -84,6 +84,18 @@ const VIEW_VIEWS: Record<BlockFamily, BlockDetailView> = {
     () => import("../../lib/blocks/feature-matrix").then((m) => m.FeatureMatrixView),
     { loading: BlockViewSkeleton },
   ),
+  store: dynamic(() => import("../../lib/blocks/store").then((m) => m.StoreView), {
+    loading: BlockViewSkeleton,
+  }),
+  account: dynamic(() => import("../../lib/blocks/account").then((m) => m.AccountView), {
+    loading: BlockViewSkeleton,
+  }),
+  admin: dynamic(() => import("../../lib/blocks/admin").then((m) => m.AdminView), {
+    loading: BlockViewSkeleton,
+  }),
+  content: dynamic(() => import("../../lib/blocks/content").then((m) => m.ContentView), {
+    loading: BlockViewSkeleton,
+  }),
 };
 
 export function BlockView({ slug, variant }: { slug: string; variant: string }) {

@@ -91,6 +91,18 @@ const GALLERY_VIEWS: Record<BlockFamily, GalleryView> = {
     () => import("../../lib/blocks/feature-matrix").then((m) => m.FeatureMatrixGallery),
     { loading: GallerySkeleton },
   ),
+  store: dynamic(() => import("../../lib/blocks/store").then((m) => m.StoreGallery), {
+    loading: GallerySkeleton,
+  }),
+  account: dynamic(() => import("../../lib/blocks/account").then((m) => m.AccountGallery), {
+    loading: GallerySkeleton,
+  }),
+  admin: dynamic(() => import("../../lib/blocks/admin").then((m) => m.AdminGallery), {
+    loading: GallerySkeleton,
+  }),
+  content: dynamic(() => import("../../lib/blocks/content").then((m) => m.ContentGallery), {
+    loading: GallerySkeleton,
+  }),
 };
 
 export function BlockVariantsGallery({ slug }: { slug: string }) {

@@ -6,6 +6,8 @@ import {
   Badge,
   Button,
   Checkbox,
+  Chip,
+  ChipGroup,
   ColorPicker,
   Combobox,
   CreditCardInput,
@@ -1458,7 +1460,166 @@ const creditCardDemoCode = `function CreditCardDemo() {
   );
 }`;
 
+// ── Chip ───────────────────────────────────────────────────────────
+const CHIP_FILTER_TOPICS = ["Design", "React", "TypeScript", "Motion", "A11y"];
+
+function ChipFilterDemo() {
+  const [selected, setSelected] = useState<string[]>(["Design"]);
+
+  const toggle = (topic: string) =>
+    setSelected((current) =>
+      current.includes(topic) ? current.filter((item) => item !== topic) : [...current, topic],
+    );
+
+  return (
+    <ChipGroup aria-label="Filter articles by topic">
+      {CHIP_FILTER_TOPICS.map((topic) => (
+        <Chip key={topic} selected={selected.includes(topic)} onClick={() => toggle(topic)}>
+          {topic}
+        </Chip>
+      ))}
+    </ChipGroup>
+  );
+}
+
+const chipFilterDemoCode = `const TOPICS = ["Design", "React", "TypeScript", "Motion", "A11y"];
+
+function ChipFilterDemo() {
+  const [selected, setSelected] = useState<string[]>(["Design"]);
+
+  const toggle = (topic: string) =>
+    setSelected((current) =>
+      current.includes(topic) ? current.filter((item) => item !== topic) : [...current, topic],
+    );
+
+  return (
+    <ChipGroup aria-label="Filter articles by topic">
+      {TOPICS.map((topic) => (
+        <Chip key={topic} selected={selected.includes(topic)} onClick={() => toggle(topic)}>
+          {topic}
+        </Chip>
+      ))}
+    </ChipGroup>
+  );
+}`;
+
+const CHIP_INITIAL_TAGS = ["Aurora", "Nebula", "Pulsar", "Quasar"];
+
+function ChipDismissibleDemo() {
+  const [tags, setTags] = useState<string[]>(CHIP_INITIAL_TAGS);
+
+  if (tags.length === 0) {
+    return (
+      <Button variant="outline" size="sm" onClick={() => setTags(CHIP_INITIAL_TAGS)}>
+        Reset tags
+      </Button>
+    );
+  }
+
+  return (
+    <ChipGroup aria-label="Selected tags">
+      {tags.map((tag) => (
+        <Chip
+          key={tag}
+          variant="soft"
+          color="primary"
+          onRemove={() => setTags((current) => current.filter((item) => item !== tag))}
+        >
+          {tag}
+        </Chip>
+      ))}
+    </ChipGroup>
+  );
+}
+
+const chipDismissibleDemoCode = `const INITIAL_TAGS = ["Aurora", "Nebula", "Pulsar", "Quasar"];
+
+function ChipDismissibleDemo() {
+  const [tags, setTags] = useState<string[]>(INITIAL_TAGS);
+
+  if (tags.length === 0) {
+    return (
+      <Button variant="outline" size="sm" onClick={() => setTags(INITIAL_TAGS)}>
+        Reset tags
+      </Button>
+    );
+  }
+
+  return (
+    <ChipGroup aria-label="Selected tags">
+      {tags.map((tag) => (
+        <Chip
+          key={tag}
+          variant="soft"
+          color="primary"
+          onRemove={() => setTags((current) => current.filter((item) => item !== tag))}
+        >
+          {tag}
+        </Chip>
+      ))}
+    </ChipGroup>
+  );
+}`;
+
 export const formsExamples: ExampleMap = {
+  chip: [
+    {
+      id: "filters",
+      title: "Filter chips",
+      description:
+        "Give a chip `selected` + `onClick` and it renders as a toggle button with `aria-pressed` and a leading check mark while on. Enter/Space toggle from the keyboard.",
+      code: chipFilterDemoCode,
+      preview: <ChipFilterDemo />,
+    },
+    {
+      id: "variants",
+      title: "Variants, colors & sizes",
+      description:
+        "Three treatments across the semantic palette — `solid` fills, `soft` 15% tints with AA-tuned `*-strong` text, and `outline`. Chips without `onClick`/`selected` render as static, server-safe `<span>`s.",
+      code: `<ChipGroup aria-label="Chip variants">
+  <Chip variant="solid" color="primary">Solid</Chip>
+  <Chip variant="solid" color="error">Error</Chip>
+  <Chip variant="soft" color="success">Soft</Chip>
+  <Chip variant="soft" color="warning">Warning</Chip>
+  <Chip variant="outline" color="info">Outline</Chip>
+  <Chip variant="soft" size="sm">Small</Chip>
+  <Chip variant="outline" size="lg">Large</Chip>
+</ChipGroup>`,
+      preview: (
+        <ChipGroup aria-label="Chip variants">
+          <Chip variant="solid" color="primary">
+            Solid
+          </Chip>
+          <Chip variant="solid" color="error">
+            Error
+          </Chip>
+          <Chip variant="soft" color="success">
+            Soft
+          </Chip>
+          <Chip variant="soft" color="warning">
+            Warning
+          </Chip>
+          <Chip variant="outline" color="info">
+            Outline
+          </Chip>
+          <Chip variant="soft" size="sm">
+            Small
+          </Chip>
+          <Chip variant="outline" size="lg">
+            Large
+          </Chip>
+        </ChipGroup>
+      ),
+    },
+    {
+      id: "dismissible",
+      title: "Dismissible",
+      description:
+        "`onRemove` adds a remove affordance — pointer users hit the ×, keyboard users press Delete or Backspace on the focused chip. Removal never triggers the chip's own `onClick`.",
+      code: chipDismissibleDemoCode,
+      preview: <ChipDismissibleDemo />,
+    },
+  ],
   input: [
     {
       id: "default",

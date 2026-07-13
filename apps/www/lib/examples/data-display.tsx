@@ -25,6 +25,10 @@ import {
   DataTable,
   DataTableColumnHeader,
   type DataTableFacetedFilter,
+  DescriptionDetails,
+  DescriptionItem,
+  DescriptionList,
+  DescriptionTerm,
   Empty,
   EmptyContent,
   EmptyDescription,
@@ -32,6 +36,7 @@ import {
   EmptyTitle,
   Heatmap,
   type HeatmapDay,
+  ImageZoom,
   JsonViewer,
   Kanban,
   type KanbanColumn,
@@ -46,6 +51,7 @@ import {
   Separator,
   Skeleton,
   Sparkline,
+  StatusDot,
   Table,
   TableBody,
   TableCaption,
@@ -63,6 +69,7 @@ import {
   TimelineTitle,
   type TreeNode,
   TreeView,
+  VideoPlayer,
 } from "@cooud-ui/ui";
 import type { ColumnDef } from "@tanstack/react-table";
 import {
@@ -642,7 +649,471 @@ const jsonViewerOrder = {
   },
 };
 
+// ── StatusDot ──────────────────────────────────────────────────────
+function StatusDotAvatarDemo() {
+  return (
+    <div className="flex items-center gap-6">
+      <span className="relative inline-flex">
+        <Avatar>
+          <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+          <AvatarFallback>CN</AvatarFallback>
+        </Avatar>
+        <StatusDot status="online" position="bottom-right" ring aria-label="@shadcn is online" />
+      </span>
+      <span className="relative inline-flex">
+        <Avatar>
+          <AvatarFallback>AL</AvatarFallback>
+        </Avatar>
+        <StatusDot status="busy" position="bottom-right" ring aria-label="Ada is busy" />
+      </span>
+      <span className="relative inline-flex">
+        <Avatar>
+          <AvatarFallback>JL</AvatarFallback>
+        </Avatar>
+        <StatusDot status="offline" position="bottom-right" ring aria-label="Jean is offline" />
+      </span>
+    </div>
+  );
+}
+
+const statusDotAvatarDemoCode = `function StatusDotAvatarDemo() {
+  return (
+    <div className="flex items-center gap-6">
+      <span className="relative inline-flex">
+        <Avatar>
+          <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+          <AvatarFallback>CN</AvatarFallback>
+        </Avatar>
+        <StatusDot status="online" position="bottom-right" ring aria-label="@shadcn is online" />
+      </span>
+      <span className="relative inline-flex">
+        <Avatar>
+          <AvatarFallback>AL</AvatarFallback>
+        </Avatar>
+        <StatusDot status="busy" position="bottom-right" ring aria-label="Ada is busy" />
+      </span>
+      <span className="relative inline-flex">
+        <Avatar>
+          <AvatarFallback>JL</AvatarFallback>
+        </Avatar>
+        <StatusDot status="offline" position="bottom-right" ring aria-label="Jean is offline" />
+      </span>
+    </div>
+  );
+}`;
+
+// ── ImageZoom ──────────────────────────────────────────────────────
+function ImageZoomStateDemo() {
+  const [zoomed, setZoomed] = useState(false);
+  return (
+    <div className="flex w-full max-w-md flex-col items-center gap-3">
+      <ImageZoom zoom={3} onZoomChange={setZoomed} labels={{ zoom: "Zoom fabric detail" }}>
+        {/* biome-ignore lint/performance/noImgElement: docs example renders an external picsum image directly */}
+        <img src="https://picsum.photos/seed/cooud-fabric/1200/675" alt="" />
+      </ImageZoom>
+      <Badge variant={zoomed ? "primary" : "secondary"}>
+        {zoomed ? "Zoomed 3×" : "Hover, tap or press Enter to zoom"}
+      </Badge>
+    </div>
+  );
+}
+
+const imageZoomStateDemoCode = `function ImageZoomStateDemo() {
+  const [zoomed, setZoomed] = useState(false);
+  return (
+    <div className="flex w-full max-w-md flex-col items-center gap-3">
+      <ImageZoom zoom={3} onZoomChange={setZoomed} labels={{ zoom: "Zoom fabric detail" }}>
+        <img src="https://picsum.photos/seed/cooud-fabric/1200/675" alt="" />
+      </ImageZoom>
+      <Badge variant={zoomed ? "primary" : "secondary"}>
+        {zoomed ? "Zoomed 3×" : "Hover, tap or press Enter to zoom"}
+      </Badge>
+    </div>
+  );
+}`;
+
+// ── VideoPlayer demo data ─────────────────────────────────────────────
+const VIDEO_PLAYER_SRC = "https://media.w3.org/2010/05/sintel/trailer.mp4";
+const VIDEO_PLAYER_POSTER = "https://media.w3.org/2010/05/sintel/poster.png";
+// Inline WebVTT stub so the demo ships a captions track without a static asset.
+const VIDEO_PLAYER_CAPTIONS =
+  "data:text/vtt,WEBVTT%0A%0A00:00.000%20--%3E%2000:04.000%0AWind%20howls%20across%20a%20snowy%20mountain%20pass.";
+
+function VideoPlayerDemo() {
+  return (
+    <VideoPlayer src={VIDEO_PLAYER_SRC} poster={VIDEO_PLAYER_POSTER}>
+      <track kind="captions" src={VIDEO_PLAYER_CAPTIONS} srcLang="en" label="English" default />
+    </VideoPlayer>
+  );
+}
+
+const videoPlayerDemoCode = `<VideoPlayer
+  src="https://media.w3.org/2010/05/sintel/trailer.mp4"
+  poster="https://media.w3.org/2010/05/sintel/poster.png"
+>
+  <track
+    kind="captions"
+    src="data:text/vtt,WEBVTT%0A%0A00:00.000%20--%3E%2000:04.000%0AWind%20howls%20across%20a%20snowy%20mountain%20pass."
+    srcLang="en"
+    label="English"
+    default
+  />
+</VideoPlayer>`;
+
+function VideoPlayerAspectDemo() {
+  return (
+    <div className="flex w-full flex-col gap-4">
+      <VideoPlayer src={VIDEO_PLAYER_SRC} poster={VIDEO_PLAYER_POSTER} aspect="wide" />
+      <VideoPlayer
+        src={VIDEO_PLAYER_SRC}
+        poster={VIDEO_PLAYER_POSTER}
+        aspect="square"
+        className="mx-auto max-w-xs"
+      />
+    </div>
+  );
+}
+
+const videoPlayerAspectDemoCode = `<div className="flex w-full flex-col gap-4">
+  <VideoPlayer
+    src="https://media.w3.org/2010/05/sintel/trailer.mp4"
+    poster="https://media.w3.org/2010/05/sintel/poster.png"
+    aspect="wide"
+  />
+  <VideoPlayer
+    src="https://media.w3.org/2010/05/sintel/trailer.mp4"
+    poster="https://media.w3.org/2010/05/sintel/poster.png"
+    aspect="square"
+    className="mx-auto max-w-xs"
+  />
+</div>`;
+
+function VideoPlayerLocalizedDemo() {
+  return (
+    <VideoPlayer
+      src={VIDEO_PLAYER_SRC}
+      poster={VIDEO_PLAYER_POSTER}
+      muted
+      loop
+      labels={{
+        play: "Reproduzir",
+        pause: "Pausar",
+        mute: "Silenciar",
+        unmute: "Ativar som",
+        seek: "Avançar",
+        volume: "Volume",
+        settings: "Velocidade",
+        fullscreen: "Tela cheia",
+      }}
+    />
+  );
+}
+
+const videoPlayerLocalizedDemoCode = `<VideoPlayer
+  src="https://media.w3.org/2010/05/sintel/trailer.mp4"
+  poster="https://media.w3.org/2010/05/sintel/poster.png"
+  muted
+  loop
+  labels={{
+    play: "Reproduzir",
+    pause: "Pausar",
+    mute: "Silenciar",
+    unmute: "Ativar som",
+    seek: "Avançar",
+    volume: "Volume",
+    settings: "Velocidade",
+    fullscreen: "Tela cheia",
+  }}
+/>`;
+
+// ── DescriptionList demos ─────────────────────────────────────────────
+function DescriptionListDemo() {
+  return (
+    <DescriptionList className="max-w-sm">
+      <DescriptionTerm>Full name</DescriptionTerm>
+      <DescriptionDetails>Margot Foster</DescriptionDetails>
+      <DescriptionTerm>Email</DescriptionTerm>
+      <DescriptionDetails>margot@example.com</DescriptionDetails>
+      <DescriptionTerm>Plan</DescriptionTerm>
+      <DescriptionDetails>Pro — billed yearly</DescriptionDetails>
+    </DescriptionList>
+  );
+}
+
+const descriptionListDemoCode = `<DescriptionList className="max-w-sm">
+  <DescriptionTerm>Full name</DescriptionTerm>
+  <DescriptionDetails>Margot Foster</DescriptionDetails>
+  <DescriptionTerm>Email</DescriptionTerm>
+  <DescriptionDetails>margot@example.com</DescriptionDetails>
+  <DescriptionTerm>Plan</DescriptionTerm>
+  <DescriptionDetails>Pro — billed yearly</DescriptionDetails>
+</DescriptionList>`;
+
+function DescriptionListHorizontalDemo() {
+  return (
+    <DescriptionList layout="horizontal" detailsAlign="end" bordered className="max-w-md">
+      <DescriptionItem term="Order">#10245</DescriptionItem>
+      <DescriptionItem term="Date">June 23, 2026</DescriptionItem>
+      <DescriptionItem term="Payment method">Visa ending in 4242</DescriptionItem>
+      <DescriptionItem term="Status">
+        <Badge variant="success">Paid</Badge>
+      </DescriptionItem>
+      <DescriptionItem term="Total">
+        <span className="font-mono font-medium tabular-nums">$149.00</span>
+      </DescriptionItem>
+    </DescriptionList>
+  );
+}
+
+const descriptionListHorizontalDemoCode = `<DescriptionList layout="horizontal" detailsAlign="end" bordered className="max-w-md">
+  <DescriptionItem term="Order">#10245</DescriptionItem>
+  <DescriptionItem term="Date">June 23, 2026</DescriptionItem>
+  <DescriptionItem term="Payment method">Visa ending in 4242</DescriptionItem>
+  <DescriptionItem term="Status">
+    <Badge variant="success">Paid</Badge>
+  </DescriptionItem>
+  <DescriptionItem term="Total">
+    <span className="font-mono font-medium tabular-nums">$149.00</span>
+  </DescriptionItem>
+</DescriptionList>`;
+
+function DescriptionListStripedDemo() {
+  return (
+    <DescriptionList layout="horizontal" striped className="max-w-md">
+      <DescriptionItem term="Environment">Production</DescriptionItem>
+      <DescriptionItem term="API version">2026-06-01</DescriptionItem>
+      <DescriptionItem term="Webhook endpoint">https://api.example.com/hooks</DescriptionItem>
+      <DescriptionItem term="Signing secret">whsec_••••••••</DescriptionItem>
+      <DescriptionItem term="Mode">
+        <Badge variant="secondary">Live</Badge>
+      </DescriptionItem>
+    </DescriptionList>
+  );
+}
+
+const descriptionListStripedDemoCode = `<DescriptionList layout="horizontal" striped className="max-w-md">
+  <DescriptionItem term="Environment">Production</DescriptionItem>
+  <DescriptionItem term="API version">2026-06-01</DescriptionItem>
+  <DescriptionItem term="Webhook endpoint">https://api.example.com/hooks</DescriptionItem>
+  <DescriptionItem term="Signing secret">whsec_••••••••</DescriptionItem>
+  <DescriptionItem term="Mode">
+    <Badge variant="secondary">Live</Badge>
+  </DescriptionItem>
+</DescriptionList>`;
+
+function DescriptionListGridDemo() {
+  return (
+    <DescriptionList layout="grid" size="sm">
+      <DescriptionItem term="Region">São Paulo (GRU)</DescriptionItem>
+      <DescriptionItem term="Runtime">Node 22 LTS</DescriptionItem>
+      <DescriptionItem term="Instances">3 × shared-cpu</DescriptionItem>
+      <DescriptionItem term="Custom domain">store.cooud.dev</DescriptionItem>
+      <DescriptionItem term="TLS">Auto-managed</DescriptionItem>
+      <DescriptionItem term="Deploy hook">Enabled</DescriptionItem>
+    </DescriptionList>
+  );
+}
+
+const descriptionListGridDemoCode = `<DescriptionList layout="grid" size="sm">
+  <DescriptionItem term="Region">São Paulo (GRU)</DescriptionItem>
+  <DescriptionItem term="Runtime">Node 22 LTS</DescriptionItem>
+  <DescriptionItem term="Instances">3 × shared-cpu</DescriptionItem>
+  <DescriptionItem term="Custom domain">store.cooud.dev</DescriptionItem>
+  <DescriptionItem term="TLS">Auto-managed</DescriptionItem>
+  <DescriptionItem term="Deploy hook">Enabled</DescriptionItem>
+</DescriptionList>`;
+
 export const dataDisplayExamples: ExampleMap = {
+  "status-dot": [
+    {
+      id: "statuses",
+      title: "Statuses",
+      description:
+        "Presence dots across the semantic palette. `withLabel` renders the status text next to the dot; without it the label becomes the accessible name.",
+      code: `<div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+  <StatusDot status="online" withLabel />
+  <StatusDot status="away" withLabel />
+  <StatusDot status="busy" withLabel />
+  <StatusDot status="offline" withLabel />
+  <StatusDot status="info" withLabel label="Deploying" />
+</div>`,
+      preview: (
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+          <StatusDot status="online" withLabel />
+          <StatusDot status="away" withLabel />
+          <StatusDot status="busy" withLabel />
+          <StatusDot status="offline" withLabel />
+          <StatusDot status="info" withLabel label="Deploying" />
+        </div>
+      ),
+    },
+    {
+      id: "on-avatar",
+      title: "On an avatar",
+      description:
+        "Anchor the dot to a corner with `position` and add `ring` so it cuts out of the image. Wrap the avatar and the dot in a `relative` container.",
+      code: statusDotAvatarDemoCode,
+      preview: <StatusDotAvatarDemo />,
+    },
+    {
+      id: "pulse-sizes",
+      title: "Pulse & sizes",
+      description:
+        "`pulse` adds an expanding ping halo for live activity — it stays static under `prefers-reduced-motion`. Sizes run `xs` through `lg`.",
+      code: `<div className="flex flex-col items-center gap-5">
+  <div className="flex items-center gap-6">
+    <StatusDot status="error" pulse withLabel label="Live" />
+    <StatusDot status="success" pulse withLabel label="Streaming" />
+  </div>
+  <div className="flex items-center gap-4">
+    <StatusDot size="xs" aria-label="Online (xs)" />
+    <StatusDot size="sm" aria-label="Online (sm)" />
+    <StatusDot size="md" aria-label="Online (md)" />
+    <StatusDot size="lg" aria-label="Online (lg)" />
+  </div>
+</div>`,
+      preview: (
+        <div className="flex flex-col items-center gap-5">
+          <div className="flex items-center gap-6">
+            <StatusDot status="error" pulse withLabel label="Live" />
+            <StatusDot status="success" pulse withLabel label="Streaming" />
+          </div>
+          <div className="flex items-center gap-4">
+            <StatusDot size="xs" aria-label="Online (xs)" />
+            <StatusDot size="sm" aria-label="Online (sm)" />
+            <StatusDot size="md" aria-label="Online (md)" />
+            <StatusDot size="lg" aria-label="Online (lg)" />
+          </div>
+        </div>
+      ),
+    },
+  ],
+  "image-zoom": [
+    {
+      id: "hover-to-zoom",
+      title: "Hover to zoom",
+      description:
+        "Product-style inline zoom: a fine pointer magnifies on hover and the pan follows the cursor via transform-origin tracking; touch taps and Enter/Space toggle a sticky zoom instead. The zoom indicator fades away while zoomed.",
+      code: `<ImageZoom
+  src="https://picsum.photos/seed/cooud-product/900/600"
+  alt="Studio product photo"
+  className="max-w-md"
+/>`,
+      preview: (
+        <ImageZoom
+          src="https://picsum.photos/seed/cooud-product/900/600"
+          alt="Studio product photo"
+          className="max-w-md"
+        />
+      ),
+    },
+    {
+      id: "zoom-scale",
+      title: "Zoom scale",
+      description:
+        "`zoom` sets the magnification applied while zoomed (values below 1 clamp to 1). Defaults to 2.",
+      code: `<div className="grid w-full max-w-2xl gap-4 sm:grid-cols-2">
+  <div className="flex flex-col items-center gap-2">
+    <ImageZoom src="https://picsum.photos/seed/cooud-loft/700/500" alt="" />
+    <span className="text-sm text-fg-secondary">zoom 2 (default)</span>
+  </div>
+  <div className="flex flex-col items-center gap-2">
+    <ImageZoom
+      src="https://picsum.photos/seed/cooud-loft/700/500"
+      alt=""
+      zoom={4}
+      labels={{ zoom: "Zoom image (4×)" }}
+    />
+    <span className="text-sm text-fg-secondary">zoom 4</span>
+  </div>
+</div>`,
+      preview: (
+        <div className="grid w-full max-w-2xl gap-4 sm:grid-cols-2">
+          <div className="flex flex-col items-center gap-2">
+            <ImageZoom src="https://picsum.photos/seed/cooud-loft/700/500" alt="" />
+            <span className="text-sm text-fg-secondary">zoom 2 (default)</span>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <ImageZoom
+              src="https://picsum.photos/seed/cooud-loft/700/500"
+              alt=""
+              zoom={4}
+              labels={{ zoom: "Zoom image (4×)" }}
+            />
+            <span className="text-sm text-fg-secondary">zoom 4</span>
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "zoom-state",
+      title: "Custom image & zoom state",
+      description:
+        "Wrap your own `<img>` instead of passing `src`, rename the accessible toggle via `labels`, and observe the state with `onZoomChange`.",
+      code: imageZoomStateDemoCode,
+      preview: <ImageZoomStateDemo />,
+    },
+  ],
+  "video-player": [
+    {
+      id: "default",
+      title: "Default",
+      description:
+        'A token-styled wrapper around the native `<video>` element with custom controls: play/pause, a seek slider, volume, playback speed, and fullscreen. Controls fade in on hover or keyboard focus and stay visible while paused. Captions are your data: pass a `<track kind="captions">` child — here a tiny inline WebVTT stub.',
+      code: videoPlayerDemoCode,
+      preview: <VideoPlayerDemo />,
+    },
+    {
+      id: "aspect-ratios",
+      title: "Aspect ratios",
+      description:
+        "`aspect` locks the frame to 16:9 (`video`), 1:1 (`square`), or 21:9 (`wide`), so the layout stays stable before metadata loads.",
+      code: videoPlayerAspectDemoCode,
+      preview: <VideoPlayerAspectDemo />,
+    },
+    {
+      id: "localized-labels",
+      title: "Localized labels",
+      description:
+        "Every control name is overridable through `labels`, so assistive tech announces the app's language — here pt-BR. `muted` and `loop` suit ambient background clips.",
+      code: videoPlayerLocalizedDemoCode,
+      preview: <VideoPlayerLocalizedDemo />,
+    },
+  ],
+  "description-list": [
+    {
+      id: "stacked",
+      title: "Stacked",
+      description:
+        "The default layout places each term above its details. Compose raw `DescriptionTerm` / `DescriptionDetails` pairs, or group each pair with `DescriptionItem`.",
+      code: descriptionListDemoCode,
+      preview: <DescriptionListDemo />,
+    },
+    {
+      id: "horizontal",
+      title: "Horizontal order summary",
+      description:
+        "The `horizontal` layout aligns terms and details into two columns with a divider between rows — the classic definition list. `bordered` adds the outer card shell, and `detailsAlign` set to `end` right-aligns values (logical, so it flips in RTL).",
+      code: descriptionListHorizontalDemoCode,
+      preview: <DescriptionListHorizontalDemo />,
+    },
+    {
+      id: "striped",
+      title: "Striped rows",
+      description:
+        "`striped` tints alternate rows for scannability. The zebra applies to grouped rows, so wrap each pair with `DescriptionItem` — raw `DescriptionTerm`/`DescriptionDetails` pairs don't participate.",
+      code: descriptionListStripedDemoCode,
+      preview: <DescriptionListStripedDemo />,
+    },
+    {
+      id: "grid-cards",
+      title: "Grid cards",
+      description:
+        "The `grid` layout spreads `DescriptionItem` pairs across a responsive 1 → 2 → 3 column set of card tiles — a compact settings review. Shown at the `sm` size.",
+      code: descriptionListGridDemoCode,
+      preview: <DescriptionListGridDemo />,
+    },
+  ],
   avatar: [
     {
       id: "image-fallback",

@@ -52,6 +52,11 @@ export const EXAMPLE_SECTIONS: Record<string, ExampleSectionMeta[]> = {
     { id: "sizes", title: "Sizes" },
     { id: "theme-provider", title: "Wired to a theme provider" },
   ],
+  chip: [
+    { id: "filters", title: "Filter chips" },
+    { id: "variants", title: "Variants, colors & sizes" },
+    { id: "dismissible", title: "Dismissible" },
+  ],
   input: [
     { id: "default", title: "Default" },
     { id: "invalid-state", title: "Invalid state" },
@@ -132,6 +137,27 @@ export const EXAMPLE_SECTIONS: Record<string, ExampleSectionMeta[]> = {
   "signature-pad": [
     { id: "capture", title: "Capture a signature" },
     { id: "disabled", title: "Disabled" },
+  ],
+  "status-dot": [
+    { id: "statuses", title: "Statuses" },
+    { id: "on-avatar", title: "On an avatar" },
+    { id: "pulse-sizes", title: "Pulse & sizes" },
+  ],
+  "image-zoom": [
+    { id: "hover-to-zoom", title: "Hover to zoom" },
+    { id: "zoom-scale", title: "Zoom scale" },
+    { id: "zoom-state", title: "Custom image & zoom state" },
+  ],
+  "video-player": [
+    { id: "default", title: "Default" },
+    { id: "aspect-ratios", title: "Aspect ratios" },
+    { id: "localized-labels", title: "Localized labels" },
+  ],
+  "description-list": [
+    { id: "stacked", title: "Stacked" },
+    { id: "horizontal", title: "Horizontal order summary" },
+    { id: "striped", title: "Striped rows" },
+    { id: "grid-cards", title: "Grid cards" },
   ],
   avatar: [
     { id: "image-fallback", title: "Image & fallback" },

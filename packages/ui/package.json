@@ -100,6 +100,10 @@
       "types": "./dist/components/checkbox.d.ts",
       "import": "./dist/components/checkbox.js"
     },
+    "./chip": {
+      "types": "./dist/components/chip.d.ts",
+      "import": "./dist/components/chip.js"
+    },
     "./code-block": {
       "types": "./dist/components/code-block.d.ts",
       "import": "./dist/components/code-block.js"
@@ -151,6 +155,10 @@
     "./date-range-picker": {
       "types": "./dist/components/date-range-picker.d.ts",
       "import": "./dist/components/date-range-picker.js"
+    },
+    "./description-list": {
+      "types": "./dist/components/description-list.d.ts",
+      "import": "./dist/components/description-list.js"
     },
     "./dialog": {
       "types": "./dist/components/dialog.d.ts",
@@ -211,6 +219,10 @@
     "./hover-card": {
       "types": "./dist/components/hover-card.d.ts",
       "import": "./dist/components/hover-card.js"
+    },
+    "./image-zoom": {
+      "types": "./dist/components/image-zoom.d.ts",
+      "import": "./dist/components/image-zoom.js"
     },
     "./input": {
       "types": "./dist/components/input.d.ts",
@@ -400,6 +412,10 @@
       "types": "./dist/components/spotlight-card.d.ts",
       "import": "./dist/components/spotlight-card.js"
     },
+    "./status-dot": {
+      "types": "./dist/components/status-dot.d.ts",
+      "import": "./dist/components/status-dot.js"
+    },
     "./stepper": {
       "types": "./dist/components/stepper.d.ts",
       "import": "./dist/components/stepper.js"
@@ -463,6 +479,10 @@
     "./usage-meter": {
       "types": "./dist/components/usage-meter.d.ts",
       "import": "./dist/components/usage-meter.js"
+    },
+    "./video-player": {
+      "types": "./dist/components/video-player.d.ts",
+      "import": "./dist/components/video-player.js"
     },
     "./package.json": "./package.json"
   },

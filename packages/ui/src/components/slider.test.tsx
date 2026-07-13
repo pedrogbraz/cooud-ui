@@ -78,8 +78,45 @@ describe("Slider", () => {
     expect(slider).toHaveAttribute("aria-valuenow", "30");
   });
 
+  it("keeps aria-label off the role-less root while naming every thumb", () => {
+    const { container } = render(
+      <Slider aria-label="Price range" defaultValue={[20, 80]} min={0} max={100} />,
+    );
+    const root = container.querySelector('[data-slot="slider"]');
+    expect(root).not.toHaveAttribute("aria-label");
+    expect(root).not.toHaveAttribute("aria-labelledby");
+    expect(screen.getByRole("slider", { name: "Price range (1)" })).toBeInTheDocument();
+    expect(screen.getByRole("slider", { name: "Price range (2)" })).toBeInTheDocument();
+  });
+
+  it("keeps aria-labelledby off the role-less root while naming the thumb", () => {
+    const { container } = render(
+      <>
+        <span id="price-label">Price</span>
+        <Slider aria-labelledby="price-label" defaultValue={[40]} min={0} max={100} />
+      </>,
+    );
+    const root = container.querySelector('[data-slot="slider"]');
+    expect(root).not.toHaveAttribute("aria-labelledby");
+    expect(screen.getByRole("slider", { name: "Price" })).toHaveAttribute(
+      "aria-labelledby",
+      "price-label",
+    );
+  });
+
   it("has no axe violations", async () => {
     const { container } = render(<Slider aria-label="Opacity" defaultValue={[50]} />);
     expect(await axe(container)).toHaveNoViolations();
+  });
+
+  it("has no axe violations under the a11y gate's WCAG tag set (labeled range slider)", async () => {
+    const { container } = render(
+      <Slider aria-label="Price range" defaultValue={[20, 80]} min={0} max={100} />,
+    );
+    expect(
+      await axe(container, {
+        runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"] },
+      }),
+    ).toHaveNoViolations();
   });
 });
