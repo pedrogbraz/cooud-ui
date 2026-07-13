@@ -45,6 +45,31 @@ export interface RegistryItem extends RegistryIndexEntry {
   files: RegistryFile[];
 }
 
+/** Semantic metadata for one block in `meta.json` (subset the MCP surface reads). */
+export interface RegistryMetaBlock {
+  title: string;
+  description: string;
+  category: string;
+}
+
+/** Semantic metadata for one component in `meta.json` (subset the MCP surface reads). */
+export interface RegistryMetaComponent {
+  title: string;
+  description: string;
+  category: string;
+}
+
+/**
+ * The `registry/meta.json` sidecar (as much of it as the MCP tools consume).
+ * Optional at runtime: older or custom registries may not ship it, in which case
+ * the tools fall back to name-derived titles.
+ */
+export interface RegistryMeta {
+  registryVersion?: string;
+  blocks?: Record<string, RegistryMetaBlock>;
+  components?: Record<string, RegistryMetaComponent>;
+}
+
 /**
  * Loads raw JSON documents from the registry. Abstracted behind an interface
  * so the server can run against the network, a local directory, or an
@@ -89,6 +114,8 @@ export class SourceRegistryLoader implements RegistryLoader {
 export class RegistryClient {
   private indexCache: RegistryIndex | undefined;
   private readonly itemCache = new Map<string, RegistryItem>();
+  /** `undefined` = not yet fetched; `null` = fetched but absent (custom/legacy registry). */
+  private metaCache: RegistryMeta | null | undefined;
 
   constructor(private readonly loader: RegistryLoader) {}
 
@@ -107,5 +134,21 @@ export class RegistryClient {
     const item = await this.loader.readJson<RegistryItem>(`${encodeURIComponent(name)}.json`);
     this.itemCache.set(name, item);
     return item;
+  }
+
+  /**
+   * The `meta.json` sidecar, or `null` when the registry does not ship one
+   * (older releases or custom registries). Cached after the first read — the
+   * absent result is cached too so a missing sidecar is fetched only once.
+   */
+  async meta(): Promise<RegistryMeta | null> {
+    if (this.metaCache !== undefined) return this.metaCache;
+    try {
+      this.metaCache = await this.loader.readJson<RegistryMeta>("meta.json");
+    } catch {
+      // 404 / missing file / parse error — degrade gracefully to name-only titles.
+      this.metaCache = null;
+    }
+    return this.metaCache;
   }
 }
