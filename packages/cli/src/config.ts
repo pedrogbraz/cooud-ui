@@ -16,6 +16,40 @@ export interface InstalledRecord {
   files: string[];
 }
 
+/**
+ * The normalized `choices` an app was composed with. Persisted with sorted keys
+ * (deterministic) so `compose --plan <dir>` clones reproduce the same plan and
+ * the 3-way page upgrade (F4) has a stable comparison base. Phase 1 fills `brand`
+ * (and, when passed, `seed`); `variants`/`pages` stay empty until F2.
+ */
+export interface ComposedChoices {
+  /** Selected block variant per family slug (F2; `{}` in F1). */
+  variants: Record<string, string>;
+  /** The routes actually generated, in manifest order. */
+  pages: string[];
+  /** The `--brand` value baked into chrome/hero copy. */
+  brand: string;
+  /** Aesthetic PRNG seed (only present when the caller passed `--seed`). */
+  seed?: number;
+}
+
+/**
+ * Per-composed-app record written by `compose` (mirrors {@link InstalledRecord}
+ * for `installed`). `files` are the generated page/layout/chrome paths (NOT the
+ * installed blocks — those live in `installed`). The `.cooud-ui/base/<app>/`
+ * snapshot holds the exact bytes for the F4 page-upgrade merge base.
+ */
+export interface ComposedRecord {
+  /** Registry release the app was composed from (git tag without the leading "v"). */
+  version: string;
+  /** Manifest plan schema version the app was generated against. */
+  planVersion: number;
+  /** The normalized choices (sorted keys) the app was generated with. */
+  choices: ComposedChoices;
+  /** Project-relative paths the composer generated (pages, layouts, chrome wrappers). */
+  files: string[];
+}
+
 export interface CooudUIConfig {
   /** Import aliases used when rewriting component sources. */
   aliases: {
@@ -43,6 +77,13 @@ export interface CooudUIConfig {
    * existed ("legacy") — `upgrade` then falls back to a 2-way diff.
    */
   installed?: Record<string, InstalledRecord>;
+  /**
+   * Compose manifest: which app templates were generated into this project, the
+   * plan version + normalized choices, and the generated files each owns. Mirrors
+   * `installed` (round-tripped verbatim); the F4 page-upgrade reads it to know
+   * which pages to re-render against their `.cooud-ui/base/` snapshot.
+   */
+  composed?: Record<string, ComposedRecord>;
 }
 
 export const DEFAULT_CONFIG: CooudUIConfig = {
@@ -71,6 +112,9 @@ export async function readConfig(cwd: string): Promise<CooudUIConfig> {
     // Same for the install manifest — dropping it would silently downgrade every
     // component to the legacy (2-way) upgrade path.
     ...(parsed.installed ? { installed: parsed.installed } : {}),
+    // And for the compose manifest — dropping it would orphan generated pages
+    // from their base snapshot, breaking the composed-page 3-way upgrade (F4).
+    ...(parsed.composed ? { composed: parsed.composed } : {}),
   };
 }
 

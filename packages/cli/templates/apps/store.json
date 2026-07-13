@@ -1,0 +1,75 @@
+{
+  "name": "store",
+  "type": "registry:app",
+  "planVersion": 1,
+  "manifest": {
+    "title": "Store",
+    "description": "A complete, navigable storefront: home, catalog, product, cart, checkout, auth, and account — all from validated blocks.",
+    "chrome": {
+      "site": { "navbar": "navbar", "footer": "footer" },
+      "bare": {}
+    },
+    "pages": [
+      {
+        "route": "/",
+        "title": "Home",
+        "nav": "Home",
+        "chrome": "site",
+        "blocks": ["hero", "product-grid", "testimonials", "cta"]
+      },
+      {
+        "route": "/products",
+        "title": "Products",
+        "nav": "Products",
+        "chrome": "site",
+        "blocks": ["page-header", "filter-bar", "product-grid"]
+      },
+      {
+        "route": "/products/[id]",
+        "title": "Product",
+        "chrome": "site",
+        "blocks": ["product-detail", "reviews"]
+      },
+      {
+        "route": "/cart",
+        "title": "Cart",
+        "nav": "Cart",
+        "chrome": "site",
+        "blocks": ["cart"]
+      },
+      {
+        "route": "/checkout",
+        "title": "Checkout",
+        "chrome": "bare",
+        "blocks": ["checkout"]
+      },
+      {
+        "route": "/login",
+        "title": "Sign in",
+        "chrome": "bare",
+        "blocks": ["login"]
+      },
+      {
+        "route": "/signup",
+        "title": "Create account",
+        "chrome": "bare",
+        "blocks": ["signup"]
+      },
+      {
+        "route": "/account",
+        "title": "Orders",
+        "nav": "Account",
+        "chrome": "site",
+        "blocks": ["page-header", "order-history", "order-tracking"]
+      },
+      {
+        "route": "/account/settings",
+        "title": "Settings",
+        "chrome": "site",
+        "blocks": ["settings", "account-security"]
+      }
+    ],
+    "extras": { "not-found": "not-found" },
+    "defaults": { "theme": "aurora", "mode": "dark", "brand": "__APP_NAME__" }
+  }
+}

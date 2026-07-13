@@ -15,6 +15,7 @@ import {
   type Skill,
   writeAiKit,
 } from "@cooud-ui/ai-kit";
+import { composeTemplate } from "./compose.js";
 import { runInstall, scaffold } from "./scaffold.js";
 import {
   c,
@@ -22,6 +23,7 @@ import {
   DEFAULT_TEMPLATE,
   DEFAULT_THEME,
   dirNameFromProjectName,
+  isComposedTemplate,
   isValidProjectName,
   log,
   MODES,
@@ -245,6 +247,31 @@ async function main(): Promise<void> {
   log.ok(
     `Created ${fileCount} files (${c.cyan(template)} template, ${c.cyan(theme)} theme, ${mode} mode).`,
   );
+
+  // Cooud Compose: store/landing scaffold the `default` base above, then generate
+  // their pages + chrome from validated registry blocks. The blocks pull npm deps
+  // (e.g. lucide-react) that the base package.json lacks, so let compose record +
+  // install them via `pm add` when installing is enabled; a following `--no-install`
+  // scaffold records nothing (matching `cooud-ui add --no-install`).
+  if (isComposedTemplate(template)) {
+    log.step(`Composing the ${c.cyan(template)} app from validated blocks…`);
+    const composed = await composeTemplate({
+      targetDir,
+      template,
+      brand: name,
+      skipInstall: !parsed.install,
+    });
+    if (composed.ok) {
+      log.ok(
+        `Composed ${composed.pageCount} page(s) from ${composed.blockCount} validated block(s).`,
+      );
+    } else {
+      log.warn(
+        `Skipped composition (${composed.reason}). The ${c.cyan("default")} app was scaffolded; ` +
+          `run ${c.cyan(`npx cooud-ui compose ${template}`)} once the registry ships meta.json.`,
+      );
+    }
+  }
 
   // AI Kit: skills, rules & doctrine for Claude Code / Cursor / Copilot.
   const wantAi =

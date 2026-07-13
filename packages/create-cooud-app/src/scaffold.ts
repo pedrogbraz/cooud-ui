@@ -18,6 +18,7 @@ import {
   type PackageManager,
   type TemplateName,
   type Theme,
+  templateBaseDir,
 } from "./utils.js";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -118,7 +119,10 @@ export interface ScaffoldResult {
  * text files and restoring stripped dotfile names. Returns the file count.
  */
 export function scaffold(options: ScaffoldOptions): ScaffoldResult {
-  const src = templateRoot(options.template ?? DEFAULT_TEMPLATE);
+  // Composed templates (store/landing) have no bundled dir — copy the base they
+  // build on (`default`), then the post-scaffold composeApp() step generates the
+  // pages/chrome from validated blocks.
+  const src = templateRoot(templateBaseDir(options.template ?? DEFAULT_TEMPLATE));
   const { targetDir, name, theme = DEFAULT_THEME, mode = DEFAULT_MODE } = options;
   mkdirSync(targetDir, { recursive: true });
   const fileCount = copyDir(src, targetDir, name, theme, mode);

@@ -1,0 +1,23 @@
+{
+  "name": "landing",
+  "type": "registry:app",
+  "planVersion": 1,
+  "manifest": {
+    "title": "Landing",
+    "description": "A single polished marketing page — hero, features, pricing, testimonials, FAQ, and a call to action — with a real navbar and footer.",
+    "chrome": {
+      "site": { "navbar": "navbar", "footer": "footer" }
+    },
+    "pages": [
+      {
+        "route": "/",
+        "title": "Home",
+        "nav": "Home",
+        "chrome": "site",
+        "blocks": ["hero", "feature-grid", "pricing", "testimonials", "faq", "cta"]
+      }
+    ],
+    "extras": { "not-found": "not-found" },
+    "defaults": { "theme": "aurora", "mode": "dark", "brand": "__APP_NAME__" }
+  }
+}

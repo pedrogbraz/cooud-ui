@@ -53,6 +53,30 @@ const BUTTON_ITEM = {
   ],
 };
 
+/** A meta sidecar matching the fixture INDEX, exercising the enrichment path. */
+const META = {
+  registryVersion: "0.4.0",
+  blocks: {
+    pricing: {
+      title: "Pricing",
+      description: "A three-tier pricing grid with a highlighted plan.",
+      category: "marketing",
+    },
+  },
+  components: {
+    button: {
+      title: "Button",
+      description: "Clickable action with variants, sizes and asChild.",
+      category: "buttons",
+    },
+    "alert-dialog": {
+      title: "AlertDialog",
+      description: "Confirm a destructive action.",
+      category: "feedback",
+    },
+  },
+};
+
 const pkg = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8")) as {
   version: string;
 };
@@ -75,6 +99,18 @@ function fixtureLoader(): RegistryLoader {
     async readJson<T>(file: string): Promise<T> {
       if (file === "index.json") return INDEX as unknown as T;
       if (file === "button.json") return BUTTON_ITEM as unknown as T;
+      if (file === "meta.json") return META as unknown as T;
+      throw new Error(`registry fetch failed (404): ${file}`);
+    },
+  };
+}
+
+/** A loader for an older/custom registry that ships NO meta.json sidecar. */
+function fixtureLoaderNoMeta(): RegistryLoader {
+  return {
+    async readJson<T>(file: string): Promise<T> {
+      if (file === "index.json") return INDEX as unknown as T;
+      if (file === "button.json") return BUTTON_ITEM as unknown as T;
       throw new Error(`registry fetch failed (404): ${file}`);
     },
   };
@@ -82,6 +118,10 @@ function fixtureLoader(): RegistryLoader {
 
 function client(): RegistryClient {
   return new RegistryClient(fixtureLoader());
+}
+
+function clientNoMeta(): RegistryClient {
+  return new RegistryClient(fixtureLoaderNoMeta());
 }
 
 describe("humanizeName", () => {
@@ -127,23 +167,43 @@ describe("listComponents", () => {
       name: "button",
       type: "registry:ui",
       title: "Button",
+      // Enriched from meta.json.
+      description: "Clickable action with variants, sizes and asChild.",
+      category: "buttons",
       registryDependencies: ["cn"],
       install: "npx cooud-ui add button",
     });
     expect(button?.dependencies).toContain("class-variance-authority@^0.7.1");
   });
+
+  it("falls back to a name-derived title and omits meta fields when no sidecar exists", async () => {
+    const result = await listComponents(clientNoMeta());
+    const button = result.items.find((i) => i.name === "button");
+    expect(button?.title).toBe("Button");
+    expect(button?.description).toBeUndefined();
+    expect(button?.category).toBeUndefined();
+  });
 });
 
 describe("listBlocks", () => {
-  it("returns only registry:block items", async () => {
+  it("returns only registry:block items enriched from meta", async () => {
     const result = await listBlocks(client());
     expect(result.count).toBe(1);
     expect(result.items[0]).toMatchObject({
       name: "pricing",
       type: "registry:block",
       title: "Pricing",
+      description: "A three-tier pricing grid with a highlighted plan.",
+      category: "marketing",
       install: "npx cooud-ui add pricing",
     });
+  });
+
+  it("omits meta fields when the registry ships no sidecar", async () => {
+    const result = await listBlocks(clientNoMeta());
+    expect(result.items[0]?.title).toBe("Pricing");
+    expect(result.items[0]?.description).toBeUndefined();
+    expect(result.items[0]?.category).toBeUndefined();
   });
 });
 
@@ -159,6 +219,25 @@ describe("searchRegistry", () => {
     expect(result.items.map((i) => i.name)).toEqual(["alert-dialog"]);
   });
 
+  it("matches against the meta description and category when a sidecar exists", async () => {
+    // "three-tier" appears only in the pricing block's meta description.
+    const byDescription = await searchRegistry(client(), "three-tier");
+    expect(byDescription.items.map((i) => i.name)).toEqual(["pricing"]);
+
+    // "marketing" is only the pricing block's meta category.
+    const byCategory = await searchRegistry(client(), "marketing");
+    expect(byCategory.items.map((i) => i.name)).toEqual(["pricing"]);
+  });
+
+  it("degrades to name/title matching when no sidecar exists", async () => {
+    // Without meta, the description-only term matches nothing...
+    const byDescription = await searchRegistry(clientNoMeta(), "three-tier");
+    expect(byDescription.count).toBe(0);
+    // ...but a name match still works.
+    const byName = await searchRegistry(clientNoMeta(), "pricing");
+    expect(byName.items.map((i) => i.name)).toEqual(["pricing"]);
+  });
+
   it("never returns the lib primitive (cn)", async () => {
     const result = await searchRegistry(client(), "cn");
     expect(result.items.some((i) => i.name === "cn")).toBe(false);
@@ -172,12 +251,14 @@ describe("searchRegistry", () => {
 });
 
 describe("getComponent", () => {
-  it("returns full detail incl. files, deps, and install command", async () => {
+  it("returns full detail incl. files, deps, install command, and meta enrichment", async () => {
     const detail = await getComponent(client(), "button");
     expect(detail).toMatchObject({
       name: "button",
       type: "registry:ui",
       title: "Button",
+      description: "Clickable action with variants, sizes and asChild.",
+      category: "buttons",
       registryDependencies: ["cn"],
       install: "npx cooud-ui add button",
     });
@@ -186,23 +267,57 @@ describe("getComponent", () => {
     expect(detail.files[0]?.content).toContain("export const Button");
   });
 
+  it("omits meta fields when the registry ships no sidecar", async () => {
+    const detail = await getComponent(clientNoMeta(), "button");
+    expect(detail.title).toBe("Button");
+    expect(detail.description).toBeUndefined();
+    expect(detail.category).toBeUndefined();
+  });
+
   it("propagates a helpful error for an unknown item", async () => {
     await expect(getComponent(client(), "does-not-exist")).rejects.toThrow(/404/);
   });
 
-  it("caches items so a second call does not re-read", async () => {
-    let reads = 0;
+  it("caches items and the meta sidecar so a second call does not re-read", async () => {
+    let itemReads = 0;
+    let metaReads = 0;
     const loader: RegistryLoader = {
       async readJson<T>(file: string): Promise<T> {
-        reads += 1;
-        if (file === "button.json") return BUTTON_ITEM as unknown as T;
+        if (file === "button.json") {
+          itemReads += 1;
+          return BUTTON_ITEM as unknown as T;
+        }
+        if (file === "meta.json") {
+          metaReads += 1;
+          return META as unknown as T;
+        }
         throw new Error(`unexpected ${file}`);
       },
     };
     const c = new RegistryClient(loader);
     await getComponent(c, "button");
     await getComponent(c, "button");
-    expect(reads).toBe(1);
+    // The item is fetched once and the meta sidecar is fetched once, then both cache.
+    expect(itemReads).toBe(1);
+    expect(metaReads).toBe(1);
+  });
+
+  it("fetches an absent meta sidecar only once, then serves the cached null", async () => {
+    let metaReads = 0;
+    const loader: RegistryLoader = {
+      async readJson<T>(file: string): Promise<T> {
+        if (file === "button.json") return BUTTON_ITEM as unknown as T;
+        if (file === "meta.json") {
+          metaReads += 1;
+          throw new Error("registry fetch failed (404): meta.json");
+        }
+        throw new Error(`unexpected ${file}`);
+      },
+    };
+    const c = new RegistryClient(loader);
+    await getComponent(c, "button");
+    await getComponent(c, "button");
+    expect(metaReads).toBe(1);
   });
 });
 

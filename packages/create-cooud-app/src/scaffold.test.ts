@@ -124,6 +124,28 @@ describe("scaffold (into a temp dir, no install)", () => {
     expect(existsSync(join(targetDir, "components"))).toBe(false);
   });
 
+  it.each([
+    "store",
+    "landing",
+  ] as const)('scaffolds the "%s" composed template from the default base (compose runs later)', (template) => {
+    const { fileCount } = scaffold({ targetDir, name, template });
+    // Composed templates have no bundled dir: they copy the "default" base.
+    const defaultTarget = join(root, "default-ref");
+    const { fileCount: defaultCount } = scaffold({
+      targetDir: defaultTarget,
+      name,
+      template: "default",
+    });
+    expect(fileCount).toBe(defaultCount);
+    expect(existsSync(join(targetDir, "app", "page.tsx"))).toBe(true);
+    expect(existsSync(join(targetDir, "cooud-ui.json"))).toBe(true);
+    // Tokens still replaced (the base is the default template).
+    const pkgJson = JSON.parse(readFileSync(join(targetDir, "package.json"), "utf8")) as {
+      name: string;
+    };
+    expect(pkgJson.name).toBe(name);
+  });
+
   it("scaffolds the dashboard template (shell, pages, chart, table, settings)", () => {
     scaffold({ targetDir, name, template: "dashboard" });
 

@@ -83,6 +83,19 @@ export class Registry {
     return this.readJson<RegistryIndex>("index.json");
   }
 
+  /**
+   * The `registry/meta.json` sidecar, or `null` when the registry does not ship
+   * one (older releases / custom registries). Mirrors the MCP client's graceful
+   * degradation so `compose` can fail with a clear message rather than a raw 404.
+   */
+  async meta<T = unknown>(): Promise<T | null> {
+    try {
+      return await this.readJson<T>("meta.json");
+    } catch {
+      return null;
+    }
+  }
+
   async item(name: string): Promise<RegistryItem> {
     const cached = this.cache.get(name);
     if (cached) return cached;

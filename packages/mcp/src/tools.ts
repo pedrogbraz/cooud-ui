@@ -1,4 +1,4 @@
-import type { RegistryClient, RegistryIndexEntry, RegistryItem } from "./registry.js";
+import type { RegistryClient, RegistryIndexEntry, RegistryItem, RegistryMeta } from "./registry.js";
 
 /** The CLI invoked to install registry items into a consumer project. */
 export const ADD_COMMAND = "npx cooud-ui add";
@@ -40,19 +40,46 @@ export function humanizeName(name: string): string {
 export interface ItemSummary {
   name: string;
   type: RegistryIndexEntry["type"];
-  /** A readable label derived from the name. */
+  /** A readable label — the `meta.json` title when available, else name-derived. */
   title: string;
+  /** One-line description from `meta.json`; omitted when no metadata is available. */
+  description?: string;
+  /** The item's semantic category from `meta.json`; omitted when unavailable. */
+  category?: string;
   dependencies: string[];
   registryDependencies: string[];
   /** The command that installs this item. */
   install: string;
 }
 
-function summarise(entry: RegistryIndexEntry): ItemSummary {
+/**
+ * Look up the metadata entry for a registry item by name across the meta
+ * `blocks` and `components` maps (both keyed by the same slug as the index name).
+ * Returns `undefined` when there is no metadata (absent sidecar or unknown item),
+ * so callers fall back to name-derived titles.
+ */
+function metaEntryFor(
+  name: string,
+  meta: RegistryMeta | null,
+): { title: string; description: string; category: string } | undefined {
+  if (!meta) return undefined;
+  return meta.blocks?.[name] ?? meta.components?.[name] ?? undefined;
+}
+
+/**
+ * Summarise one index entry, enriching `title`/`description`/`category` from
+ * `meta.json` when present. Falls back to {@link humanizeName} for the title (and
+ * omits description/category) so older/custom registries without a sidecar still
+ * produce a usable summary.
+ */
+function summarise(entry: RegistryIndexEntry, meta: RegistryMeta | null): ItemSummary {
+  const info = metaEntryFor(entry.name, meta);
   return {
     name: entry.name,
     type: entry.type,
-    title: humanizeName(entry.name),
+    title: info?.title ?? humanizeName(entry.name),
+    ...(info?.description ? { description: info.description } : {}),
+    ...(info?.category ? { category: info.category } : {}),
     dependencies: entry.dependencies,
     registryDependencies: entry.registryDependencies,
     install: buildInstallCommand([entry.name]),
@@ -67,15 +94,19 @@ export interface ListResult {
 
 /** List installable UI components (registry items of type `registry:ui`). */
 export async function listComponents(client: RegistryClient): Promise<ListResult> {
-  const index = await client.index();
-  const items = index.filter((entry) => entry.type === "registry:ui").map(summarise);
+  const [index, meta] = await Promise.all([client.index(), client.meta()]);
+  const items = index
+    .filter((entry) => entry.type === "registry:ui")
+    .map((entry) => summarise(entry, meta));
   return { count: items.length, items };
 }
 
 /** List installable blocks (registry items of type `registry:block`). */
 export async function listBlocks(client: RegistryClient): Promise<ListResult> {
-  const index = await client.index();
-  const items = index.filter((entry) => entry.type === "registry:block").map(summarise);
+  const [index, meta] = await Promise.all([client.index(), client.meta()]);
+  const items = index
+    .filter((entry) => entry.type === "registry:block")
+    .map((entry) => summarise(entry, meta));
   return { count: items.length, items };
 }
 
@@ -86,20 +117,31 @@ export interface SearchResult extends ListResult {
 
 /**
  * Fuzzy-filter components and blocks by name (case-insensitive substring on the
- * raw name and its humanized title). The lib primitive (`cn`) is excluded — it
- * is pulled in automatically as a dependency, not something agents add directly.
+ * raw name and its humanized title, plus the `meta.json` title, description and
+ * category when a sidecar is available). The lib primitive (`cn`) is excluded —
+ * it is pulled in automatically as a dependency, not something agents add
+ * directly. Degrades to name/title matching when no metadata is present.
  */
 export async function searchRegistry(client: RegistryClient, query: string): Promise<SearchResult> {
-  const index = await client.index();
+  const [index, meta] = await Promise.all([client.index(), client.meta()]);
   const needle = query.trim().toLowerCase();
   const items = index
     .filter((entry) => entry.type === "registry:ui" || entry.type === "registry:block")
     .filter((entry) => {
       if (needle.length === 0) return true;
-      const haystack = `${entry.name} ${humanizeName(entry.name)}`.toLowerCase();
+      const info = metaEntryFor(entry.name, meta);
+      const haystack = [
+        entry.name,
+        humanizeName(entry.name),
+        info?.title ?? "",
+        info?.description ?? "",
+        info?.category ?? "",
+      ]
+        .join(" ")
+        .toLowerCase();
       return haystack.includes(needle);
     })
-    .map(summarise);
+    .map((entry) => summarise(entry, meta));
   return { query, count: items.length, items };
 }
 
@@ -108,6 +150,10 @@ export interface ComponentDetail {
   name: string;
   type: RegistryItem["type"];
   title: string;
+  /** One-line description from `meta.json`; omitted when no metadata is available. */
+  description?: string;
+  /** The item's semantic category from `meta.json`; omitted when unavailable. */
+  category?: string;
   dependencies: string[];
   registryDependencies: string[];
   files: RegistryItem["files"];
@@ -117,14 +163,19 @@ export interface ComponentDetail {
 
 /**
  * Fetch the full detail for a single component or block: its source file(s),
- * npm `dependencies`, `registryDependencies`, and the install command.
+ * npm `dependencies`, `registryDependencies`, and the install command. Enriches
+ * `title`/`description`/`category` from `meta.json` when a sidecar is available,
+ * falling back to a name-derived title otherwise.
  */
 export async function getComponent(client: RegistryClient, name: string): Promise<ComponentDetail> {
-  const item = await client.item(name);
+  const [item, meta] = await Promise.all([client.item(name), client.meta()]);
+  const info = metaEntryFor(item.name, meta);
   return {
     name: item.name,
     type: item.type,
-    title: humanizeName(item.name),
+    title: info?.title ?? humanizeName(item.name),
+    ...(info?.description ? { description: info.description } : {}),
+    ...(info?.category ? { category: info.category } : {}),
     dependencies: item.dependencies,
     registryDependencies: item.registryDependencies,
     files: item.files,

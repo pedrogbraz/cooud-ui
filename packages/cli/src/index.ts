@@ -2,6 +2,7 @@
 import { Command } from "commander";
 import { add } from "./commands/add.js";
 import { aiAdd } from "./commands/ai.js";
+import { compose } from "./commands/compose.js";
 import { diff } from "./commands/diff.js";
 import { init } from "./commands/init.js";
 import { list } from "./commands/list.js";
@@ -46,6 +47,42 @@ program
       registry: opts.registry,
       overwrite: opts.overwrite,
       skipInstall: opts.skipInstall,
+    }),
+  );
+
+program
+  .command("compose")
+  .description(
+    "Generate a full app from a validated template (pages + chrome from installed blocks).",
+  )
+  .argument("[template]", "app template name (e.g. store, landing)")
+  .option("-c, --cwd <dir>", "working directory", process.cwd())
+  .option("-r, --registry <source>", "registry URL or local directory")
+  .option(
+    "-m, --manifest <file>",
+    "compose from an explicit manifest file instead of a bundled template",
+  )
+  .option("--pages <list>", "comma-separated route subset (e.g. /,products,login)")
+  .option("--variant <pair...>", "block variant selection, e.g. --variant login=split (F2)")
+  .option("-b, --brand <name>", "brand wordmark baked into chrome/hero")
+  .option("-s, --seed <n>", "aesthetic PRNG seed (recorded for reproducibility)")
+  .option("-o, --overwrite", "overwrite existing files")
+  .option("--skip-install", "do not install npm dependencies")
+  .option("--dry-run", "print the validated plan + per-file preview, write nothing")
+  .option("-y, --yes", "non-interactive: pick the first template if none is given")
+  .action((template, opts) =>
+    compose(template, {
+      cwd: opts.cwd,
+      registry: opts.registry,
+      manifest: opts.manifest,
+      pages: opts.pages,
+      variant: opts.variant,
+      brand: opts.brand,
+      seed: opts.seed,
+      overwrite: opts.overwrite,
+      skipInstall: opts.skipInstall,
+      dryRun: opts.dryRun,
+      yes: opts.yes,
     }),
   );
 

@@ -1,0 +1,373 @@
+/**
+ * The PURE compose renderer. Given a validated plan it emits the generated files:
+ * one `page.tsx` per route, one route-group `layout.tsx` per chrome group, and the
+ * thin `components/chrome/site-nav.tsx` / `site-footer.tsx` wrappers.
+ *
+ * GOLDEN RULE: a generated page is ONLY `imports of installed blocks + a <main>
+ * stacking them`. This module never emits UI JSX beyond that wrapper (and the
+ * chrome layout wrapper, itself just block wrappers). Every visible pixel comes
+ * from a registry item.
+ *
+ * DETERMINISM: a pure function of `(plan, config)` — no `Date`/random, stable
+ * ordering — so `registry:check`-style byte-equality and the F4 3-way base hold.
+ */
+
+import type { CooudUIConfig } from "../config.js";
+import { replaceBrandLiteral, replaceDataSlot } from "./data-slots.js";
+import type { ComposePlan, PlanBlock, PlanChrome, PlanExtra, PlanPage } from "./plan.js";
+
+/** A file the composer will write, relative to the project root. */
+export interface GeneratedFile {
+  /** Project-relative path, e.g. "app/(site)/page.tsx". */
+  path: string;
+  content: string;
+}
+
+/** How the composer customizes one installed chrome block copy (nav data + brand). */
+export interface ChromeRewrite {
+  /** The chrome block slug (e.g. "navbar"). */
+  slug: string;
+  /** Project-relative path of the installed block file to rewrite in place. */
+  file: string;
+  /** The rewritten source (data-slot + brand applied). */
+  content: string;
+}
+
+/** Everything the composer emits: generated files + the in-place chrome rewrites. */
+export interface RenderResult {
+  files: GeneratedFile[];
+  chromeRewrites: ChromeRewrite[];
+}
+
+/** One nav entry derived from a manifest page carrying a `nav` label. */
+interface NavLink {
+  label: string;
+  href: string;
+}
+
+/**
+ * Turn an App Router route into a page-directory path under a route group. "/" is
+ * the group root (empty dir); "/products/[id]" → "products/[id]". Dynamic segments
+ * are preserved verbatim (already validated in plan.ts).
+ */
+function routeToDir(route: string): string {
+  const trimmed = route.replace(/^\/+/, "").replace(/\/+$/, "");
+  return trimmed;
+}
+
+/** Derive a PascalCase component name for a generated page from its route. */
+function pageComponentName(route: string): string {
+  const dir = routeToDir(route);
+  if (dir === "") return "HomePage";
+  const parts = dir
+    .split("/")
+    .map((seg) => seg.replace(/\[(\.\.\.)?([^\]]+)\]/g, "$2")) // [id] / [...slug] → id / slug
+    .flatMap((seg) => seg.split(/[-_]/))
+    .filter((s) => s.length > 0)
+    .map((s) => s.charAt(0).toUpperCase() + s.slice(1));
+  return `${parts.join("")}Page`;
+}
+
+/** Serialize a JS string literal deterministically (double quotes, escaped). */
+function jsString(value: string): string {
+  return JSON.stringify(value);
+}
+
+/** Serialize nav links to a `const NAME = [...]` body (2-space indent, stable). */
+function serializeNavLinks(constName: string, links: NavLink[]): string {
+  if (links.length === 0) return `const ${constName} = [];`;
+  const rows = links
+    .map((l) => `  { label: ${jsString(l.label)}, href: ${jsString(l.href)} },`)
+    .join("\n");
+  return `const ${constName} = [\n${rows}\n];`;
+}
+
+/** Serialize the footer columns const (a single "Navigation" column of the nav links). */
+function serializeFooterColumns(constName: string, links: NavLink[]): string {
+  const inner = links
+    .map((l) => `      { label: ${jsString(l.label)}, href: ${jsString(l.href)} },`)
+    .join("\n");
+  const linksBlock = links.length === 0 ? "[]" : `[\n${inner}\n    ]`;
+  return `const ${constName} = [\n  {\n    heading: "Navigation",\n    links: ${linksBlock},\n  },\n];`;
+}
+
+/**
+ * The nav links derived from the plan's pages: every page that carries a `nav`
+ * label, in manifest order, linking to its route. Deterministic.
+ */
+export function navLinksOf(plan: ComposePlan): NavLink[] {
+  const links: NavLink[] = [];
+  for (const page of plan.pages) {
+    if (page.nav !== undefined) links.push({ label: page.nav, href: page.route });
+  }
+  return links;
+}
+
+/**
+ * The data-const name declared inside a chrome block's data-slot. Kept as an
+ * explicit table (not inferred) so the serialized replacement matches the shipped
+ * const exactly — the two chrome families F1 supports.
+ */
+const CHROME_SLOT_CONST: Readonly<Record<string, string>> = {
+  "navbar-links": "NAVBAR_LINKS",
+  "footer-links": "FOOTER_COLUMNS",
+};
+
+/**
+ * Rewrite one installed chrome block copy: inject the real nav links into its
+ * data-slot and replace its brand literal(s) with the app brand. `blockSource` is
+ * the exact on-disk copy (post-`add`), so the markers/literals are present or the
+ * data-slot helpers throw (fail-loud). Pure.
+ */
+export function rewriteChromeBlock(slug: string, blockSource: string, plan: ComposePlan): string {
+  const links = navLinksOf(plan);
+  let out = blockSource;
+
+  for (const slot of plan.dataSlotsBySlug[slug] ?? []) {
+    const constName = CHROME_SLOT_CONST[slot];
+    if (constName === undefined) {
+      // A declared slot with no known serializer is a build/table drift — the
+      // markers exist (gated) but we have no data to fill them, so fail loud.
+      throw new Error(`chrome block "${slug}": no serializer for data-slot "${slot}"`);
+    }
+    const body =
+      constName === "FOOTER_COLUMNS"
+        ? serializeFooterColumns(constName, links)
+        : serializeNavLinks(constName, links);
+    out = replaceDataSlot(out, slot, body);
+  }
+
+  for (const brand of plan.brandTokensBySlug[slug] ?? []) {
+    out = replaceBrandLiteral(out, brand.literal, plan.choices.brand);
+  }
+
+  return out;
+}
+
+/** Import specifier for a block slug via the consumer's blocks alias. */
+function blockImport(config: CooudUIConfig, slug: string): string {
+  return `${config.aliases.blocks}/${slug}`;
+}
+
+/** Render a single page.tsx: imports of its blocks + a <main> stacking them. */
+export function renderPage(page: PlanPage, config: CooudUIConfig): string {
+  // De-dupe imports by exportName (a page may legitimately repeat a section, but
+  // it must be imported once); keep first-seen order for determinism.
+  const imports: string[] = [];
+  const seen = new Set<string>();
+  for (const block of page.blocks) {
+    if (seen.has(block.exportName)) continue;
+    seen.add(block.exportName);
+    imports.push(
+      `import { ${block.exportName} } from ${jsString(blockImport(config, block.slug))};`,
+    );
+  }
+  const importLines = imports.join("\n");
+
+  const componentName = pageComponentName(page.route);
+  const stack = page.blocks.map((b) => `      <${b.exportName} />`).join("\n");
+
+  // Page-kind blocks are full-page surfaces; when a route renders a single page
+  // block, center it. Otherwise stack sections in a plain column.
+  const single = page.blocks.length === 1 && page.blocks[0]?.kind === "page";
+  const mainClass = single
+    ? "flex min-h-svh flex-col items-center justify-center"
+    : "flex min-h-svh flex-col";
+
+  return [
+    importLines,
+    "",
+    `export const metadata = { title: ${jsString(page.title)} };`,
+    "",
+    `export default function ${componentName}() {`,
+    "  return (",
+    `    <main className=${jsString(mainClass)}>`,
+    stack,
+    "    </main>",
+    "  );",
+    "}",
+    "",
+  ].join("\n");
+}
+
+/** Path of a page.tsx under its chrome route group. */
+export function pagePath(page: PlanPage): string {
+  const dir = routeToDir(page.route);
+  const group = `(${page.chrome})`;
+  return dir === "" ? `app/${group}/page.tsx` : `app/${group}/${dir}/page.tsx`;
+}
+
+/** Import path from a route-group layout to a chrome wrapper via the blocks alias. */
+function chromeWrapperImport(config: CooudUIConfig, name: string): string {
+  // Wrappers live under the blocks path in a `chrome/` subdir; import via the
+  // blocks alias so the consumer's tsconfig path mapping resolves them.
+  return `${config.aliases.blocks}/chrome/${name}`;
+}
+
+/** Render a route-group layout for a chrome group (site = navbar+footer; bare = centered). */
+export function renderLayout(chrome: PlanChrome, config: CooudUIConfig): string {
+  const hasNav = chrome.navbar !== undefined;
+  const hasFooter = chrome.footer !== undefined;
+
+  if (!hasNav && !hasFooter) {
+    // Bare/centered group: no chrome furniture, just a passthrough layout so the
+    // route group is a real segment (keeps auth/checkout off the site chrome).
+    return [
+      `import type { ReactNode } from "react";`,
+      "",
+      `export default function ${layoutComponentName(chrome.group)}({ children }: { children: ReactNode }) {`,
+      "  return <>{children}</>;",
+      "}",
+      "",
+    ].join("\n");
+  }
+
+  const imports = [`import type { ReactNode } from "react";`];
+  if (hasNav)
+    imports.push(`import { SiteNav } from ${jsString(chromeWrapperImport(config, "site-nav"))};`);
+  if (hasFooter)
+    imports.push(
+      `import { SiteFooter } from ${jsString(chromeWrapperImport(config, "site-footer"))};`,
+    );
+
+  const body: string[] = [];
+  body.push(`    <div className="flex min-h-svh flex-col">`);
+  if (hasNav) body.push("      <SiteNav />");
+  body.push(`      <div className="flex-1">{children}</div>`);
+  if (hasFooter) body.push("      <SiteFooter />");
+  body.push("    </div>");
+
+  return [
+    imports.join("\n"),
+    "",
+    `export default function ${layoutComponentName(chrome.group)}({ children }: { children: ReactNode }) {`,
+    "  return (",
+    body.join("\n"),
+    "  );",
+    "}",
+    "",
+  ].join("\n");
+}
+
+/** PascalCase layout component name for a chrome group. */
+function layoutComponentName(group: string): string {
+  const pascal = group
+    .split(/[-_]/)
+    .filter((s) => s.length > 0)
+    .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
+    .join("");
+  return `${pascal}Layout`;
+}
+
+/** Path of a chrome route-group layout. */
+export function layoutPath(chrome: PlanChrome): string {
+  return `app/(${chrome.group})/layout.tsx`;
+}
+
+/**
+ * Render a thin chrome wrapper: a named re-export of the installed block's default
+ * export, so the layout imports a stable `SiteNav`/`SiteFooter` while the visual
+ * source stays the (customized) installed block. GOLDEN-RULE compliant: pure
+ * re-export, no new UI.
+ */
+export function renderChromeWrapper(
+  exportAs: string,
+  blockSlug: string,
+  blockExportName: string,
+  config: CooudUIConfig,
+): string {
+  return [
+    `import { ${blockExportName} } from ${jsString(blockImport(config, blockSlug))};`,
+    "",
+    `export function ${exportAs}() {`,
+    `  return <${blockExportName} />;`,
+    "}",
+    "",
+  ].join("\n");
+}
+
+/** Path of a chrome wrapper file under the blocks path. */
+export function chromeWrapperPath(config: CooudUIConfig, name: string): string {
+  return `${config.paths.blocks}/chrome/${name}.tsx`;
+}
+
+/**
+ * Render a Next special-file wrapper page for an `extras` block (e.g.
+ * `app/not-found.tsx`). GOLDEN-RULE compliant: imports the installed page-kind
+ * block and centers it in a single `<main>` — no new UI. The component name is
+ * PascalCase(key)Page (e.g. "not-found" → NotFoundPage). Pure.
+ */
+export function renderExtra(extra: PlanExtra, config: CooudUIConfig): string {
+  const componentName = `${extra.key
+    .split(/[-_]/)
+    .filter((s) => s.length > 0)
+    .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
+    .join("")}Page`;
+  return [
+    `import { ${extra.exportName} } from ${jsString(blockImport(config, extra.slug))};`,
+    "",
+    `export default function ${componentName}() {`,
+    "  return (",
+    `    <main className="flex min-h-svh flex-col items-center justify-center">`,
+    `      <${extra.exportName} />`,
+    "    </main>",
+    "  );",
+    "}",
+    "",
+  ].join("\n");
+}
+
+/**
+ * Render the whole plan into files. Deterministic ordering: chrome rewrites by
+ * slug, then wrappers, then layouts (by group), then pages (manifest order), then
+ * Next special-file extras (by key). The caller writes them; nothing here touches
+ * the filesystem.
+ */
+export function renderPlan(plan: ComposePlan, config: CooudUIConfig): RenderResult {
+  const files: GeneratedFile[] = [];
+  const chromeRewrites: ChromeRewrite[] = [];
+
+  // 1. Chrome block rewrites (in-place customization of installed copies).
+  for (const slug of plan.chromeSlugs) {
+    const source = plan.chromeSources[slug];
+    if (source === undefined) continue;
+    chromeRewrites.push({
+      slug,
+      file: `${config.paths.blocks}/${slug}.tsx`,
+      content: rewriteChromeBlock(slug, source, plan),
+    });
+  }
+
+  // 2. Thin chrome wrappers (SiteNav / SiteFooter), only for chrome actually used.
+  if (plan.usesNavbar && plan.navbarExportName !== undefined && plan.navbarSlug !== undefined) {
+    files.push({
+      path: chromeWrapperPath(config, "site-nav"),
+      content: renderChromeWrapper("SiteNav", plan.navbarSlug, plan.navbarExportName, config),
+    });
+  }
+  if (plan.usesFooter && plan.footerExportName !== undefined && plan.footerSlug !== undefined) {
+    files.push({
+      path: chromeWrapperPath(config, "site-footer"),
+      content: renderChromeWrapper("SiteFooter", plan.footerSlug, plan.footerExportName, config),
+    });
+  }
+
+  // 3. Route-group layouts, one per chrome group used (stable by group name).
+  for (const chrome of plan.chromes) {
+    files.push({ path: layoutPath(chrome), content: renderLayout(chrome, config) });
+  }
+
+  // 4. Pages, in manifest order.
+  for (const page of plan.pages) {
+    files.push({ path: pagePath(page), content: renderPage(page, config) });
+  }
+
+  // 5. Next special-file wrappers from `extras` (sorted by key in the plan).
+  for (const extra of plan.extras) {
+    files.push({ path: extra.file, content: renderExtra(extra, config) });
+  }
+
+  return { files, chromeRewrites };
+}
+
+export type { PlanBlock };

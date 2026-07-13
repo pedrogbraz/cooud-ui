@@ -1,0 +1,2008 @@
+{
+  "registryVersion": "0.4.0",
+  "blocks": {
+    "about": {
+      "title": "About",
+      "description": "Company about sections: mission story with stats, founder quote, and milestone timeline; plus a values card grid with a token-built culture collage.",
+      "category": "content",
+      "exportName": "AboutStoryBlock",
+      "kind": "section",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": [
+        {
+          "id": "story",
+          "name": "Story",
+          "description": "Mission statement, stats row, founder quote, and a milestone timeline."
+        },
+        {
+          "id": "values",
+          "name": "Values",
+          "description": "A values card grid with icons and a token-built culture collage."
+        }
+      ]
+    },
+    "account-security": {
+      "title": "Account security",
+      "description": "Two-factor authentication setup and password management with a danger zone.",
+      "category": "account",
+      "exportName": "AccountSecurityTwoFactorBlock",
+      "kind": "section",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": [
+        {
+          "id": "two-factor",
+          "name": "Two-factor setup",
+          "description": "Status card plus QR pairing, setup key, and one-time backup codes."
+        },
+        {
+          "id": "password",
+          "name": "Password & danger zone",
+          "description": "Password change with strength meter, recovery email, and a danger zone."
+        }
+      ]
+    },
+    "activity-feed": {
+      "title": "Activity Feed",
+      "description": "A vertical timeline of recent events with toned icons, timestamps, and detail.",
+      "category": "notifications",
+      "exportName": "ActivityFeedBlock",
+      "kind": "section",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": []
+    },
+    "ai-response": {
+      "title": "AI Response",
+      "description": "An assistant answer card with formatted content, cited sources, and feedback and regenerate actions.",
+      "category": "ai",
+      "exportName": "AiResponseBlock",
+      "kind": "section",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": []
+    },
+    "analytics": {
+      "title": "Analytics",
+      "description": "Admin analytics surfaces — KPI metrics with sparklines, a 30-day traffic trend and top pages/referrers breakdowns with progress bars, plus a cohort-retention engagement variant built from token-colored heat cells.",
+      "category": "admin",
+      "exportName": "AnalyticsOverviewBlock",
+      "kind": "section",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": [
+        {
+          "id": "overview",
+          "name": "Traffic overview",
+          "description": "KPI metrics with sparklines, a 30-day traffic trend and top pages and referrers breakdowns."
+        },
+        {
+          "id": "engagement",
+          "name": "Engagement cohorts",
+          "description": "Retention stat cards plus a weekly cohort heat grid built from token-colored cells."
+        }
+      ]
+    },
+    "api-keys": {
+      "title": "API keys",
+      "description": "API key management with masked secrets, scopes, and a scoped create flow.",
+      "category": "account",
+      "exportName": "ApiKeysListBlock",
+      "kind": "section",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": [
+        {
+          "id": "list",
+          "name": "Key list",
+          "description": "Masked keys with reveal and copy, scope badges, and usage metadata."
+        },
+        {
+          "id": "create",
+          "name": "Create key",
+          "description": "Scoped key creation with expiry and a one-time generated-key reveal."
+        }
+      ]
+    },
+    "audit-log": {
+      "title": "Audit log",
+      "description": "A security audit trail — a grouped-by-day timeline feed with actor avatars, emphasized actor/object names and severity badges, plus a filterable table variant with event-type badges, actors, IPs and expandable detail hints.",
+      "category": "admin",
+      "exportName": "AuditLogTimelineBlock",
+      "kind": "section",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": [
+        {
+          "id": "timeline",
+          "name": "Day-grouped timeline",
+          "description": "A grouped-by-day security feed with actor avatars, emphasized names and severity badges."
+        },
+        {
+          "id": "table",
+          "name": "Filterable table",
+          "description": "A filterable event table with type badges, actors, IP addresses and detail affordances."
+        }
+      ]
+    },
+    "billing": {
+      "title": "Billing",
+      "description": "Subscription management, usage meters, invoices, and a plan selector.",
+      "category": "billing",
+      "exportName": "SubscriptionBlock",
+      "kind": "section",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": [
+        {
+          "id": "subscription",
+          "name": "Subscription",
+          "description": "Current plan, usage meters, payment method, and a downloadable invoice history."
+        },
+        {
+          "id": "plans",
+          "name": "Plan selector",
+          "description": "Three-tier plan picker with a highlighted popular plan and a monthly/annual toggle."
+        }
+      ]
+    },
+    "blog": {
+      "title": "Blog",
+      "description": "Blog index layouts: a featured hero post with a responsive post grid, and an editorial list with larger typography.",
+      "category": "content",
+      "exportName": "BlogGridBlock",
+      "kind": "section",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": [
+        {
+          "id": "grid",
+          "name": "Featured grid",
+          "description": "A featured hero post above a responsive three-column post grid."
+        },
+        {
+          "id": "list",
+          "name": "Editorial list",
+          "description": "An editorial list layout with larger typography and horizontal cards."
+        }
+      ]
+    },
+    "blog-post": {
+      "title": "Blog post",
+      "description": "Article detail layouts with token-styled prose (headings, blockquote, inline code), author card, hero art, and a share row.",
+      "category": "content",
+      "exportName": "BlogPostArticleBlock",
+      "kind": "section",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": [
+        {
+          "id": "article",
+          "name": "Article",
+          "description": "A single-column article with token-styled prose and a share row."
+        },
+        {
+          "id": "with-sidebar",
+          "name": "With sidebar",
+          "description": "The article beside a sticky table of contents and a newsletter card."
+        }
+      ]
+    },
+    "cancel-flow": {
+      "title": "Cancel Flow",
+      "description": "A cancellation survey with reason options and a retention offer to keep the subscription.",
+      "category": "billing",
+      "exportName": "CancelFlowBlock",
+      "kind": "section",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": []
+    },
+    "cart": {
+      "title": "Cart",
+      "description": "Shopping cart surfaces: a full cart page with editable line items and order summary, and a static slide-over drawer composition.",
+      "category": "store",
+      "exportName": "CartPageBlock",
+      "kind": "page",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": [
+        {
+          "id": "page",
+          "name": "Cart page",
+          "description": "Full cart page with editable line items and an order summary."
+        },
+        {
+          "id": "drawer",
+          "name": "Drawer",
+          "description": "Slide-over mini cart with a free-shipping meter and quick checkout."
+        }
+      ]
+    },
+    "changelog": {
+      "title": "Changelog",
+      "description": "A product release feed on a vertical timeline with version badges, dates, and typed Feature/Fix/Perf change rows.",
+      "category": "marketing",
+      "exportName": "ChangelogBlock",
+      "kind": "section",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": []
+    },
+    "chat-thread": {
+      "title": "Chat Thread",
+      "description": "An assistant conversation card with user and AI bubbles, a typing indicator, and a message composer.",
+      "category": "ai",
+      "exportName": "ChatThreadBlock",
+      "kind": "section",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": []
+    },
+    "checkout": {
+      "title": "Checkout",
+      "description": "A product checkout with an order summary and a card payment form.",
+      "category": "commerce",
+      "exportName": "CheckoutBlock",
+      "kind": "page",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": [
+        {
+          "id": "classic",
+          "name": "Card payment",
+          "description": "Two-column checkout with an order summary beside a card payment form."
+        },
+        {
+          "id": "one-page",
+          "name": "One page",
+          "description": "Single-page checkout stacking contact, shipping, and payment beside a sticky order summary."
+        },
+        {
+          "id": "multi-step",
+          "name": "Multi-step",
+          "description": "Wizard checkout with a shipping–payment–review stepper and back/continue navigation."
+        }
+      ]
+    },
+    "comment-thread": {
+      "title": "Comment Thread",
+      "description": "A threaded comment list with a composer and a nested reply.",
+      "category": "social",
+      "exportName": "CommentThreadBlock",
+      "kind": "section",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": []
+    },
+    "contact-form": {
+      "title": "Contact Form",
+      "description": "A two-column contact section pairing contact methods with a name, email, and message form.",
+      "category": "survey",
+      "exportName": "ContactFormBlock",
+      "kind": "section",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": []
+    },
+    "cta": {
+      "title": "Call to Action",
+      "description": "A bold gradient call-to-action banner.",
+      "category": "marketing",
+      "exportName": "CtaBlock",
+      "kind": "section",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": [
+        {
+          "id": "classic",
+          "name": "Gradient panel",
+          "description": "Contained gradient panel with an email-capture form and dotted texture."
+        },
+        {
+          "id": "banner",
+          "name": "Gradient banner",
+          "description": "Full-width gradient band with a display headline and dual CTAs."
+        },
+        {
+          "id": "split-visual",
+          "name": "Split with visual",
+          "description": "Copy and checkmark bullets beside a token-built product mock panel."
+        }
+      ]
+    },
+    "dashboard": {
+      "title": "Dashboard",
+      "description": "A full application shell with sidebar nav, KPI cards, a chart, and a table.",
+      "category": "dashboard",
+      "exportName": "DashboardAnalyticsBlock",
+      "kind": "page",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": [
+        {
+          "id": "analytics",
+          "name": "Analytics dashboard",
+          "description": "A full application shell — sidebar nav, search topbar, KPI cards, a revenue chart and a recent-activity table."
+        },
+        {
+          "id": "admin-overview",
+          "name": "Admin overview",
+          "description": "An admin console with an icon-collapsible sidebar, status cards, a signups trend and a larger users & orders table."
+        }
+      ]
+    },
+    "email-receipt": {
+      "title": "Receipt Email",
+      "description": "A branded purchase receipt email with an itemized table, totals, and an invoice action.",
+      "category": "email",
+      "exportName": "EmailReceiptBlock",
+      "kind": "email",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": []
+    },
+    "email-verify": {
+      "title": "Verify Email",
+      "description": "An email-confirmation message with a verify button and a fallback one-time code.",
+      "category": "email",
+      "exportName": "EmailVerifyBlock",
+      "kind": "email",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": []
+    },
+    "email-welcome": {
+      "title": "Welcome Email",
+      "description": "A branded welcome email with a get-started CTA and onboarding quick links.",
+      "category": "email",
+      "exportName": "EmailWelcomeBlock",
+      "kind": "email",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": []
+    },
+    "empty-state": {
+      "title": "Empty State",
+      "description": "Empty and error states with illustrations, guidance, and recovery actions.",
+      "category": "page",
+      "exportName": "EmptyStateBlock",
+      "kind": "section",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": [
+        {
+          "id": "empty",
+          "name": "Empty list",
+          "description": "A friendly empty list with an illustration, guidance, and creation CTAs."
+        },
+        {
+          "id": "error",
+          "name": "Error / not found",
+          "description": "An error state for failed loads or 404s, with retry and recovery actions."
+        }
+      ]
+    },
+    "error-state": {
+      "title": "Error State",
+      "description": "A full-page error state with an error code, a retry action, and a support link.",
+      "category": "states",
+      "exportName": "ErrorStateBlock",
+      "kind": "page",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": []
+    },
+    "faq": {
+      "title": "FAQ",
+      "description": "An accessible accordion of frequently asked questions.",
+      "category": "marketing",
+      "exportName": "FaqBlock",
+      "kind": "section",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": [
+        {
+          "id": "accordion",
+          "name": "Centered accordion",
+          "description": "A centered, width-constrained accordion of common questions and answers."
+        },
+        {
+          "id": "split",
+          "name": "Split with support",
+          "description": "A two-column layout pairing the questions with a contact-support panel."
+        }
+      ]
+    },
+    "feature-grid": {
+      "title": "Feature Grid",
+      "description": "A responsive grid of product features with icons.",
+      "category": "marketing",
+      "exportName": "FeatureGridBlock",
+      "kind": "section",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": [
+        {
+          "id": "cards",
+          "name": "Card grid",
+          "description": "Six balanced feature cards for broad capability overviews."
+        },
+        {
+          "id": "bento",
+          "name": "Bento grid",
+          "description": "Editorial bento layout for showcasing a platform narrative."
+        }
+      ]
+    },
+    "feature-matrix": {
+      "title": "Feature Matrix",
+      "description": "A plan-comparison matrix with grouped feature rows, per-plan checks and limits, and an elevated popular column that stacks into cards on mobile.",
+      "category": "marketing",
+      "exportName": "FeatureMatrixBlock",
+      "kind": "section",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": []
+    },
+    "feedback-form": {
+      "title": "Feedback Form",
+      "description": "A feedback card with a star rating, category chips, and an optional details field.",
+      "category": "survey",
+      "exportName": "FeedbackFormBlock",
+      "kind": "section",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": []
+    },
+    "filter-bar": {
+      "title": "Filter Bar",
+      "description": "A search and filter toolbar with chips and a result count.",
+      "category": "page",
+      "exportName": "FilterBarBlock",
+      "kind": "section",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": [
+        {
+          "id": "toolbar",
+          "name": "Search and filters",
+          "description": "Search input, status select, owner combobox, list/grid toggle, removable filter chips, and a result count."
+        }
+      ]
+    },
+    "footer": {
+      "title": "Footer",
+      "description": "A full site footer with brand block, link columns, and a newsletter sign-up.",
+      "category": "marketing",
+      "exportName": "FooterBlock",
+      "kind": "chrome",
+      "dataSlots": [
+        "footer-links"
+      ],
+      "brandTokens": [
+        {
+          "token": "brand",
+          "literal": "Cooud"
+        }
+      ],
+      "variants": [
+        {
+          "id": "classic",
+          "name": "Columns with newsletter",
+          "description": "Brand column, three link columns and a newsletter panel."
+        },
+        {
+          "id": "mega",
+          "name": "Mega",
+          "description": "Five link columns, newsletter, social icons and a live-status legal row."
+        },
+        {
+          "id": "minimal",
+          "name": "Minimal",
+          "description": "A single-row footer with logo, three links and copyright."
+        }
+      ]
+    },
+    "forgot-password": {
+      "title": "Forgot Password",
+      "description": "A password reset flow with an email request and a sent confirmation.",
+      "category": "auth",
+      "exportName": "ForgotPasswordBlock",
+      "kind": "page",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": [
+        {
+          "id": "request",
+          "name": "Request link",
+          "description": "Email entry that sends a one-time password reset link."
+        },
+        {
+          "id": "sent",
+          "name": "Link sent",
+          "description": "Confirmation that a reset link was emailed, with a resend action."
+        }
+      ]
+    },
+    "hero": {
+      "title": "Hero",
+      "description": "A centered marketing hero with eyebrow, headline, copy and CTAs.",
+      "category": "marketing",
+      "exportName": "HeroBlock",
+      "kind": "section",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": [
+        {
+          "id": "centered",
+          "name": "Centered launch",
+          "description": "Classic centered SaaS hero with trust proof and two CTAs."
+        },
+        {
+          "id": "split",
+          "name": "Split dashboard",
+          "description": "Two-column hero with a compact product-quality panel."
+        },
+        {
+          "id": "compact",
+          "name": "Compact registry",
+          "description": "Contained hero card for docs, registries and template libraries."
+        }
+      ]
+    },
+    "integrations": {
+      "title": "Integrations Grid",
+      "description": "A marketing integrations section with an eyebrow header and a responsive grid of connectable service tiles.",
+      "category": "integrations",
+      "exportName": "IntegrationsGridBlock",
+      "kind": "section",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": []
+    },
+    "invoice": {
+      "title": "Invoice",
+      "description": "An invoice receipt with line items, totals, status, and a download action.",
+      "category": "commerce",
+      "exportName": "InvoiceBlock",
+      "kind": "section",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": [
+        {
+          "id": "classic",
+          "name": "Detailed invoice",
+          "description": "Full invoice with billing parties, line items, totals, and a download action."
+        },
+        {
+          "id": "receipt",
+          "name": "Receipt",
+          "description": "Narrow thermal-style receipt with mono totals, dashed separators, and a paid stamp."
+        }
+      ]
+    },
+    "kanban-board": {
+      "title": "Kanban board",
+      "description": "A sprint board with four columns of labeled cards — Badge labels, assignee avatar stacks, due dates and comment counts — plus a dense compact variant with per-column WIP limits and at-limit indicators.",
+      "category": "admin",
+      "exportName": "KanbanBoardBlock",
+      "kind": "section",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": [
+        {
+          "id": "default",
+          "name": "Sprint board",
+          "description": "Four columns of labeled cards with assignees, due dates, comment counts and add actions."
+        },
+        {
+          "id": "compact",
+          "name": "Compact WIP board",
+          "description": "A dense single-line task list with per-column WIP limits and at-limit indicators."
+        }
+      ]
+    },
+    "login": {
+      "title": "Login",
+      "description": "A centered authentication card with email + social login.",
+      "category": "auth",
+      "exportName": "LoginBlock",
+      "kind": "page",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": [
+        {
+          "id": "classic",
+          "name": "Classic card",
+          "description": "Centered email and password card with social sign-in shortcuts."
+        },
+        {
+          "id": "split",
+          "name": "Split panel",
+          "description": "Brand gradient panel with a customer testimonial beside the sign-in form."
+        },
+        {
+          "id": "social-first",
+          "name": "Social first",
+          "description": "Google, GitHub, and Apple buttons stacked above the email fallback."
+        },
+        {
+          "id": "minimal",
+          "name": "Minimal",
+          "description": "Ultra-clean logo mark, email, and continue button with quiet footer links."
+        }
+      ]
+    },
+    "logo-cloud": {
+      "title": "Logo cloud",
+      "description": "Customer trust sections built from wordmark-style text logos in text-fg-tertiary — a quiet grid and a dual counter-scrolling marquee.",
+      "category": "content",
+      "exportName": "LogoCloudGridBlock",
+      "kind": "section",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": [
+        {
+          "id": "grid",
+          "name": "Trust grid",
+          "description": "A quiet responsive grid of customer wordmarks under a trust heading."
+        },
+        {
+          "id": "marquee",
+          "name": "Dual marquee",
+          "description": "Two counter-scrolling, pause-on-hover marquee rows of customer wordmarks."
+        }
+      ]
+    },
+    "magic-link": {
+      "title": "Magic Link",
+      "description": "A passwordless email link flow with a request and a sent confirmation.",
+      "category": "auth",
+      "exportName": "MagicLinkBlock",
+      "kind": "page",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": [
+        {
+          "id": "request",
+          "name": "Request link",
+          "description": "Passwordless email entry that sends a single-use sign-in link."
+        },
+        {
+          "id": "sent",
+          "name": "Link sent",
+          "description": "Confirmation that a magic sign-in link was emailed, with a resend action."
+        }
+      ]
+    },
+    "maintenance": {
+      "title": "Maintenance",
+      "description": "A scheduled-maintenance page with an estimated downtime and a notify-me email capture.",
+      "category": "states",
+      "exportName": "MaintenanceBlock",
+      "kind": "page",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": []
+    },
+    "manage-subscription": {
+      "title": "Manage Subscription",
+      "description": "A current-subscription card with a renewal banner, usage meters, payment method, and plan actions.",
+      "category": "billing",
+      "exportName": "ManageSubscriptionBlock",
+      "kind": "section",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": []
+    },
+    "navbar": {
+      "title": "Navbar",
+      "description": "A contained, rounded marketing navigation bar with brand mark and CTAs.",
+      "category": "marketing",
+      "exportName": "NavbarBlock",
+      "kind": "chrome",
+      "dataSlots": [
+        "navbar-links"
+      ],
+      "brandTokens": [
+        {
+          "token": "brand",
+          "literal": "Cooud"
+        }
+      ],
+      "variants": [
+        {
+          "id": "classic",
+          "name": "Pill with actions",
+          "description": "Rounded navbar with brand badge, primary links and sign-in actions."
+        },
+        {
+          "id": "centered",
+          "name": "Centered pill",
+          "description": "Floating pill navbar with centered links on a blurred overlay surface."
+        },
+        {
+          "id": "with-announcement",
+          "name": "With announcement",
+          "description": "Announcement bar with a badge and link above the navigation row."
+        }
+      ]
+    },
+    "not-found": {
+      "title": "Not Found",
+      "description": "A centered 404 page with a search field and back-to-home and support actions.",
+      "category": "states",
+      "exportName": "NotFoundBlock",
+      "kind": "page",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": []
+    },
+    "notification-panel": {
+      "title": "Notification Panel",
+      "description": "A dropdown notifications list with avatars, unread markers, and a mark-all-read action.",
+      "category": "notifications",
+      "exportName": "NotificationPanelBlock",
+      "kind": "section",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": []
+    },
+    "notification-preferences": {
+      "title": "Notification preferences",
+      "description": "Per-channel notification controls as a matrix or grouped toggle list.",
+      "category": "account",
+      "exportName": "NotificationPreferencesMatrixBlock",
+      "kind": "section",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": [
+        {
+          "id": "matrix",
+          "name": "Channel matrix",
+          "description": "Per-event switches across email, push, and SMS, grouped by area."
+        },
+        {
+          "id": "simple",
+          "name": "Simple toggles",
+          "description": "Grouped email toggles with a plain-language description per row."
+        }
+      ]
+    },
+    "nps-survey": {
+      "title": "NPS Survey",
+      "description": "An NPS card with a 0–10 score scale and an open-ended reason field.",
+      "category": "survey",
+      "exportName": "NpsSurveyBlock",
+      "kind": "section",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": []
+    },
+    "order-history": {
+      "title": "Order history",
+      "description": "Customer purchase history as a dense table with row actions or stacked order cards with thumbnails and reorder.",
+      "category": "store",
+      "exportName": "OrderHistoryTableBlock",
+      "kind": "section",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": [
+        {
+          "id": "table",
+          "name": "Table",
+          "description": "Dense orders table with status badges and a per-row actions menu."
+        },
+        {
+          "id": "cards",
+          "name": "Cards",
+          "description": "Stacked order cards with item thumbnails and one-tap reorder."
+        }
+      ]
+    },
+    "order-tracking": {
+      "title": "Order tracking",
+      "description": "Shipment status card with a vertical timeline, ETA banner and courier info across in-transit, delivered and delayed states.",
+      "category": "store",
+      "exportName": "OrderTrackingBlock",
+      "kind": "section",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": [
+        {
+          "id": "in-transit",
+          "name": "In transit",
+          "description": "Shipment timeline with the current leg highlighted and courier info."
+        },
+        {
+          "id": "delivered",
+          "name": "Delivered",
+          "description": "Completed timeline with a delivery confirmation and a review prompt."
+        },
+        {
+          "id": "delayed",
+          "name": "Delayed",
+          "description": "Late shipment with a warning notice, a new estimate and support actions."
+        }
+      ]
+    },
+    "otp": {
+      "title": "Two-Factor Code",
+      "description": "A two-factor authentication card with a six-digit one-time code entry.",
+      "category": "auth",
+      "exportName": "OtpBlock",
+      "kind": "page",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": []
+    },
+    "page-header": {
+      "title": "Page Header",
+      "description": "A page header with breadcrumbs, title, status, actions, and optional tabs.",
+      "category": "page",
+      "exportName": "PageHeaderBlock",
+      "kind": "section",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": [
+        {
+          "id": "with-actions",
+          "name": "Title and actions",
+          "description": "Breadcrumb, title with status badge, supporting copy, and primary/secondary actions."
+        },
+        {
+          "id": "with-tabs",
+          "name": "Title and tabs",
+          "description": "Adds a section tab row beneath the header for switching detail views."
+        }
+      ]
+    },
+    "payment-method": {
+      "title": "Payment Method",
+      "description": "Choose a saved card from a radio list or add a new card with a full card-entry form.",
+      "category": "billing",
+      "exportName": "PaymentMethodBlock",
+      "kind": "section",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": [
+        {
+          "id": "select",
+          "name": "Select method",
+          "description": "Pick a saved card from a radio list, mark a default, or add a new payment method."
+        },
+        {
+          "id": "add-card",
+          "name": "Add card",
+          "description": "A new-card form with cardholder, number, expiry, CVC, and a set-as-default toggle."
+        }
+      ]
+    },
+    "payouts": {
+      "title": "Payouts",
+      "description": "A creator payout dashboard with balance cards and a settlement history table.",
+      "category": "commerce",
+      "exportName": "PayoutsBlock",
+      "kind": "section",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": []
+    },
+    "post-card": {
+      "title": "Post Card",
+      "description": "A social post with author, content, and engagement actions.",
+      "category": "social",
+      "exportName": "PostCardBlock",
+      "kind": "section",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": []
+    },
+    "pricing": {
+      "title": "Pricing",
+      "description": "A three-tier pricing grid with a highlighted plan.",
+      "category": "marketing",
+      "exportName": "PricingBlock",
+      "kind": "section",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": [
+        {
+          "id": "tiers",
+          "name": "Three tiers",
+          "description": "A responsive three-plan grid with a highlighted popular tier."
+        },
+        {
+          "id": "toggle",
+          "name": "Plan toggle",
+          "description": "Two-plan pricing with a monthly/annual segmented control."
+        },
+        {
+          "id": "usage",
+          "name": "Usage based",
+          "description": "A metered pricing layout for API, infra and event-based products."
+        }
+      ]
+    },
+    "product-detail": {
+      "title": "Product detail",
+      "description": "Full product page section with gallery art, rating, variant selectors, quantity stepper, add-to-cart CTA and detail accordions.",
+      "category": "store",
+      "exportName": "ProductDetailBlock",
+      "kind": "page",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": [
+        {
+          "id": "standard",
+          "name": "Standard",
+          "description": "Full product page with variant selectors, a quantity stepper and detail accordions."
+        },
+        {
+          "id": "gallery",
+          "name": "Gallery",
+          "description": "Thumbnail rail beside the main image, with a quick spec strip."
+        },
+        {
+          "id": "minimal",
+          "name": "Minimal",
+          "description": "Centered single-column layout, ideal for one-product stores."
+        }
+      ]
+    },
+    "product-grid": {
+      "title": "Product Grid",
+      "description": "A digital-products storefront grid of product cards with prices and buy buttons.",
+      "category": "commerce",
+      "exportName": "ProductGridBlock",
+      "kind": "section",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": [
+        {
+          "id": "classic",
+          "name": "Storefront grid",
+          "description": "Three-column storefront grid with product art, pricing, and buy actions."
+        },
+        {
+          "id": "with-filters",
+          "name": "With filters",
+          "description": "Catalog layout with category, price, and color filters beside a sortable product grid."
+        },
+        {
+          "id": "showcase",
+          "name": "Editorial showcase",
+          "description": "Hero product feature with an asymmetric grid and overlay shop actions."
+        }
+      ]
+    },
+    "profile-card": {
+      "title": "Profile Card",
+      "description": "A user profile card with a cover, stats, and a follow action.",
+      "category": "social",
+      "exportName": "ProfileCardBlock",
+      "kind": "section",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": []
+    },
+    "prompt-box": {
+      "title": "Prompt Box",
+      "description": "A standalone AI composer with suggestion chips, a model picker, and attach and send actions.",
+      "category": "ai",
+      "exportName": "PromptBoxBlock",
+      "kind": "section",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": []
+    },
+    "reviews": {
+      "title": "Reviews",
+      "description": "Customer reviews: aggregate rating with distribution bars plus top reviews, or a dense compact grid of short reviews.",
+      "category": "store",
+      "exportName": "ReviewsSummaryBlock",
+      "kind": "section",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": [
+        {
+          "id": "summary",
+          "name": "Summary",
+          "description": "Aggregate rating with a distribution chart next to the top reviews."
+        },
+        {
+          "id": "compact",
+          "name": "Compact grid",
+          "description": "Dense grid of short reviews for landing and product pages."
+        }
+      ]
+    },
+    "sessions": {
+      "title": "Sessions",
+      "description": "Active device sessions with per-session and bulk revoke.",
+      "category": "account",
+      "exportName": "SessionsListBlock",
+      "kind": "section",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": [
+        {
+          "id": "list",
+          "name": "Device list",
+          "description": "Signed-in devices with client, location, last activity, and revoke."
+        },
+        {
+          "id": "table",
+          "name": "Selectable table",
+          "description": "Session table with bulk selection and a revoke-selected action."
+        }
+      ]
+    },
+    "settings": {
+      "title": "Settings Panel",
+      "description": "An account settings form with switches and inputs.",
+      "category": "application",
+      "exportName": "SettingsBlock",
+      "kind": "section",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": []
+    },
+    "setup-checklist": {
+      "title": "Setup Checklist",
+      "description": "A setup-progress checklist with a progress bar and per-item actions.",
+      "category": "onboarding",
+      "exportName": "SetupChecklistBlock",
+      "kind": "section",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": []
+    },
+    "setup-wizard": {
+      "title": "Setup Wizard",
+      "description": "A multi-step setup flow with a stepper and a form panel.",
+      "category": "onboarding",
+      "exportName": "SetupWizardBlock",
+      "kind": "section",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": []
+    },
+    "signup": {
+      "title": "Sign Up",
+      "description": "A create-account card with email, password, terms, and social sign-up.",
+      "category": "auth",
+      "exportName": "SignupBlock",
+      "kind": "page",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": [
+        {
+          "id": "classic",
+          "name": "Classic card",
+          "description": "Centered create-account card with social sign-up shortcuts."
+        },
+        {
+          "id": "split-proof",
+          "name": "Split with proof",
+          "description": "Create-account form beside customer logos, a star rating, and short quotes."
+        },
+        {
+          "id": "with-plan",
+          "name": "With plan summary",
+          "description": "Signup form beside the selected plan, trial terms, and first-charge summary."
+        }
+      ]
+    },
+    "stats": {
+      "title": "Stats Cards",
+      "description": "A dashboard row of KPI metric cards with trends.",
+      "category": "application",
+      "exportName": "StatsBlock",
+      "kind": "section",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": [
+        {
+          "id": "kpi-grid",
+          "name": "KPI grid",
+          "description": "Four-card dashboard metrics with icons, deltas, and contextual hints."
+        },
+        {
+          "id": "compact-summary",
+          "name": "Compact summary",
+          "description": "A single-card metric summary for dense dashboards and overview panels."
+        },
+        {
+          "id": "pipeline-funnel",
+          "name": "Pipeline funnel",
+          "description": "A segmented stats card for activation, pipeline, or conversion steps."
+        }
+      ]
+    },
+    "status-page": {
+      "title": "Status Page",
+      "description": "A service-status section with an operational banner, per-service 45-day uptime bars, and an incident-history link.",
+      "category": "page",
+      "exportName": "StatusPageBlock",
+      "kind": "page",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": []
+    },
+    "success-state": {
+      "title": "Success State",
+      "description": "A centered confirmation state with a success icon and follow-up actions.",
+      "category": "states",
+      "exportName": "SuccessStateBlock",
+      "kind": "page",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": []
+    },
+    "team": {
+      "title": "Team Members",
+      "description": "A team list with avatars, roles and a menu.",
+      "category": "application",
+      "exportName": "TeamBlock",
+      "kind": "section",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": []
+    },
+    "testimonials": {
+      "title": "Testimonials",
+      "description": "Social proof with avatar trust line and a wall of customer testimonials.",
+      "category": "marketing",
+      "exportName": "TestimonialsBlock",
+      "kind": "section",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": [
+        {
+          "id": "marquee",
+          "name": "Marquee wall",
+          "description": "A scrolling, pause-on-hover wall of testimonials with avatar social proof."
+        },
+        {
+          "id": "grid",
+          "name": "Card grid",
+          "description": "A static responsive grid of testimonial cards for dense social proof."
+        }
+      ]
+    },
+    "toast-stack": {
+      "title": "Toast Stack",
+      "description": "A stack of success, error, warning, and info toasts with icons and dismiss actions.",
+      "category": "notifications",
+      "exportName": "ToastStackBlock",
+      "kind": "section",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": []
+    },
+    "usage-dashboard": {
+      "title": "Usage Dashboard",
+      "description": "A usage analytics panel with metric cards, trend sparklines, quota meters, and a top-resources table.",
+      "category": "billing",
+      "exportName": "UsageDashboardBlock",
+      "kind": "section",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": []
+    },
+    "user-management": {
+      "title": "User management",
+      "description": "Team member administration for a B2B SaaS workspace — a searchable directory table with role filter, status badges, per-user action menus and pagination, plus a card-grid variant for small teams.",
+      "category": "admin",
+      "exportName": "UserManagementTableBlock",
+      "kind": "section",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": [
+        {
+          "id": "table",
+          "name": "Directory table",
+          "description": "A searchable member table with a role filter, status badges, row actions and pagination."
+        },
+        {
+          "id": "cards",
+          "name": "Member cards",
+          "description": "A card grid with the same member actions — a better fit for small teams."
+        }
+      ]
+    },
+    "waitlist": {
+      "title": "Waitlist Hero",
+      "description": "A waitlist capture hero with an early-access pill, a gradient headline, an inline email form that swaps to a joined state, and avatar social proof.",
+      "category": "marketing",
+      "exportName": "WaitlistHeroBlock",
+      "kind": "section",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": []
+    },
+    "welcome": {
+      "title": "Welcome",
+      "description": "A get-started welcome panel with quick-start actions.",
+      "category": "onboarding",
+      "exportName": "WelcomeBlock",
+      "kind": "section",
+      "dataSlots": [],
+      "brandTokens": [],
+      "variants": []
+    }
+  },
+  "components": {
+    "accordion": {
+      "title": "Accordion",
+      "category": "navigation",
+      "description": "Collapsible content sections.",
+      "rsc": false
+    },
+    "alert": {
+      "title": "Alert",
+      "category": "feedback",
+      "description": "Inline callout banner with semantic variants.",
+      "rsc": true
+    },
+    "alert-dialog": {
+      "title": "AlertDialog",
+      "category": "feedback",
+      "description": "Confirm a destructive action.",
+      "rsc": false
+    },
+    "animated-button": {
+      "title": "AnimatedButton",
+      "category": "buttons",
+      "description": "Motion-powered button with spring feedback.",
+      "rsc": false
+    },
+    "animated-number": {
+      "title": "AnimatedNumber",
+      "category": "premium",
+      "description": "Number that springs to its target — counts up or down.",
+      "rsc": false
+    },
+    "app-shell": {
+      "title": "AppShell",
+      "category": "navigation",
+      "description": "Sidebar + header + content layout in one step.",
+      "rsc": true
+    },
+    "aspect-ratio": {
+      "title": "AspectRatio",
+      "category": "data-display",
+      "description": "Constrain content to a fixed width-to-height ratio.",
+      "rsc": true
+    },
+    "aurora-background": {
+      "title": "AuroraBackground",
+      "category": "premium",
+      "description": "Animated aurora backdrop.",
+      "rsc": true
+    },
+    "autocomplete": {
+      "title": "Autocomplete",
+      "category": "forms",
+      "description": "Free-text input with sync or async suggestions.",
+      "rsc": false
+    },
+    "avatar": {
+      "title": "Avatar",
+      "category": "data-display",
+      "description": "User image with a fallback.",
+      "rsc": true
+    },
+    "avatar-group": {
+      "title": "AvatarGroup",
+      "category": "data-display",
+      "description": "Overlapping avatar stack with a \"+N\" overflow chip.",
+      "rsc": true
+    },
+    "badge": {
+      "title": "Badge",
+      "category": "data-display",
+      "description": "Small status / category label.",
+      "rsc": true
+    },
+    "banner": {
+      "title": "Banner",
+      "category": "feedback",
+      "description": "Dismissible full-width announcement / promo bar with a CTA.",
+      "rsc": false
+    },
+    "border-beam": {
+      "title": "BorderBeam",
+      "category": "premium",
+      "description": "An animated light beam that travels around an element's border.",
+      "rsc": true
+    },
+    "breadcrumb": {
+      "title": "Breadcrumb",
+      "category": "navigation",
+      "description": "Hierarchical page trail.",
+      "rsc": true
+    },
+    "button": {
+      "title": "Button",
+      "category": "buttons",
+      "description": "Clickable action with variants, sizes and asChild.",
+      "rsc": true
+    },
+    "button-group": {
+      "title": "ButtonGroup",
+      "category": "buttons",
+      "description": "Attaches a row or column of buttons into one segmented unit.",
+      "rsc": true
+    },
+    "calendar": {
+      "title": "Calendar",
+      "category": "date-time",
+      "description": "Date grid (react-day-picker).",
+      "rsc": false
+    },
+    "card": {
+      "title": "Card",
+      "category": "data-display",
+      "description": "Surface that groups related content.",
+      "rsc": true
+    },
+    "carousel": {
+      "title": "Carousel",
+      "category": "premium",
+      "description": "Scroll-snap slide gallery with prev/next, dots and keyboard nav.",
+      "rsc": false
+    },
+    "chart": {
+      "title": "Chart",
+      "category": "charts",
+      "description": "Recharts wrapper with tokens.",
+      "rsc": false
+    },
+    "checkbox": {
+      "title": "Checkbox",
+      "category": "forms",
+      "description": "Binary choice with an indicator.",
+      "rsc": false
+    },
+    "chip": {
+      "title": "Chip",
+      "category": "forms",
+      "description": "Interactive filter/selection chip — toggleable, dismissible, with icon and avatar slots.",
+      "rsc": true
+    },
+    "code-block": {
+      "title": "CodeBlock",
+      "category": "data-display",
+      "description": "Source snippet with header, line numbers and copy.",
+      "rsc": true
+    },
+    "code-tabs": {
+      "title": "CodeTabs",
+      "category": "data-display",
+      "description": "Tabbed code snippets with per-tab copy and a localStorage-synced tab choice.",
+      "rsc": false
+    },
+    "collapsible": {
+      "title": "Collapsible",
+      "category": "data-display",
+      "description": "Animated show/hide for a single section.",
+      "rsc": false
+    },
+    "color-picker": {
+      "title": "ColorPicker",
+      "category": "forms",
+      "description": "OKLCH-native color input on a popover, with an area, hue slider and swatches.",
+      "rsc": false
+    },
+    "combobox": {
+      "title": "Combobox",
+      "category": "forms",
+      "description": "Searchable single-select with autocomplete.",
+      "rsc": false
+    },
+    "command": {
+      "title": "Command",
+      "category": "overlays",
+      "description": "⌘K command palette (cmdk).",
+      "rsc": false
+    },
+    "comparison-slider": {
+      "title": "ComparisonSlider",
+      "category": "data-display",
+      "description": "Drag a divider to reveal a before/after comparison of two layers.",
+      "rsc": false
+    },
+    "confirmation-dialog": {
+      "title": "ConfirmationDialog",
+      "category": "overlays",
+      "description": "Ergonomic AlertDialog wrapper for destructive actions with async confirm.",
+      "rsc": false
+    },
+    "context-menu": {
+      "title": "ContextMenu",
+      "category": "overlays",
+      "description": "Right-click menu with items, checkboxes and submenus.",
+      "rsc": false
+    },
+    "copy-button": {
+      "title": "CopyButton",
+      "category": "buttons",
+      "description": "Copy text to the clipboard with success feedback.",
+      "rsc": false
+    },
+    "countdown": {
+      "title": "Countdown",
+      "category": "date-time",
+      "description": "Ticking day/hour/minute/second tiles counting down to a target.",
+      "rsc": false
+    },
+    "credit-card-input": {
+      "title": "CreditCardInput",
+      "category": "forms",
+      "description": "Card number, expiry and CVC with brand detection and Luhn validation.",
+      "rsc": false
+    },
+    "currency-input": {
+      "title": "CurrencyInput",
+      "category": "forms",
+      "description": "Money field with a currency selector and live thousand/decimal formatting.",
+      "rsc": false
+    },
+    "data-table": {
+      "title": "DataTable",
+      "category": "data-display",
+      "description": "TanStack table with sorting, search & faceted filters, pagination, row selection with bulk actions, column visibility, density, and loading/empty/error states.",
+      "rsc": false
+    },
+    "date-picker": {
+      "title": "DatePicker",
+      "category": "date-time",
+      "description": "Popover-based date selection.",
+      "rsc": false
+    },
+    "date-range-picker": {
+      "title": "DateRangePicker",
+      "category": "date-time",
+      "description": "Start/end date selection with presets.",
+      "rsc": false
+    },
+    "description-list": {
+      "title": "DescriptionList",
+      "category": "data-display",
+      "description": "Semantic dl/dt/dd pairs in stacked, horizontal, or grid-card layouts for detail panes and order summaries.",
+      "rsc": true
+    },
+    "dialog": {
+      "title": "Dialog",
+      "category": "overlays",
+      "description": "Modal dialog with header and footer.",
+      "rsc": false
+    },
+    "dock": {
+      "title": "Dock",
+      "category": "premium",
+      "description": "A macOS-style icon dock that magnifies items as the pointer nears.",
+      "rsc": false
+    },
+    "drawer": {
+      "title": "Drawer",
+      "category": "overlays",
+      "description": "Bottom drawer (vaul).",
+      "rsc": false
+    },
+    "dropdown-menu": {
+      "title": "DropdownMenu",
+      "category": "overlays",
+      "description": "Actions menu with submenus.",
+      "rsc": false
+    },
+    "empty": {
+      "title": "Empty",
+      "category": "data-display",
+      "description": "Empty-state placeholder.",
+      "rsc": true
+    },
+    "fab": {
+      "title": "Fab",
+      "category": "buttons",
+      "description": "Floating action button with an optional speed-dial of actions.",
+      "rsc": false
+    },
+    "field": {
+      "title": "Field",
+      "category": "forms",
+      "description": "Label + description + error layout.",
+      "rsc": true
+    },
+    "file-dropzone": {
+      "title": "FileDropzone",
+      "category": "forms",
+      "description": "Drag-and-drop file upload area.",
+      "rsc": false
+    },
+    "flip-card": {
+      "title": "FlipCard",
+      "category": "premium",
+      "description": "A 3D card that flips between a front and a back face.",
+      "rsc": false
+    },
+    "floating-label-input": {
+      "title": "FloatingLabelInput",
+      "category": "forms",
+      "description": "Text field whose label floats above on focus or when filled.",
+      "rsc": true
+    },
+    "form": {
+      "title": "Form",
+      "category": "forms",
+      "description": "react-hook-form + zod integration.",
+      "rsc": false
+    },
+    "frame": {
+      "title": "Frame",
+      "category": "premium",
+      "description": "Browser/window chrome that frames a screenshot or product mockup.",
+      "rsc": true
+    },
+    "glass-card": {
+      "title": "GlassCard",
+      "category": "premium",
+      "description": "Frosted-glass surface.",
+      "rsc": true
+    },
+    "gradient-border": {
+      "title": "GradientBorder",
+      "category": "premium",
+      "description": "Aurora gradient border.",
+      "rsc": true
+    },
+    "gradient-text": {
+      "title": "GradientText",
+      "category": "premium",
+      "description": "Gradient-clipped text.",
+      "rsc": true
+    },
+    "heatmap": {
+      "title": "Heatmap",
+      "category": "data-display",
+      "description": "A calendar-style contribution heatmap that buckets daily activity into levels.",
+      "rsc": true
+    },
+    "hover-card": {
+      "title": "HoverCard",
+      "category": "overlays",
+      "description": "Preview content on hover.",
+      "rsc": false
+    },
+    "image-zoom": {
+      "title": "ImageZoom",
+      "category": "data-display",
+      "description": "Inline hover/press zoom that magnifies product imagery and pans with the cursor.",
+      "rsc": false
+    },
+    "input": {
+      "title": "Input",
+      "category": "forms",
+      "description": "Single-line text field with invalid state.",
+      "rsc": true
+    },
+    "input-group": {
+      "title": "InputGroup",
+      "category": "forms",
+      "description": "A composable wrapper that fuses prefix/suffix addons to an Input into one bordered field.",
+      "rsc": true
+    },
+    "input-otp": {
+      "title": "InputOTP",
+      "category": "forms",
+      "description": "One-time-code input with slots.",
+      "rsc": false
+    },
+    "json-viewer": {
+      "title": "JsonViewer",
+      "category": "data-display",
+      "description": "Collapsible JSON tree with type-colored values and per-row copy.",
+      "rsc": false
+    },
+    "kanban": {
+      "title": "Kanban",
+      "category": "data-display",
+      "description": "Drag-and-drop board with cards that reorder and move across columns.",
+      "rsc": false
+    },
+    "kbd": {
+      "title": "Kbd",
+      "category": "data-display",
+      "description": "Keyboard key hint.",
+      "rsc": true
+    },
+    "label": {
+      "title": "Label",
+      "category": "forms",
+      "description": "Accessible label tied to a control.",
+      "rsc": true
+    },
+    "lightbox": {
+      "title": "Lightbox",
+      "category": "overlays",
+      "description": "Full-screen image gallery with thumbnails and keyboard navigation.",
+      "rsc": false
+    },
+    "logo-carousel": {
+      "title": "LogoCarousel",
+      "category": "premium",
+      "description": "Animated hero logo carousel with reduced-motion fallback.",
+      "rsc": false
+    },
+    "magnetic": {
+      "title": "Magnetic",
+      "category": "premium",
+      "description": "Wrapper whose content is gently pulled toward the cursor.",
+      "rsc": false
+    },
+    "marquee": {
+      "title": "Marquee",
+      "category": "premium",
+      "description": "Seamless infinite scroller for logos, testimonials, or a ticker.",
+      "rsc": false
+    },
+    "masonry": {
+      "title": "Masonry",
+      "category": "data-display",
+      "description": "A responsive CSS multi-column masonry layout for cards and images.",
+      "rsc": true
+    },
+    "menubar": {
+      "title": "Menubar",
+      "category": "navigation",
+      "description": "Desktop-style menu bar with File / Edit / View menus.",
+      "rsc": false
+    },
+    "metric": {
+      "title": "Metric",
+      "category": "data-display",
+      "description": "KPI value with trend delta.",
+      "rsc": true
+    },
+    "mode-toggle": {
+      "title": "ModeToggle",
+      "category": "buttons",
+      "description": "Animated sun ⇄ moon light/dark toggle icon-button.",
+      "rsc": false
+    },
+    "morphing-popover": {
+      "title": "MorphingPopover",
+      "category": "premium",
+      "description": "Trigger that morphs into a non-modal dialog surface.",
+      "rsc": false
+    },
+    "multi-select": {
+      "title": "MultiSelect",
+      "category": "forms",
+      "description": "Pick multiple values shown as removable chips.",
+      "rsc": false
+    },
+    "navigation-menu": {
+      "title": "NavigationMenu",
+      "category": "navigation",
+      "description": "Horizontal menu bar with disclosure panels.",
+      "rsc": false
+    },
+    "notification-center": {
+      "title": "NotificationCenter",
+      "category": "overlays",
+      "description": "Bell-trigger inbox with unread badge and a scrollable list.",
+      "rsc": false
+    },
+    "number-input": {
+      "title": "NumberInput",
+      "category": "forms",
+      "description": "Numeric field with steppers, clamping and keyboard control.",
+      "rsc": false
+    },
+    "orbit": {
+      "title": "Orbit",
+      "category": "premium",
+      "description": "Icons or avatars revolving around a nucleus on pure-CSS rings.",
+      "rsc": true
+    },
+    "pagination": {
+      "title": "Pagination",
+      "category": "navigation",
+      "description": "Navigate between pages.",
+      "rsc": true
+    },
+    "password-input": {
+      "title": "PasswordInput",
+      "category": "forms",
+      "description": "A password field with a show/hide toggle and an optional strength meter.",
+      "rsc": false
+    },
+    "phone-input": {
+      "title": "PhoneInput",
+      "category": "forms",
+      "description": "International phone field with a country selector, emitting E.164.",
+      "rsc": false
+    },
+    "popover": {
+      "title": "Popover",
+      "category": "overlays",
+      "description": "Floating content anchored to a trigger.",
+      "rsc": false
+    },
+    "progress": {
+      "title": "Progress",
+      "category": "feedback",
+      "description": "Determinate progress bar.",
+      "rsc": true
+    },
+    "radio-group": {
+      "title": "RadioGroup",
+      "category": "forms",
+      "description": "Single choice among options.",
+      "rsc": false
+    },
+    "rating": {
+      "title": "Rating",
+      "category": "forms",
+      "description": "Star rating input — interactive or read-only, with optional half stars.",
+      "rsc": false
+    },
+    "resizable": {
+      "title": "Resizable",
+      "category": "navigation",
+      "description": "Draggable split panes for resizable layouts.",
+      "rsc": false
+    },
+    "reveal": {
+      "title": "Reveal",
+      "category": "premium",
+      "description": "Scroll-into-view reveal wrapper.",
+      "rsc": false
+    },
+    "rich-text-editor": {
+      "title": "RichTextEditor",
+      "category": "forms",
+      "description": "Tiptap WYSIWYG editor with a formatting toolbar and HTML output.",
+      "rsc": false
+    },
+    "scheduler": {
+      "title": "Scheduler",
+      "category": "date-time",
+      "description": "Month-view event calendar that lays events onto day cells.",
+      "rsc": false
+    },
+    "scroll-area": {
+      "title": "ScrollArea",
+      "category": "data-display",
+      "description": "Custom-styled scroll container.",
+      "rsc": false
+    },
+    "scroll-progress": {
+      "title": "ScrollProgress",
+      "category": "premium",
+      "description": "A bar or ring that tracks how far a scroll container has been read.",
+      "rsc": false
+    },
+    "segmented-control": {
+      "title": "SegmentedControl",
+      "category": "premium",
+      "description": "Single-select toggle row with a thumb that slides between options.",
+      "rsc": false
+    },
+    "select": {
+      "title": "Select",
+      "category": "forms",
+      "description": "Composable dropdown with groups.",
+      "rsc": false
+    },
+    "separator": {
+      "title": "Separator",
+      "category": "data-display",
+      "description": "Visual divider between content.",
+      "rsc": true
+    },
+    "sheet": {
+      "title": "Sheet",
+      "category": "overlays",
+      "description": "Side-anchored panel.",
+      "rsc": false
+    },
+    "shimmer": {
+      "title": "Shimmer",
+      "category": "premium",
+      "description": "Premium shimmer surface.",
+      "rsc": true
+    },
+    "sidebar": {
+      "title": "Sidebar",
+      "category": "navigation",
+      "description": "Composable, collapsible app sidebar.",
+      "rsc": false
+    },
+    "signature-pad": {
+      "title": "SignaturePad",
+      "category": "forms",
+      "description": "Canvas signature input with smoothed strokes, undo/clear, and data-URL output.",
+      "rsc": false
+    },
+    "skeleton": {
+      "title": "Skeleton",
+      "category": "data-display",
+      "description": "Loading placeholder shimmer.",
+      "rsc": true
+    },
+    "slider": {
+      "title": "Slider",
+      "category": "forms",
+      "description": "Pick a value or a range.",
+      "rsc": false
+    },
+    "sonner": {
+      "title": "Toast",
+      "category": "feedback",
+      "description": "Transient notifications via Sonner.",
+      "rsc": false
+    },
+    "sparkline": {
+      "title": "Sparkline",
+      "category": "data-display",
+      "description": "Tiny inline line, area, or bar trend chart for stat tiles.",
+      "rsc": true
+    },
+    "spinner": {
+      "title": "Spinner",
+      "category": "feedback",
+      "description": "Indeterminate loading indicator.",
+      "rsc": true
+    },
+    "split-button": {
+      "title": "SplitButton",
+      "category": "buttons",
+      "description": "Primary action fused to a dropdown of secondary actions.",
+      "rsc": true
+    },
+    "spotlight-card": {
+      "title": "SpotlightCard",
+      "category": "premium",
+      "description": "Cursor-following spotlight.",
+      "rsc": false
+    },
+    "status-dot": {
+      "title": "StatusDot",
+      "category": "data-display",
+      "description": "Presence dot with pulse, optional label, and avatar-overlay anchoring.",
+      "rsc": true
+    },
+    "stepper": {
+      "title": "Stepper",
+      "category": "forms",
+      "description": "Multi-step wizard progress with optional clickable steps.",
+      "rsc": false
+    },
+    "switch": {
+      "title": "Switch",
+      "category": "forms",
+      "description": "Toggle a setting on or off.",
+      "rsc": false
+    },
+    "table": {
+      "title": "Table",
+      "category": "data-display",
+      "description": "Styled semantic table primitives.",
+      "rsc": true
+    },
+    "table-of-contents": {
+      "title": "TableOfContents",
+      "category": "navigation",
+      "description": "Scrollspy on-this-page nav with an animated active indicator.",
+      "rsc": false
+    },
+    "tabs": {
+      "title": "Tabs",
+      "category": "navigation",
+      "description": "Switch between panels.",
+      "rsc": false
+    },
+    "tags-input": {
+      "title": "TagsInput",
+      "category": "forms",
+      "description": "Type and commit free-form tags as removable chips.",
+      "rsc": false
+    },
+    "terminal": {
+      "title": "Terminal",
+      "category": "premium",
+      "description": "Animated terminal window that types a scripted shell session.",
+      "rsc": false
+    },
+    "text-effect": {
+      "title": "TextEffect",
+      "category": "premium",
+      "description": "Reveal text by staggering words or characters (fade / blur / slide).",
+      "rsc": false
+    },
+    "textarea": {
+      "title": "Textarea",
+      "category": "forms",
+      "description": "Multi-line auto-sizing text field.",
+      "rsc": true
+    },
+    "tilt-card": {
+      "title": "TiltCard",
+      "category": "premium",
+      "description": "A card that tilts in 3D toward the pointer, with an optional glare.",
+      "rsc": false
+    },
+    "time-picker": {
+      "title": "TimePicker",
+      "category": "date-time",
+      "description": "Popover hour/minute (and optional second) selection, 12h or 24h.",
+      "rsc": false
+    },
+    "timeline": {
+      "title": "Timeline",
+      "category": "data-display",
+      "description": "Vertical activity feed with dots, connectors, timestamps and descriptions.",
+      "rsc": true
+    },
+    "toggle": {
+      "title": "Toggle",
+      "category": "buttons",
+      "description": "A two-state on/off button.",
+      "rsc": true
+    },
+    "toggle-group": {
+      "title": "ToggleGroup",
+      "category": "buttons",
+      "description": "A set of toggles, single or multiple.",
+      "rsc": false
+    },
+    "toolbar": {
+      "title": "Toolbar",
+      "category": "navigation",
+      "description": "An accessible button toolbar with roving focus and grouped controls.",
+      "rsc": false
+    },
+    "tooltip": {
+      "title": "Tooltip",
+      "category": "overlays",
+      "description": "Short hint on hover or focus.",
+      "rsc": false
+    },
+    "tree-view": {
+      "title": "TreeView",
+      "category": "data-display",
+      "description": "Data-driven, accessible hierarchy with keyboard navigation.",
+      "rsc": false
+    },
+    "usage-meter": {
+      "title": "UsageMeter",
+      "category": "feedback",
+      "description": "Linear or circular quota / billing usage indicator with severity tones.",
+      "rsc": true
+    },
+    "video-player": {
+      "title": "VideoPlayer",
+      "category": "data-display",
+      "description": "Native video wrapped in token-styled custom controls: seek, volume, playback speed, and fullscreen.",
+      "rsc": false
+    }
+  },
+  "apps": {
+    "landing": {
+      "title": "Landing",
+      "description": "A single polished marketing page — hero, features, pricing, testimonials, FAQ, and a call to action — with a real navbar and footer.",
+      "pages": 1
+    },
+    "store": {
+      "title": "Store",
+      "description": "A complete, navigable storefront: home, catalog, product, cart, checkout, auth, and account — all from validated blocks.",
+      "pages": 9
+    }
+  }
+}

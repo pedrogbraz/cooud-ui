@@ -1,0 +1,240 @@
+import {
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { fileURLToPath } from "node:url";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { composeTemplate } from "./compose.js";
+import { scaffold } from "./scaffold.js";
+
+/**
+ * `composeTemplate` is a thin adapter over `cooud-ui`'s `composeApp()` library
+ * entry. The happy-path integration exercises it against the REAL repo registry
+ * dir (same seam as the CLI's compose.test.ts) — it needs BOTH the committed
+ * `registry/meta.json` AND the built `cooud-ui/compose` dist (dynamic import), so
+ * it is skipped when either is absent (e.g. a pre-build test run). The graceful
+ * paths run always: the adapter must never throw.
+ */
+
+const REPO_REGISTRY = fileURLToPath(new URL("../../../registry", import.meta.url));
+const COMPOSE_DIST = fileURLToPath(
+  new URL("../node_modules/cooud-ui/dist/compose.js", import.meta.url),
+);
+const CAN_COMPOSE = existsSync(join(REPO_REGISTRY, "meta.json")) && existsSync(COMPOSE_DIST);
+
+/** A minimal scaffolded project (package.json + cooud-ui.json) for the composer. */
+function seedProject(cwd: string, registry: string, name = "loja"): void {
+  mkdirSync(cwd, { recursive: true });
+  writeFileSync(
+    join(cwd, "package.json"),
+    JSON.stringify({ name, version: "0.0.0", private: true }),
+  );
+  writeFileSync(
+    join(cwd, "cooud-ui.json"),
+    JSON.stringify(
+      {
+        aliases: { ui: "@/components/ui", lib: "@/lib", blocks: "@/components/blocks" },
+        paths: { ui: "components/ui", lib: "lib", blocks: "components/blocks" },
+        registry,
+      },
+      null,
+      2,
+    ),
+  );
+}
+
+describe("composeTemplate — graceful failure (never throws)", () => {
+  let root: string;
+
+  beforeEach(() => {
+    root = mkdtempSync(join(tmpdir(), "cca-compose-"));
+  });
+  afterEach(() => {
+    rmSync(root, { recursive: true, force: true });
+  });
+
+  it("returns { ok: false } when the target has no cooud-ui.json", async () => {
+    const bare = join(root, "bare");
+    mkdirSync(bare, { recursive: true });
+    const result = await composeTemplate({
+      targetDir: bare,
+      template: "store",
+      brand: "Bare",
+      skipInstall: true,
+    });
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.reason).toMatch(/cooud-ui\.json/);
+  });
+
+  it("returns { ok: false } when the registry lacks a meta.json sidecar", async () => {
+    const cwd = join(root, "no-meta");
+    // Point at an empty local dir → index()/meta() both miss → graceful skip.
+    const emptyRegistry = join(root, "empty-registry");
+    mkdirSync(emptyRegistry, { recursive: true });
+    seedProject(cwd, emptyRegistry);
+    const result = await composeTemplate({
+      targetDir: cwd,
+      template: "store",
+      brand: "NoMeta",
+      registry: emptyRegistry,
+      skipInstall: true,
+    });
+    expect(result.ok).toBe(false);
+  });
+});
+
+describe.skipIf(!CAN_COMPOSE)("composeTemplate — integration (local repo registry)", () => {
+  let root: string;
+  let cwd: string;
+
+  beforeEach(() => {
+    root = mkdtempSync(join(tmpdir(), "cca-compose-int-"));
+    cwd = join(root, "loja");
+    seedProject(cwd, REPO_REGISTRY);
+  });
+  afterEach(() => {
+    rmSync(root, { recursive: true, force: true });
+  });
+
+  it("composes the landing template and reports page/block counts", async () => {
+    const result = await composeTemplate({
+      targetDir: cwd,
+      template: "landing",
+      brand: "Minha Loja",
+      registry: REPO_REGISTRY,
+      skipInstall: true,
+    });
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.pageCount).toBeGreaterThan(0);
+    expect(result.blockCount).toBeGreaterThan(0);
+    expect(result.files).toContain("app/(site)/page.tsx");
+
+    // The generated page follows the golden rule (imports blocks + <main>).
+    const page = readFileSync(join(cwd, "app/(site)/page.tsx"), "utf8");
+    expect(page).toContain("<main");
+    // Brand was baked into the installed navbar copy.
+    const navbar = readFileSync(join(cwd, "components/blocks/navbar.tsx"), "utf8");
+    expect(navbar).toContain("Minha Loja");
+  });
+
+  it("composes the store template into (site)/(bare) route groups", async () => {
+    const result = await composeTemplate({
+      targetDir: cwd,
+      template: "store",
+      brand: "loja",
+      registry: REPO_REGISTRY,
+      skipInstall: true,
+    });
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    // 9 manifest pages → 9 generated page.tsx files.
+    expect(result.pageCount).toBe(9);
+    expect(existsSync(join(cwd, "app/(site)/page.tsx"))).toBe(true);
+    expect(existsSync(join(cwd, "app/(bare)/login/page.tsx"))).toBe(true);
+    expect(existsSync(join(cwd, "app/(site)/products/page.tsx"))).toBe(true);
+  });
+});
+
+/**
+ * The wired `create-cooud-app --template store|landing` flow scaffolds the
+ * `default` base (which ships `app/page.tsx`) and THEN composes on top. Since a
+ * route group like `(site)` is path-transparent, the base `app/page.tsx` and the
+ * generated `app/(site)/page.tsx` would BOTH own "/", which `next build` rejects
+ * ("two parallel pages resolve to /") or, on Turbopack, silently serves the wrong
+ * (base) home. `composeTemplate` must delete the superseded base page — these
+ * tests reproduce the REAL scaffold+compose path (not the minimal seedProject).
+ */
+describe.skipIf(!CAN_COMPOSE)("composeTemplate — base app/page.tsx collision (real base)", () => {
+  let root: string;
+  let cwd: string;
+
+  beforeEach(() => {
+    root = mkdtempSync(join(tmpdir(), "cca-compose-base-"));
+    cwd = join(root, "loja");
+    // Scaffold the REAL default base so app/page.tsx actually exists on disk
+    // before composing — the exact collision source the CLI hits.
+    scaffold({ targetDir: cwd, name: "loja", template: "store" });
+    // The base ships app/page.tsx + app/layout.tsx; without a fix they'd collide.
+    expect(existsSync(join(cwd, "app/page.tsx"))).toBe(true);
+    expect(existsSync(join(cwd, "app/layout.tsx"))).toBe(true);
+    // Point the scaffolded config at the repo registry (has meta.json).
+    const configPath = join(cwd, "cooud-ui.json");
+    const config = JSON.parse(readFileSync(configPath, "utf8"));
+    config.registry = REPO_REGISTRY;
+    writeFileSync(configPath, JSON.stringify(config, null, 2));
+  });
+  afterEach(() => {
+    rmSync(root, { recursive: true, force: true });
+  });
+
+  /** Every dir under app/ that holds a page.tsx (route-group-relative path). */
+  function pageDirs(appDir: string, rel = ""): string[] {
+    const out: string[] = [];
+    for (const entry of readdirSync(appDir, { withFileTypes: true })) {
+      const childRel = rel ? `${rel}/${entry.name}` : entry.name;
+      if (entry.isDirectory()) out.push(...pageDirs(join(appDir, entry.name), childRel));
+      else if (entry.name === "page.tsx") out.push(rel);
+    }
+    return out;
+  }
+
+  /** Route each page resolves to, with path-transparent (group) segments dropped. */
+  function resolvedRoute(pageDir: string): string {
+    const segs = pageDir.split("/").filter((s) => s.length > 0 && !/^\(.*\)$/.test(s));
+    return `/${segs.join("/")}`;
+  }
+
+  it.each([
+    "store",
+    "landing",
+  ] as const)("removes the base app/page.tsx so exactly one page resolves to / (%s)", async (template) => {
+    const result = await composeTemplate({
+      targetDir: cwd,
+      template,
+      brand: "Minha Loja",
+      registry: REPO_REGISTRY,
+      skipInstall: true,
+    });
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+
+    // The composer authored the "/" home under the route group…
+    expect(existsSync(join(cwd, "app/(site)/page.tsx"))).toBe(true);
+    // …and the colliding base page is gone.
+    expect(existsSync(join(cwd, "app/page.tsx"))).toBe(false);
+    // The root layout (required <html>/<body>) is KEPT — only the PAGE collides.
+    expect(existsSync(join(cwd, "app/layout.tsx"))).toBe(true);
+
+    // No two pages resolve to the same URL after stripping route groups.
+    const routes = pageDirs(join(cwd, "app")).map(resolvedRoute);
+    expect(routes).toContain("/");
+    expect(new Set(routes).size).toBe(routes.length);
+  });
+
+  it("keeps the base app/page.tsx when compose fails (never orphans the home route)", async () => {
+    // An empty registry → compose fails gracefully; the base page must survive so
+    // the fallback `default` scaffold still has a working "/" route.
+    const emptyRegistry = join(root, "empty-registry");
+    mkdirSync(emptyRegistry, { recursive: true });
+    const result = await composeTemplate({
+      targetDir: cwd,
+      template: "store",
+      brand: "Minha Loja",
+      registry: emptyRegistry,
+      skipInstall: true,
+    });
+    expect(result.ok).toBe(false);
+    // Compose never ran → base page is untouched (still the app's "/" route).
+    expect(existsSync(join(cwd, "app/page.tsx"))).toBe(true);
+    expect(existsSync(join(cwd, "app/(site)/page.tsx"))).toBe(false);
+  });
+});
