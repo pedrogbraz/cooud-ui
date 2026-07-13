@@ -7,6 +7,7 @@ const preset = {
         primary: {
           DEFAULT: "var(--cooud-primary)",
           foreground: "var(--cooud-primary-foreground)",
+          strong: "var(--cooud-primary-text)",
         },
         accent: {
           DEFAULT: "var(--cooud-accent)",
@@ -33,10 +34,22 @@ const preset = {
           soft: "var(--cooud-border-soft)",
         },
         ring: "var(--cooud-ring)",
-        success: "var(--cooud-success)",
-        warning: "var(--cooud-warning)",
-        error: "var(--cooud-error)",
-        info: "var(--cooud-info)",
+        success: {
+          DEFAULT: "var(--cooud-success)",
+          strong: "var(--cooud-success-text)",
+        },
+        warning: {
+          DEFAULT: "var(--cooud-warning)",
+          strong: "var(--cooud-warning-text)",
+        },
+        error: {
+          DEFAULT: "var(--cooud-error)",
+          strong: "var(--cooud-error-text)",
+        },
+        info: {
+          DEFAULT: "var(--cooud-info)",
+          strong: "var(--cooud-info-text)",
+        },
         chart: {
           1: "var(--cooud-chart-1)",
           2: "var(--cooud-chart-2)",

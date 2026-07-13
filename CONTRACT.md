@@ -56,6 +56,25 @@ Colors (use as `bg-*`, `text-*`, `border-*`, `ring-*`):
     for purely ornamental text (redundant annotations, watermark-style hints).
 - `border`, `border-strong`, `border-soft`, `ring`
 - `success`, `warning`, `error`, `info`
+- **Accent/semantic AS TEXT:** `primary`, `success`, `warning`, `error`, and
+  `info` are FILL colors and can read below WCAG AA (4.5:1) as small text — both
+  on a plain surface in the bright/light themes AND, more subtly, as a same-hue
+  label on their OWN `bg-<semantic>/15` tint (a badge chip). For links, labels,
+  tinted-badge text, or syntax-highlighted values ALWAYS use the AA-tuned same-hue
+  `*-strong` text variants, never the raw fill token:
+  - `text-primary-strong` (token `primary-text`)
+  - `text-success-strong` (token `success-text`)
+  - `text-warning-strong` (token `warning-text`)
+  - `text-error-strong` (token `error-text`)
+  - `text-info-strong` (token `info-text`)
+
+  Each is tuned to clear ≥4.5:1 on its WORST case (the `/15` tint over the
+  lightest surface a badge lands on), so `bg-<semantic>/15 text-<semantic>-strong`
+  is AA-safe on every theme/mode; where the raw color already clears AA as tint
+  text, the variant equals it. Leave the raw fill tokens (`text-success`, etc.)
+  only for icon/glyph fills, chart/sparkline strokes, and large decorative marks —
+  NOT for small text. (Auditable: `node scripts/contrast.mjs` asserts every
+  `*-strong` token on its `/15` tint across all 10 theme/modes.)
 
 Radius: `rounded-sm | rounded-md | rounded-lg | rounded-xl | rounded-2xl |
 rounded-3xl` (all derived from `--cooud-radius`; default control surface =
