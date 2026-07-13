@@ -97,6 +97,18 @@ described below.
   (`surface-base` → `surface-floating`), foreground (`fg` → `fg-muted`), lines
   (`border`, `ring`), semantic (`success`, `warning`, `error`, `info`), and a
   five-color chart palette.
+- **Accessible accent text.** `primary`, `success`, `warning`, `error`, and
+  `info` are FILL colors (great as `bg-primary` + `primary-foreground`, or as
+  status/icon fills) and are not always legible as small TEXT — a bright accent
+  on white, or a same-hue accent on its own `bg-<semantic>/15` tint, can read
+  below WCAG AA (4.5:1). For accent/semantic text (links, labels, tinted badge
+  text, syntax-highlighted values) use the AA-tuned same-hue `*-strong` variants:
+  `primary-text` (`text-primary-strong`), `success-text` (`text-success-strong`),
+  `warning-text` (`text-warning-strong`), `error-text` (`text-error-strong`), and
+  `info-text` (`text-info-strong`). Each is tuned against its WORST case — the
+  same-hue `/15` tint over the lightest surface a badge lands on, not just
+  `surface-base` — so it clears AA both on plain surfaces and on a tinted chip;
+  where the base color already clears AA as tint text, the variant equals it.
 - **Typography**, **shape** (`radius`), and **elevation** (`shadow-xs` →
   `shadow-glow`) are tokens too, so they move with the theme.
 - Five built-in themes — **Aurora** (the default; premium sky/cyan),

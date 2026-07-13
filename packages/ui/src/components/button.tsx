@@ -21,7 +21,10 @@ const buttonVariants = cva(
         // theme/mode above 4.5:1 (min 6.63:1) while staying theme-relative.
         destructive:
           "bg-[color-mix(in_oklch,var(--cooud-error),black_30%)] text-white hover:opacity-90 shadow-xs",
-        link: "text-primary underline-offset-4 hover:underline",
+        // `text-primary-strong` (not `text-primary`): a link is small body text,
+        // and the raw brand primary reads <4.5:1 on surface-base in the bright
+        // light themes; the -strong variant is the AA-tuned same-hue text color.
+        link: "text-primary-strong underline-offset-4 hover:underline",
       },
       size: {
         sm: "h-8 gap-1.5 px-3 text-xs [&_svg]:size-3.5",

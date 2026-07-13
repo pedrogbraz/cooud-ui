@@ -568,7 +568,7 @@ function FlipCardControlledDemo() {
             <span className="text-xs font-medium uppercase tracking-wide text-fg-tertiary">
               Pedido #4821
             </span>
-            <span className="rounded-full bg-success/15 px-2.5 py-0.5 text-xs font-medium text-success">
+            <span className="rounded-full bg-success/15 px-2.5 py-0.5 text-xs font-medium text-success-strong">
               Pago
             </span>
           </div>
@@ -1643,7 +1643,7 @@ export const premiumExamples: ExampleMap = {
             <span className="text-xs font-medium uppercase tracking-wide text-fg-tertiary">
               Pedido #4821
             </span>
-            <span className="rounded-full bg-success/15 px-2.5 py-0.5 text-xs font-medium text-success">
+            <span className="rounded-full bg-success/15 px-2.5 py-0.5 text-xs font-medium text-success-strong">
               Pago
             </span>
           </div>

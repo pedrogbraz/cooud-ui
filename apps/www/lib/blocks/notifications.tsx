@@ -135,7 +135,7 @@ export function NotificationPanelBlock() {
         </CardContent>
 
         <CardFooter className="justify-center border-border border-t p-2">
-          <Button variant="ghost" size="sm" className="w-full text-primary">
+          <Button variant="ghost" size="sm" className="w-full text-primary-strong">
             View all notifications
           </Button>
         </CardFooter>
@@ -247,7 +247,7 @@ export function NotificationPanelBlock() {
         </CardContent>
 
         <CardFooter className="justify-center border-border border-t p-2">
-          <Button variant="ghost" size="sm" className="w-full text-primary">
+          <Button variant="ghost" size="sm" className="w-full text-primary-strong">
             View all notifications
           </Button>
         </CardFooter>

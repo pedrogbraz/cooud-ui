@@ -17,9 +17,9 @@ describe("JsonViewer", () => {
   it("colors primitive values and keys with semantic tokens", () => {
     render(<JsonViewer data={payload} defaultExpandedDepth={Number.POSITIVE_INFINITY} />);
 
-    expect(screen.getByText('"Ada"')).toHaveClass("text-success");
-    expect(screen.getByText("36")).toHaveClass("text-info", "tabular-nums");
-    expect(screen.getByText("true")).toHaveClass("text-warning");
+    expect(screen.getByText('"Ada"')).toHaveClass("text-success-strong");
+    expect(screen.getByText("36")).toHaveClass("text-info-strong", "tabular-nums");
+    expect(screen.getByText("true")).toHaveClass("text-warning-strong");
     // null is meaningful data, so it uses AA-safe `fg-tertiary`, not `fg-muted`.
     expect(screen.getByText("null")).toHaveClass("text-fg-tertiary");
     expect(screen.getByText('"name"')).toHaveClass("text-fg-secondary");
@@ -91,10 +91,10 @@ describe("JsonViewer", () => {
       />,
     );
 
-    expect(screen.getByText("2026-07-09T12:00:00.000Z")).toHaveClass("text-info");
-    expect(screen.getByText("/ab+c/gi")).toHaveClass("text-success");
-    expect(screen.getByText('"https://cooud.com/docs"')).toHaveClass("text-success");
-    expect(screen.getByText("Error: boom")).toHaveClass("text-error");
+    expect(screen.getByText("2026-07-09T12:00:00.000Z")).toHaveClass("text-info-strong");
+    expect(screen.getByText("/ab+c/gi")).toHaveClass("text-success-strong");
+    expect(screen.getByText('"https://cooud.com/docs"')).toHaveClass("text-success-strong");
+    expect(screen.getByText("Error: boom")).toHaveClass("text-error-strong");
     // Dim type hints where the text alone is ambiguous.
     expect(screen.getByText("Date")).toHaveClass("text-fg-muted");
     expect(screen.getByText("URL")).toHaveClass("text-fg-muted");

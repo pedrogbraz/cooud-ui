@@ -48,6 +48,22 @@
         }
       },
       {
+        "name": "color/primary-text",
+        "resolvedType": "COLOR",
+        "valuesByMode": {
+          "aurora-light": "#0070a3",
+          "aurora-dark": "#00a6f4",
+          "neutral-light": "#171717",
+          "neutral-dark": "#e8e8e8",
+          "midnight-light": "#5b51dc",
+          "midnight-dark": "#807dff",
+          "sunset-light": "#a05b00",
+          "sunset-dark": "#fc9f30",
+          "emerald-light": "#007c4f",
+          "emerald-dark": "#23c987"
+        }
+      },
+      {
         "name": "color/accent",
         "resolvedType": "COLOR",
         "valuesByMode": {
@@ -211,15 +227,15 @@
         "name": "color/fg-tertiary",
         "resolvedType": "COLOR",
         "valuesByMode": {
-          "aurora-light": "#71717a",
+          "aurora-light": "#6e6e77",
           "aurora-dark": "#85858e",
-          "neutral-light": "#737373",
+          "neutral-light": "#6c6c6c",
           "neutral-dark": "#868686",
-          "midnight-light": "#71717a",
+          "midnight-light": "#6e6e77",
           "midnight-dark": "#85858e",
-          "sunset-light": "#71717a",
+          "sunset-light": "#6e6e77",
           "sunset-dark": "#85858e",
-          "emerald-light": "#71717a",
+          "emerald-light": "#6e6e77",
           "emerald-dark": "#85858e"
         }
       },
@@ -336,6 +352,22 @@
         }
       },
       {
+        "name": "color/success-text",
+        "resolvedType": "COLOR",
+        "valuesByMode": {
+          "aurora-light": "#007642",
+          "aurora-dark": "#05c086",
+          "neutral-light": "#007642",
+          "neutral-dark": "#05c086",
+          "midnight-light": "#007642",
+          "midnight-dark": "#05c086",
+          "sunset-light": "#457200",
+          "sunset-dark": "#89be47",
+          "emerald-light": "#007642",
+          "emerald-dark": "#05c086"
+        }
+      },
+      {
         "name": "color/warning",
         "resolvedType": "COLOR",
         "valuesByMode": {
@@ -348,6 +380,22 @@
           "sunset-light": "#945a00",
           "sunset-dark": "#f69e03",
           "emerald-light": "#945a00",
+          "emerald-dark": "#f69e03"
+        }
+      },
+      {
+        "name": "color/warning-text",
+        "resolvedType": "COLOR",
+        "valuesByMode": {
+          "aurora-light": "#935900",
+          "aurora-dark": "#f69e03",
+          "neutral-light": "#935900",
+          "neutral-dark": "#f69e03",
+          "midnight-light": "#935900",
+          "midnight-dark": "#f69e03",
+          "sunset-light": "#935900",
+          "sunset-dark": "#f69e03",
+          "emerald-light": "#935900",
           "emerald-dark": "#f69e03"
         }
       },
@@ -368,6 +416,22 @@
         }
       },
       {
+        "name": "color/error-text",
+        "resolvedType": "COLOR",
+        "valuesByMode": {
+          "aurora-light": "#c61d28",
+          "aurora-dark": "#ff4c6a",
+          "neutral-light": "#c61d28",
+          "neutral-dark": "#ff6467",
+          "midnight-light": "#c61d28",
+          "midnight-dark": "#ff4c6a",
+          "sunset-light": "#c61d28",
+          "sunset-dark": "#ff4c6a",
+          "emerald-light": "#c61d28",
+          "emerald-dark": "#ff4c6a"
+        }
+      },
+      {
         "name": "color/info",
         "resolvedType": "COLOR",
         "valuesByMode": {
@@ -380,6 +444,22 @@
           "sunset-light": "#aa5910",
           "sunset-dark": "#e28d4f",
           "emerald-light": "#007d71",
+          "emerald-dark": "#31c3b5"
+        }
+      },
+      {
+        "name": "color/info-text",
+        "resolvedType": "COLOR",
+        "valuesByMode": {
+          "aurora-light": "#006aad",
+          "aurora-dark": "#00b8db",
+          "neutral-light": "#006aad",
+          "neutral-dark": "#00b8db",
+          "midnight-light": "#5550c0",
+          "midnight-dark": "#878af8",
+          "sunset-light": "#a05000",
+          "sunset-dark": "#e28d4f",
+          "emerald-light": "#007469",
           "emerald-dark": "#31c3b5"
         }
       },

@@ -4,10 +4,12 @@ import { DocsHeader, DocsSection } from "../../components/docs/documentation";
 import { SectionGlow } from "../../components/showcase-ui";
 import { CHANGELOG_ENTRIES } from "../../lib/docs";
 
+// `text-*-strong` labels (AA-tuned same-hue variants): the plain semantic colors
+// read <4.5:1 as small pill text on their own tint over the page surface.
 const statusTone = {
-  Released: "border-success/30 bg-success/10 text-success",
-  "In development": "border-primary/30 bg-primary/10 text-primary",
-  Planned: "border-warning/30 bg-warning/10 text-warning",
+  Released: "border-success/30 bg-success/10 text-success-strong",
+  "In development": "border-primary/30 bg-primary/10 text-primary-strong",
+  Planned: "border-warning/30 bg-warning/10 text-warning-strong",
 };
 
 export default function ChangelogPage() {

@@ -19,7 +19,7 @@ describe("Metric", () => {
 
   it("applies the down-trend styling on the delta", () => {
     render(<MetricDelta trend="down">-4%</MetricDelta>);
-    expect(screen.getByText("-4%")).toHaveClass("text-error");
+    expect(screen.getByText("-4%")).toHaveClass("text-error-strong");
   });
 
   it("has no axe violations", async () => {

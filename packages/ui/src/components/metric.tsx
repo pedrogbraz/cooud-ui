@@ -48,9 +48,12 @@ export interface MetricDeltaProps extends HTMLAttributes<HTMLSpanElement> {
   trend?: "up" | "down" | "neutral";
 }
 
+// Small (`text-xs`) delta text: use the AA-tuned `*-strong` variants so the
+// success/error trend labels clear WCAG AA on the light-theme card surfaces
+// (plain `text-success`/`text-error` read <4.5:1 as small text there).
 const trendStyles: Record<NonNullable<MetricDeltaProps["trend"]>, string> = {
-  up: "text-success",
-  down: "text-error",
+  up: "text-success-strong",
+  down: "text-error-strong",
   neutral: "text-fg-tertiary",
 };
 

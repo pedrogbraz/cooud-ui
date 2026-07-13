@@ -45,9 +45,20 @@ Browser gates (run against the **built** app, so `bun run build` first):
 ```sh
 bunx playwright install chromium    # once
 bun run test:a11y                   # axe-core scans of the core routes
+bun run test:contrast               # per-theme color-contrast sweep (all 10 theme×mode combos)
 bun run test:e2e                    # behavioral flows
 bunx playwright test --project=visual   # screenshot regression (see below)
 ```
+
+### Per-theme contrast
+
+`e2e/a11y/contrast-themes.spec.ts` is a contrast-only axe sweep that runs over a
+curated, representative set of routes across **all 10 theme×mode combos**
+(aurora/neutral/midnight/sunset/emerald × light/dark). It exists because the
+broad a11y gate (`test:a11y`) only scans the default aurora/dark theme, so light
+mode and the other themes would otherwise be ungated for contrast. Run it with
+`bun run test:contrast` (after `bun run build`); it fails on any WCAG-AA
+`color-contrast` violation with the failing fg/bg colors, ratio, and target.
 
 ### Visual regression
 
