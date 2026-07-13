@@ -23,6 +23,7 @@
     "tokens:check": "bun run -F @cooud-ui/tokens tokens:check",
     "props:check": "bun run -F @cooud-ui/www props:check",
     "package:smoke": "node scripts/package-smoke.mjs",
+    "rsc:smoke": "node scripts/rsc-catalog-smoke.mjs",
     "release": "node scripts/release.mjs",
     "bundle:check": "node scripts/bundle-check.mjs",
     "check:example-sections": "node scripts/check-example-sections.mjs",
