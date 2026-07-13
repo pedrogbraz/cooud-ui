@@ -57,11 +57,12 @@ export const log = {
 
 /**
  * The starter templates a user can pick. `default`/`dashboard`/`marketing` copy
- * a bundled directory under `templates/`; `store`/`landing` have NO template dir
- * — they scaffold the `default` base and then compose validated blocks on top
- * (see {@link TEMPLATE_BASE_DIR} and the post-scaffold `composeApp()` step).
+ * a bundled directory under `templates/`; `store`/`landing`/`saas` have NO
+ * template dir — they scaffold the `default` base and then compose validated
+ * blocks on top (see {@link TEMPLATE_BASE_DIR} and the post-scaffold
+ * `composeApp()` step).
  */
-export const TEMPLATES = ["default", "dashboard", "marketing", "store", "landing"] as const;
+export const TEMPLATES = ["default", "dashboard", "marketing", "store", "landing", "saas"] as const;
 export type TemplateName = (typeof TEMPLATES)[number];
 export const DEFAULT_TEMPLATE: TemplateName = "default";
 
@@ -74,6 +75,7 @@ export const DEFAULT_TEMPLATE: TemplateName = "default";
 export const COMPOSED_TEMPLATES = {
   store: "store",
   landing: "landing",
+  saas: "saas",
 } as const satisfies Partial<Record<TemplateName, string>>;
 
 export type ComposedTemplateName = keyof typeof COMPOSED_TEMPLATES;
@@ -99,6 +101,7 @@ export const TEMPLATE_HINTS: Record<TemplateName, string> = {
   marketing: "landing site — hero, features, pricing, testimonials, FAQ, waitlist",
   store: "generated storefront — 9 navigable pages, real nav, from validated blocks",
   landing: "generated landing page — hero, features, pricing, testimonials, FAQ, CTA",
+  saas: "generated SaaS app — split auth + sidebar-shell dashboard, analytics, team, billing, settings",
 };
 
 /** The five shipped theme presets (must match @cooud-ui/tokens `ThemeName`). */

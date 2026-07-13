@@ -44,13 +44,17 @@
  *     No install, no network — safe for a fast gate.
  *
  *   FULL  (`SMOKE_FULL=1 node scripts/compose-smoke.mjs`)
- *     Additionally, for the `store` template composed above (via the real
- *     create-cooud-app scaffold+composeTemplate path, so the base app/page.tsx is
- *     already removed): add the blocks' npm deps to the scaffolded package.json,
- *     `npm install` (pulls the published @cooud-ui/* + lucide-react), run
- *     `next build`, and assert it exits 0 and produced `.next` — the end-to-end
- *     proof that the exact wired store flow builds clean. Heavier and needs the
- *     npm registry reachable, so it's behind the flag.
+ *     Additionally, for the `store` AND `saas` templates composed above (via the
+ *     real create-cooud-app scaffold+composeTemplate path, so the base app/page.tsx
+ *     is already superseded): add the blocks' npm deps to the scaffolded
+ *     package.json, `npm install` (pulls the published @cooud-ui/* + lucide-react +
+ *     recharts), run `next build`, and assert it exits 0 and produced `.next` — the
+ *     end-to-end proof that the exact wired flows build clean. `saas` is the one that
+ *     exercises the Phase-2 machinery (the "use client" app-shell-chrome block
+ *     wrapping server-component children through a route-group layout, the
+ *     login--split installable variant, and recharts), none of which the `store`
+ *     build touches. Heavier and needs the npm registry reachable, so it's behind
+ *     the flag.
  *
  * Exit code is non-zero on ANY failure. Logs are explicit about what failed.
  */
@@ -179,6 +183,7 @@ function blockNpmDeps(manifest) {
   for (const grp of Object.values(manifest.manifest.chrome)) {
     if (grp.navbar) wanted.add(grp.navbar);
     if (grp.footer) wanted.add(grp.footer);
+    if (grp.block) wanted.add(grp.block);
   }
 
   const deps = new Set();
@@ -257,23 +262,38 @@ async function lightComposeTemplate({ scaffold, composeTemplate }, template) {
       check(okShape, `${template}: ${rel} obeys the golden rule (imports + <main> only)`);
     }
 
-    // 4b) No two pages resolve to the same URL. The base app/page.tsx MUST have
-    //     been removed (it and the generated app/(<group>)/page.tsx both own "/"),
-    //     and no route survives twice after stripping path-transparent (group)
-    //     segments. This is the guard for the parallel-pages / silent-wrong-home
-    //     class that `next build` otherwise ships.
-    check(
-      !existsSync(join(target, "app/page.tsx")),
-      `${template}: base app/page.tsx removed (no "/" collision with generated home)`,
-    );
+    // 4b) No two pages resolve to the same URL. When the manifest DOES own "/"
+    //     (store/landing, and now saas — its dashboard IS the shell home at "/"),
+    //     the base app/page.tsx MUST have been removed (it and the generated
+    //     app/(<group>)/page.tsx both own "/"). When it does NOT, the base page is
+    //     legitimately KEPT so "/" still resolves — assert that instead. Either way
+    //     no route survives twice after stripping path-transparent (group) segments.
+    const ownsRoot = manifest.manifest.pages.some((p) => p.route === "/");
+    if (ownsRoot) {
+      check(
+        !existsSync(join(target, "app/page.tsx")),
+        `${template}: base app/page.tsx removed (no "/" collision with generated home)`,
+      );
+    } else {
+      check(
+        existsSync(join(target, "app/page.tsx")),
+        `${template}: base app/page.tsx kept (manifest has no "/" page to supersede it)`,
+      );
+    }
     assertNoRouteCollisions(template, target);
 
-    // 5) Brand baked into the installed chrome copy (site chrome uses navbar/footer).
-    const navbar = join(target, "components/blocks/navbar.tsx");
-    if (existsSync(navbar)) {
+    // 5) Brand baked into the installed chrome copy: navbar (site chrome) and/or
+    //    the app-shell block (shell chrome). At least one chrome copy exists per
+    //    manifest, so require the brand to land in whichever ships.
+    const chromeCopies = [
+      join(target, "components/blocks/navbar.tsx"),
+      join(target, "components/blocks/app-shell-chrome.tsx"),
+    ].filter((p) => existsSync(p));
+    check(chromeCopies.length > 0, `${template}: at least one chrome copy installed`);
+    for (const copy of chromeCopies) {
       check(
-        readFileSync(navbar, "utf8").includes(brand),
-        `${template}: brand baked into navbar copy`,
+        readFileSync(copy, "utf8").includes(brand),
+        `${template}: brand baked into ${copy.replace(`${target}/`, "")}`,
       );
     }
 
@@ -353,14 +373,22 @@ function assertNoRouteCollisions(template, target) {
 }
 
 /* ------------------------------------------------------------------ *
- * FULL: npm install + next build against the composed store
- * ------------------------------------------------------------------ */
-function fullBuildStore(composed) {
+ * FULL: npm install + next build against a composed template
+ * ------------------------------------------------------------------ *
+ * Generalized over the template so the FULL gate covers BOTH `store` (site/bare
+ * chrome, plain login) AND `saas` — the Phase-2 template that introduces the
+ * genuinely new build-time machinery: the `"use client"` app-shell-chrome block
+ * wrapping server-component page children through a route-group layout, the
+ * installable `login--split` variant, and the recharts deps pulled by the
+ * analytics/dashboard blocks. None of that overlaps the store surface, so
+ * building only store left the shell/variant/recharts compile path ungated.
+ */
+function fullBuild(template, composed) {
   const { target, manifest } = composed;
-  group("full build · store (npm install + next build)");
+  group(`full build · ${template} (npm install + next build)`);
 
-  // Add the blocks' npm deps (e.g. lucide-react) to the scaffolded package.json —
-  // in LIGHT we skipInstall, so persist them the way `pm add` would have.
+  // Add the blocks' npm deps (e.g. lucide-react, recharts) to the scaffolded
+  // package.json — in LIGHT we skipInstall, so persist them the way `pm add` would.
   const pkgPath = join(target, "package.json");
   const pkg = JSON.parse(readFileSync(pkgPath, "utf8"));
   pkg.dependencies = pkg.dependencies || {};
@@ -381,16 +409,16 @@ function fullBuildStore(composed) {
       inherit: true,
     });
   } catch (err) {
-    return check(false, `store: npm install failed: ${err.message}`);
+    return check(false, `${template}: npm install failed: ${err.message}`);
   }
 
   try {
     info("next build");
     run("npm", ["run", "build"], { cwd: target, inherit: true });
-    check(existsSync(join(target, ".next")), "store: next build produced .next");
-    ok("store: next build exited 0");
+    check(existsSync(join(target, ".next")), `${template}: next build produced .next`);
+    ok(`${template}: next build exited 0`);
   } catch (err) {
-    check(false, `store: next build failed: ${err.message}`);
+    check(false, `${template}: next build failed: ${err.message}`);
   }
 }
 
@@ -411,22 +439,32 @@ async function main() {
 
   const cleanups = [];
   try {
-    // LIGHT: both templates, always.
+    // LIGHT: every composed template, always.
     const landing = await lightComposeTemplate(dist, "landing");
     if (landing) cleanups.push(landing.tmp);
     const store = await lightComposeTemplate(dist, "store");
     if (store) cleanups.push(store.tmp);
+    const saas = await lightComposeTemplate(dist, "saas");
+    if (saas) cleanups.push(saas.tmp);
 
-    // FULL: build the composed store.
+    // FULL: build the composed store AND saas. store covers the site/bare chrome
+    // + plain-login path; saas covers the Phase-2 machinery (app-shell-chrome
+    // client wrapper through the route-group layout, the login--split variant, and
+    // recharts) that the store build never exercises.
     if (FULL) {
       if (store) {
-        fullBuildStore(store);
+        fullBuild("store", store);
       } else {
         check(false, "store: composed app unavailable for FULL build");
       }
+      if (saas) {
+        fullBuild("saas", saas);
+      } else {
+        check(false, "saas: composed app unavailable for FULL build");
+      }
     } else {
       group("full build");
-      info("skipped — set SMOKE_FULL=1 to npm install + next build the composed store");
+      info("skipped — set SMOKE_FULL=1 to npm install + next build the composed store + saas");
     }
   } catch (err) {
     fatal("compose smoke crashed", err);

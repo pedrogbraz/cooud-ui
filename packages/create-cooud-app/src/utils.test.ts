@@ -33,6 +33,7 @@ describe("templates", () => {
   it("includes the composed templates in the picker set", () => {
     expect(TEMPLATES).toContain("store");
     expect(TEMPLATES).toContain("landing");
+    expect(TEMPLATES).toContain("saas");
     // The bundled-dir templates stay listed too.
     expect(TEMPLATES).toContain("default");
     expect(TEMPLATES).toContain("dashboard");
@@ -45,18 +46,20 @@ describe("templates", () => {
     }
   });
 
-  it("classifies only store/landing as composed templates", () => {
+  it("classifies only store/landing/saas as composed templates", () => {
     expect(isComposedTemplate("store")).toBe(true);
     expect(isComposedTemplate("landing")).toBe(true);
+    expect(isComposedTemplate("saas")).toBe(true);
     expect(isComposedTemplate("default")).toBe(false);
     expect(isComposedTemplate("dashboard")).toBe(false);
     expect(isComposedTemplate("marketing")).toBe(false);
-    expect(Object.keys(COMPOSED_TEMPLATES).sort()).toEqual(["landing", "store"]);
+    expect(Object.keys(COMPOSED_TEMPLATES).sort()).toEqual(["landing", "saas", "store"]);
   });
 
   it("maps composed templates to the default base dir, others to themselves", () => {
     expect(templateBaseDir("store")).toBe("default");
     expect(templateBaseDir("landing")).toBe("default");
+    expect(templateBaseDir("saas")).toBe("default");
     expect(templateBaseDir("default")).toBe("default");
     expect(templateBaseDir("dashboard")).toBe("dashboard");
     expect(templateBaseDir("marketing")).toBe("marketing");
@@ -109,9 +112,10 @@ describe("parseCli", () => {
     expect(parseCli(["my-app", "--template", "default"]).template).toBe("default");
   });
 
-  it("accepts the composed templates (store/landing)", () => {
+  it("accepts the composed templates (store/landing/saas)", () => {
     expect(parseCli(["my-app", "--template", "store"]).template).toBe("store");
     expect(parseCli(["my-app", "--template", "landing"]).template).toBe("landing");
+    expect(parseCli(["my-app", "--template", "saas"]).template).toBe("saas");
   });
 
   it("defaults the AI Kit fields (ai undecided, all assistants/skills, standard preset)", () => {
