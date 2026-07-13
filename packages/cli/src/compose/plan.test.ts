@@ -4,6 +4,7 @@ import {
   fixtureIndex,
   fixtureManifest,
   fixtureMeta,
+  fixtureShellManifest,
 } from "./compose.fixtures.js";
 import type { AppManifest } from "./manifest.js";
 import { buildComposePlan, ComposePlanError, validateComposePlan } from "./plan.js";
@@ -47,14 +48,22 @@ describe("buildComposePlan — happy path", () => {
   });
 
   it("records normalized choices (sorted variant keys, seed when present)", () => {
+    // Both override keys must target a variant-capable block an included page
+    // references (else the plan now fails loud on an unused override key), so the
+    // /login page stacks login + product-detail and both keys resolve.
+    const m = manifest();
+    m.manifest.pages[1]!.blocks = [
+      { block: "login", variant: "split" },
+      { block: "product-detail", variant: "gallery" },
+    ];
     const plan = buildComposePlan(
-      manifest(),
-      { appName: "loja", seed: 7, variants: { z: "1", a: "2" } },
+      m,
+      { appName: "loja", seed: 7, variants: { "product-detail": "gallery", login: "split" } },
       index,
       meta,
       chrome,
     );
-    expect(Object.keys(plan.choices.variants)).toEqual(["a", "z"]);
+    expect(Object.keys(plan.choices.variants)).toEqual(["login", "product-detail"]);
     expect(plan.choices.seed).toBe(7);
     expect(plan.choices.pages).toEqual(["/", "/login"]);
   });
@@ -104,12 +113,63 @@ describe("validateComposePlan — semantic aggregation", () => {
     expect(errors.join("\n")).toMatch(/only chrome blocks belong in a chrome slot/);
   });
 
-  it("rejects the F1-unsupported shell chrome block", () => {
-    const m = manifest();
-    m.manifest.chrome.app = { block: "app-shell" };
-    m.manifest.pages.push({ route: "/dash", title: "D", chrome: "app", blocks: ["hero"] });
+  it("resolves the app-shell chrome block (F2 shell support)", () => {
+    const plan = buildComposePlan(fixtureShellManifest(), { appName: "x" }, index, meta, chrome);
+    expect(plan.usesShell).toBe(true);
+    expect(plan.shellSlug).toBe("app-shell-chrome");
+    expect(plan.shellExportName).toBe("AppShellChromeBlock");
+    // The shell slug is a used chrome slug (installed + rewritten).
+    expect(plan.chromeSlugs).toContain("app-shell-chrome");
+    // The shell group carries the resolved block on its PlanChrome.
+    expect(plan.chromes.find((c) => c.group === "shell")?.block).toBe("app-shell-chrome");
+  });
+
+  it("rejects a non-chrome block in the shell slot", () => {
+    const m = structuredClone(fixtureShellManifest());
+    m.manifest.chrome.shell = { block: "hero" }; // hero is a section, not chrome
     const { errors } = validateComposePlan(m, { appName: "x" }, index, meta, chrome);
-    expect(errors.join("\n")).toMatch(/shell "block" chrome is not supported in F1/);
+    expect(errors.join("\n")).toMatch(/only chrome blocks belong in a chrome slot/);
+  });
+
+  it("rejects combining a shell block with navbar/footer in one group", () => {
+    const m = structuredClone(fixtureShellManifest());
+    m.manifest.chrome.shell = { block: "app-shell-chrome", navbar: "navbar" };
+    const { errors } = validateComposePlan(m, { appName: "x" }, index, meta, chrome);
+    expect(errors.join("\n")).toMatch(/cannot be combined with navbar\/footer/);
+  });
+
+  it("rejects a second shell group (only one shell block group supported per app)", () => {
+    // Two chrome groups both declaring an app-shell `block` validate clean today
+    // but the renderer collapses to a single shell wrapper, silently mis-rendering
+    // the second group's sidebar. Fail loud instead.
+    const m = structuredClone(fixtureShellManifest());
+    m.manifest.chrome.admin = { block: "app-shell-chrome" };
+    m.manifest.pages.push({
+      route: "/admin",
+      title: "Admin",
+      nav: "Admin",
+      chrome: "admin",
+      blocks: ["hero"],
+    });
+    const { errors, plan } = validateComposePlan(m, { appName: "x" }, index, meta, chrome);
+    expect(plan).toBeUndefined();
+    // "admin" sorts before "shell", so "shell" is the extra group flagged.
+    expect(errors.join("\n")).toMatch(
+      /chrome "shell": only one shell "block" group is supported per app \(already used by "admin"\)/,
+    );
+    // Exactly one extra group is flagged (two groups → one error), not both.
+    expect(errors.filter((e) => e.includes("only one shell")).length).toBe(1);
+  });
+
+  it("still accepts a single shell group (guard does not over-fire)", () => {
+    const { errors } = validateComposePlan(
+      fixtureShellManifest(),
+      { appName: "x" },
+      index,
+      meta,
+      chrome,
+    );
+    expect(errors).toEqual([]);
   });
 
   it("throws ComposePlanError (not a plain Error) from buildComposePlan", () => {
@@ -236,6 +296,196 @@ describe("buildComposePlan — dynamic-slug route collisions (Next-invalid)", ()
     ]);
     const { errors } = validateComposePlan(m, { appName: "x" }, index, meta, chrome);
     expect(errors).toEqual([]);
+  });
+});
+
+describe("buildComposePlan — variants (F2)", () => {
+  it("resolves the default variant to the bare item + block export (no variant set)", () => {
+    const plan = buildComposePlan(manifest(), { appName: "loja" }, index, meta, chrome);
+    const loginBlock = plan.pages.find((p) => p.route === "/login")?.blocks[0];
+    expect(loginBlock).toEqual(
+      expect.objectContaining({ slug: "login", item: "login", exportName: "LoginBlock" }),
+    );
+    expect(loginBlock?.variant).toBeUndefined();
+    // The bare item is what installs.
+    expect(plan.blockSlugs).toContain("login");
+    expect(plan.blockSlugs).not.toContain("login--split");
+  });
+
+  it("honors a manifest { block, variant } ref → variant item + export", () => {
+    const m = manifest();
+    m.manifest.pages[1]!.blocks = [{ block: "login", variant: "split" }];
+    const plan = buildComposePlan(m, { appName: "loja" }, index, meta, chrome);
+    const loginBlock = plan.pages.find((p) => p.route === "/login")?.blocks[0];
+    expect(loginBlock).toEqual(
+      expect.objectContaining({
+        slug: "login",
+        item: "login--split",
+        exportName: "LoginSplitBlock",
+        variant: "split",
+      }),
+    );
+    // The variant item (not the bare slug) is what installs.
+    expect(plan.blockSlugs).toContain("login--split");
+    expect(plan.blockSlugs).not.toContain("login");
+  });
+
+  it("lets a --variant choices override win over the manifest variant", () => {
+    const m = manifest();
+    m.manifest.pages[1]!.blocks = [{ block: "login", variant: "split" }];
+    const plan = buildComposePlan(
+      m,
+      { appName: "loja", variants: { login: "minimal" } },
+      index,
+      meta,
+      chrome,
+    );
+    const loginBlock = plan.pages.find((p) => p.route === "/login")?.blocks[0];
+    expect(loginBlock).toEqual(
+      expect.objectContaining({
+        item: "login--minimal",
+        exportName: "LoginMinimalBlock",
+        variant: "minimal",
+      }),
+    );
+    // The override is recorded in normalized choices.
+    expect(plan.choices.variants.login).toBe("minimal");
+  });
+
+  it("a choices override targeting the DEFAULT variant maps back to the bare item", () => {
+    // "default" is the fixture's default-variant id → the bare login item.
+    const plan = buildComposePlan(
+      manifest(),
+      { appName: "loja", variants: { login: "default" } },
+      index,
+      meta,
+      chrome,
+    );
+    const loginBlock = plan.pages.find((p) => p.route === "/login")?.blocks[0];
+    expect(loginBlock?.item).toBe("login");
+    expect(loginBlock?.variant).toBeUndefined();
+  });
+
+  it("rejects an unknown variant with a did-you-mean suggestion", () => {
+    const m = manifest();
+    m.manifest.pages[1]!.blocks = [{ block: "login", variant: "splt" }];
+    const { errors, plan } = validateComposePlan(m, { appName: "x" }, index, meta, chrome);
+    expect(plan).toBeUndefined();
+    expect(errors.join("\n")).toMatch(
+      /unknown variant "splt" for block "login".*Did you mean "split"/,
+    );
+  });
+
+  it("rejects a variant request on a block that has no variants", () => {
+    const m = manifest();
+    // checkout has no variants in the fixture.
+    m.manifest.pages.push({
+      route: "/co",
+      title: "CO",
+      chrome: "bare",
+      blocks: [{ block: "checkout", variant: "wizard" }],
+    });
+    const { errors } = validateComposePlan(m, { appName: "x" }, index, meta, chrome);
+    expect(errors.join("\n")).toMatch(/unknown variant "wizard" for block "checkout"/);
+  });
+
+  it("rejects a --variant override that targets a chrome slot (navbar/footer/shell)", () => {
+    // navbar is a chrome slot; --variant is never consulted for chrome, so an
+    // override here would be silently ignored + persisted. Fail loud instead.
+    const { errors, plan } = validateComposePlan(
+      manifest(),
+      { appName: "x", variants: { navbar: "mega" } },
+      index,
+      meta,
+      chrome,
+    );
+    expect(plan).toBeUndefined();
+    expect(errors.join("\n")).toMatch(
+      /--variant "navbar": chrome slots \(navbar\/footer\/shell\) do not accept --variant/,
+    );
+  });
+
+  it("rejects a --variant override for a shell block slot", () => {
+    const { errors, plan } = validateComposePlan(
+      fixtureShellManifest(),
+      { appName: "x", variants: { "app-shell-chrome": "wide" } },
+      index,
+      meta,
+      chrome,
+    );
+    expect(plan).toBeUndefined();
+    expect(errors.join("\n")).toMatch(/chrome slots.*do not accept --variant/);
+  });
+
+  it("rejects a --variant override whose slug matches no included page/extras block", () => {
+    const { errors, plan } = validateComposePlan(
+      manifest(),
+      { appName: "x", variants: { zzznotablock: "foo" } },
+      index,
+      meta,
+      chrome,
+    );
+    expect(plan).toBeUndefined();
+    expect(errors.join("\n")).toMatch(
+      /--variant "zzznotablock": no included page\/extras block uses block "zzznotablock"/,
+    );
+  });
+
+  it("suggests the closest block for a near-miss --variant override slug", () => {
+    // "logins" is not referenced by any page; the closest variant target is "login".
+    const { errors } = validateComposePlan(
+      manifest(),
+      { appName: "x", variants: { logins: "split" } },
+      index,
+      meta,
+      chrome,
+    );
+    expect(errors.join("\n")).toMatch(/--variant "logins".*Did you mean "login"/);
+  });
+
+  it("rejects a --variant override for a page block dropped by a --pages subset", () => {
+    // /login (the only page referencing `login`) is excluded, so the override for
+    // `login` no longer applies to anything and must not be silently persisted.
+    const { errors, plan } = validateComposePlan(
+      manifest(),
+      { appName: "x", pages: ["/"], variants: { login: "split" } },
+      index,
+      meta,
+      chrome,
+    );
+    expect(plan).toBeUndefined();
+    expect(errors.join("\n")).toMatch(/--variant "login": no included page\/extras block uses/);
+  });
+
+  it("accepts a --variant override that targets an extras block", () => {
+    const m = manifest();
+    m.manifest.extras = { "not-found": "product-detail" };
+    // A slug an extras block references is a legitimate --variant target: the
+    // cross-check must NOT reject it (resolveBlock applied it), and it is recorded.
+    const { errors, plan } = validateComposePlan(
+      m,
+      { appName: "x", variants: { "product-detail": "gallery" } },
+      index,
+      meta,
+      chrome,
+    );
+    expect(errors).toEqual([]);
+    expect(plan?.extras[0]?.slug).toBe("product-detail");
+    expect(plan?.choices.variants["product-detail"]).toBe("gallery");
+  });
+
+  it("errors (not raw ENOENT) when meta names a variant item the registry index omits", () => {
+    // A drifted custom --registry: meta still references login--split but the index
+    // no longer publishes it. resolveBlock must reject it inside the aggregated
+    // ComposePlanError, not let it slip through to a downstream registry.resolve ENOENT.
+    const driftedIndex = fixtureIndex().filter((e) => e.name !== "login--split");
+    const m = manifest();
+    m.manifest.pages[1]!.blocks = [{ block: "login", variant: "split" }];
+    const { errors, plan } = validateComposePlan(m, { appName: "x" }, driftedIndex, meta, chrome);
+    expect(plan).toBeUndefined();
+    expect(errors.join("\n")).toMatch(
+      /variant "split" of block "login" resolves to item "login--split", which the registry index does not publish/,
+    );
   });
 });
 

@@ -13,12 +13,16 @@
         {
           "id": "story",
           "name": "Story",
-          "description": "Mission statement, stats row, founder quote, and a milestone timeline."
+          "description": "Mission statement, stats row, founder quote, and a milestone timeline.",
+          "item": "about",
+          "exportName": "AboutStoryBlock"
         },
         {
           "id": "values",
           "name": "Values",
-          "description": "A values card grid with icons and a token-built culture collage."
+          "description": "A values card grid with icons and a token-built culture collage.",
+          "item": "about--values",
+          "exportName": "AboutValuesBlock"
         }
       ]
     },
@@ -34,12 +38,16 @@
         {
           "id": "two-factor",
           "name": "Two-factor setup",
-          "description": "Status card plus QR pairing, setup key, and one-time backup codes."
+          "description": "Status card plus QR pairing, setup key, and one-time backup codes.",
+          "item": "account-security",
+          "exportName": "AccountSecurityTwoFactorBlock"
         },
         {
           "id": "password",
           "name": "Password & danger zone",
-          "description": "Password change with strength meter, recovery email, and a danger zone."
+          "description": "Password change with strength meter, recovery email, and a danger zone.",
+          "item": "account-security--password",
+          "exportName": "AccountSecurityPasswordBlock"
         }
       ]
     },
@@ -75,12 +83,16 @@
         {
           "id": "overview",
           "name": "Traffic overview",
-          "description": "KPI metrics with sparklines, a 30-day traffic trend and top pages and referrers breakdowns."
+          "description": "KPI metrics with sparklines, a 30-day traffic trend and top pages and referrers breakdowns.",
+          "item": "analytics",
+          "exportName": "AnalyticsOverviewBlock"
         },
         {
           "id": "engagement",
           "name": "Engagement cohorts",
-          "description": "Retention stat cards plus a weekly cohort heat grid built from token-colored cells."
+          "description": "Retention stat cards plus a weekly cohort heat grid built from token-colored cells.",
+          "item": "analytics--engagement",
+          "exportName": "AnalyticsEngagementBlock"
         }
       ]
     },
@@ -96,14 +108,35 @@
         {
           "id": "list",
           "name": "Key list",
-          "description": "Masked keys with reveal and copy, scope badges, and usage metadata."
+          "description": "Masked keys with reveal and copy, scope badges, and usage metadata.",
+          "item": "api-keys",
+          "exportName": "ApiKeysListBlock"
         },
         {
           "id": "create",
           "name": "Create key",
-          "description": "Scoped key creation with expiry and a one-time generated-key reveal."
+          "description": "Scoped key creation with expiry and a one-time generated-key reveal.",
+          "item": "api-keys--create",
+          "exportName": "ApiKeysCreateBlock"
         }
       ]
+    },
+    "app-shell-chrome": {
+      "title": "App Shell",
+      "description": "A sidebar + header application shell that wraps page content — the chrome the (app) route group uses for dashboard pages.",
+      "category": "shell",
+      "exportName": "AppShellChromeBlock",
+      "kind": "chrome",
+      "dataSlots": [
+        "app-nav"
+      ],
+      "brandTokens": [
+        {
+          "token": "brand",
+          "literal": "Cooud"
+        }
+      ],
+      "variants": []
     },
     "audit-log": {
       "title": "Audit log",
@@ -117,12 +150,16 @@
         {
           "id": "timeline",
           "name": "Day-grouped timeline",
-          "description": "A grouped-by-day security feed with actor avatars, emphasized names and severity badges."
+          "description": "A grouped-by-day security feed with actor avatars, emphasized names and severity badges.",
+          "item": "audit-log",
+          "exportName": "AuditLogTimelineBlock"
         },
         {
           "id": "table",
           "name": "Filterable table",
-          "description": "A filterable event table with type badges, actors, IP addresses and detail affordances."
+          "description": "A filterable event table with type badges, actors, IP addresses and detail affordances.",
+          "item": "audit-log--table",
+          "exportName": "AuditLogTableBlock"
         }
       ]
     },
@@ -138,12 +175,16 @@
         {
           "id": "subscription",
           "name": "Subscription",
-          "description": "Current plan, usage meters, payment method, and a downloadable invoice history."
+          "description": "Current plan, usage meters, payment method, and a downloadable invoice history.",
+          "item": "billing",
+          "exportName": "SubscriptionBlock"
         },
         {
           "id": "plans",
           "name": "Plan selector",
-          "description": "Three-tier plan picker with a highlighted popular plan and a monthly/annual toggle."
+          "description": "Three-tier plan picker with a highlighted popular plan and a monthly/annual toggle.",
+          "item": "billing--plans",
+          "exportName": "PlansBlock"
         }
       ]
     },
@@ -159,12 +200,16 @@
         {
           "id": "grid",
           "name": "Featured grid",
-          "description": "A featured hero post above a responsive three-column post grid."
+          "description": "A featured hero post above a responsive three-column post grid.",
+          "item": "blog",
+          "exportName": "BlogGridBlock"
         },
         {
           "id": "list",
           "name": "Editorial list",
-          "description": "An editorial list layout with larger typography and horizontal cards."
+          "description": "An editorial list layout with larger typography and horizontal cards.",
+          "item": "blog--list",
+          "exportName": "BlogListBlock"
         }
       ]
     },
@@ -180,12 +225,16 @@
         {
           "id": "article",
           "name": "Article",
-          "description": "A single-column article with token-styled prose and a share row."
+          "description": "A single-column article with token-styled prose and a share row.",
+          "item": "blog-post",
+          "exportName": "BlogPostArticleBlock"
         },
         {
           "id": "with-sidebar",
           "name": "With sidebar",
-          "description": "The article beside a sticky table of contents and a newsletter card."
+          "description": "The article beside a sticky table of contents and a newsletter card.",
+          "item": "blog-post--with-sidebar",
+          "exportName": "BlogPostSidebarBlock"
         }
       ]
     },
@@ -211,12 +260,16 @@
         {
           "id": "page",
           "name": "Cart page",
-          "description": "Full cart page with editable line items and an order summary."
+          "description": "Full cart page with editable line items and an order summary.",
+          "item": "cart",
+          "exportName": "CartPageBlock"
         },
         {
           "id": "drawer",
           "name": "Drawer",
-          "description": "Slide-over mini cart with a free-shipping meter and quick checkout."
+          "description": "Slide-over mini cart with a free-shipping meter and quick checkout.",
+          "item": "cart--drawer",
+          "exportName": "CartDrawerBlock"
         }
       ]
     },
@@ -252,17 +305,23 @@
         {
           "id": "classic",
           "name": "Card payment",
-          "description": "Two-column checkout with an order summary beside a card payment form."
+          "description": "Two-column checkout with an order summary beside a card payment form.",
+          "item": "checkout",
+          "exportName": "CheckoutBlock"
         },
         {
           "id": "one-page",
           "name": "One page",
-          "description": "Single-page checkout stacking contact, shipping, and payment beside a sticky order summary."
+          "description": "Single-page checkout stacking contact, shipping, and payment beside a sticky order summary.",
+          "item": "checkout--one-page",
+          "exportName": "CheckoutOnePageBlock"
         },
         {
           "id": "multi-step",
           "name": "Multi-step",
-          "description": "Wizard checkout with a shipping–payment–review stepper and back/continue navigation."
+          "description": "Wizard checkout with a shipping–payment–review stepper and back/continue navigation.",
+          "item": "checkout--multi-step",
+          "exportName": "CheckoutMultiStepBlock"
         }
       ]
     },
@@ -298,17 +357,23 @@
         {
           "id": "classic",
           "name": "Gradient panel",
-          "description": "Contained gradient panel with an email-capture form and dotted texture."
+          "description": "Contained gradient panel with an email-capture form and dotted texture.",
+          "item": "cta",
+          "exportName": "CtaBlock"
         },
         {
           "id": "banner",
           "name": "Gradient banner",
-          "description": "Full-width gradient band with a display headline and dual CTAs."
+          "description": "Full-width gradient band with a display headline and dual CTAs.",
+          "item": "cta--banner",
+          "exportName": "CtaBannerBlock"
         },
         {
           "id": "split-visual",
           "name": "Split with visual",
-          "description": "Copy and checkmark bullets beside a token-built product mock panel."
+          "description": "Copy and checkmark bullets beside a token-built product mock panel.",
+          "item": "cta--split-visual",
+          "exportName": "CtaSplitVisualBlock"
         }
       ]
     },
@@ -324,12 +389,16 @@
         {
           "id": "analytics",
           "name": "Analytics dashboard",
-          "description": "A full application shell — sidebar nav, search topbar, KPI cards, a revenue chart and a recent-activity table."
+          "description": "A full application shell — sidebar nav, search topbar, KPI cards, a revenue chart and a recent-activity table.",
+          "item": "dashboard",
+          "exportName": "DashboardAnalyticsBlock"
         },
         {
           "id": "admin-overview",
           "name": "Admin overview",
-          "description": "An admin console with an icon-collapsible sidebar, status cards, a signups trend and a larger users & orders table."
+          "description": "An admin console with an icon-collapsible sidebar, status cards, a signups trend and a larger users & orders table.",
+          "item": "dashboard--admin-overview",
+          "exportName": "DashboardAdminOverviewBlock"
         }
       ]
     },
@@ -375,12 +444,16 @@
         {
           "id": "empty",
           "name": "Empty list",
-          "description": "A friendly empty list with an illustration, guidance, and creation CTAs."
+          "description": "A friendly empty list with an illustration, guidance, and creation CTAs.",
+          "item": "empty-state",
+          "exportName": "EmptyStateBlock"
         },
         {
           "id": "error",
           "name": "Error / not found",
-          "description": "An error state for failed loads or 404s, with retry and recovery actions."
+          "description": "An error state for failed loads or 404s, with retry and recovery actions.",
+          "item": "empty-state--error",
+          "exportName": "EmptyStateErrorBlock"
         }
       ]
     },
@@ -406,12 +479,16 @@
         {
           "id": "accordion",
           "name": "Centered accordion",
-          "description": "A centered, width-constrained accordion of common questions and answers."
+          "description": "A centered, width-constrained accordion of common questions and answers.",
+          "item": "faq",
+          "exportName": "FaqBlock"
         },
         {
           "id": "split",
           "name": "Split with support",
-          "description": "A two-column layout pairing the questions with a contact-support panel."
+          "description": "A two-column layout pairing the questions with a contact-support panel.",
+          "item": "faq--split",
+          "exportName": "FaqSplitBlock"
         }
       ]
     },
@@ -427,12 +504,16 @@
         {
           "id": "cards",
           "name": "Card grid",
-          "description": "Six balanced feature cards for broad capability overviews."
+          "description": "Six balanced feature cards for broad capability overviews.",
+          "item": "feature-grid",
+          "exportName": "FeatureGridBlock"
         },
         {
           "id": "bento",
           "name": "Bento grid",
-          "description": "Editorial bento layout for showcasing a platform narrative."
+          "description": "Editorial bento layout for showcasing a platform narrative.",
+          "item": "feature-grid--bento",
+          "exportName": "BentoFeatureBlock"
         }
       ]
     },
@@ -468,7 +549,9 @@
         {
           "id": "toolbar",
           "name": "Search and filters",
-          "description": "Search input, status select, owner combobox, list/grid toggle, removable filter chips, and a result count."
+          "description": "Search input, status select, owner combobox, list/grid toggle, removable filter chips, and a result count.",
+          "item": "filter-bar",
+          "exportName": "FilterBarBlock"
         }
       ]
     },
@@ -491,17 +574,23 @@
         {
           "id": "classic",
           "name": "Columns with newsletter",
-          "description": "Brand column, three link columns and a newsletter panel."
+          "description": "Brand column, three link columns and a newsletter panel.",
+          "item": "footer",
+          "exportName": "FooterBlock"
         },
         {
           "id": "mega",
           "name": "Mega",
-          "description": "Five link columns, newsletter, social icons and a live-status legal row."
+          "description": "Five link columns, newsletter, social icons and a live-status legal row.",
+          "item": "footer--mega",
+          "exportName": "FooterMegaBlock"
         },
         {
           "id": "minimal",
           "name": "Minimal",
-          "description": "A single-row footer with logo, three links and copyright."
+          "description": "A single-row footer with logo, three links and copyright.",
+          "item": "footer--minimal",
+          "exportName": "FooterMinimalBlock"
         }
       ]
     },
@@ -517,12 +606,16 @@
         {
           "id": "request",
           "name": "Request link",
-          "description": "Email entry that sends a one-time password reset link."
+          "description": "Email entry that sends a one-time password reset link.",
+          "item": "forgot-password",
+          "exportName": "ForgotPasswordBlock"
         },
         {
           "id": "sent",
           "name": "Link sent",
-          "description": "Confirmation that a reset link was emailed, with a resend action."
+          "description": "Confirmation that a reset link was emailed, with a resend action.",
+          "item": "forgot-password--sent",
+          "exportName": "ForgotPasswordSentBlock"
         }
       ]
     },
@@ -538,17 +631,23 @@
         {
           "id": "centered",
           "name": "Centered launch",
-          "description": "Classic centered SaaS hero with trust proof and two CTAs."
+          "description": "Classic centered SaaS hero with trust proof and two CTAs.",
+          "item": "hero",
+          "exportName": "HeroBlock"
         },
         {
           "id": "split",
           "name": "Split dashboard",
-          "description": "Two-column hero with a compact product-quality panel."
+          "description": "Two-column hero with a compact product-quality panel.",
+          "item": "hero--split",
+          "exportName": "SplitHeroBlock"
         },
         {
           "id": "compact",
           "name": "Compact registry",
-          "description": "Contained hero card for docs, registries and template libraries."
+          "description": "Contained hero card for docs, registries and template libraries.",
+          "item": "hero--compact",
+          "exportName": "CompactHeroBlock"
         }
       ]
     },
@@ -574,12 +673,16 @@
         {
           "id": "classic",
           "name": "Detailed invoice",
-          "description": "Full invoice with billing parties, line items, totals, and a download action."
+          "description": "Full invoice with billing parties, line items, totals, and a download action.",
+          "item": "invoice",
+          "exportName": "InvoiceBlock"
         },
         {
           "id": "receipt",
           "name": "Receipt",
-          "description": "Narrow thermal-style receipt with mono totals, dashed separators, and a paid stamp."
+          "description": "Narrow thermal-style receipt with mono totals, dashed separators, and a paid stamp.",
+          "item": "invoice--receipt",
+          "exportName": "InvoiceReceiptBlock"
         }
       ]
     },
@@ -595,12 +698,16 @@
         {
           "id": "default",
           "name": "Sprint board",
-          "description": "Four columns of labeled cards with assignees, due dates, comment counts and add actions."
+          "description": "Four columns of labeled cards with assignees, due dates, comment counts and add actions.",
+          "item": "kanban-board",
+          "exportName": "KanbanBoardBlock"
         },
         {
           "id": "compact",
           "name": "Compact WIP board",
-          "description": "A dense single-line task list with per-column WIP limits and at-limit indicators."
+          "description": "A dense single-line task list with per-column WIP limits and at-limit indicators.",
+          "item": "kanban-board--compact",
+          "exportName": "KanbanBoardCompactBlock"
         }
       ]
     },
@@ -616,22 +723,30 @@
         {
           "id": "classic",
           "name": "Classic card",
-          "description": "Centered email and password card with social sign-in shortcuts."
+          "description": "Centered email and password card with social sign-in shortcuts.",
+          "item": "login",
+          "exportName": "LoginBlock"
         },
         {
           "id": "split",
           "name": "Split panel",
-          "description": "Brand gradient panel with a customer testimonial beside the sign-in form."
+          "description": "Brand gradient panel with a customer testimonial beside the sign-in form.",
+          "item": "login--split",
+          "exportName": "LoginSplitBlock"
         },
         {
           "id": "social-first",
           "name": "Social first",
-          "description": "Google, GitHub, and Apple buttons stacked above the email fallback."
+          "description": "Google, GitHub, and Apple buttons stacked above the email fallback.",
+          "item": "login--social-first",
+          "exportName": "LoginSocialFirstBlock"
         },
         {
           "id": "minimal",
           "name": "Minimal",
-          "description": "Ultra-clean logo mark, email, and continue button with quiet footer links."
+          "description": "Ultra-clean logo mark, email, and continue button with quiet footer links.",
+          "item": "login--minimal",
+          "exportName": "LoginMinimalBlock"
         }
       ]
     },
@@ -647,12 +762,16 @@
         {
           "id": "grid",
           "name": "Trust grid",
-          "description": "A quiet responsive grid of customer wordmarks under a trust heading."
+          "description": "A quiet responsive grid of customer wordmarks under a trust heading.",
+          "item": "logo-cloud",
+          "exportName": "LogoCloudGridBlock"
         },
         {
           "id": "marquee",
           "name": "Dual marquee",
-          "description": "Two counter-scrolling, pause-on-hover marquee rows of customer wordmarks."
+          "description": "Two counter-scrolling, pause-on-hover marquee rows of customer wordmarks.",
+          "item": "logo-cloud--marquee",
+          "exportName": "LogoCloudMarqueeBlock"
         }
       ]
     },
@@ -668,12 +787,16 @@
         {
           "id": "request",
           "name": "Request link",
-          "description": "Passwordless email entry that sends a single-use sign-in link."
+          "description": "Passwordless email entry that sends a single-use sign-in link.",
+          "item": "magic-link",
+          "exportName": "MagicLinkBlock"
         },
         {
           "id": "sent",
           "name": "Link sent",
-          "description": "Confirmation that a magic sign-in link was emailed, with a resend action."
+          "description": "Confirmation that a magic sign-in link was emailed, with a resend action.",
+          "item": "magic-link--sent",
+          "exportName": "MagicLinkSentBlock"
         }
       ]
     },
@@ -716,17 +839,23 @@
         {
           "id": "classic",
           "name": "Pill with actions",
-          "description": "Rounded navbar with brand badge, primary links and sign-in actions."
+          "description": "Rounded navbar with brand badge, primary links and sign-in actions.",
+          "item": "navbar",
+          "exportName": "NavbarBlock"
         },
         {
           "id": "centered",
           "name": "Centered pill",
-          "description": "Floating pill navbar with centered links on a blurred overlay surface."
+          "description": "Floating pill navbar with centered links on a blurred overlay surface.",
+          "item": "navbar--centered",
+          "exportName": "NavbarCenteredBlock"
         },
         {
           "id": "with-announcement",
           "name": "With announcement",
-          "description": "Announcement bar with a badge and link above the navigation row."
+          "description": "Announcement bar with a badge and link above the navigation row.",
+          "item": "navbar--with-announcement",
+          "exportName": "NavbarAnnouncementBlock"
         }
       ]
     },
@@ -762,12 +891,16 @@
         {
           "id": "matrix",
           "name": "Channel matrix",
-          "description": "Per-event switches across email, push, and SMS, grouped by area."
+          "description": "Per-event switches across email, push, and SMS, grouped by area.",
+          "item": "notification-preferences",
+          "exportName": "NotificationPreferencesMatrixBlock"
         },
         {
           "id": "simple",
           "name": "Simple toggles",
-          "description": "Grouped email toggles with a plain-language description per row."
+          "description": "Grouped email toggles with a plain-language description per row.",
+          "item": "notification-preferences--simple",
+          "exportName": "NotificationPreferencesSimpleBlock"
         }
       ]
     },
@@ -793,12 +926,16 @@
         {
           "id": "table",
           "name": "Table",
-          "description": "Dense orders table with status badges and a per-row actions menu."
+          "description": "Dense orders table with status badges and a per-row actions menu.",
+          "item": "order-history",
+          "exportName": "OrderHistoryTableBlock"
         },
         {
           "id": "cards",
           "name": "Cards",
-          "description": "Stacked order cards with item thumbnails and one-tap reorder."
+          "description": "Stacked order cards with item thumbnails and one-tap reorder.",
+          "item": "order-history--cards",
+          "exportName": "OrderHistoryCardsBlock"
         }
       ]
     },
@@ -814,17 +951,23 @@
         {
           "id": "in-transit",
           "name": "In transit",
-          "description": "Shipment timeline with the current leg highlighted and courier info."
+          "description": "Shipment timeline with the current leg highlighted and courier info.",
+          "item": "order-tracking",
+          "exportName": "OrderTrackingBlock"
         },
         {
           "id": "delivered",
           "name": "Delivered",
-          "description": "Completed timeline with a delivery confirmation and a review prompt."
+          "description": "Completed timeline with a delivery confirmation and a review prompt.",
+          "item": "order-tracking--delivered",
+          "exportName": "OrderDeliveredBlock"
         },
         {
           "id": "delayed",
           "name": "Delayed",
-          "description": "Late shipment with a warning notice, a new estimate and support actions."
+          "description": "Late shipment with a warning notice, a new estimate and support actions.",
+          "item": "order-tracking--delayed",
+          "exportName": "OrderDelayedBlock"
         }
       ]
     },
@@ -850,12 +993,16 @@
         {
           "id": "with-actions",
           "name": "Title and actions",
-          "description": "Breadcrumb, title with status badge, supporting copy, and primary/secondary actions."
+          "description": "Breadcrumb, title with status badge, supporting copy, and primary/secondary actions.",
+          "item": "page-header",
+          "exportName": "PageHeaderBlock"
         },
         {
           "id": "with-tabs",
           "name": "Title and tabs",
-          "description": "Adds a section tab row beneath the header for switching detail views."
+          "description": "Adds a section tab row beneath the header for switching detail views.",
+          "item": "page-header--with-tabs",
+          "exportName": "PageHeaderTabsBlock"
         }
       ]
     },
@@ -871,12 +1018,16 @@
         {
           "id": "select",
           "name": "Select method",
-          "description": "Pick a saved card from a radio list, mark a default, or add a new payment method."
+          "description": "Pick a saved card from a radio list, mark a default, or add a new payment method.",
+          "item": "payment-method",
+          "exportName": "PaymentMethodBlock"
         },
         {
           "id": "add-card",
           "name": "Add card",
-          "description": "A new-card form with cardholder, number, expiry, CVC, and a set-as-default toggle."
+          "description": "A new-card form with cardholder, number, expiry, CVC, and a set-as-default toggle.",
+          "item": "payment-method--add-card",
+          "exportName": "PaymentMethodAddBlock"
         }
       ]
     },
@@ -912,17 +1063,23 @@
         {
           "id": "tiers",
           "name": "Three tiers",
-          "description": "A responsive three-plan grid with a highlighted popular tier."
+          "description": "A responsive three-plan grid with a highlighted popular tier.",
+          "item": "pricing",
+          "exportName": "PricingBlock"
         },
         {
           "id": "toggle",
           "name": "Plan toggle",
-          "description": "Two-plan pricing with a monthly/annual segmented control."
+          "description": "Two-plan pricing with a monthly/annual segmented control.",
+          "item": "pricing--toggle",
+          "exportName": "PricingToggleBlock"
         },
         {
           "id": "usage",
           "name": "Usage based",
-          "description": "A metered pricing layout for API, infra and event-based products."
+          "description": "A metered pricing layout for API, infra and event-based products.",
+          "item": "pricing--usage",
+          "exportName": "UsagePricingBlock"
         }
       ]
     },
@@ -938,17 +1095,23 @@
         {
           "id": "standard",
           "name": "Standard",
-          "description": "Full product page with variant selectors, a quantity stepper and detail accordions."
+          "description": "Full product page with variant selectors, a quantity stepper and detail accordions.",
+          "item": "product-detail",
+          "exportName": "ProductDetailBlock"
         },
         {
           "id": "gallery",
           "name": "Gallery",
-          "description": "Thumbnail rail beside the main image, with a quick spec strip."
+          "description": "Thumbnail rail beside the main image, with a quick spec strip.",
+          "item": "product-detail--gallery",
+          "exportName": "ProductDetailGalleryBlock"
         },
         {
           "id": "minimal",
           "name": "Minimal",
-          "description": "Centered single-column layout, ideal for one-product stores."
+          "description": "Centered single-column layout, ideal for one-product stores.",
+          "item": "product-detail--minimal",
+          "exportName": "ProductDetailMinimalBlock"
         }
       ]
     },
@@ -964,17 +1127,23 @@
         {
           "id": "classic",
           "name": "Storefront grid",
-          "description": "Three-column storefront grid with product art, pricing, and buy actions."
+          "description": "Three-column storefront grid with product art, pricing, and buy actions.",
+          "item": "product-grid",
+          "exportName": "ProductGridBlock"
         },
         {
           "id": "with-filters",
           "name": "With filters",
-          "description": "Catalog layout with category, price, and color filters beside a sortable product grid."
+          "description": "Catalog layout with category, price, and color filters beside a sortable product grid.",
+          "item": "product-grid--with-filters",
+          "exportName": "ProductGridWithFiltersBlock"
         },
         {
           "id": "showcase",
           "name": "Editorial showcase",
-          "description": "Hero product feature with an asymmetric grid and overlay shop actions."
+          "description": "Hero product feature with an asymmetric grid and overlay shop actions.",
+          "item": "product-grid--showcase",
+          "exportName": "ProductGridShowcaseBlock"
         }
       ]
     },
@@ -1010,12 +1179,16 @@
         {
           "id": "summary",
           "name": "Summary",
-          "description": "Aggregate rating with a distribution chart next to the top reviews."
+          "description": "Aggregate rating with a distribution chart next to the top reviews.",
+          "item": "reviews",
+          "exportName": "ReviewsSummaryBlock"
         },
         {
           "id": "compact",
           "name": "Compact grid",
-          "description": "Dense grid of short reviews for landing and product pages."
+          "description": "Dense grid of short reviews for landing and product pages.",
+          "item": "reviews--compact",
+          "exportName": "ReviewsCompactBlock"
         }
       ]
     },
@@ -1031,12 +1204,16 @@
         {
           "id": "list",
           "name": "Device list",
-          "description": "Signed-in devices with client, location, last activity, and revoke."
+          "description": "Signed-in devices with client, location, last activity, and revoke.",
+          "item": "sessions",
+          "exportName": "SessionsListBlock"
         },
         {
           "id": "table",
           "name": "Selectable table",
-          "description": "Session table with bulk selection and a revoke-selected action."
+          "description": "Session table with bulk selection and a revoke-selected action.",
+          "item": "sessions--table",
+          "exportName": "SessionsTableBlock"
         }
       ]
     },
@@ -1082,17 +1259,23 @@
         {
           "id": "classic",
           "name": "Classic card",
-          "description": "Centered create-account card with social sign-up shortcuts."
+          "description": "Centered create-account card with social sign-up shortcuts.",
+          "item": "signup",
+          "exportName": "SignupBlock"
         },
         {
           "id": "split-proof",
           "name": "Split with proof",
-          "description": "Create-account form beside customer logos, a star rating, and short quotes."
+          "description": "Create-account form beside customer logos, a star rating, and short quotes.",
+          "item": "signup--split-proof",
+          "exportName": "SignupSplitProofBlock"
         },
         {
           "id": "with-plan",
           "name": "With plan summary",
-          "description": "Signup form beside the selected plan, trial terms, and first-charge summary."
+          "description": "Signup form beside the selected plan, trial terms, and first-charge summary.",
+          "item": "signup--with-plan",
+          "exportName": "SignupWithPlanBlock"
         }
       ]
     },
@@ -1108,17 +1291,23 @@
         {
           "id": "kpi-grid",
           "name": "KPI grid",
-          "description": "Four-card dashboard metrics with icons, deltas, and contextual hints."
+          "description": "Four-card dashboard metrics with icons, deltas, and contextual hints.",
+          "item": "stats",
+          "exportName": "StatsBlock"
         },
         {
           "id": "compact-summary",
           "name": "Compact summary",
-          "description": "A single-card metric summary for dense dashboards and overview panels."
+          "description": "A single-card metric summary for dense dashboards and overview panels.",
+          "item": "stats--compact-summary",
+          "exportName": "StatsCompactBlock"
         },
         {
           "id": "pipeline-funnel",
           "name": "Pipeline funnel",
-          "description": "A segmented stats card for activation, pipeline, or conversion steps."
+          "description": "A segmented stats card for activation, pipeline, or conversion steps.",
+          "item": "stats--pipeline-funnel",
+          "exportName": "StatsPipelineBlock"
         }
       ]
     },
@@ -1164,12 +1353,16 @@
         {
           "id": "marquee",
           "name": "Marquee wall",
-          "description": "A scrolling, pause-on-hover wall of testimonials with avatar social proof."
+          "description": "A scrolling, pause-on-hover wall of testimonials with avatar social proof.",
+          "item": "testimonials",
+          "exportName": "TestimonialsBlock"
         },
         {
           "id": "grid",
           "name": "Card grid",
-          "description": "A static responsive grid of testimonial cards for dense social proof."
+          "description": "A static responsive grid of testimonial cards for dense social proof.",
+          "item": "testimonials--grid",
+          "exportName": "TestimonialsGridBlock"
         }
       ]
     },
@@ -1205,12 +1398,16 @@
         {
           "id": "table",
           "name": "Directory table",
-          "description": "A searchable member table with a role filter, status badges, row actions and pagination."
+          "description": "A searchable member table with a role filter, status badges, row actions and pagination.",
+          "item": "user-management",
+          "exportName": "UserManagementTableBlock"
         },
         {
           "id": "cards",
           "name": "Member cards",
-          "description": "A card grid with the same member actions — a better fit for small teams."
+          "description": "A card grid with the same member actions — a better fit for small teams.",
+          "item": "user-management--cards",
+          "exportName": "UserManagementCardsBlock"
         }
       ]
     },
@@ -1998,6 +2195,11 @@
       "title": "Landing",
       "description": "A single polished marketing page — hero, features, pricing, testimonials, FAQ, and a call to action — with a real navbar and footer.",
       "pages": 1
+    },
+    "saas": {
+      "title": "SaaS",
+      "description": "A complete multi-page SaaS app: split login/signup, and a sidebar-shell dashboard, analytics, team, billing and settings — all from validated blocks.",
+      "pages": 7
     },
     "store": {
       "title": "Store",

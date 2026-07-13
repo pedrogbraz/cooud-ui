@@ -2502,7 +2502,9 @@ function FooterMegaBlock() {
   );
 }
 
-const footerMegaCode = `import { Button, Input, Label, Separator } from "@cooud-ui/ui";
+const footerMegaCode = `"use client";
+
+import { Button, Input, Label, Separator } from "@cooud-ui/ui";
 import { Github, Hexagon, Linkedin, Send, Twitter } from "lucide-react";
 
 const FOOTER_MEGA_COLUMNS = [

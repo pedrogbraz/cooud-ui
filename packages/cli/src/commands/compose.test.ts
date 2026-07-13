@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { CLI_VERSION, CONFIG_FILE, DEFAULT_CONFIG, readConfig } from "../config.js";
-import { composeApp } from "./compose.js";
+import { composeApp, parseVariants } from "./compose.js";
 
 /**
  * Integration tests for the compose apply core against the REAL repo registry
@@ -15,6 +15,28 @@ import { composeApp } from "./compose.js";
 
 const REPO_REGISTRY = fileURLToPath(new URL("../../../../registry", import.meta.url));
 const HAS_REGISTRY = existsSync(join(REPO_REGISTRY, "meta.json"));
+
+describe("parseVariants — --variant slug=variant parsing", () => {
+  it("parses one or more slug=variant pairs into a record (last wins)", () => {
+    expect(parseVariants(["login=split"])).toEqual({ login: "split" });
+    expect(parseVariants(["login=split", "footer=mega"])).toEqual({
+      login: "split",
+      footer: "mega",
+    });
+    expect(parseVariants(["login=split", "login=minimal"])).toEqual({ login: "minimal" });
+  });
+
+  it("returns {} for no flags", () => {
+    expect(parseVariants(undefined)).toEqual({});
+    expect(parseVariants([])).toEqual({});
+  });
+
+  it("throws a clear error on a malformed pair", () => {
+    expect(() => parseVariants(["login"])).toThrow(/expected "slug=variant"/);
+    expect(() => parseVariants(["=split"])).toThrow(/expected "slug=variant"/);
+    expect(() => parseVariants(["login="])).toThrow(/expected "slug=variant"/);
+  });
+});
 
 /** Write a minimal consumer project (package.json + cooud-ui.json) pointed at the repo registry. */
 function seedProject(cwd: string, name = "loja"): void {
@@ -208,6 +230,37 @@ describe.skipIf(!HAS_REGISTRY)("composeApp — integration (local repo registry)
       expect(existsSync(join(cwd, rel))).toBe(true);
     }
     expect(existsSync(join(cwd, ".cooud-ui/base/loja/app/(site)/page.tsx"))).toBe(true);
+  });
+
+  it("composes a login variant: installs login-split.tsx + page imports LoginSplitBlock", async () => {
+    const result = await composeApp({
+      targetDir: cwd,
+      template: "store",
+      choices: { variants: { login: "split" } },
+      skipInstall: true,
+    });
+
+    // The variant item installs as login-split.tsx (single-dash file basename).
+    expect(result.installedBlocks).toContain("login--split");
+    expect(result.installedBlocks).not.toContain("login");
+    const variantFile = join(cwd, "components/blocks/login-split.tsx");
+    expect(existsSync(variantFile)).toBe(true);
+    expect(readFileSync(variantFile, "utf8")).toMatch(/export function LoginSplitBlock/);
+
+    // The generated /login page imports the variant export from the variant file.
+    const loginPage = readFileSync(join(cwd, "app/(bare)/login/page.tsx"), "utf8");
+    expect(loginPage).toContain(
+      'import { LoginSplitBlock } from "@/components/blocks/login-split";',
+    );
+    expect(loginPage).toContain("<LoginSplitBlock />");
+    expect(loginPage).not.toContain("<LoginBlock />");
+
+    // The choice is recorded in composed{}.
+    const config = await readConfig(cwd);
+    expect(config.composed?.store?.choices.variants.login).toBe("split");
+    // installed{} tracks the variant item, not the bare block.
+    expect(config.installed?.["login--split"]).toBeDefined();
+    expect(config.installed?.login).toBeUndefined();
   });
 
   it("throws a clear error for an unknown template (with a suggestion)", async () => {

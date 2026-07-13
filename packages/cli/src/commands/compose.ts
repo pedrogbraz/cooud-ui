@@ -2,7 +2,12 @@ import { existsSync } from "node:fs";
 import { readdir, readFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { type AppManifest, type ManifestError, parseManifest } from "../compose/manifest.js";
+import {
+  type AppManifest,
+  type ManifestError,
+  manifestFingerprint,
+  parseManifest,
+} from "../compose/manifest.js";
 import {
   buildComposePlan,
   type ComposeChoiceInput,
@@ -88,6 +93,7 @@ async function readChromeSources(
   for (const group of Object.values(manifest.manifest.chrome)) {
     if (group.navbar !== undefined) slugs.add(group.navbar);
     if (group.footer !== undefined) slugs.add(group.footer);
+    if (group.block !== undefined) slugs.add(group.block);
   }
   const sources: Record<string, string> = {};
   for (const slug of slugs) {
@@ -272,6 +278,9 @@ export async function composeApp(options: ComposeAppOptions): Promise<ComposeApp
     planVersion: plan.planVersion,
     choices: plan.choices,
     files: [...new Set([...priorFiles, ...generatedFiles])].sort(),
+    // Compose provenance: lets add-page verify a bundled reload is the SAME
+    // manifest this app was composed from (guards the bundled-name collision).
+    manifestHash: manifestFingerprint(manifest),
   };
   const nextConfig: CooudUIConfig = { ...config, installed, composed };
   await writeConfig(targetDir, nextConfig);
@@ -318,13 +327,23 @@ export interface ComposeCommandOptions {
   yes?: boolean;
 }
 
-/** Parse `--variant login=split --variant footer=x` into a record. */
-function parseVariants(pairs: string[] | undefined): Record<string, string> {
+/**
+ * Parse `--variant login=split --variant footer=mega` into a `{ slug: variant }`
+ * record. Each pair MUST be `slug=variant` with a non-empty slug and variant;
+ * a malformed pair (no `=`, empty side) throws so a typo like `--variant login`
+ * fails loud instead of being silently dropped. A repeated slug keeps the last
+ * value (last flag wins).
+ */
+export function parseVariants(pairs: string[] | undefined): Record<string, string> {
   const out: Record<string, string> = {};
   for (const pair of pairs ?? []) {
     const eq = pair.indexOf("=");
-    if (eq <= 0) continue;
-    out[pair.slice(0, eq)] = pair.slice(eq + 1);
+    const slug = eq > 0 ? pair.slice(0, eq) : "";
+    const variant = eq > 0 ? pair.slice(eq + 1) : "";
+    if (slug.length === 0 || variant.length === 0) {
+      throw new Error(`Invalid --variant "${pair}" (expected "slug=variant", e.g. login=split).`);
+    }
+    out[slug] = variant;
   }
   return out;
 }
@@ -360,6 +379,17 @@ export async function compose(
   const seed = options.seed !== undefined ? Number.parseInt(options.seed, 10) : undefined;
   if (options.seed !== undefined && (seed === undefined || Number.isNaN(seed))) {
     log.err(`Invalid --seed "${options.seed}" (expected an integer).`);
+    process.exitCode = 1;
+    return;
+  }
+
+  // Parse `--variant slug=variant` up front so a malformed pair fails loud before
+  // any registry work (parseVariants throws on a bad shape).
+  let variants: Record<string, string>;
+  try {
+    variants = parseVariants(options.variant);
+  } catch (err) {
+    log.err((err as Error).message);
     process.exitCode = 1;
     return;
   }
@@ -410,7 +440,7 @@ export async function compose(
     ...(options.brand !== undefined ? { brand: options.brand } : {}),
     ...(seed !== undefined ? { seed } : {}),
     ...(parsedPages !== undefined ? { pages: parsedPages } : {}),
-    variants: parseVariants(options.variant),
+    variants,
   };
 
   // Plan + validate (aggregate ALL errors).

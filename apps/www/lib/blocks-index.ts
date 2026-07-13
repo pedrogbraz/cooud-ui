@@ -1096,6 +1096,18 @@ export const BLOCK_CATEGORIES: BlockCategory[] = [
       },
     ],
   },
+  {
+    slug: "shell",
+    name: "App Shell",
+    items: [
+      {
+        slug: "app-shell-chrome",
+        name: "App Shell",
+        description:
+          "A sidebar + header application shell that wraps page content — the chrome the (app) route group uses for dashboard pages.",
+      },
+    ],
+  },
 ];
 
 export const ALL_BLOCKS: (BlockMeta & { category: string })[] = BLOCK_CATEGORIES.flatMap((c) =>

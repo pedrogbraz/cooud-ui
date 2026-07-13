@@ -36,6 +36,21 @@ describe("renderPreview", () => {
     expect(text).toContain("Nav: Home → /");
   });
 
+  it("marks the selected variant in the block stack", () => {
+    const m = fixtureManifest();
+    m.manifest.pages[1]!.blocks = [{ block: "login", variant: "split" }];
+    const withVariant = buildComposePlan(
+      m,
+      { appName: "loja" },
+      fixtureIndex(),
+      fixtureMeta(),
+      fixtureChromeSources(),
+    );
+    expect(renderPreview(withVariant)).toContain(
+      "- login (variant: split) <LoginSplitBlock> (page)",
+    );
+  });
+
   it("omits the seed line when no seed was given", () => {
     const noSeed = buildComposePlan(
       fixtureManifest(),

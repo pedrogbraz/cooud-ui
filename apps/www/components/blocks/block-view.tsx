@@ -96,6 +96,9 @@ const VIEW_VIEWS: Record<BlockFamily, BlockDetailView> = {
   content: dynamic(() => import("../../lib/blocks/content").then((m) => m.ContentView), {
     loading: BlockViewSkeleton,
   }),
+  shell: dynamic(() => import("../../lib/blocks/shell").then((m) => m.ShellView), {
+    loading: BlockViewSkeleton,
+  }),
 };
 
 export function BlockView({ slug, variant }: { slug: string; variant: string }) {

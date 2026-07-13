@@ -30,7 +30,8 @@ export type BlockFamily =
   | "store"
   | "account"
   | "admin"
-  | "content";
+  | "content"
+  | "shell";
 
 /** slug → the family module that owns its content. */
 export const BLOCK_FAMILY_BY_SLUG: Record<string, BlockFamily> = {
@@ -129,6 +130,8 @@ export const BLOCK_FAMILY_BY_SLUG: Record<string, BlockFamily> = {
   "blog-post": "content",
   "logo-cloud": "content",
   about: "content",
+  // shell
+  "app-shell-chrome": "shell",
 };
 
 export function getBlockFamily(slug: string): BlockFamily | undefined {

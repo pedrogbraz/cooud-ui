@@ -22,22 +22,44 @@ export interface BrandToken {
   literal: string;
 }
 
+/**
+ * A block variant as recorded in meta: its id + the registry `item` the composer
+ * installs (bare `<slug>` for the default, `<slug>--<id>` otherwise) + the
+ * component `exportName` a generated page imports.
+ */
+export interface VariantMetaRef {
+  id: string;
+  item: string;
+  exportName: string;
+}
+
 /** The subset of `registry/meta.json` the planner reads. */
 export interface ComposeMetaBlock {
   exportName: string;
   kind: BlockKind;
   dataSlots: string[];
   brandTokens: BrandToken[];
+  /** Declared variants (default first); empty when the block has none. */
+  variants?: VariantMetaRef[];
 }
 export interface ComposeMeta {
   blocks: Record<string, ComposeMetaBlock>;
 }
 
-/** A resolved block inside a page (slug + its meta-derived export name + kind). */
+/**
+ * A resolved block inside a page: its family slug, the registry `item` name to
+ * install (bare `<slug>`, or `<slug>--<variant>` for a non-default variant), the
+ * `exportName` a generated page imports, the block kind, and the selected
+ * `variant` id when a non-default variant was chosen (absent for the default).
+ */
 export interface PlanBlock {
   slug: string;
+  /** Registry item name to install/import from (`<slug>` or `<slug>--<variant>`). */
+  item: string;
   exportName: string;
   kind: BlockKind;
+  /** Selected non-default variant id (absent = default variant). */
+  variant?: string;
 }
 
 /** A resolved page ready to render. */
@@ -49,11 +71,13 @@ export interface PlanPage {
   blocks: PlanBlock[];
 }
 
-/** A resolved chrome group (route group + its navbar/footer slugs). */
+/** A resolved chrome group (route group + its navbar/footer/shell slugs). */
 export interface PlanChrome {
   group: string;
   navbar?: string;
   footer?: string;
+  /** App-shell chrome block slug (sidebar shell), when the group uses one. */
+  block?: string;
 }
 
 /**
@@ -86,7 +110,11 @@ export interface ComposePlan {
   chromes: PlanChrome[];
   /** Resolved Next special-file blocks (from `manifest.extras`), sorted by key. */
   extras: PlanExtra[];
-  /** Every unique block slug the plan installs (pages + chrome + extras), sorted. */
+  /**
+   * Every unique registry ITEM the plan installs (pages + chrome + extras),
+   * sorted. Item names, not family slugs: a non-default variant contributes its
+   * `<slug>--<variant>` item, so this is what the composer resolves/installs.
+   */
   blockSlugs: string[];
   /** Chrome block slugs used by any group, sorted. */
   chromeSlugs: string[];
@@ -96,13 +124,16 @@ export interface ComposePlan {
   dataSlotsBySlug: Record<string, string[]>;
   /** Declared brand tokens per chrome slug (from meta). */
   brandTokensBySlug: Record<string, BrandToken[]>;
-  /** Whether any group uses a navbar / footer (drives wrapper emission). */
+  /** Whether any group uses a navbar / footer / shell (drives wrapper emission). */
   usesNavbar: boolean;
   usesFooter: boolean;
+  usesShell: boolean;
   navbarSlug?: string;
   footerSlug?: string;
+  shellSlug?: string;
   navbarExportName?: string;
   footerExportName?: string;
+  shellExportName?: string;
 }
 
 /** Thrown by {@link buildComposePlan} carrying EVERY semantic error found. */
@@ -123,7 +154,10 @@ export interface ComposeChoiceInput {
   seed?: number;
   /** Route subset to include (F2); when omitted, all manifest pages are used. */
   pages?: string[];
-  /** Per-family variant selection (F2); ignored beyond recording in F1. */
+  /**
+   * Per-family variant override (`{ login: "split" }`); a present entry wins over
+   * the manifest ref's declared variant for that slug. Recorded in `composed{}`.
+   */
   variants?: Record<string, string>;
   /** Project name, used to fill `__APP_NAME__` in the manifest brand default. */
   appName?: string;
@@ -236,9 +270,18 @@ export function buildComposePlan(
     }
   }
 
-  // Resolve a block ref against the registry index + meta, collecting errors.
+  // Per-family variant overrides from choices (`--variant login=split`); a
+  // present override wins over whatever variant the manifest ref declared.
+  const variantOverrides = input.variants ?? {};
+
+  // Resolve a block ref against the registry index + meta, collecting errors,
+  // honoring variants: the effective variant is the choices override (if any),
+  // else the manifest ref's `{ block, variant }`. The default variant resolves to
+  // the bare `<slug>` item + the block's own export; a non-default variant to
+  // `<slug>--<id>` + the variant's export (both read from meta so a generated
+  // page imports exactly what ships).
   const resolveBlock = (ref: BlockRef, where: string): PlanBlock | undefined => {
-    const { slug } = blockRefParts(ref);
+    const { slug, variant: manifestVariant } = blockRefParts(ref);
     if (!known.has(slug)) {
       const suggestion = closestName(slug, blockNames);
       errors.push(
@@ -253,13 +296,64 @@ export function buildComposePlan(
       errors.push(`${where}: block "${slug}" has no metadata (regenerate registry meta.json).`);
       return undefined;
     }
-    return { slug, exportName: m.exportName, kind: m.kind };
+
+    // Choice override wins over the manifest-declared variant.
+    const wantVariant = variantOverrides[slug] ?? manifestVariant;
+    if (wantVariant === undefined) {
+      // Default variant → bare item + the block's own export.
+      return { slug, item: slug, exportName: m.exportName, kind: m.kind };
+    }
+
+    const variants = m.variants ?? [];
+    const match = variants.find((v) => v.id === wantVariant);
+    if (match === undefined) {
+      const ids = variants.map((v) => v.id);
+      const suggestion = closestName(wantVariant, ids);
+      const hint = ids.length > 0 ? ` (known: ${ids.join(", ")})` : " (this block has no variants)";
+      errors.push(
+        suggestion
+          ? `${where}: unknown variant "${wantVariant}" for block "${slug}". Did you mean "${suggestion}"?`
+          : `${where}: unknown variant "${wantVariant}" for block "${slug}"${hint}.`,
+      );
+      return undefined;
+    }
+
+    // Meta named a variant item; the registry index must actually publish it,
+    // else `registry.resolve(plan.blockSlugs)` would later crash with a raw
+    // ENOENT on the missing item file. This can happen on a drifted custom
+    // `--registry` whose meta references a variant its index omits; the shipped
+    // registry is protected by check-registry's validateVariantItems gate.
+    if (!known.has(match.item)) {
+      errors.push(
+        `${where}: variant "${wantVariant}" of block "${slug}" resolves to item "${match.item}", ` +
+          `which the registry index does not publish (regenerate/repair the registry).`,
+      );
+      return undefined;
+    }
+
+    // A matched variant carries its own registry item + export. The default
+    // variant's meta `item` equals the bare slug (so `variant` stays absent);
+    // a non-default variant records its id so the renderer imports from
+    // `<slug>--<id>`.
+    const isDefault = match.item === slug;
+    return {
+      slug,
+      item: match.item,
+      exportName: match.exportName,
+      kind: m.kind,
+      ...(isDefault ? {} : { variant: match.id }),
+    };
   };
 
   // --- Pages ---------------------------------------------------------------
   const seenRoutes = new Set<string>();
   const planPages: PlanPage[] = [];
   const chromeGroupsUsed = new Set<string>();
+  // Family slugs a page/extras block references — the ONLY slots where a
+  // `--variant` override is consulted (inside resolveBlock). Chrome-slot slugs
+  // and slugs matching no slot are validated separately below so an override
+  // that had no effect is never silently accepted+persisted.
+  const variantTargetSlugs = new Set<string>();
 
   for (const page of selectedPages) {
     const where = `page "${page.route}"`;
@@ -280,6 +374,7 @@ export function buildComposePlan(
 
     const blocks: PlanBlock[] = [];
     page.blocks.forEach((ref, i) => {
+      variantTargetSlugs.add(blockRefParts(ref).slug);
       const resolved = resolveBlock(ref, `${where}.blocks[${i}]`);
       if (resolved === undefined) return;
       // Semantic slot check: email never in a page; chrome only in a chrome slot.
@@ -357,10 +452,21 @@ export function buildComposePlan(
   // --- Chrome groups -------------------------------------------------------
   const planChromes: PlanChrome[] = [];
   const chromeSlugsSet = new Set<string>();
+  // Family slugs a chrome slot (navbar/footer/shell) references in a USED group,
+  // whether or not the ref resolved — chrome slots never consult `--variant`, so
+  // an override targeting one is rejected below rather than silently dropped.
+  const chromeSlotSlugs = new Set<string>();
   let usesNavbar = false;
   let usesFooter = false;
+  let usesShell = false;
   let navbarSlug: string | undefined;
   let footerSlug: string | undefined;
+  let shellSlug: string | undefined;
+  // The renderer collapses the shell to SINGLE globals (one shellSlug + one
+  // AppShellNav wrapper scoped to one group). Two shell groups would both import
+  // that single wrapper and mis-render the sidebar nav of every group after the
+  // first, so only one shell group per app is supported. Count them to fail loud.
+  const shellGroups: string[] = [];
 
   // Only groups actually used by an included page get a layout (sorted for stability).
   for (const group of [...chromeGroupsUsed].sort()) {
@@ -368,7 +474,11 @@ export function buildComposePlan(
     if (def === undefined) continue; // already reported above
     const chrome: PlanChrome = { group };
 
-    const checkChromeRef = (slug: string, slot: "navbar" | "footer"): void => {
+    // Validate one chrome-block ref (navbar / footer / shell): the block must
+    // exist, have meta, and be kind "chrome". On success it records the slug in
+    // `chrome` + the shared wrapper globals. `slot` is only used for the error
+    // wording; the caller wires the resolved slug into the right field.
+    const checkChromeRef = (slug: string, slot: "navbar" | "footer" | "block"): void => {
       if (!known.has(slug)) {
         const suggestion = closestName(slug, blockNames);
         errors.push(
@@ -394,20 +504,54 @@ export function buildComposePlan(
         chrome.navbar = slug;
         usesNavbar = true;
         navbarSlug = slug;
-      } else {
+      } else if (slot === "footer") {
         chrome.footer = slug;
         usesFooter = true;
         footerSlug = slug;
+      } else {
+        chrome.block = slug;
+        usesShell = true;
+        shellSlug = slug;
       }
     };
 
-    if (def.navbar !== undefined) checkChromeRef(def.navbar, "navbar");
-    if (def.footer !== undefined) checkChromeRef(def.footer, "footer");
-    // F1 does not support the app-shell chrome block yet.
+    if (def.navbar !== undefined) {
+      chromeSlotSlugs.add(def.navbar);
+      checkChromeRef(def.navbar, "navbar");
+    }
+    if (def.footer !== undefined) {
+      chromeSlotSlugs.add(def.footer);
+      checkChromeRef(def.footer, "footer");
+    }
+    // The app-shell chrome block (sidebar shell): the (app)-group layout wraps
+    // {children} in it, exactly as (site) wraps SiteNav/SiteFooter. Mixing a
+    // shell with navbar/footer in one group is a design error — a shell IS the
+    // full page frame — so reject that combination up front.
     if (def.block !== undefined) {
-      errors.push(`chrome "${group}": the shell "block" chrome is not supported in F1.`);
+      if (def.navbar !== undefined || def.footer !== undefined) {
+        errors.push(
+          `chrome "${group}": a shell "block" cannot be combined with navbar/footer in the same group.`,
+        );
+      }
+      shellGroups.push(group);
+      chromeSlotSlugs.add(def.block);
+      checkChromeRef(def.block, "block");
     }
     planChromes.push(chrome);
+  }
+
+  // Only ONE shell group per app is supported: the renderer emits a single
+  // AppShellNav wrapper backed by one block copy scoped to one group, so a
+  // second shell group would silently render the first group's sidebar nav.
+  // Fail loud, mirroring the shell+navbar/footer guard above.
+  if (shellGroups.length > 1) {
+    const [, ...extras] = shellGroups;
+    for (const group of extras) {
+      errors.push(
+        `chrome "${group}": only one shell "block" group is supported per app ` +
+          `(already used by "${shellGroups[0]}").`,
+      );
+    }
   }
 
   // --- Chrome sources + meta lookups (for the renderer) --------------------
@@ -449,6 +593,7 @@ export function buildComposePlan(
       );
       continue;
     }
+    variantTargetSlugs.add(blockRefParts(slug).slug);
     const resolved = resolveBlock(slug, where);
     if (resolved === undefined) continue; // resolveBlock already pushed the error
     if (resolved.kind !== "page") {
@@ -460,13 +605,43 @@ export function buildComposePlan(
     planExtras.push({ key, file, slug: resolved.slug, exportName: resolved.exportName });
   }
 
+  // --- Variant-override targets --------------------------------------------
+  // A `--variant slug=id` override is consulted ONLY inside resolveBlock, i.e.
+  // only for a family slug some included page/extras block references. If the
+  // slug is a chrome-slot slug (navbar/footer/shell), the override is silently
+  // ignored (chrome variants are out of F2 scope); if it matches no slot at all
+  // (typo / dead / nonexistent slug), it is silently ignored too. Either way the
+  // override is still persisted into choices.variants, producing a record that
+  // does not match the generated app. Cross-check every override key here so an
+  // override that had no effect fails loud instead — mirroring the clear
+  // did-you-mean error a page-block variant typo already gets.
+  for (const slug of Object.keys(variantOverrides).sort()) {
+    if (variantTargetSlugs.has(slug)) continue; // applied by a page/extras block
+    if (chromeSlotSlugs.has(slug)) {
+      errors.push(
+        `--variant "${slug}": chrome slots (navbar/footer/shell) do not accept --variant.`,
+      );
+      continue;
+    }
+    const suggestion = closestName(slug, [...variantTargetSlugs]);
+    errors.push(
+      suggestion
+        ? `--variant "${slug}": no included page/extras block uses block "${slug}". Did you mean "${suggestion}"?`
+        : `--variant "${slug}": no included page/extras block uses block "${slug}".`,
+    );
+  }
+
   // --- Dependencies (arg-injection guard reuse) ----------------------------
-  const allBlockSlugs = new Set<string>();
-  for (const page of planPages) for (const b of page.blocks) allBlockSlugs.add(b.slug);
-  for (const slug of chromeSlugsSet) allBlockSlugs.add(slug);
-  for (const extra of planExtras) allBlockSlugs.add(extra.slug);
+  // Collect the registry ITEM names to install (a non-default variant contributes
+  // its `<slug>--<variant>` item, not the bare slug), so resolve/install and the
+  // arg-injection guard both run over exactly what lands on disk. Chrome + extras
+  // are bare items (no variants in those slots in F2).
+  const allBlockItems = new Set<string>();
+  for (const page of planPages) for (const b of page.blocks) allBlockItems.add(b.item);
+  for (const slug of chromeSlugsSet) allBlockItems.add(slug);
+  for (const extra of planExtras) allBlockItems.add(extra.slug);
   for (const entry of index) {
-    if (!allBlockSlugs.has(entry.name)) continue;
+    if (!allBlockItems.has(entry.name)) continue;
     for (const dep of entry.dependencies) {
       try {
         assertValidDependency(dep);
@@ -478,6 +653,7 @@ export function buildComposePlan(
 
   const navbarMeta = navbarSlug !== undefined ? meta.blocks[navbarSlug] : undefined;
   const footerMeta = footerSlug !== undefined ? meta.blocks[footerSlug] : undefined;
+  const shellMeta = shellSlug !== undefined ? meta.blocks[shellSlug] : undefined;
 
   const plan: ComposePlan = {
     templateName: manifest.name,
@@ -489,17 +665,20 @@ export function buildComposePlan(
     pages: planPages,
     chromes: planChromes,
     extras: planExtras,
-    blockSlugs: [...allBlockSlugs].sort(),
+    blockSlugs: [...allBlockItems].sort(),
     chromeSlugs: [...chromeSlugsSet].sort(),
     chromeSources: resolvedChromeSources,
     dataSlotsBySlug,
     brandTokensBySlug,
     usesNavbar,
     usesFooter,
+    usesShell,
     ...(navbarSlug !== undefined ? { navbarSlug } : {}),
     ...(footerSlug !== undefined ? { footerSlug } : {}),
+    ...(shellSlug !== undefined ? { shellSlug } : {}),
     ...(navbarMeta !== undefined ? { navbarExportName: navbarMeta.exportName } : {}),
     ...(footerMeta !== undefined ? { footerExportName: footerMeta.exportName } : {}),
+    ...(shellMeta !== undefined ? { shellExportName: shellMeta.exportName } : {}),
   };
 
   if (errors.length > 0) throw new ComposePlanError(errors);

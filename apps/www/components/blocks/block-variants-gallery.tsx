@@ -103,6 +103,9 @@ const GALLERY_VIEWS: Record<BlockFamily, GalleryView> = {
   content: dynamic(() => import("../../lib/blocks/content").then((m) => m.ContentGallery), {
     loading: GallerySkeleton,
   }),
+  shell: dynamic(() => import("../../lib/blocks/shell").then((m) => m.ShellGallery), {
+    loading: GallerySkeleton,
+  }),
 };
 
 export function BlockVariantsGallery({ slug }: { slug: string }) {
