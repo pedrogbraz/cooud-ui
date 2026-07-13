@@ -20,8 +20,28 @@ const scriptDir = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(scriptDir, "../../..");
 const uiRoot = join(repoRoot, "packages/ui");
 const componentsDir = join(uiRoot, "src/components");
-const cnFile = join(uiRoot, "src/lib/cn.ts");
+const libDir = join(uiRoot, "src/lib");
 const blocksDir = join(repoRoot, "apps/www/lib/blocks");
+
+/**
+ * The shared `registry:lib` modules published alongside the components/blocks
+ * (F3). Each is a PURE data/util module under `packages/ui/src/lib/`: `cn` is the
+ * class-merge helper every component imports; `demo-store`/`demo-saas` are the
+ * cohesive demo datasets the storefront/dashboard blocks read from. A lib item's
+ * `name` doubles as the `../lib/<name>.js` specifier blocks import, so a block's
+ * `registryDependencies` are derived by matching that specifier against this set
+ * (see {@link LIB_NAMES}). npm `dependencies` are parsed from each module's own
+ * imports — pure data modules yield none, `cn` yields clsx + tailwind-merge — so
+ * the set never has to be hand-maintained.
+ */
+const LIB_MODULES: ReadonlyArray<{ name: string; file: string }> = [
+  { name: "cn", file: "cn.ts" },
+  { name: "demo-store", file: "demo-store.ts" },
+  { name: "demo-saas", file: "demo-saas.ts" },
+];
+
+/** Every published `registry:lib` name, for `../lib/<name>.js` dependency detection. */
+const LIB_NAMES: ReadonlySet<string> = new Set(LIB_MODULES.map((m) => m.name));
 /** Bundled app-template manifests read into the meta `apps` section (empty when absent). */
 export const appsTemplatesDir = join(repoRoot, "packages/cli/templates/apps");
 
@@ -859,6 +879,22 @@ function packageNameOf(spec: string): string {
   return spec.split("/")[0] ?? spec;
 }
 
+/**
+ * If `spec` is a `../lib/<name>.js` import of a PUBLISHED `registry:lib` module
+ * (`cn`, `demo-store`, `demo-saas`), return that lib name so it becomes a
+ * `registryDependency`; otherwise `undefined`. Generalizes the old `cn`-only
+ * special case (F3): a block/component importing `../lib/demo-store.js` now
+ * declares `demo-store` as a registry dependency, so `resolve` pulls the demo
+ * dataset in transitively and `rewriteImports` retargets the specifier to the
+ * consumer's `lib` alias. A `../lib/<name>.js` that is NOT a known lib is left
+ * unmatched (returns undefined) rather than silently fabricating a dependency.
+ */
+function libDependencyOf(spec: string): string | undefined {
+  const m = /^\.\.\/lib\/([\w-]+)\.js$/.exec(spec);
+  const name = m?.[1];
+  return name !== undefined && LIB_NAMES.has(name) ? name : undefined;
+}
+
 function parseImports(content: string): string[] {
   const specs: string[] = [];
   const re = /(?:from|import)\s+["']([^"']+)["']/g;
@@ -938,6 +974,23 @@ export async function readBlockSources(): Promise<Map<string, string>> {
   return sources;
 }
 
+/**
+ * Read the DEMO-DATASET `registry:lib` module sources (`demo-store` / `demo-saas`)
+ * keyed by lib name, exactly as they ship. These are the single source of truth
+ * the migrated blocks import from; the anti-inline-mock gate parses them to derive
+ * (from source, never hand-maintained) the set of distinctive data values that a
+ * migrated block must NOT re-inline. `cn` is excluded — it is a util, not a mock
+ * dataset. Returns `name → source` for exactly the two demo libs.
+ */
+export async function readDemoLibSources(): Promise<Map<string, string>> {
+  const sources = new Map<string, string>();
+  for (const lib of LIB_MODULES) {
+    if (lib.name !== "demo-store" && lib.name !== "demo-saas") continue;
+    sources.set(lib.name, await readFile(join(libDir, lib.file), "utf8"));
+  }
+  return sources;
+}
+
 /** Read the @cooud-ui/ui sources and derive the full, validated set of registry items. */
 export async function buildItems(): Promise<RegistryItem[]> {
   const pkg = JSON.parse(await readFile(join(uiRoot, "package.json"), "utf8")) as PkgJson;
@@ -955,15 +1008,32 @@ export async function buildItems(): Promise<RegistryItem[]> {
 
   const items: RegistryItem[] = [];
 
-  // The shared cn() lib item.
-  const cnContent = await readFile(cnFile, "utf8");
-  items.push({
-    name: "cn",
-    type: "registry:lib",
-    dependencies: [resolveDep("clsx"), resolveDep("tailwind-merge")],
-    registryDependencies: [],
-    files: [{ path: "cn.ts", content: cnContent, target: "lib" }],
-  });
+  // The shared `registry:lib` modules (cn + the F3 demo datasets). Each item's
+  // npm `dependencies` are PARSED from the module's own imports (pure data
+  // modules yield none; `cn` yields clsx + tailwind-merge), so the set is derived
+  // from source, never hand-maintained. A lib may itself depend on another lib
+  // via `../lib/<name>.js` (recorded as a registryDependency, same as blocks).
+  for (const lib of LIB_MODULES) {
+    const content = await readFile(join(libDir, lib.file), "utf8");
+    const npm = new Set<string>();
+    const reg = new Set<string>();
+    for (const spec of parseImports(content)) {
+      const libDep = libDependencyOf(spec);
+      if (libDep !== undefined && libDep !== lib.name) {
+        reg.add(libDep);
+      } else if (!spec.startsWith(".")) {
+        const pkgName = packageNameOf(spec);
+        if (!IGNORED_NPM.has(pkgName)) npm.add(resolveDep(pkgName));
+      }
+    }
+    items.push({
+      name: lib.name,
+      type: "registry:lib",
+      dependencies: [...npm].sort(),
+      registryDependencies: [...reg].sort(),
+      files: [{ path: lib.file, content, target: "lib" }],
+    });
+  }
 
   for (const file of entries) {
     const name = basename(file, extname(file));
@@ -972,8 +1042,9 @@ export async function buildItems(): Promise<RegistryItem[]> {
     const reg = new Set<string>();
 
     for (const spec of parseImports(content)) {
-      if (spec === "../lib/cn.js") {
-        reg.add("cn");
+      const libDep = libDependencyOf(spec);
+      if (libDep !== undefined) {
+        reg.add(libDep);
       } else if (spec.startsWith("./")) {
         reg.add(spec.replace(/^\.\//, "").replace(/\.js$/, ""));
       } else if (!spec.startsWith(".")) {
@@ -999,18 +1070,32 @@ export async function buildItems(): Promise<RegistryItem[]> {
   const blockSources = await readBlockSources();
   const variantSources = await readVariantSources();
 
-  /** Derive a block item's npm deps from its shipped source (bare or variant). */
-  const blockItemDeps = (source: string): string[] => {
+  /**
+   * Derive a block item's dependencies from its shipped source (bare or variant):
+   * npm `dependencies` (always pinned `@cooud-ui/ui` + any other bare imports) and
+   * `registryDependencies` — the shared `registry:lib` modules the block imports
+   * via `../lib/<name>.js` (F3: `demo-store`/`demo-saas`). Today every unmigrated
+   * block imports only `@cooud-ui/ui` + `lucide-react`, so `registryDeps` is `[]`;
+   * once a block is migrated to read the demo dataset it declares the lib here and
+   * `resolve` pulls it in transitively (`writeItemFiles` places it under `lib`).
+   */
+  const blockItemDeps = (source: string): { npm: string[]; registry: string[] } => {
     // @cooud-ui/ui is a bare import in every block but is not in the ui package's
     // own dependency map, so pin it explicitly to the ui package version.
     const npm = new Set<string>([uiPackage]);
+    const registry = new Set<string>();
     for (const spec of parseImports(source)) {
+      const libDep = libDependencyOf(spec);
+      if (libDep !== undefined) {
+        registry.add(libDep);
+        continue;
+      }
       if (spec.startsWith(".")) continue;
       const pkgName = packageNameOf(spec);
       if (pkgName === "@cooud-ui/ui" || IGNORED_NPM.has(pkgName)) continue;
       npm.add(resolveDep(pkgName));
     }
-    return [...npm].sort();
+    return { npm: [...npm].sort(), registry: [...registry].sort() };
   };
 
   for (const block of BLOCK_MANIFEST) {
@@ -1025,12 +1110,14 @@ export async function buildItems(): Promise<RegistryItem[]> {
     const source = blockSources.get(block.slug);
     if (source === undefined) throw new Error(`block "${block.slug}": missing extracted source`);
 
-    // The bare DEFAULT-variant item, unchanged.
+    // The bare DEFAULT-variant item. `registryDependencies` are derived from the
+    // block's `../lib/<name>.js` imports (empty until the block is migrated).
+    const bareDeps = blockItemDeps(source);
     items.push({
       name: block.slug,
       type: "registry:block",
-      dependencies: blockItemDeps(source),
-      registryDependencies: [],
+      dependencies: bareDeps.npm,
+      registryDependencies: bareDeps.registry,
       files: [{ path: `${block.slug}.tsx`, content: source, target: "block" }],
     });
 
@@ -1042,11 +1129,12 @@ export async function buildItems(): Promise<RegistryItem[]> {
       if (variantSource === undefined) {
         throw new Error(`variant "${itemName}": missing extracted source`);
       }
+      const variantDeps = blockItemDeps(variantSource);
       items.push({
         name: itemName,
         type: "registry:block",
-        dependencies: blockItemDeps(variantSource),
-        registryDependencies: [],
+        dependencies: variantDeps.npm,
+        registryDependencies: variantDeps.registry,
         files: [
           {
             path: variantFileName(block.slug, variant.id),

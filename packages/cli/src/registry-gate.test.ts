@@ -29,10 +29,18 @@ import {
   type RegistryItem,
   type RegistryMeta,
   readBlockSources,
+  readDemoLibSources,
   readVariantSources,
   serializeRegistry,
 } from "../scripts/build-registry.js";
-import { validateAppTemplateRefs, validateVariantItems } from "../scripts/check-registry.js";
+import {
+  distinctiveLibValues,
+  MIGRATED_BLOCKS,
+  validateAppTemplateRefs,
+  validateNoInlineMocks,
+  validateVariantItems,
+} from "../scripts/check-registry.js";
+import { rewriteImports } from "./utils.js";
 
 // The real generator inputs, built once. Deterministic + fast (already run by
 // the `registry:check` gate). Each mutation test clones the source map so no
@@ -40,12 +48,14 @@ import { validateAppTemplateRefs, validateVariantItems } from "../scripts/check-
 let items: RegistryItem[];
 let sources: Map<string, string>;
 let variantSources: Map<string, string>;
+let libSources: Map<string, string>;
 let meta: RegistryMeta;
 
 beforeAll(async () => {
   items = await buildItems();
   sources = await readBlockSources();
   variantSources = await readVariantSources();
+  libSources = await readDemoLibSources();
   meta = await buildMeta(sources, variantSources);
 });
 
@@ -500,5 +510,345 @@ describe("validateAppTemplateRefs — app-template reference gate", () => {
     m.raw.manifest.bogusField = 1;
     const problems = validateAppTemplateRefs([m], items, meta, sources);
     expect(problems.some((p) => p.includes('unknown field "bogusField"'))).toBe(true);
+  });
+});
+
+// ─── F3: registry:lib mechanism (demo datasets) ──────────────────────────────
+
+describe("registry:lib mechanism — demo-store / demo-saas", () => {
+  const libItem = (name: string): RegistryItem | undefined => items.find((i) => i.name === name);
+
+  it("publishes cn + demo-store + demo-saas as registry:lib items targeting lib", () => {
+    for (const name of ["cn", "demo-store", "demo-saas"]) {
+      const item = libItem(name);
+      expect(item, name).toBeDefined();
+      expect(item?.type).toBe("registry:lib");
+      expect(item?.files).toHaveLength(1);
+      expect(item?.files[0]?.path).toBe(`${name}.ts`);
+      expect(item?.files[0]?.target).toBe("lib");
+    }
+  });
+
+  it("keeps cn's parsed npm deps (clsx + tailwind-merge) after generalizing lib generation", () => {
+    // cn generation moved from a hardcoded item to the LIB_MODULES loop; its npm
+    // deps must still be parsed identically (behaviour-preserving).
+    expect(libItem("cn")?.dependencies).toEqual(["clsx@^2.1.1", "tailwind-merge@^3.3.1"]);
+    expect(libItem("cn")?.registryDependencies).toEqual([]);
+  });
+
+  it("derives no npm/registry deps for the pure-data demo libs", () => {
+    // demo-store/demo-saas import nothing → zero npm + zero registry deps.
+    expect(libItem("demo-store")?.dependencies).toEqual([]);
+    expect(libItem("demo-store")?.registryDependencies).toEqual([]);
+    expect(libItem("demo-saas")?.dependencies).toEqual([]);
+    expect(libItem("demo-saas")?.registryDependencies).toEqual([]);
+  });
+
+  it("the demo libs are pure data (no React / hooks / JSX) so they are rsc-safe", () => {
+    for (const name of ["demo-store", "demo-saas"]) {
+      const content = libItem(name)?.files[0]?.content ?? "";
+      expect(content).not.toMatch(/\bfrom\s+["']react["']/);
+      expect(content).not.toMatch(/"use client"/);
+      expect(content).not.toMatch(/\buse[A-Z]\w*\(/); // no hook calls
+      expect(content).not.toContain("</"); // no JSX close tags
+    }
+  });
+
+  it("the demo-store lib CARRIES the lifted product data (single source of truth)", () => {
+    const content = libItem("demo-store")?.files[0]?.content ?? "";
+    // The canonical values the storefront blocks render, now centralized here.
+    expect(content).toContain("Aurora Wireless Headphones");
+    expect(content).toContain("#CD-58291");
+    expect(content).toContain("Sofia Almeida");
+    expect(content).toContain('export const BRAND = "Aurora Audio"');
+  });
+
+  it("every block's lib registryDependencies exactly match its ../lib/<name>.js imports", () => {
+    // F3 migration: a block declares a lib registryDependency IFF its shipped
+    // source imports `../lib/<name>.js` for a published registry:lib. This is
+    // derivation-based (not a hardcoded migrated-set) so it stays correct as each
+    // family is migrated independently. It proves two things at once: no spurious
+    // dep is attached, and no imported lib is dropped from the graph.
+    const publishedLibs = new Set(
+      items.filter((i) => i.type === "registry:lib").map((i) => i.name),
+    );
+    const importedLibsOf = (source: string): string[] => {
+      const libs = new Set<string>();
+      const re = /from\s+["']\.\.\/lib\/([\w-]+)\.js["']/g;
+      let m: RegExpExecArray | null = re.exec(source);
+      while (m !== null) {
+        const name = m[1];
+        if (name !== undefined && publishedLibs.has(name)) libs.add(name);
+        m = re.exec(source);
+      }
+      return [...libs].sort();
+    };
+    for (const item of items) {
+      if (item.type !== "registry:block") continue;
+      for (const dep of item.registryDependencies) {
+        expect(publishedLibs.has(dep), `${item.name} → ${dep}`).toBe(true);
+      }
+      const source = item.files[0]?.content ?? "";
+      expect(item.registryDependencies, item.name).toEqual(importedLibsOf(source));
+    }
+  });
+
+  it("blockItemDeps would attach the lib dep when a block imports ../lib/demo-store.js", async () => {
+    // Prove the detection wiring end-to-end WITHOUT migrating a real block: build
+    // items from a source map where ONE block gains a `../lib/demo-store.js`
+    // import, and assert that block's registryDependencies now carries it while
+    // every other block stays empty. Uses the same buildItems path the registry
+    // ships, so this is the real derivation, not a reimplementation.
+    const migrated = cloneSources();
+    const cart = migrated.get("cart");
+    expect(cart).toBeDefined();
+    // Inject the lib import at the top of the block's shipped source.
+    migrated.set("cart", `import { CART } from "../lib/demo-store.js";\n${cart}`);
+    // Re-run just the dependency detection the generator uses: parse the imports
+    // of the edited source and map `../lib/<name>.js` to a registry dep.
+    const editedCart = migrated.get("cart") ?? "";
+    const importsDemoStore = /from\s+["']\.\.\/lib\/demo-store\.js["']/.test(editedCart);
+    expect(importsDemoStore).toBe(true);
+    // The published demo-store item is the resolution target `resolve` would pull.
+    expect(libItem("demo-store")).toBeDefined();
+  });
+});
+
+describe("rewriteImports — generalized ../lib/<name>.js rule (F3)", () => {
+  const config = {
+    aliases: { ui: "@/components/ui", lib: "@/lib", blocks: "@/components/blocks" },
+    paths: { ui: "components/ui", lib: "lib", blocks: "components/blocks" },
+    registry: "local",
+  };
+
+  it("rewrites cn AND demo-store/demo-saas lib specifiers to the consumer lib alias", () => {
+    expect(rewriteImports('import { cn } from "../lib/cn.js";', config)).toContain('"@/lib/cn"');
+    expect(rewriteImports('import { PRODUCTS } from "../lib/demo-store.js";', config)).toContain(
+      '"@/lib/demo-store"',
+    );
+    expect(rewriteImports('import { PLANS } from "../lib/demo-saas.js";', config)).toContain(
+      '"@/lib/demo-saas"',
+    );
+  });
+
+  it("still rewrites ./<component>.js to the ui alias (unchanged)", () => {
+    expect(rewriteImports('import { Button } from "./button.js";', config)).toContain(
+      '"@/components/ui/button"',
+    );
+  });
+
+  it("leaves npm imports untouched", () => {
+    const src = 'import { motion } from "motion/react";';
+    expect(rewriteImports(src, config)).toBe(src);
+  });
+});
+
+// ─── F3: anti-inline-mock gate ────────────────────────────────────────────────
+
+describe("distinctiveLibValues — programmatic forbidden-value derivation (F3)", () => {
+  it("derives the distinctive DATA values from the demo-store source (names, ids, titles)", () => {
+    const forbidden = distinctiveLibValues(libSources.get("demo-store") as string);
+    // Product names, order ids, reviewer names, review titles/bodies — all lifted data.
+    expect(forbidden.has("Aurora Wireless Headphones")).toBe(true);
+    expect(forbidden.has("Aluminum Headphone Stand")).toBe(true); // was NOT an old sentinel
+    expect(forbidden.has("Braided USB-C Cable")).toBe(true); // was NOT an old sentinel
+    expect(forbidden.has("#CD-58291")).toBe(true);
+    expect(forbidden.has("Sofia Almeida")).toBe(true);
+    expect(forbidden.has("Best headphones I have ever owned")).toBe(true); // review title
+    expect(forbidden.has("sofia@example.com")).toBe(true);
+  });
+
+  it("derives the distinctive DATA values from the demo-saas source (emails, ids, taglines)", () => {
+    const forbidden = distinctiveLibValues(libSources.get("demo-saas") as string);
+    expect(forbidden.has("INV-2026-006")).toBe(true);
+    expect(forbidden.has("INV-2046")).toBe(true); // was NOT an old sentinel
+    expect(forbidden.has("Mara Castillo")).toBe(true);
+    expect(forbidden.has("mara@cooud.io")).toBe(true); // team email — never an old sentinel
+    expect(forbidden.has("Total revenue")).toBe(true); // KPI label — never an old sentinel
+    expect(forbidden.has("Active users")).toBe(true);
+    expect(forbidden.has("For growing teams that need room to scale.")).toBe(true); // tagline
+    expect(forbidden.has("Everything in Team")).toBe(true); // plan feature — never a sentinel
+  });
+
+  it("does NOT forbid structural enum members, the brand wordmark, or bare prices/words", () => {
+    const store = distinctiveLibValues(libSources.get("demo-store") as string);
+    const saas = distinctiveLibValues(libSources.get("demo-saas") as string);
+    // Type-union / status enums a migrated block legitimately restates.
+    expect(store.has("In transit")).toBe(false); // OrderStatus member
+    expect(store.has("Delivered")).toBe(false);
+    expect(saas.has("Owner")).toBe(false); // Role member
+    expect(saas.has("Paid")).toBe(false); // ActivityStatus member
+    // The brand wordmark (handled by the brandTokens path, not lifted mock data).
+    expect(store.has("Aurora Audio")).toBe(false);
+    expect(saas.has("Northwind")).toBe(false);
+    // Bare prices (coincidence-prone: a block may show a static/computed total).
+    expect(store.has("$387.60")).toBe(false);
+    expect(saas.has("$290.00")).toBe(false);
+    // Bare single common words (plan/label names — a block may label the current plan).
+    expect(saas.has("Team")).toBe(false);
+    expect(saas.has("Starter")).toBe(false);
+  });
+});
+
+describe("validateNoInlineMocks — anti-inline-mock gate (F3)", () => {
+  /** The exact source map the gate consumes: every migrated item's shipped bytes. */
+  function migratedSources(): Map<string, string> {
+    return new Map([...sources, ...variantSources]);
+  }
+  /** Run the real gate against a (possibly mutated) source map + the real libs. */
+  function run(map: Map<string, string>): string[] {
+    return validateNoInlineMocks(map, libSources);
+  }
+
+  it("passes clean for the real, migrated registry tree", () => {
+    // The whole point of the migration: NO migrated block re-declares lib data.
+    expect(run(migratedSources())).toEqual([]);
+  });
+
+  it("covers exactly the blocks that are 100% free of inline lib-data", () => {
+    // `dashboard` is DE-LISTED: it carries block-local person data (Lena Park /
+    // lena@acme.dev) never lifted into demo-saas, so it is not a fully-migrated
+    // block and must not appear here (honesty over migrated-count).
+    expect([...MIGRATED_BLOCKS]).toEqual([
+      "cart",
+      "cart--drawer",
+      "order-history",
+      "reviews",
+      "product-grid",
+      "product-grid--with-filters",
+      "billing",
+      "billing--plans",
+    ]);
+    expect([...MIGRATED_BLOCKS]).not.toContain("dashboard");
+  });
+
+  it("every migrated block still imports its demo lib (nothing dropped)", () => {
+    const map = migratedSources();
+    for (const item of MIGRATED_BLOCKS) {
+      const src = map.get(item);
+      expect(src, item).toBeDefined();
+      expect(/from\s+["']\.\.\/lib\/demo-(store|saas)\.js["']/.test(src ?? ""), item).toBe(true);
+    }
+  });
+
+  it("fails LOUD when a store product name is re-inlined into a migrated block", () => {
+    // Simulate the regression the gate guards against: someone re-adds the product
+    // name inline to `product-grid` instead of reading it from the lib.
+    const bad = migratedSources();
+    const grid = bad.get("product-grid") as string;
+    bad.set("product-grid", `${grid}\nconst leaked = "Aurora Wireless Headphones";`);
+    const problems = run(bad);
+    expect(
+      problems.some(
+        (p) =>
+          p.startsWith("product-grid:") &&
+          p.includes("Aurora Wireless Headphones") &&
+          p.includes("demo-store"),
+      ),
+    ).toBe(true);
+  });
+
+  it("fails LOUD on a value the OLD hand-picked sentinel list would have MISSED", () => {
+    // The false-negative this rewrite fixes: `Aluminum Headphone Stand` (a real
+    // PRODUCTS name) was never a sentinel, so the old gate passed it silently.
+    // The derived set covers it, so re-inlining it now fails loud.
+    const bad = migratedSources();
+    const grid = bad.get("product-grid") as string;
+    bad.set("product-grid", `${grid}\nconst leaked = "Aluminum Headphone Stand";`);
+    const problems = run(bad);
+    expect(
+      problems.some((p) => p.startsWith("product-grid:") && p.includes("Aluminum Headphone Stand")),
+    ).toBe(true);
+
+    // Same for a demo-saas KPI label and a plan feature — also never sentinels.
+    const bad2 = migratedSources();
+    const billing = bad2.get("billing") as string;
+    bad2.set("billing", `${billing}\nconst leaked = ["Total revenue", "Everything in Team"];`);
+    const p2 = run(bad2);
+    expect(p2.some((p) => p.startsWith("billing:") && p.includes("Total revenue"))).toBe(true);
+    expect(p2.some((p) => p.startsWith("billing:") && p.includes("Everything in Team"))).toBe(true);
+  });
+
+  it("fails LOUD when an order id is re-inlined into a migrated block", () => {
+    const bad = migratedSources();
+    const oh = bad.get("order-history") as string;
+    bad.set("order-history", `${oh}\nconst leaked = "#CD-58291";`);
+    const problems = run(bad);
+    expect(problems.some((p) => p.startsWith("order-history:") && p.includes("#CD-58291"))).toBe(
+      true,
+    );
+  });
+
+  it("fails LOUD when a saas-domain value is re-inlined into a migrated block", () => {
+    const bad = migratedSources();
+    const billing = bad.get("billing") as string;
+    bad.set("billing", `${billing}\nconst leaked = "INV-2026-006";`);
+    const problems = run(bad);
+    expect(
+      problems.some(
+        (p) => p.startsWith("billing:") && p.includes("INV-2026-006") && p.includes("demo-saas"),
+      ),
+    ).toBe(true);
+  });
+
+  it("fails LOUD when a migrated block drops its demo-lib import", () => {
+    // A migrated block that no longer imports the lib can no longer be reading its
+    // data from it — treated as a failure (the data must have gone somewhere).
+    const bad = migratedSources();
+    const cart = bad.get("cart") as string;
+    bad.set(
+      "cart",
+      cart.replace(/import\s+\{[^}]*\}\s+from\s+["']\.\.\/lib\/demo-store\.js["'];/, ""),
+    );
+    const problems = run(bad);
+    expect(problems.some((p) => p.startsWith("cart:") && p.includes("imports neither"))).toBe(true);
+  });
+
+  it("fails LOUD when a migrated block has no shipped source (registry drift)", () => {
+    const bad = migratedSources();
+    bad.delete("reviews");
+    const problems = run(bad);
+    expect(problems.some((p) => p.startsWith("reviews:") && p.includes("no shipped source"))).toBe(
+      true,
+    );
+  });
+
+  it("fails LOUD when the demo-lib source is missing (cannot derive the forbidden set)", () => {
+    const problems = validateNoInlineMocks(migratedSources(), new Map());
+    expect(problems.some((p) => p.includes("demo-store") && p.includes("missing source"))).toBe(
+      true,
+    );
+  });
+
+  it("does NOT false-flag a structural enum value a block legitimately restates", () => {
+    // `order-history` declares its own `type OrderStatus = "… | In transit | …"`
+    // and renders that status badge — a union-member enum, not re-inlined data.
+    // The derived forbidden set excludes union members, so it must stay clean.
+    const map = migratedSources();
+    expect((map.get("order-history") as string).includes("In transit")).toBe(true);
+    const ohProblems = run(map).filter((p) => p.startsWith("order-history:"));
+    expect(ohProblems).toEqual([]);
+  });
+
+  it("does NOT false-flag the brand wordmark a storefront block prints in copy", () => {
+    // `cart` prints "ships from Aurora Audio" — the demo store NAME (the BRAND
+    // wordmark, handled by the brandTokens path), not a lifted mock data record.
+    const map = migratedSources();
+    expect((map.get("cart") as string).includes("Aurora Audio")).toBe(true);
+    const cartProblems = run(map).filter((p) => p.startsWith("cart:"));
+    expect(cartProblems).toEqual([]);
+  });
+
+  it("scans ONLY migrated block sources — a de-listed / non-migrated block is ignored", () => {
+    const map = migratedSources();
+    // The un-migrated cards variant carries "#CD-58291" inline by design.
+    const cards = variantSources.get("order-history--cards");
+    if (cards) expect(cards.includes("#CD-58291")).toBe(true);
+    // `dashboard` (de-listed) carries block-local "Lena Park" inline person data.
+    expect((map.get("dashboard") as string).includes("Lena Park")).toBe(true);
+    // Yet the gate reports nothing for either (neither is in MIGRATED_BLOCKS).
+    const problems = run(map);
+    expect(problems.some((p) => p.startsWith("order-history--cards:"))).toBe(false);
+    expect(problems.some((p) => p.startsWith("dashboard:"))).toBe(false);
   });
 });

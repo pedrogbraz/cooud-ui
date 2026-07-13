@@ -141,6 +141,14 @@ describe.skipIf(!CAN_COMPOSE)("composeTemplate — integration (local repo regis
     expect(existsSync(join(cwd, "app/(site)/page.tsx"))).toBe(true);
     expect(existsSync(join(cwd, "app/(bare)/login/page.tsx"))).toBe(true);
     expect(existsSync(join(cwd, "app/(site)/products/page.tsx"))).toBe(true);
+
+    // The brand reaches the VISIBLE chrome via the brandTokens literal path (not
+    // a generated lib/brand.ts, which does not exist): the installed navbar copy
+    // carries the app brand, and the generated home page is tracked in composed{}.
+    expect(existsSync(join(cwd, "lib/brand.ts"))).toBe(false);
+    const navbar = readFileSync(join(cwd, "components/blocks/navbar.tsx"), "utf8");
+    expect(navbar).toContain("loja");
+    expect(result.files).toContain("app/(site)/page.tsx");
   });
 
   it("composes the saas template into (shell)/(bare) route groups with the app-shell chrome", async () => {

@@ -49,13 +49,16 @@ export function runInstall(pm: PackageManager, deps: string[], cwd: string): Pro
 
 /**
  * Rewrite a component's canonical specifiers to the consumer's aliases:
- *   "../lib/cn.js"  → `${aliases.lib}/cn`
- *   "./button.js"   → `${aliases.ui}/button`
- * npm imports are left untouched.
+ *   "../lib/cn.js"         → `${aliases.lib}/cn`
+ *   "../lib/demo-store.js" → `${aliases.lib}/demo-store`
+ *   "./button.js"          → `${aliases.ui}/button`
+ * The `../lib/<name>.js` rule is generalized (F3) so any shared `registry:lib`
+ * a block depends on — `cn`, `demo-store`, `demo-saas`, … — rewrites to the
+ * consumer's `lib` alias, not just `cn`. npm imports are left untouched.
  */
 export function rewriteImports(content: string, config: CooudUIConfig): string {
   return content
-    .replace(/(["'])\.\.\/lib\/cn\.js\1/g, `"${config.aliases.lib}/cn"`)
+    .replace(/(["'])\.\.\/lib\/([\w-]+)\.js\1/g, `"${config.aliases.lib}/$2"`)
     .replace(/(["'])\.\/([\w-]+)\.js\1/g, `"${config.aliases.ui}/$2"`);
 }
 

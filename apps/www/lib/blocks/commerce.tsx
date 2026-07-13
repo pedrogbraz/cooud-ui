@@ -33,6 +33,7 @@ import {
   TableHeader,
   TableRow,
 } from "@cooud-ui/ui";
+import { PRODUCTS } from "@cooud-ui/ui/demo-store";
 import {
   ArrowLeft,
   ArrowRight,
@@ -1369,58 +1370,21 @@ interface Product {
   badge?: string;
 }
 
-const products: Product[] = [
-  {
-    id: "playbook",
-    title: "The Creator Playbook",
-    kind: "Course · 42 lessons",
-    price: "$129",
-    gradient: "from-primary/30 to-info/20",
-    initials: "CP",
-    badge: "Bestseller",
-  },
-  {
-    id: "presets",
-    title: "Cinematic LUT Presets",
-    kind: "Asset pack · 60 presets",
-    price: "$39",
-    gradient: "from-info/30 to-success/20",
-    initials: "LP",
-  },
-  {
-    id: "templates",
-    title: "Launch Notion System",
-    kind: "Template · instant access",
-    price: "$24",
-    gradient: "from-warning/30 to-primary/20",
-    initials: "NS",
-  },
-  {
-    id: "ebook",
-    title: "Newsletter to Income",
-    kind: "Ebook · 180 pages",
-    price: "$19",
-    gradient: "from-success/30 to-info/20",
-    initials: "NI",
-  },
-  {
-    id: "workshop",
-    title: "Monetization Workshop",
-    kind: "Replay · 3 hours",
-    price: "$89",
-    gradient: "from-primary/30 to-warning/20",
-    initials: "MW",
-    badge: "New",
-  },
-  {
-    id: "soundkit",
-    title: "Ambient Sound Kit",
-    kind: "Audio · 120 loops",
-    price: "$29",
-    gradient: "from-info/30 to-primary/20",
-    initials: "SK",
-  },
-];
+// The storefront grid shows the digital creator line from the shared demo-store
+// dataset (everything that is not the physical Audio/Accessories catalog), so the
+// same products stay in sync across the grid, cart, and order surfaces. Prices are
+// whole dollars here (e.g. `$129`), derived from the canonical `priceValue`.
+const products: Product[] = PRODUCTS.filter(
+  (p) => p.category !== "Audio" && p.category !== "Accessories",
+).map((p) => ({
+  id: p.id,
+  title: p.name,
+  kind: p.kind,
+  price: `$${p.priceValue}`,
+  gradient: p.gradient,
+  initials: p.initials,
+  badge: p.badge,
+}));
 
 export function ProductGridBlock() {
   return (
@@ -1474,6 +1438,7 @@ const productGridCode = `import {
   CardHeader,
   CardTitle,
 } from "@cooud-ui/ui";
+import { PRODUCTS } from "../lib/demo-store.js";
 import { ArrowUpRight } from "lucide-react";
 
 interface Product {
@@ -1486,58 +1451,21 @@ interface Product {
   badge?: string;
 }
 
-const products: Product[] = [
-  {
-    id: "playbook",
-    title: "The Creator Playbook",
-    kind: "Course · 42 lessons",
-    price: "$129",
-    gradient: "from-primary/30 to-info/20",
-    initials: "CP",
-    badge: "Bestseller",
-  },
-  {
-    id: "presets",
-    title: "Cinematic LUT Presets",
-    kind: "Asset pack · 60 presets",
-    price: "$39",
-    gradient: "from-info/30 to-success/20",
-    initials: "LP",
-  },
-  {
-    id: "templates",
-    title: "Launch Notion System",
-    kind: "Template · instant access",
-    price: "$24",
-    gradient: "from-warning/30 to-primary/20",
-    initials: "NS",
-  },
-  {
-    id: "ebook",
-    title: "Newsletter to Income",
-    kind: "Ebook · 180 pages",
-    price: "$19",
-    gradient: "from-success/30 to-info/20",
-    initials: "NI",
-  },
-  {
-    id: "workshop",
-    title: "Monetization Workshop",
-    kind: "Replay · 3 hours",
-    price: "$89",
-    gradient: "from-primary/30 to-warning/20",
-    initials: "MW",
-    badge: "New",
-  },
-  {
-    id: "soundkit",
-    title: "Ambient Sound Kit",
-    kind: "Audio · 120 loops",
-    price: "$29",
-    gradient: "from-info/30 to-primary/20",
-    initials: "SK",
-  },
-];
+// The storefront grid shows the digital creator line from the shared demo-store
+// dataset (everything that is not the physical Audio/Accessories catalog), so the
+// same products stay in sync across the grid, cart, and order surfaces. Prices are
+// whole dollars here (e.g. \`$129\`), derived from the canonical \`priceValue\`.
+const products: Product[] = PRODUCTS.filter(
+  (p) => p.category !== "Audio" && p.category !== "Accessories",
+).map((p) => ({
+  id: p.id,
+  title: p.name,
+  kind: p.kind,
+  price: \`$\${p.priceValue}\`,
+  gradient: p.gradient,
+  initials: p.initials,
+  badge: p.badge,
+}));
 
 export function ProductGridBlock() {
   return (
@@ -1766,6 +1694,7 @@ const productGridWithFiltersCode = `import {
   Separator,
   Slider,
 } from "@cooud-ui/ui";
+import { PRODUCTS } from "../lib/demo-store.js";
 import { ArrowUpRight, SlidersHorizontal } from "lucide-react";
 
 interface Product {
@@ -1778,58 +1707,21 @@ interface Product {
   badge?: string;
 }
 
-const products: Product[] = [
-  {
-    id: "playbook",
-    title: "The Creator Playbook",
-    kind: "Course · 42 lessons",
-    price: "$129",
-    gradient: "from-primary/30 to-info/20",
-    initials: "CP",
-    badge: "Bestseller",
-  },
-  {
-    id: "presets",
-    title: "Cinematic LUT Presets",
-    kind: "Asset pack · 60 presets",
-    price: "$39",
-    gradient: "from-info/30 to-success/20",
-    initials: "LP",
-  },
-  {
-    id: "templates",
-    title: "Launch Notion System",
-    kind: "Template · instant access",
-    price: "$24",
-    gradient: "from-warning/30 to-primary/20",
-    initials: "NS",
-  },
-  {
-    id: "ebook",
-    title: "Newsletter to Income",
-    kind: "Ebook · 180 pages",
-    price: "$19",
-    gradient: "from-success/30 to-info/20",
-    initials: "NI",
-  },
-  {
-    id: "workshop",
-    title: "Monetization Workshop",
-    kind: "Replay · 3 hours",
-    price: "$89",
-    gradient: "from-primary/30 to-warning/20",
-    initials: "MW",
-    badge: "New",
-  },
-  {
-    id: "soundkit",
-    title: "Ambient Sound Kit",
-    kind: "Audio · 120 loops",
-    price: "$29",
-    gradient: "from-info/30 to-primary/20",
-    initials: "SK",
-  },
-];
+// The storefront grid shows the digital creator line from the shared demo-store
+// dataset (everything that is not the physical Audio/Accessories catalog), so the
+// same products stay in sync across the grid, cart, and order surfaces. Prices are
+// whole dollars here (e.g. \`$129\`), derived from the canonical \`priceValue\`.
+const products: Product[] = PRODUCTS.filter(
+  (p) => p.category !== "Audio" && p.category !== "Accessories",
+).map((p) => ({
+  id: p.id,
+  title: p.name,
+  kind: p.kind,
+  price: \`$\${p.priceValue}\`,
+  gradient: p.gradient,
+  initials: p.initials,
+  badge: p.badge,
+}));
 
 interface CatalogCategory {
   id: string;

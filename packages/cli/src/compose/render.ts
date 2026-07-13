@@ -414,9 +414,15 @@ export function renderExtra(extra: PlanExtra, config: CooudUIConfig): string {
 
 /**
  * Render the whole plan into files. Deterministic ordering: chrome rewrites by
- * slug, then wrappers, then layouts (by group), then pages (manifest order), then
- * Next special-file extras (by key). The caller writes them; nothing here touches
- * the filesystem.
+ * slug, then wrappers, then layouts (by group), then pages (manifest order),
+ * then Next special-file extras (by key). The caller writes them; nothing here
+ * touches the filesystem.
+ *
+ * NOTE: the app brand reaches every visible surface via the brandTokens
+ * literal-replacement path ({@link rewriteChromeBlock} → replaceBrandLiteral in
+ * the chrome navbar/footer/hero) — NOT via a generated `lib/brand.ts`. The demo
+ * libs (`demo-store`/`demo-saas`) carry their own standalone `BRAND` default for
+ * the storefront/dashboard demo name; compose does not override it.
  */
 export function renderPlan(plan: ComposePlan, config: CooudUIConfig): RenderResult {
   const files: GeneratedFile[] = [];

@@ -42,6 +42,7 @@ import {
   TableHeader,
   TableRow,
 } from "@cooud-ui/ui";
+import { ACTIVITY, type ActivityStatus, KPIS, REVENUE_SERIES } from "@cooud-ui/ui/demo-saas";
 import {
   Activity,
   Bell,
@@ -98,103 +99,34 @@ const analyticsNav: NavLink[] = [
   { id: "settings", label: "Settings", icon: Settings },
 ];
 
-const analyticsKpis = [
-  {
-    label: "Total revenue",
-    value: "$84,210",
-    delta: "+14.2%",
-    trend: "up" as const,
-    icon: DollarSign,
-  },
-  {
-    label: "Active users",
-    value: "12,840",
-    delta: "+6.8%",
-    trend: "up" as const,
-    icon: Users,
-  },
-  {
-    label: "Conversion",
-    value: "4.21%",
-    delta: "+0.9%",
-    trend: "up" as const,
-    icon: Activity,
-  },
-  {
-    label: "Churn",
-    value: "1.64%",
-    delta: "-0.4%",
-    trend: "down" as const,
-    icon: TrendingDown,
-  },
-];
+// KPI icons are presentational (not data): map each demo-saas KPI to its icon.
+const KPI_ICONS: Record<string, typeof DollarSign> = {
+  "Total revenue": DollarSign,
+  "Active users": Users,
+  Conversion: Activity,
+  Churn: TrendingDown,
+};
 
-const revenueData = [
-  { month: "Jan", revenue: 42_100 },
-  { month: "Feb", revenue: 48_400 },
-  { month: "Mar", revenue: 45_900 },
-  { month: "Apr", revenue: 56_200 },
-  { month: "May", revenue: 61_800 },
-  { month: "Jun", revenue: 72_400 },
-  { month: "Jul", revenue: 84_210 },
-];
+const analyticsKpis = KPIS.map((kpi) => ({ ...kpi, icon: KPI_ICONS[kpi.label] ?? DollarSign }));
+
+const revenueData = REVENUE_SERIES;
 
 const revenueChartConfig = {
   revenue: { label: "Revenue", color: "var(--color-chart-1)" },
 } satisfies ChartConfig;
 
-interface ActivityRow {
-  id: string;
-  customer: string;
-  email: string;
-  initials: string;
-  avatar?: string;
-  amount: string;
-  status: "Paid" | "Pending" | "Refunded";
-  statusVariant: "success" | "warning" | "secondary";
-}
+// Status → badge variant is presentational (not data): map each demo-saas
+// activity status to its badge variant.
+const ACTIVITY_STATUS_VARIANT: Record<ActivityStatus, "success" | "warning" | "secondary"> = {
+  Paid: "success",
+  Pending: "warning",
+  Refunded: "secondary",
+};
 
-const recentActivity: ActivityRow[] = [
-  {
-    id: "INV-2048",
-    customer: "Mara Castillo",
-    email: "mara@northwind.io",
-    initials: "MC",
-    avatar: "https://i.pravatar.cc/96?img=12",
-    amount: "$1,290.00",
-    status: "Paid",
-    statusVariant: "success",
-  },
-  {
-    id: "INV-2047",
-    customer: "Devon Lane",
-    email: "devon@acme.dev",
-    initials: "DL",
-    avatar: "https://i.pravatar.cc/96?img=33",
-    amount: "$640.00",
-    status: "Pending",
-    statusVariant: "warning",
-  },
-  {
-    id: "INV-2046",
-    customer: "Priya Sharma",
-    email: "priya@lumon.co",
-    initials: "PS",
-    amount: "$2,180.00",
-    status: "Paid",
-    statusVariant: "success",
-  },
-  {
-    id: "INV-2045",
-    customer: "Tobias Funke",
-    email: "tobias@bluth.com",
-    initials: "TF",
-    avatar: "https://i.pravatar.cc/96?img=68",
-    amount: "$320.00",
-    status: "Refunded",
-    statusVariant: "secondary",
-  },
-];
+const recentActivity = ACTIVITY.map((row) => ({
+  ...row,
+  statusVariant: ACTIVITY_STATUS_VARIANT[row.status],
+}));
 
 const topbarNav = [
   { id: "dashboard", label: "Dashboard", current: true },
@@ -459,6 +391,7 @@ import {
   TableHeader,
   TableRow,
 } from "@cooud-ui/ui";
+import { ACTIVITY, type ActivityStatus, KPIS, REVENUE_SERIES } from "../lib/demo-saas.js";
 import {
   Activity,
   Bell,
@@ -481,33 +414,33 @@ const nav = [
   { id: "settings", label: "Settings", icon: Settings },
 ];
 
-const kpis = [
-  { label: "Total revenue", value: "$84,210", delta: "+14.2%", trend: "up" as const, icon: DollarSign },
-  { label: "Active users", value: "12,840", delta: "+6.8%", trend: "up" as const, icon: Users },
-  { label: "Conversion", value: "4.21%", delta: "+0.9%", trend: "up" as const, icon: Activity },
-  { label: "Churn", value: "1.64%", delta: "-0.4%", trend: "down" as const, icon: TrendingDown },
-];
+// KPI icons are presentational (not data): map each demo-saas KPI to its icon.
+const kpiIcons: Record<string, typeof DollarSign> = {
+  "Total revenue": DollarSign,
+  "Active users": Users,
+  Conversion: Activity,
+  Churn: TrendingDown,
+};
 
-const revenueData = [
-  { month: "Jan", revenue: 42100 },
-  { month: "Feb", revenue: 48400 },
-  { month: "Mar", revenue: 45900 },
-  { month: "Apr", revenue: 56200 },
-  { month: "May", revenue: 61800 },
-  { month: "Jun", revenue: 72400 },
-  { month: "Jul", revenue: 84210 },
-];
+const kpis = KPIS.map((kpi) => ({ ...kpi, icon: kpiIcons[kpi.label] ?? DollarSign }));
+
+const revenueData = REVENUE_SERIES;
 
 const chartConfig = {
   revenue: { label: "Revenue", color: "var(--color-chart-1)" },
 } satisfies ChartConfig;
 
-const activity = [
-  { id: "INV-2048", customer: "Mara Castillo", email: "mara@northwind.io", initials: "MC", avatar: "https://i.pravatar.cc/96?img=12", amount: "$1,290.00", status: "Paid", statusVariant: "success" as const },
-  { id: "INV-2047", customer: "Devon Lane", email: "devon@acme.dev", initials: "DL", avatar: "https://i.pravatar.cc/96?img=33", amount: "$640.00", status: "Pending", statusVariant: "warning" as const },
-  { id: "INV-2046", customer: "Priya Sharma", email: "priya@lumon.co", initials: "PS", amount: "$2,180.00", status: "Paid", statusVariant: "success" as const },
-  { id: "INV-2045", customer: "Tobias Funke", email: "tobias@bluth.com", initials: "TF", avatar: "https://i.pravatar.cc/96?img=68", amount: "$320.00", status: "Refunded", statusVariant: "secondary" as const },
-];
+// Status → badge variant is presentational (not data).
+const activityStatusVariant: Record<ActivityStatus, "success" | "warning" | "secondary"> = {
+  Paid: "success",
+  Pending: "warning",
+  Refunded: "secondary",
+};
+
+const activity = ACTIVITY.map((row) => ({
+  ...row,
+  statusVariant: activityStatusVariant[row.status],
+}));
 
 const topbar = [
   { id: "dashboard", label: "Dashboard", current: true },

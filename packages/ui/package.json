@@ -12,6 +12,14 @@
       "types": "./dist/lib/cn.d.ts",
       "import": "./dist/lib/cn.js"
     },
+    "./demo-store": {
+      "types": "./dist/lib/demo-store.d.ts",
+      "import": "./dist/lib/demo-store.js"
+    },
+    "./demo-saas": {
+      "types": "./dist/lib/demo-saas.d.ts",
+      "import": "./dist/lib/demo-saas.js"
+    },
     "./testing": {
       "types": "./dist/testing/index.d.ts",
       "import": "./dist/testing/index.js"
