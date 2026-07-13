@@ -7,6 +7,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] — 2026-07-13
+
+### Added
+
+- **Cooud Compose — the app generator (Phase 1).** `cooud-ui compose <template>`
+  and `npx create-cooud-app --template store|landing` build a full multi-page
+  Next.js app by composing validated registry blocks. The generator is data,
+  not codegen: every generated page is only imports of installed blocks plus a
+  `<main>` that stacks them (the golden rule), so many similar apps generate
+  without drift. It reuses the validated CLI core (`Registry.resolve`,
+  `writeItemFiles`, the install manifest) verbatim and adds a pure, deterministic
+  planner/renderer. Ships `store` (9-page storefront) and `landing` bundled
+  manifests, `--dry-run` sitemap preview, and a `.cooud-ui/` base snapshot for
+  future 3-way page upgrades. **No new package.**
+- **`registry/meta.json` sidecar.** A deterministic (timestamp-free, key-sorted)
+  metadata index generated alongside the registry: per block the
+  title/description/category plus the extracted `exportName`, `kind`, data-slots
+  and brand tokens; per component the title/category/`rsc`; and an `apps` section
+  for the bundled templates. `registry:check` gains fail-loud gates for meta
+  sync, unique block export names, required data-slot/brand markers, and
+  app-template block references.
+- **MCP tools enriched with metadata.** `search_registry`, `list_blocks`,
+  `list_components` and `get_component` now surface each item's
+  description/category from `meta.json` (with graceful fallback for registries
+  that ship none), and search matches description + category.
+- **`rsc:smoke` gate.** Proves the whole block catalog is safe to compose into
+  React Server Component pages — installs every block and `next build`s one bare
+  RSC page per block. All 73 blocks pass; the five interactive blocks already
+  carry `use client`.
+
 ## [0.3.0] — 2026-07-13
 
 ### Breaking
@@ -210,7 +240,8 @@ as installable packages and as copy-paste registry items you own.
 - Added per-entry gzipped bundle budgets for the published `@cooud-ui/ui` so a
   dependency or code-size regression is caught at build time.
 
-[Unreleased]: https://github.com/pedrogbraz/cooud-ui/compare/v0.3.0...main
+[Unreleased]: https://github.com/pedrogbraz/cooud-ui/compare/v0.4.0...main
+[0.4.0]: https://github.com/pedrogbraz/cooud-ui/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/pedrogbraz/cooud-ui/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/pedrogbraz/cooud-ui/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/pedrogbraz/cooud-ui/releases/tag/v0.1.0

@@ -59,7 +59,7 @@ export function fixtureIndex(): RegistryIndex {
   return Object.keys(FIXTURE_BLOCKS).map((name) => ({
     name,
     type: "registry:block" as const,
-    dependencies: ["@cooud-ui/ui@0.3.0", "lucide-react@^0.400.0"],
+    dependencies: ["@cooud-ui/ui@0.4.0", "lucide-react@^0.400.0"],
     registryDependencies: [],
   }));
 }

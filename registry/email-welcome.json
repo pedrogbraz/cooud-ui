@@ -2,7 +2,7 @@
   "name": "email-welcome",
   "type": "registry:block",
   "dependencies": [
-    "@cooud-ui/ui@0.3.0"
+    "@cooud-ui/ui@0.4.0"
   ],
   "registryDependencies": [],
   "files": [

@@ -1,6 +1,6 @@
 {
   "name": "@cooud-ui/theme",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Cooud runtime theming engine — CooudUIProvider + useTheme (CSS-var only, no re-render).",
   "type": "module",
   "exports": {
