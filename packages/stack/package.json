@@ -1,6 +1,6 @@
 {
   "name": "@cooud-ui/stack",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Cooud Stack Builder core — catalog, resolver, CLI flags, KICKOFF.md and stack.json artifacts.",
   "type": "module",
   "license": "MIT",

@@ -1,6 +1,6 @@
 {
   "name": "@cooud-ui/ui",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Cooud UI — themeable, accessible React components (Radix + CVA + Tailwind v4).",
   "type": "module",
   "exports": {

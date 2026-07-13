@@ -1329,7 +1329,7 @@
     "name": "hero",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1338,7 +1338,7 @@
     "name": "pricing",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1347,7 +1347,7 @@
     "name": "feature-grid",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1356,7 +1356,7 @@
     "name": "cta",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1365,7 +1365,7 @@
     "name": "testimonials",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1374,7 +1374,7 @@
     "name": "faq",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0"
+      "@cooud-ui/ui@0.3.0"
     ],
     "registryDependencies": []
   },
@@ -1382,7 +1382,7 @@
     "name": "footer",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1391,7 +1391,7 @@
     "name": "navbar",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1400,7 +1400,7 @@
     "name": "login",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1409,7 +1409,7 @@
     "name": "signup",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1418,7 +1418,7 @@
     "name": "forgot-password",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1427,7 +1427,7 @@
     "name": "otp",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1436,7 +1436,7 @@
     "name": "magic-link",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1445,7 +1445,7 @@
     "name": "stats",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1454,7 +1454,7 @@
     "name": "settings",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0"
+      "@cooud-ui/ui@0.3.0"
     ],
     "registryDependencies": []
   },
@@ -1462,7 +1462,7 @@
     "name": "team",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1471,7 +1471,7 @@
     "name": "welcome",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1480,7 +1480,7 @@
     "name": "setup-wizard",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0"
+      "@cooud-ui/ui@0.3.0"
     ],
     "registryDependencies": []
   },
@@ -1488,7 +1488,7 @@
     "name": "setup-checklist",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1497,7 +1497,7 @@
     "name": "dashboard",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0",
       "recharts@^3.9.2"
     ],
@@ -1507,7 +1507,7 @@
     "name": "billing",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1516,7 +1516,7 @@
     "name": "manage-subscription",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1525,7 +1525,7 @@
     "name": "payment-method",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1534,7 +1534,7 @@
     "name": "usage-dashboard",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0"
+      "@cooud-ui/ui@0.3.0"
     ],
     "registryDependencies": []
   },
@@ -1542,7 +1542,7 @@
     "name": "cancel-flow",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1551,7 +1551,7 @@
     "name": "checkout",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1560,7 +1560,7 @@
     "name": "payouts",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1569,7 +1569,7 @@
     "name": "product-grid",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1578,7 +1578,7 @@
     "name": "invoice",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1587,7 +1587,7 @@
     "name": "page-header",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1596,7 +1596,7 @@
     "name": "filter-bar",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1605,7 +1605,7 @@
     "name": "empty-state",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1614,7 +1614,7 @@
     "name": "status-page",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1623,7 +1623,7 @@
     "name": "chat-thread",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1632,7 +1632,7 @@
     "name": "prompt-box",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1641,7 +1641,7 @@
     "name": "ai-response",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1650,7 +1650,7 @@
     "name": "not-found",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1659,7 +1659,7 @@
     "name": "error-state",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1668,7 +1668,7 @@
     "name": "success-state",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1677,7 +1677,7 @@
     "name": "maintenance",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1686,7 +1686,7 @@
     "name": "email-welcome",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0"
+      "@cooud-ui/ui@0.3.0"
     ],
     "registryDependencies": []
   },
@@ -1694,7 +1694,7 @@
     "name": "email-receipt",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0"
+      "@cooud-ui/ui@0.3.0"
     ],
     "registryDependencies": []
   },
@@ -1702,7 +1702,7 @@
     "name": "email-verify",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0"
+      "@cooud-ui/ui@0.3.0"
     ],
     "registryDependencies": []
   },
@@ -1710,7 +1710,7 @@
     "name": "notification-panel",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0"
+      "@cooud-ui/ui@0.3.0"
     ],
     "registryDependencies": []
   },
@@ -1718,7 +1718,7 @@
     "name": "activity-feed",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1727,7 +1727,7 @@
     "name": "toast-stack",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1736,7 +1736,7 @@
     "name": "nps-survey",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0"
+      "@cooud-ui/ui@0.3.0"
     ],
     "registryDependencies": []
   },
@@ -1744,7 +1744,7 @@
     "name": "feedback-form",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0"
+      "@cooud-ui/ui@0.3.0"
     ],
     "registryDependencies": []
   },
@@ -1752,7 +1752,7 @@
     "name": "contact-form",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1761,7 +1761,7 @@
     "name": "post-card",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1770,7 +1770,7 @@
     "name": "comment-thread",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1779,7 +1779,7 @@
     "name": "profile-card",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0"
+      "@cooud-ui/ui@0.3.0"
     ],
     "registryDependencies": []
   },
@@ -1787,7 +1787,7 @@
     "name": "changelog",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0"
+      "@cooud-ui/ui@0.3.0"
     ],
     "registryDependencies": []
   },
@@ -1795,7 +1795,7 @@
     "name": "integrations",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1804,7 +1804,7 @@
     "name": "waitlist",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1813,7 +1813,7 @@
     "name": "feature-matrix",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1822,7 +1822,7 @@
     "name": "product-detail",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1831,7 +1831,7 @@
     "name": "cart",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1840,7 +1840,7 @@
     "name": "order-tracking",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1849,7 +1849,7 @@
     "name": "order-history",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1858,7 +1858,7 @@
     "name": "reviews",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1867,7 +1867,7 @@
     "name": "account-security",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1876,7 +1876,7 @@
     "name": "sessions",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1885,7 +1885,7 @@
     "name": "api-keys",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1894,7 +1894,7 @@
     "name": "notification-preferences",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0"
+      "@cooud-ui/ui@0.3.0"
     ],
     "registryDependencies": []
   },
@@ -1902,7 +1902,7 @@
     "name": "user-management",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1911,7 +1911,7 @@
     "name": "analytics",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0"
+      "@cooud-ui/ui@0.3.0"
     ],
     "registryDependencies": []
   },
@@ -1919,7 +1919,7 @@
     "name": "kanban-board",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1928,7 +1928,7 @@
     "name": "audit-log",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1937,7 +1937,7 @@
     "name": "blog",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1946,7 +1946,7 @@
     "name": "blog-post",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1955,7 +1955,7 @@
     "name": "logo-cloud",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []
@@ -1964,7 +1964,7 @@
     "name": "about",
     "type": "registry:block",
     "dependencies": [
-      "@cooud-ui/ui@0.2.0",
+      "@cooud-ui/ui@0.3.0",
       "lucide-react@^0.577.0"
     ],
     "registryDependencies": []

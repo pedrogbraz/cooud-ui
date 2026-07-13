@@ -10,9 +10,9 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@cooud-ui/theme": "^0.2.0",
-    "@cooud-ui/tokens": "^0.2.0",
-    "@cooud-ui/ui": "^0.2.0",
+    "@cooud-ui/theme": "^0.3.0",
+    "@cooud-ui/tokens": "^0.3.0",
+    "@cooud-ui/ui": "^0.3.0",
     "lucide-react": "^0.577.0",
     "next": "16.2.10",
     "react": "^19.2.0",

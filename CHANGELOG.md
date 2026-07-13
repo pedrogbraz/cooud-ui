@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] — 2026-07-13
+
 ### Breaking
 
 - **`@cooud-ui/ui`: heavy leaf-only libraries are now optional peer dependencies.**
@@ -21,6 +23,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `@cooud-ui/ui` README for the component → package table). All other components
   are unaffected. **CLI/registry users are unaffected** — `npx cooud-ui add <slug>`
   derives each item's npm dependencies from its real imports and installs them.
+
+### Added
+
+- **4 new block families — 17 new blocks (56 → 73), every one CLI-installable
+  with a paste-exact code literal:**
+  - **Store**: `product-detail` (standard / gallery / minimal),
+    `cart` (page / drawer), `order-tracking` (in-transit / delivered / delayed),
+    `order-history` (table / cards), `reviews` (summary / compact).
+  - **Account**: `account-security` (two-factor / password & danger zone),
+    `sessions` (device list / selectable table), `api-keys` (list / create),
+    `notification-preferences` (channel matrix / simple toggles).
+  - **Admin**: `user-management` (table / cards), `analytics`
+    (traffic overview / engagement cohorts), `kanban-board`
+    (sprint / compact WIP), `audit-log` (timeline / table).
+  - **Content**: `blog` (featured grid / editorial list), `blog-post`
+    (article / with sidebar), `logo-cloud` (trust grid / dual marquee),
+    `about` (story / values).
+- **29 new variants on existing key blocks** — `login` (+3: split panel,
+  social-first, minimal), `signup` (+2: split with proof, with plan summary),
+  `cta` (+2), `navbar` (+2), `footer` (+2), `checkout` (+2: one-page,
+  multi-step), `product-grid` (+2: with filters, editorial showcase), and
+  `invoice` (+1: receipt).
+- **5 new components** (each CLI-installable and exported with its own entry
+  point): `Chip` (interactive filter/selection chip with accessible dismissal),
+  `StatusDot` (presence indicator with live-region announcements),
+  `ImageZoom` (cursor-panning hover/press zoom with controlled state),
+  `VideoPlayer` (token-styled native video controls with focus hand-off), and
+  `DescriptionList` (semantic `dl`/`dt`/`dd` in three layouts).
+- Docs examples for all five new components, including a captions-track video
+  demo and a striped description-list example.
+
+### Fixed
+
+- `Slider` no longer forwards `aria-label`/`aria-labelledby` onto its role-less
+  root, which tripped axe `aria-prohibited-attr` (serious, WCAG 2 A) on every
+  labeled slider; thumbs keep their accessible names.
+- The `pricing` toggle/usage variants and the `feature-grid` bento variant now
+  ship code literals that fully reproduce their previews (they previously
+  rendered placeholder comments with unused imports), and the `testimonials`
+  literal compiles under `strict` TypeScript.
+- Classic `login`/`signup`/`otp`/`magic-link` link text moved to the AA-safe
+  `text-primary-strong` token.
 
 ## [0.2.0] — 2026-07-07
 
@@ -166,6 +210,7 @@ as installable packages and as copy-paste registry items you own.
 - Added per-entry gzipped bundle budgets for the published `@cooud-ui/ui` so a
   dependency or code-size regression is caught at build time.
 
-[Unreleased]: https://github.com/pedrogbraz/cooud-ui/compare/v0.2.0...main
+[Unreleased]: https://github.com/pedrogbraz/cooud-ui/compare/v0.3.0...main
+[0.3.0]: https://github.com/pedrogbraz/cooud-ui/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/pedrogbraz/cooud-ui/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/pedrogbraz/cooud-ui/releases/tag/v0.1.0

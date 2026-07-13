@@ -9,7 +9,7 @@
     "lib": "lib",
     "blocks": "components/blocks"
   },
-  "registry": "https://raw.githubusercontent.com/pedrogbraz/cooud-ui/v0.2.0/registry",
+  "registry": "https://raw.githubusercontent.com/pedrogbraz/cooud-ui/v0.3.0/registry",
   "theme": {
     "name": "__THEME__",
     "mode": "__MODE__"

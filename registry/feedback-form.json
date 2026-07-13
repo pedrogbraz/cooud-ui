@@ -2,7 +2,7 @@
   "name": "feedback-form",
   "type": "registry:block",
   "dependencies": [
-    "@cooud-ui/ui@0.2.0"
+    "@cooud-ui/ui@0.3.0"
   ],
   "registryDependencies": [],
   "files": [

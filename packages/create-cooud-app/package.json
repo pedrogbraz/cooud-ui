@@ -1,6 +1,6 @@
 {
   "name": "create-cooud-app",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Scaffold a Next.js + Cooud UI app in one command: npx create-cooud-app my-app.",
   "type": "module",
   "license": "MIT",

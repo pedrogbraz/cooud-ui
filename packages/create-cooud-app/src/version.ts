@@ -1,2 +1,2 @@
 /** Kept in sync with package.json#version. */
-export const CREATE_VERSION = "0.2.0";
+export const CREATE_VERSION = "0.3.0";
