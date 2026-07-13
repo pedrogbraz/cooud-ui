@@ -7,6 +7,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] — 2026-07-13
+
+### Added
+
+- **App-generator: installable block variants + `--variant`.** Every block
+  variant (`login--split`, `checkout--one-page`, …) is now a real registry item
+  (51 of them). A manifest `{block,variant}` ref or a repeatable
+  `--variant <slug>=<v>` flag composes the same app with a different look;
+  unknown / ineffective / chrome-slot overrides fail loud.
+- **App-generator: the SaaS template.** A new `app-shell` chrome block (sidebar +
+  header) drives an `(app)` route group; `create-cooud-app --template saas` opens
+  straight on a composed dashboard behind the shell (analytics, team, billing,
+  settings, split-variant login).
+- **App-generator: `add-page`.** `cooud-ui add-page` grows a composed app by one
+  page (installs new blocks incl. a new chrome group's chrome, updates nav,
+  refreshes the base snapshot, provenance-checked manifest reload, `--dry-run`).
+- **App-generator: shared demo-data libs.** Blocks can depend on a `registry:lib`
+  (`demo-store` / `demo-saas`, exported via the `@cooud-ui/ui` subpath) — pure-TS
+  single sources of truth with tested dataset invariants. `cooud-ui add`/compose
+  installs the lib transitively; 8 coherent blocks (cart, order-history, reviews,
+  product-grid, billing, …) now read their data from it. An anti-inline-mock
+  gate (deriving the forbidden set from the lib) keeps migrated blocks honest.
+- **`rsc:smoke` gate** proving every block item (incl. all 51 variants + the
+  shell) compiles as a React Server Component page.
+
+### Note
+
+- The bundled app manifests stay bundled (not migrated to `registry:app`); a
+  full catalog-data reconciliation (unifying the remaining blocks' divergent
+  mock data) is a follow-up. The visible app brand flows through the brandTokens
+  chrome path.
+
 ## [0.4.0] — 2026-07-13
 
 ### Added
@@ -240,7 +272,8 @@ as installable packages and as copy-paste registry items you own.
 - Added per-entry gzipped bundle budgets for the published `@cooud-ui/ui` so a
   dependency or code-size regression is caught at build time.
 
-[Unreleased]: https://github.com/pedrogbraz/cooud-ui/compare/v0.4.0...main
+[Unreleased]: https://github.com/pedrogbraz/cooud-ui/compare/v0.5.0...main
+[0.5.0]: https://github.com/pedrogbraz/cooud-ui/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/pedrogbraz/cooud-ui/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/pedrogbraz/cooud-ui/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/pedrogbraz/cooud-ui/compare/v0.1.0...v0.2.0

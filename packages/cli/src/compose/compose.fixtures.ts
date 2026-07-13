@@ -104,7 +104,7 @@ export const FIXTURE_BLOCKS: Record<
  * resolve/install can find what a variant plan installs).
  */
 export function fixtureIndex(): RegistryIndex {
-  const dependencies = ["@cooud-ui/ui@0.4.0", "lucide-react@^0.400.0"];
+  const dependencies = ["@cooud-ui/ui@0.5.0", "lucide-react@^0.400.0"];
   const entries: RegistryIndex = [];
   for (const [slug, info] of Object.entries(FIXTURE_BLOCKS)) {
     entries.push({ name: slug, type: "registry:block", dependencies, registryDependencies: [] });

@@ -9,9 +9,9 @@ The Cooud design system — a themeable, accessible, shadcn-class React componen
 library that **is** the Cooud design language. Default theme **Aurora** (premium
 sky/cyan), with **Neutral** as a first-class preset and arbitrary brand override.
 
-> **v0.4.0 working release** — the app-generator line: `cooud-ui compose` and
-> `create-cooud-app --template store|landing` build a full multi-page app from
-> validated blocks, plus a generated `registry/meta.json` and metadata-aware MCP tools.
+> **v0.5.0 working release** — the app-generator matures: installable block
+> variants + `--variant`, the SaaS `app-shell` template, `add-page`, and shared
+> `demo-store`/`demo-saas` data libs for cohesive, editable generated-app data.
 
 ## Monorepo layout
 

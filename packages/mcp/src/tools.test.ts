@@ -55,7 +55,7 @@ const BUTTON_ITEM = {
 
 /** A meta sidecar matching the fixture INDEX, exercising the enrichment path. */
 const META = {
-  registryVersion: "0.4.0",
+  registryVersion: "0.5.0",
   blocks: {
     pricing: {
       title: "Pricing",

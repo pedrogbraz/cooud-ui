@@ -50,7 +50,7 @@ export const outDir = join(repoRoot, "registry");
 /** Committed metadata sidecar file name (lives alongside index.json in `registry/`). */
 export const META_FILE = "meta.json";
 /** Registry metadata schema version (bumped on breaking meta shape changes). */
-const REGISTRY_VERSION = "0.4.0";
+const REGISTRY_VERSION = "0.5.0";
 
 interface PkgJson {
   version?: string;

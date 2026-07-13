@@ -1,6 +1,6 @@
 {
   "name": "@cooud-ui/tokens",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Cooud design tokens — source of truth (TS) + CSS variable bridge + Tailwind v4 preset.",
   "type": "module",
   "exports": {

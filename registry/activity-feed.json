@@ -2,7 +2,7 @@
   "name": "activity-feed",
   "type": "registry:block",
   "dependencies": [
-    "@cooud-ui/ui@0.4.0",
+    "@cooud-ui/ui@0.5.0",
     "lucide-react@^0.577.0"
   ],
   "registryDependencies": [],
