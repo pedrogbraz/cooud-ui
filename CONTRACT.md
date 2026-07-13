@@ -233,6 +233,51 @@ occurs verbatim in the shipped block source** (e.g. the `Cooud` wordmark in navb
   `registry:check` fails. This proves the anchor exists before the composer replaces it.
 - The composer replaces the literal with the app's `--brand` value deterministically.
 
+## Shared demo-data libs (`registry:lib`)
+Cohesive demo data lives in **pure-TS `registry:lib` modules** under
+`packages/ui/src/lib/`, published alongside `cn`:
+- `demo-store.ts` — storefront dataset: `BRAND`, `PRODUCTS`, `CART`, `ORDERS`,
+  `REVIEWS`, `RATING_DISTRIBUTION`, `RATING_SUMMARY`, `USER`, `productById`.
+- `demo-saas.ts` — SaaS dashboard dataset: `BRAND`, `USER`, `TEAM`, `KPIS`,
+  `REVENUE_SERIES`, `ACTIVITY`, `INVOICES`, `USAGE_METERS`, `PLANS`,
+  `CURRENT_PLAN_ID`, `planById`.
+
+Rules:
+- These modules are **PURE data** — zero React/hooks/JSX — so they are RSC-safe
+  and ship as `type: "registry:lib"`, `files[0].target: "lib"`. Keep them that way.
+- The registry set of shared libs is the `LIB_MODULES` table in `build-registry.ts`
+  (`cn`, `demo-store`, `demo-saas`). A lib's npm `dependencies` are **parsed from its
+  own imports** (pure data → none); a lib may depend on another lib via `../lib/<name>.js`.
+- **Single source of truth.** The block preview and its code literal both read the
+  SAME data. In the family file:
+  - the **preview** imports from the package export
+    `import { PRODUCTS } from "@cooud-ui/ui/demo-store";` (see below), and
+  - the **code literal** carries `import { PRODUCTS } from "../lib/demo-store.js";`
+    (kept a `NoSubstitutionTemplateLiteral`). `build-registry` records `demo-store` as
+    a `registryDependency` (resolved transitively at `add`/`compose`); `rewriteImports`
+    retargets `../lib/<name>.js` → the consumer's `lib` alias.
+- **Migrating a block is behaviour-preserving:** replace its inline data array with an
+  import of the SAME values from the lib — do not invent new data (visual snapshots +
+  preview↔literal byte-equality must stay green).
+
+### Import paths (memorize)
+- **Preview (showcase-relative):** `@cooud-ui/ui/demo-store` / `@cooud-ui/ui/demo-saas`
+  (package subpath exports; resolves to `packages/ui/src/lib/*` — the single source).
+- **Code literal (shipped block source):** `../lib/demo-store.js` / `../lib/demo-saas.js`
+  (`build-registry` extracts only the literal; `rewriteImports` rewrites it).
+
+### Brand
+The app brand reaches every **visible** surface through the **brandTokens literal-
+replacement** path: at compose time `rewriteChromeBlock` runs `replaceBrandLiteral` over
+the installed chrome copies (navbar/footer/hero), swapping the shipped `"Cooud"` literal
+for the app's `--brand`. There is **no generated `lib/brand.ts`** — compose does not
+override the demo datasets' brand.
+
+The demo libs (`demo-store`/`demo-saas`) export their own **standalone `BRAND` default**
+(`"Aurora Audio"` / `"Northwind"`) — the demo store/app **name** used when the dataset is
+consumed on its own (`cooud-ui add demo-store`). It is a demo default, not a compose
+override; compose leaves it untouched.
+
 ## Editing a block family file
 Any edit to `apps/www/lib/blocks/*.tsx` that touches a block with markers/brand tokens
 must change the **preview component AND its code template literal identically**, and

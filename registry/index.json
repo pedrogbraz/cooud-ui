@@ -9,6 +9,18 @@
     "registryDependencies": []
   },
   {
+    "name": "demo-store",
+    "type": "registry:lib",
+    "dependencies": [],
+    "registryDependencies": []
+  },
+  {
+    "name": "demo-saas",
+    "type": "registry:lib",
+    "dependencies": [],
+    "registryDependencies": []
+  },
+  {
     "name": "accordion",
     "type": "registry:ui",
     "dependencies": [
@@ -1696,7 +1708,9 @@
       "lucide-react@^0.577.0",
       "recharts@^3.9.2"
     ],
-    "registryDependencies": []
+    "registryDependencies": [
+      "demo-saas"
+    ]
   },
   {
     "name": "dashboard--admin-overview",
@@ -1715,7 +1729,9 @@
       "@cooud-ui/ui@0.4.0",
       "lucide-react@^0.577.0"
     ],
-    "registryDependencies": []
+    "registryDependencies": [
+      "demo-saas"
+    ]
   },
   {
     "name": "billing--plans",
@@ -1724,7 +1740,9 @@
       "@cooud-ui/ui@0.4.0",
       "lucide-react@^0.577.0"
     ],
-    "registryDependencies": []
+    "registryDependencies": [
+      "demo-saas"
+    ]
   },
   {
     "name": "manage-subscription",
@@ -1812,7 +1830,9 @@
       "@cooud-ui/ui@0.4.0",
       "lucide-react@^0.577.0"
     ],
-    "registryDependencies": []
+    "registryDependencies": [
+      "demo-store"
+    ]
   },
   {
     "name": "product-grid--with-filters",
@@ -1821,7 +1841,9 @@
       "@cooud-ui/ui@0.4.0",
       "lucide-react@^0.577.0"
     ],
-    "registryDependencies": []
+    "registryDependencies": [
+      "demo-store"
+    ]
   },
   {
     "name": "product-grid--showcase",
@@ -2135,7 +2157,9 @@
       "@cooud-ui/ui@0.4.0",
       "lucide-react@^0.577.0"
     ],
-    "registryDependencies": []
+    "registryDependencies": [
+      "demo-store"
+    ]
   },
   {
     "name": "cart--drawer",
@@ -2144,7 +2168,9 @@
       "@cooud-ui/ui@0.4.0",
       "lucide-react@^0.577.0"
     ],
-    "registryDependencies": []
+    "registryDependencies": [
+      "demo-store"
+    ]
   },
   {
     "name": "order-tracking",
@@ -2180,7 +2206,9 @@
       "@cooud-ui/ui@0.4.0",
       "lucide-react@^0.577.0"
     ],
-    "registryDependencies": []
+    "registryDependencies": [
+      "demo-store"
+    ]
   },
   {
     "name": "order-history--cards",
@@ -2198,7 +2226,9 @@
       "@cooud-ui/ui@0.4.0",
       "lucide-react@^0.577.0"
     ],
-    "registryDependencies": []
+    "registryDependencies": [
+      "demo-store"
+    ]
   },
   {
     "name": "reviews--compact",
