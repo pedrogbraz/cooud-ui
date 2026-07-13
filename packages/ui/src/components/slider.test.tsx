@@ -55,6 +55,21 @@ describe("Slider", () => {
     );
   });
 
+  it("forwards aria-label onto the slider thumb", () => {
+    render(<Slider aria-label="Volume" defaultValue={[40]} min={0} max={100} />);
+    expect(screen.getByRole("slider", { name: "Volume" })).toHaveAttribute("aria-label", "Volume");
+  });
+
+  it("names a single thumb from aria-labelledby", () => {
+    render(
+      <>
+        <span id="brightness-label">Brightness</span>
+        <Slider aria-labelledby="brightness-label" defaultValue={[40]} min={0} max={100} />
+      </>,
+    );
+    expect(screen.getByRole("slider", { name: "Brightness" })).toBeInTheDocument();
+  });
+
   it("does not change value while disabled", async () => {
     render(<Slider aria-label="Locked" defaultValue={[30]} min={0} max={100} disabled />);
     const slider = screen.getByRole("slider", { name: "Locked" });

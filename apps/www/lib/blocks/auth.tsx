@@ -619,7 +619,7 @@ export function OtpBlock() {
 
         <CardContent className="flex flex-col gap-4">
           <div className="flex justify-center">
-            <InputOTP maxLength={6}>
+            <InputOTP maxLength={6} aria-label="6-digit authentication code">
               <InputOTPGroup className="gap-2">
                 <InputOTPSlot index={0} />
                 <InputOTPSlot index={1} />
@@ -691,7 +691,7 @@ export function OtpBlock() {
 
         <CardContent className="flex flex-col gap-4">
           <div className="flex justify-center">
-            <InputOTP maxLength={6}>
+            <InputOTP maxLength={6} aria-label="6-digit authentication code">
               <InputOTPGroup className="gap-2">
                 <InputOTPSlot index={0} />
                 <InputOTPSlot index={1} />

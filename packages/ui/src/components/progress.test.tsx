@@ -18,6 +18,22 @@ describe("Progress", () => {
     expect(bar).not.toHaveAttribute("aria-valuenow");
   });
 
+  it("forwards aria-label onto the progressbar element", () => {
+    render(<Progress value={30} aria-label="Storage used" />);
+    const bar = screen.getByRole("progressbar", { name: "Storage used" });
+    expect(bar).toHaveAttribute("aria-label", "Storage used");
+  });
+
+  it("names the progressbar from aria-labelledby", () => {
+    render(
+      <>
+        <span id="upload-label">Upload progress</span>
+        <Progress value={66} aria-labelledby="upload-label" />
+      </>,
+    );
+    expect(screen.getByRole("progressbar", { name: "Upload progress" })).toBeInTheDocument();
+  });
+
   it("has no axe violations", async () => {
     const { container } = render(<Progress value={75} aria-label="Progress" />);
     expect(await axe(container)).toHaveNoViolations();

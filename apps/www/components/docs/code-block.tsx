@@ -4,31 +4,36 @@ import { Check, ChevronDown, Copy } from "lucide-react";
 import { Highlight, type PrismTheme } from "prism-react-renderer";
 import { useState } from "react";
 
-/** A token theme tuned to the Cooud dark surfaces. */
+/**
+ * Token theme for the code viewer. Every color is a CSS variable so the palette
+ * adapts to the active mode: the `--cooud-syntax-*` vars (defined in globals.css)
+ * are bright on the dark inset and darkened on the light inset, keeping code
+ * AA-legible (>=4.5:1) in both — a single hardcoded bright color fails on light.
+ */
 const theme: PrismTheme = {
   plain: { color: "var(--cooud-fg)", backgroundColor: "transparent" },
   styles: [
     {
       types: ["comment", "prolog", "doctype", "cdata"],
       // fg-tertiary (not fg-muted) keeps comments muted while clearing AA contrast
-      // (>=4.5:1) on the dark code surface — fg-muted fails at ~2.5:1.
+      // (>=4.5:1) on the code surface — fg-muted fails at ~2.5:1.
       style: { color: "var(--cooud-fg-tertiary)", fontStyle: "italic" },
     },
     { types: ["punctuation"], style: { color: "var(--cooud-fg-tertiary)" } },
     {
       types: ["tag", "operator", "keyword", "boolean", "selector"],
-      style: { color: "oklch(0.72 0.15 235)" },
+      style: { color: "var(--cooud-syntax-keyword)" },
     },
     {
       types: ["function", "class-name", "maybe-class-name"],
-      style: { color: "oklch(0.78 0.13 200)" },
+      style: { color: "var(--cooud-syntax-fn)" },
     },
     {
       types: ["string", "char", "attr-value", "inserted"],
-      style: { color: "oklch(0.78 0.14 150)" },
+      style: { color: "var(--cooud-syntax-string)" },
     },
-    { types: ["attr-name", "property"], style: { color: "oklch(0.8 0.12 90)" } },
-    { types: ["number", "constant", "symbol"], style: { color: "oklch(0.8 0.13 50)" } },
+    { types: ["attr-name", "property"], style: { color: "var(--cooud-syntax-attr)" } },
+    { types: ["number", "constant", "symbol"], style: { color: "var(--cooud-syntax-number)" } },
     { types: ["script", "plain"], style: { color: "var(--cooud-fg-secondary)" } },
   ],
 };

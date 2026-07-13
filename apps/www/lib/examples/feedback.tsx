@@ -47,9 +47,9 @@ function ProgressDemo() {
 
   return (
     <div className="flex w-full max-w-sm flex-col gap-6">
-      <Progress value={30} />
-      <Progress value={animated} />
-      <Progress value={100} />
+      <Progress value={30} aria-label="Storage used" />
+      <Progress value={animated} aria-label="Upload progress" />
+      <Progress value={100} aria-label="Sync complete" />
     </div>
   );
 }
@@ -286,9 +286,9 @@ export const feedbackExamples: ExampleMap = {
 
   return (
     <div className="flex w-full max-w-sm flex-col gap-6">
-      <Progress value={30} />
-      <Progress value={animated} />
-      <Progress value={100} />
+      <Progress value={30} aria-label="Storage used" />
+      <Progress value={animated} aria-label="Upload progress" />
+      <Progress value={100} aria-label="Sync complete" />
     </div>
   );
 }`,

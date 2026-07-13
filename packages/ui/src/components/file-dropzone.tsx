@@ -1,14 +1,7 @@
 "use client";
 
 import { UploadCloud } from "lucide-react";
-import {
-  type DragEvent,
-  forwardRef,
-  type KeyboardEvent,
-  type ReactNode,
-  useRef,
-  useState,
-} from "react";
+import { type DragEvent, forwardRef, type ReactNode, useState } from "react";
 import { cn } from "../lib/cn.js";
 
 export interface FileDropzoneProps {
@@ -18,11 +11,39 @@ export interface FileDropzoneProps {
   disabled?: boolean;
   className?: string;
   children?: ReactNode;
+  /**
+   * Accessible name for the file input. Defaults to `"Upload files"` so the
+   * control is never nameless.
+   */
+  "aria-label"?: string;
+  /** IDs of element(s) that describe the dropzone (e.g. accepted types). */
+  "aria-describedby"?: string;
 }
 
-export const FileDropzone = forwardRef<HTMLDivElement, FileDropzoneProps>(
-  ({ onFiles, accept, multiple = false, disabled = false, className, children }, ref) => {
-    const inputRef = useRef<HTMLInputElement>(null);
+/**
+ * A drag-and-drop file picker.
+ *
+ * The whole surface is a `<label>` that wraps a single visually-hidden
+ * `<input type="file">` — the only interactive, labelable control. That keeps
+ * the widget natively accessible: clicking anywhere opens the picker, the input
+ * is keyboard-focusable and Enter/Space open the picker for free, and there is
+ * no nested-interactive (no `role="button"` around the input). Drag-and-drop is
+ * layered on the label; drops are forwarded to `onFiles` just like picks.
+ */
+export const FileDropzone = forwardRef<HTMLLabelElement, FileDropzoneProps>(
+  (
+    {
+      onFiles,
+      accept,
+      multiple = false,
+      disabled = false,
+      className,
+      children,
+      "aria-label": ariaLabel = "Upload files",
+      "aria-describedby": ariaDescribedBy,
+    },
+    ref,
+  ) => {
     const [dragging, setDragging] = useState(false);
 
     const emit = (fileList: FileList | null) => {
@@ -30,40 +51,27 @@ export const FileDropzone = forwardRef<HTMLDivElement, FileDropzoneProps>(
       onFiles(Array.from(fileList));
     };
 
-    const openPicker = () => {
-      if (disabled) return;
-      inputRef.current?.click();
-    };
-
-    const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-      if (disabled) return;
-      if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-        openPicker();
-      }
-    };
-
-    const handleDragEnter = (event: DragEvent<HTMLDivElement>) => {
+    const handleDragEnter = (event: DragEvent<HTMLLabelElement>) => {
       event.preventDefault();
       event.stopPropagation();
       if (disabled) return;
       setDragging(true);
     };
 
-    const handleDragOver = (event: DragEvent<HTMLDivElement>) => {
+    const handleDragOver = (event: DragEvent<HTMLLabelElement>) => {
       event.preventDefault();
       event.stopPropagation();
       if (disabled) return;
       setDragging(true);
     };
 
-    const handleDragLeave = (event: DragEvent<HTMLDivElement>) => {
+    const handleDragLeave = (event: DragEvent<HTMLLabelElement>) => {
       event.preventDefault();
       event.stopPropagation();
       setDragging(false);
     };
 
-    const handleDrop = (event: DragEvent<HTMLDivElement>) => {
+    const handleDrop = (event: DragEvent<HTMLLabelElement>) => {
       event.preventDefault();
       event.stopPropagation();
       setDragging(false);
@@ -72,35 +80,32 @@ export const FileDropzone = forwardRef<HTMLDivElement, FileDropzoneProps>(
     };
 
     return (
-      // biome-ignore lint/a11y/useSemanticElements: a native <button> can't host the nested file input + full drag-and-drop affordance; role=button with keyboard handlers gives equivalent semantics.
-      <div
+      <label
         ref={ref}
         data-slot="file-dropzone"
-        role="button"
-        tabIndex={disabled ? -1 : 0}
-        aria-disabled={disabled}
+        aria-disabled={disabled || undefined}
         data-dragging={dragging}
-        onClick={openPicker}
-        onKeyDown={handleKeyDown}
         onDragEnter={handleDragEnter}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
         className={cn(
-          "flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border bg-surface-inset px-6 py-10 text-center text-sm text-fg-secondary transition-colors hover:border-border-strong data-[dragging=true]:border-primary data-[dragging=true]:bg-primary/5 disabled:opacity-50 disabled:pointer-events-none",
-          "outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base",
-          disabled && "opacity-50 pointer-events-none",
+          "flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border bg-surface-inset px-6 py-10 text-center text-sm text-fg-secondary transition-colors hover:border-border-strong data-[dragging=true]:border-primary data-[dragging=true]:bg-primary/5",
+          // Move the focus ring onto the label when the hidden input is
+          // keyboard-focused, so the whole surface shows focus.
+          "outline-none has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring has-[:focus-visible]:ring-offset-2 has-[:focus-visible]:ring-offset-surface-base",
+          disabled && "cursor-not-allowed opacity-50",
           className,
         )}
       >
         <input
-          ref={inputRef}
           type="file"
           accept={accept}
           multiple={multiple}
           disabled={disabled}
+          aria-label={ariaLabel}
+          aria-describedby={ariaDescribedBy}
           className="sr-only"
-          tabIndex={-1}
           onChange={(event) => {
             emit(event.target.files);
             event.target.value = "";
@@ -114,7 +119,7 @@ export const FileDropzone = forwardRef<HTMLDivElement, FileDropzoneProps>(
             </span>
           </>
         )}
-      </div>
+      </label>
     );
   },
 );

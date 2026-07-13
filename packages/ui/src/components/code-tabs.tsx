@@ -229,7 +229,9 @@ export const CodeTabs = forwardRef<HTMLDivElement, CodeTabsProps>(
           {activeItem?.language ? (
             <span
               data-slot="code-tabs-language"
-              className="shrink-0 font-mono text-fg-muted text-xs"
+              // Information-bearing label — `fg-muted` fails AA on the header
+              // surface, so it uses `fg-tertiary` (the next step up, which passes).
+              className="shrink-0 font-mono text-fg-tertiary text-xs"
             >
               {activeItem.language}
             </span>

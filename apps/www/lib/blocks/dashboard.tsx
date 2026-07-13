@@ -852,7 +852,13 @@ export function DashboardAdminOverviewBlock() {
             <SidebarMenu>
               {adminNav.map((item, index) => (
                 <SidebarMenuItem key={item.id}>
-                  <SidebarMenuButton isActive={index === 1} tooltip={item.label}>
+                  {/* aria-label persists the name when the sidebar collapses to
+                      icons and the label <span> is hidden (button-name, WCAG 4.1.2). */}
+                  <SidebarMenuButton
+                    isActive={index === 1}
+                    tooltip={item.label}
+                    aria-label={item.label}
+                  >
                     <item.icon aria-hidden="true" />
                     <span>{item.label}</span>
                   </SidebarMenuButton>
@@ -866,7 +872,7 @@ export function DashboardAdminOverviewBlock() {
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton tooltip="Lena Park">
+            <SidebarMenuButton tooltip="Lena Park" aria-label="Lena Park">
               <Avatar className="size-6">
                 <AvatarImage src="https://i.pravatar.cc/96?img=5" alt="Lena Park" />
                 <AvatarFallback>LP</AvatarFallback>
@@ -1129,7 +1135,7 @@ export function DashboardAdminOverviewBlock() {
             <SidebarMenu>
               {nav.map((item, index) => (
                 <SidebarMenuItem key={item.id}>
-                  <SidebarMenuButton isActive={index === 1} tooltip={item.label}>
+                  <SidebarMenuButton isActive={index === 1} tooltip={item.label} aria-label={item.label}>
                     <item.icon aria-hidden="true" />
                     <span>{item.label}</span>
                   </SidebarMenuButton>
@@ -1142,7 +1148,7 @@ export function DashboardAdminOverviewBlock() {
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton tooltip="Lena Park">
+            <SidebarMenuButton tooltip="Lena Park" aria-label="Lena Park">
               <Avatar className="size-6">
                 <AvatarImage src="https://i.pravatar.cc/96?img=5" alt="Lena Park" />
                 <AvatarFallback>LP</AvatarFallback>
