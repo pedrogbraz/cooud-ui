@@ -3,7 +3,7 @@
 [![@cronus-ui/ui on npm](https://img.shields.io/npm/v/@cronus-ui/ui?label=%40cronus-ui%2Fui&color=0ea5e9)](https://www.npmjs.com/package/@cronus-ui/ui)
 [![npm downloads](https://img.shields.io/npm/dm/@cronus-ui/ui?color=0ea5e9)](https://www.npmjs.com/package/@cronus-ui/ui)
 [![cronus-ui CLI](https://img.shields.io/npm/v/cronus-ui?label=cronus-ui&color=0ea5e9)](https://www.npmjs.com/package/cronus-ui)
-[![license](https://img.shields.io/badge/license-proprietary-0ea5e9)](LICENSE)
+[![license](https://img.shields.io/npm/l/@cronus-ui/ui?color=0ea5e9)](LICENSE)
 [![sponsor](https://img.shields.io/badge/sponsor-coffee-0ea5e9)](https://github.com/sponsors/pedrogbraz)
 
 Cronus UI is a **product UI system** — the Cronus design language, a live theme
@@ -240,8 +240,5 @@ A live Cursor/Claude 20-prompt eval is for a human — no score claimed here.
 
 ## License
 
-Proprietary. All rights reserved. See [LICENSE](./LICENSE).
-
-You may use official npm packages and CLI output in your own apps. You may not
-copy, fork, rebrand, or republish this repository or the Cronus UI design
-system as your own.
+[MIT](./LICENSE) © 2026 Pedro Gontijo Braz — every package published to npm and the docs site.
+The Cronus Pro application in `apps/pro` is proprietary; see [apps/pro/LICENSE](./apps/pro/LICENSE).

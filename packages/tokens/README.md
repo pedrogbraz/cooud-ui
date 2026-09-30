@@ -159,4 +159,4 @@ they re-theme automatically and are not tokens.
 
 ## License
 
-Proprietary. See [LICENSE](../../LICENSE).
+MIT

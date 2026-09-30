@@ -170,4 +170,4 @@ npx cronus-ui compose saas
 
 ## License
 
-Proprietary. See [LICENSE](../../LICENSE).
+MIT

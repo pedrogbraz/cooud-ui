@@ -196,7 +196,7 @@ src/cronus_ui_widgets.rs         PORTED_FAMILIES + dedicated_render
 ## 5. Restrições que ainda valem (não reabrir)
 
 - **Não** Polar, Pro (`iacronus.com`), Resend, bump npm. Publicado fica **0.7.6** até o humano dizer `sobe o X.Y.Z`.
-- **Não** mergear CLI Polar. Licença: `UNLICENSED` / All Rights Reserved.
+- **Não** mergear CLI Polar. Licença: MIT (pacotes e docs); `apps/pro` segue proprietário.
 - **Não** commit sem o humano dizer `commita` / `commita e sobe`.
 - Conventional commits **em português**, **split por concern**, **sem** trailer de IA.
 - Gold path de templates: **saas+admin** only (store/landing = compose; gontify/portfolio = showcase). ADR 0003: catálogo é o meio.

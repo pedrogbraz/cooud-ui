@@ -1,0 +1,9 @@
+Copyright (c) 2026 Pedro Gontijo Braz. All rights reserved.
+
+The source code in this directory (apps/pro, the Cronus Pro application) is
+proprietary and is NOT covered by the MIT License at the root of this
+repository. No license is granted to copy, modify, distribute or host it.
+
+Everything else in this repository — including every package published to npm
+under @cronus-ui and the cronus-ui, create-cronus-app, create-cronus-stack and
+cronus-ui-mcp packages — is licensed under the MIT License (see ../../LICENSE).
